@@ -50,7 +50,7 @@ wingshomeopathy@gmail.com
                   </p>
               </div>
           </div>
-          <hr className='w-full mt-4 bg-[#c2c4c2] h-[0.3px] border-none ' />
+          <hr className='w-full opacity-20 mt-4 bg-[#c2c4c2] h-[0.5px] border-none ' />
           <div className=' md:flex-row flex flex-col  items-center justify-around text-[13px] text-[#c2c4c2] py-8'>
               <p className=''>© Copyright Wings Classical Homeopathy. All Rights Reserved.</p>
               <p>Designed with 💜 By <a href="https://www.snteducation.com/" target='blank' className='hover:underline hover:text-blue-500 transition-all duration-400'> Snt Super Net Technology Munirka Delhi(New)</a></p>
