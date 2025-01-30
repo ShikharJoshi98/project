@@ -8,13 +8,12 @@ function App() {
   
 
   return (
-    <div className="bg-[#4a9acc]">
+    <div >
       
       <Router>
-      <Navbar/>
       <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} className='overflow-y-hidden' />
           <Route path="/register" element={<Register/>}/>
 
       </Routes>

@@ -1,15 +1,26 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { FaFacebookF } from 'react-icons/fa';
+import { FaSquareXTwitter } from "react-icons/fa6";
+import { AiFillInstagram } from "react-icons/ai";
+import { IoLogoWhatsapp } from "react-icons/io";
 
 const Footer = () => {
-    const navigate = useNavigate();
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
   return (
       <div className='bg-[#343a40]   '>
           <div className='flex flex-col px-20 py-10 sm:grid md:grid-cols-[1.1fr_1fr_1fr_1fr] gap-14 my-10 mt-10 text-sm '>
-              <div>
-                  <h2 onClick={()=>navigate('/')} className='text-white font-semibold  cursor-pointer  mb-4'>Wings Classical Homeopathy</h2>
+              <div className='scroll-smooth'>
+                  <h1 onClick={scrollToTop} className='text-white font-semibold  cursor-pointer  mb-4'>Wings Classical Homeopathy</h1>
                   <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
                   <p className='w-full text-[#c2c4c2]'>" Service To Patient is Service To Nation "</p>
+                  <div className=' flex text-[#c2c4c2]  items-center gap-5 mt-10'>
+                      <a href='#' className='p-3   hover:bg-[#343a40] rounded-full bg-[#3e4144]'><IoLogoWhatsapp  /></a>
+                      <a href='#' className='p-3 hover:bg-[#343a40] rounded-full bg-[#3e4144]'>  <FaSquareXTwitter /></a>
+                      <a href='#' className='p-3 hover:bg-[#343a40] rounded-full bg-[#3e4144]'><AiFillInstagram /></a>                  
+                      <a href='#' className='p-3 hover:bg-[#343a40] rounded-full bg-[#3e4144]'><FaFacebookF /> </a>                                           
+                  </div>
               </div>
               <div>
                   <h2 className='text-white font-semibold  mb-4'>SERVICES</h2>
