@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar'
 
 const Home = () => {
   return (
-    <div className='bg-gradient-to-br from-blue-300 via-[#4a9acc]  to-blue-600' >   
+    <div className='bg-gradient-to-br from-blue-400 via-[#4a9acc] to-blue-900 ' >   
       <Navbar/>
       <video autoPlay muted loop src="/src/public/wings.mp4" className=' max-w-[326px] mt-4  md:max-w-[760px]  lg:max-w-[900px]  h-auto mx-auto   shadow-gray-700 shadow-lg rounded-lg '></video>
       <Contact/>
