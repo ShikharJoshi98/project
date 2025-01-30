@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import FloatingShape from '../components/FloatingShape';
 import { Hospital, Lock, Mail, Phone, User } from 'lucide-react';
 import Input from '../components/Input';
+import { p } from 'framer-motion/client';
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -16,10 +17,15 @@ const Register = () => {
   const [altphone, setAltPhone] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [showConfirmPassword, setConfirmShowPassword] = useState(true);
-
+  const [error, setError] = useState(false);
   const handleSubmit = (e) => { 
     e.preventDefault();
-    console.log(name, phone, username);
+    if (pass !== confirmpass) {
+      setError(true);
+    }
+    else {
+      setError(false);
+    }
   };
   function usernameCreator(newName,newPhone){
     let text = "";
@@ -76,9 +82,7 @@ const Register = () => {
               <option value="Mulund">Mulund</option>
               </select>
     </div>
-            
-              
-        
+            {error && <p className='text-red-500'>The confirm password must be the same as the password.</p>}
             <button  className='mx-auto cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit'>Register</button>
             <p className='mx-auto mt-5'>Already have an Account ? 
 
