@@ -36,11 +36,12 @@ const Register = () => {
   }
   const navigate = useNavigate();
   return (
-    <div className='min-h-screen  bg-gradient-to-br from-blue-400 via-[#4a9acc] to-blue-900  relative overflow-hidden ' >
+    <div className='min-h-screen  bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-400 via-blue-400 to-sky-700  relative overflow-hidden ' >
       <Navbar/>
       <div  >
-      <FloatingShape color='bg-blue-900' size='w-64 h-64' top='-5%' left='10%' delay={0}/>
-
+      <FloatingShape color='bg-blue-500' size='w-64 h-64' top='-5%' left='10%' delay={0} />
+        <FloatingShape color='bg-blue-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
+			<FloatingShape color='bg-blue-500' size='w-32 h-32' top='40%' left='-10%' delay={2} />
       <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-8  h-auto bg-white p-8 md:max-w-[500px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg ' >
           <h1 className='text-3xl font-semibold mb-5 text-center'>Registration Form
           </h1>
