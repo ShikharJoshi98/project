@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/mongoDB.js";
 import dotenv from "dotenv";
-import HRrouter from "./routes/HRroute.js";
+import router from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 connectDB();
@@ -10,7 +11,7 @@ connectDB();
 //middlewares
 app.use(express.json());
 app.use(cors());
-app.use('/api/hr', HRrouter);
+app.use('/api/auth', router);
 
 //api endpoints
 app.get('/', (req, res) => {

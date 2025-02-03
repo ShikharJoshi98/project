@@ -13,8 +13,12 @@ const doctorSchema = new mongoose.Schema({
     attendance: { type: Number, required: true },
     status: { type: String, required: true },
     password: { type: String, required: true },
-    branch: {type:String, required: true}
+    role: {
+        type: String,
+        required:true,
+        default: "doctor"
+    },
 })
 
-const doctorModel = mongoose.models('doctor', doctorSchema);
-export default doctorModel
+const Doctor = mongoose.model('Doctor', doctorSchema);
+export default Doctor

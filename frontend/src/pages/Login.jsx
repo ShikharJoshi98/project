@@ -4,14 +4,14 @@ import React, { useState } from 'react'
 import FloatingShape from '../components/FloatingShape';
 import { Lock, User } from 'lucide-react';
 import Input from '../components/Input';
-
+import axios from "axios";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [pass, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    const response = await axios.post('http://localhost:4000/api/hr/login', { username, pass });
   };
   const navigate = useNavigate();
       const [role, setRole] = useState('PATIENT');
@@ -24,13 +24,13 @@ const Login = () => {
         <FloatingShape color='bg-blue-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
 			<FloatingShape color='bg-blue-500' size='w-32 h-32' top='40%' left='-10%' delay={2} />
 
-      <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-4 h-auto bg-white p-7 md:max-w-[430px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg ' >
+      <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-3 h-auto bg-white p-5 md:max-w-[430px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg ' >
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className=' text-blue-400'>{role }</span> LOGIN</h1>          
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-8 w-28 mx-auto ' />
 
           <div className='md:flex items-center text-zinc-900 md:max-w-[380px] hidden   mb-8 text-sm  md:text-base  justify-center'>
             <button type='button' onClick={() => { setRole('PATIENT'); }} className={`cursor-pointer  rounded-l-full border-l-1 border-l-zinc-500  border-1 border-r-zinc-500 py-1 px-3
-              ${role==='PATIENT'? "bg-blue-500 scale-105 text-white":"hover:bg-blue-500 hover:scale-105 hover:text-white"}
+              ${role==='PATIENT'? "bg-blue-500  scale-105 text-white":"hover:bg-blue-500 hover:scale-105 hover:text-white"}
               `}>PATIENT</button>
             <button type='button' onClick={()=>{setRole('DOCTOR'); }} className={`cursor-pointer  border-l-1 border-l-zinc-500  border-1 border-r-zinc-500 py-1 px-3
               ${role==='DOCTOR'? "bg-blue-500 scale-105 text-white":"hover:bg-blue-500 hover:scale-105 hover:text-white"}
@@ -49,7 +49,7 @@ const Login = () => {
               setRole(selectRole);
               
             }} name="Select Role" id="role" className='md:hidden block mx-auto mb-6 py-1 pl-5 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-              <option  value="select Role">SELECT ROLE</option>
+              <option  value="">SELECT ROLE</option>
               <option value="PATIENT">PATIENT</option>
               <option  value="DOCTOR">DOCTOR</option>
               <option  value="HR">HR</option>
@@ -68,8 +68,9 @@ const Login = () => {
               <input type="checkbox" className='ml-2' onChange={()=>setShowPassword(!showPassword)} id='check'/><label  htmlFor="check">Show Password</label>
             </div>  
            
-            <button  className='mx-auto font-semibold cursor-pointer bg-blue-400 text-lg hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-2 w-52 p-2 rounded-full' type='submit'>Login</button>
-            <p className='mx-auto text-zinc-800 mt-3'>Don't have an Account ? Click here to <span onClick={()=>navigate('/register')}className='cursor-pointer text-blue-500 hover:text-blue-700 hover:underline'>Register</span></p>
+            <button className='mx-auto font-semibold cursor-pointer bg-blue-400 text-lg hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white  w-52 p-2 rounded-full' type='submit'>Login</button>
+            <p className='cursor-pointer mx-auto text-blue-500 hover:text-blue-700 hover:underline'>Forgot Password?</p>
+            <p className='mx-auto text-zinc-800 '>Don't have an Account ? Click here to <span onClick={()=>navigate('/register')}className='cursor-pointer text-blue-500 hover:text-blue-700 hover:underline'>Register</span></p>
 
           </div>
       </form>
