@@ -2,19 +2,24 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import React, { useState } from 'react'
 import FloatingShape from '../components/FloatingShape';
-import { Lock, User } from 'lucide-react';
+import { LoaderCircle, Lock, User } from 'lucide-react';
 import Input from '../components/Input';
-import axios from "axios";
+import { useAuthStore } from '../store/authStore';
 const Login = () => {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [pass, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
+  const [role, setRole] = useState('PATIENT');
+
+  const { login, isLoading, error,user } = useAuthStore();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post('http://localhost:4000/api/hr/login', { username, pass });
+   let newRole = role.toLowerCase()
+    await login(username, pass,newRole );
+    navigate(`/dashboard-${role}`);
   };
-  const navigate = useNavigate();
-      const [role, setRole] = useState('PATIENT');
   
   return (
     <div className='min-h-screen  bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700   relative overflow-hidden' >
@@ -24,7 +29,7 @@ const Login = () => {
         <FloatingShape color='bg-blue-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
 			<FloatingShape color='bg-blue-500' size='w-32 h-32' top='40%' left='-10%' delay={2} />
 
-      <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-3 h-auto bg-white p-5 md:max-w-[430px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg ' >
+      <form onSubmit={handleSubmit} className='mx-auto relative z-10 mt-4 mb-2 h-auto bg-white p-5 md:max-w-[430px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg ' >
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className=' text-blue-400'>{role }</span> LOGIN</h1>          
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-8 w-28 mx-auto ' />
 
@@ -68,7 +73,11 @@ const Login = () => {
               <input type="checkbox" className='ml-2' onChange={()=>setShowPassword(!showPassword)} id='check'/><label  htmlFor="check">Show Password</label>
             </div>  
            
-            <button className='mx-auto font-semibold cursor-pointer bg-blue-400 text-lg hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white  w-52 p-2 rounded-full' type='submit'>Login</button>
+            <button className='mx-auto font-semibold cursor-pointer bg-blue-400 text-lg hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white  w-52 p-2 rounded-full' type='submit'>
+              {!error && isLoading ? <LoaderCircle className='animate-spin mx-auto ' size={24} /> : "Login"}
+            </button>
+           {error && <p className='text-red-500 mx-auto'>{ error}</p>}
+            
             <p className='cursor-pointer mx-auto text-blue-500 hover:text-blue-700 hover:underline'>Forgot Password?</p>
             <p className='mx-auto text-zinc-800 '>Don't have an Account ? Click here to <span onClick={()=>navigate('/register')}className='cursor-pointer text-blue-500 hover:text-blue-700 hover:underline'>Register</span></p>
 

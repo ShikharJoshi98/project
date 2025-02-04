@@ -21,7 +21,10 @@ export const register = async (req, res) => {
         })
         await newUser.save();
         generateTokenAndSetCookie(res, newUser._id);
-        res.status(200).json({ newUser });
+        res.status(200).json({ newUser: {
+            ...newUser._doc,
+            password:undefined
+    } });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -39,10 +42,15 @@ export const login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(404).json({ success: false, message: "Password incorrect" });
             }
-            generateTokenAndSetCookie(res, User._id);
+            generateTokenAndSetCookie(res, User._id,role);
+
             User.lastLogin = new Date();
             await User.save();
-            res.status(200).json({ success: true, message: "Logged in Successfully", User });
+            res.status(200).json({
+                success: true, message: "Logged in Successfully", User: {
+                    ...User._doc,
+                    password:undefined
+            } });
         }
         else if (role === 'doctor') {
             const User = await Doctor.findOne({ username });
@@ -53,7 +61,7 @@ export const login = async (req, res) => {
             if (!isPasswordValid) {
                 return res.status(404).json({ success: false, message: "Password incorrect" });
             }
-            generateTokenAndSetCookie(res, User._id);
+            generateTokenAndSetCookie(res, User._id,role);
             User.lastLogin = new Date();
             await User.save();
                 res.status(200).json({ success: true, message: "Logged in Successfully", User }); 
@@ -67,7 +75,7 @@ export const login = async (req, res) => {
             if (!isPasswordValid) {
                 return res.status(404).json({ success: false, message: "Password incorrect" });
             }
-            generateTokenAndSetCookie(res, User._id);
+            generateTokenAndSetCookie(res, User._id,role);
             User.lastLogin = new Date();
             await User.save();
                 res.status(200).json({ success: true, message: "Logged in Successfully", User }); 
@@ -81,7 +89,7 @@ export const login = async (req, res) => {
             if (!isPasswordValid) {
                 return res.status(404).json({ success: false, message: "Password incorrect" });
             }
-            generateTokenAndSetCookie(res, User._id);
+            generateTokenAndSetCookie(res, User._id,role);
             User.lastLogin = new Date();
             await User.save();
                 res.status(200).json({ success: true, message: "Logged in Successfully", User }); 
@@ -159,7 +167,23 @@ export const resetPassword = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     try {
-        const user = await Patient.findById(req.userID).select("-password");
+        let user;
+        if(req.role==='patient'){
+             user = await Patient.findById(req.userId).select("-password");
+        }
+        else if (req.role === 'doctor') {
+             user = await Doctor.findById(req.userId).select("-password");
+
+        }
+        else if (req.role === 'hr') {
+             user = await HR.findById(req.userId).select("-password");
+
+        }
+        else if (req.role === 'receptionist') {
+             user = await Receptionist.findById(req.userId).select("-password");
+
+        }
+        console.log(user);
         if (!user) {
             return res.status(400).json({ success: false, message: "Not found" });
         }

@@ -2,30 +2,42 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar'
 import React, { useState } from 'react'
 import FloatingShape from '../components/FloatingShape';
-import { Hospital, Lock, Mail, Phone, User } from 'lucide-react';
+import { Hospital, LoaderCircle, Lock, Mail, Phone, User } from 'lucide-react';
 import Input from '../components/Input';
-import { p } from 'framer-motion/client';
+import { useAuthStore } from '../store/authStore';
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-  
+  const navigate = useNavigate();
+
   const [pass, setPassword] = useState("");
   const [confirmpass, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [altphone, setAltPhone] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [showConfirmPassword, setConfirmShowPassword] = useState(true);
-  const [error, setError] = useState(false);
-  const handleSubmit = (e) => { 
+  const [branch, setBranch] = useState("");
+  const [passerror, setError] = useState(false);
+  const { register,error,isLoading } = useAuthStore();
+  const handleSubmit = async (e) => { 
     e.preventDefault();
     if (pass !== confirmpass) {
       setError(true);
+      return;
     }
     else {
       setError(false);
     }
+    try {
+      await register(name, phone, altphone, email, username, pass, branch);
+      navigate('/login');
+
+    } catch (error) {
+      console.log(error);
+    }
+   
   };
   function usernameCreator(newName,newPhone){
     let text = "";
@@ -34,7 +46,6 @@ const Register = () => {
     text = firstName + num.slice(num.length - 4);
     setUsername(text);
   }
-  const navigate = useNavigate();
   return (
     <div className='min-h-screen  bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-400 via-blue-400 to-sky-700  relative overflow-hidden ' >
       <Navbar/>
@@ -77,14 +88,23 @@ const Register = () => {
           <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
               <Hospital className="size-4 text-blue-500"/>
           </div>
-          <select name="branch" required id="Branch" className='py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
+              <select
+                onChange={(e) => {
+                  const selectBranch = e.target.value; 
+                  setBranch(selectBranch);                  
+                }}
+                name="branch" required id="Branch" className='py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
               <option value="Select Branch">Select Branch*</option>
               <option value="Dombivali">Dombivali</option>
               <option value="Mulund">Mulund</option>
               </select>
     </div>
-            {error && <p className='text-red-500'>The confirm password must be the same as the password.</p>}
-            <button  className='mx-auto cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit'>Register</button>
+            {passerror && <p className='text-red-500'>The confirm password must be the same as the password.</p>}
+            {error && <p className='text-red-500'>{ error}</p>}
+
+            <button className='mx-auto cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit' disabled={isLoading}>
+              {!passerror && !error && isLoading ?     <LoaderCircle className='animate-spin mx-auto ' size={24} /> : "Register" }
+            </button>
             <p className='mx-auto mt-5'>Already have an Account ? 
 
 <span onClick={()=>navigate('/login')}className='cursor-pointer text-blue-500 hover:text-blue-700 hover:underline'>Click here to login</span></p>
