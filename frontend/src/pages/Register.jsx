@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar'
 import React, { useState } from 'react'
 import FloatingShape from '../components/FloatingShape';
@@ -11,7 +11,6 @@ const Register = () => {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
-
   const [pass, setPassword] = useState("");
   const [confirmpass, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -32,9 +31,9 @@ const Register = () => {
     }
     try {
       await register(name, phone, altphone, email, username, pass, branch);
-      navigate('/login');
-
-    } catch (error) {
+      navigate('/login', { state: { usrname: username } });
+}
+    catch (error) {
       console.log(error);
     }
    

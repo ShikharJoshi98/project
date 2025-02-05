@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import React, { useState } from 'react'
 import FloatingShape from '../components/FloatingShape';
@@ -7,7 +7,8 @@ import Input from '../components/Input';
 import { useAuthStore } from '../store/authStore';
 const Login = () => {
   const navigate = useNavigate();
-
+  const location = useLocation();
+  
   const [username, setUsername] = useState("");
   const [pass, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -20,7 +21,7 @@ const Login = () => {
     await login(username, pass,newRole );
     navigate(`/dashboard-${role}`);
   };
-  
+  console.log(location.state);
   return (
     <div className='min-h-screen  bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700   relative overflow-hidden' >
       <Navbar/>
@@ -32,7 +33,7 @@ const Login = () => {
       <form onSubmit={handleSubmit} className='mx-auto relative z-10 mt-4 mb-2 h-auto bg-white p-5 md:max-w-[430px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg ' >
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className=' text-blue-400'>{role }</span> LOGIN</h1>          
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-8 w-28 mx-auto ' />
-
+          
           <div className='md:flex items-center text-zinc-900 md:max-w-[380px] hidden   mb-8 text-sm  md:text-base  justify-center'>
             <button type='button' onClick={() => { setRole('PATIENT'); }} className={`cursor-pointer  rounded-l-full border-l-1 border-l-zinc-500  border-1 border-r-zinc-500 py-1 px-3
               ${role==='PATIENT'? "bg-blue-500  scale-105 text-white":"hover:bg-blue-500 hover:scale-105 hover:text-white"}
@@ -78,7 +79,7 @@ const Login = () => {
             </button>
            {error && <p className='text-red-500 mx-auto'>{ error}</p>}
             
-            <p className='cursor-pointer mx-auto text-blue-500 hover:text-blue-700 hover:underline'>Forgot Password?</p>
+            <p onClick={()=>{navigate('/forgotPassword')}} className='cursor-pointer mx-auto text-blue-500 hover:text-blue-700 hover:underline'>Forgot Password?</p>
             <p className='mx-auto text-zinc-800 '>Don't have an Account ? Click here to <span onClick={()=>navigate('/register')}className='cursor-pointer text-blue-500 hover:text-blue-700 hover:underline'>Register</span></p>
 
           </div>

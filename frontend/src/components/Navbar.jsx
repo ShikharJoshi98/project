@@ -20,7 +20,7 @@ const Navbar = () => {
             };
     }, []);
   return (
-      <div className='bg-[#404858] min-w-full px-14 md:px-28 py-5 sticky top-0 z-20 flex items-center justify-between'>
+      <div className='bg-[#404858]  min-w-full px-14 md:px-28 py-5 sticky top-0 z-20 flex items-center justify-between'>
           <div onClick={()=>navigate('/')} className='text-white cursor-pointer font-semibold text-sm md:text-2xl flex items-center gap-2 '>
               <Hospital />
               <h1 >Wings Classical Homeopathy</h1>

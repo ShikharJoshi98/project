@@ -1,8 +1,13 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
 const PatientDashboard = () => {
+  const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
   function handleLogout() {
-    alert("logout button");
+    logout();
+    navigate('/login');
   }
   return (
     <div className='flex items-center justify-between'>

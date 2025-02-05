@@ -8,7 +8,17 @@ import HRDashboard from "./pages/HRDashboard";
 import ReceptionistDashboard from "./pages/ReceptionistDashboard";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
+
+const ProtectedRoute = ({children}) => {
+  const { isAuthenticated } = useAuthStore();
+  if (!isAuthenticated) {
+    return <Navigate to='/login' replace />
+  }
+  return children;
+}
 
 const RedirectAuthenticatedUser = ({children}) => {
   const { isAuthenticated , user} = useAuthStore();
@@ -43,11 +53,15 @@ function App() {
       <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} /> 
-          <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>}/>
-          <Route path="/dashboard-PATIENT" element={<PatientDashboard />} />
-          <Route path="/dashboard-DOCTOR" element={<DoctorDashboard />} />
-          <Route path="/dashboard-HR" element={<HRDashboard />} />
-          <Route path="/dashboard-RECEPTIONIST" element={<ReceptionistDashboard />} />
+          <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />
+          <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>}/>
+          <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>}/>
+
+          <Route path="/dashboard-PATIENT" element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard-DOCTOR" element={<ProtectedRoute><DoctorDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard-HR" element={<ProtectedRoute><HRDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute><ReceptionistDashboard /></ProtectedRoute>} />
+
 
       </Routes>
     </Router>
