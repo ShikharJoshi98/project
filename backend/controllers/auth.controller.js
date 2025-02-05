@@ -183,7 +183,6 @@ export const checkAuth = async (req, res) => {
              user = await Receptionist.findById(req.userId).select("-password");
 
         }
-        console.log(user);
         if (!user) {
             return res.status(400).json({ success: false, message: "Not found" });
         }

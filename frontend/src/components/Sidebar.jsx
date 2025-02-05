@@ -3,10 +3,10 @@ import React, { createContext, useContext, useState } from 'react'
 const SidebarContext = createContext(); 
 
 const Sidebar = ({ children }) => {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
   return (
       
-          <aside className={`h-screen text-white  transition-all duration-300 ${expanded?"w-56":"w-18"} `}>
+          <aside className={`min-h-screen text-white  transition-all duration-300 ${expanded?"w-32 md:w-56":"w-18"} `}>
               <nav className='h-full flex bg-[#404858] flex-col  border-r border-black'>
                   <div onClick={()=>setExpanded(!expanded)} className='p-4 text-xl pb-2 cursor-pointer '>
                       ☰
@@ -28,7 +28,7 @@ export function SidebarItem({ icon, text, active }) {
             <div className='flex-shrink-0'>
                 {icon}
                 </div>
-            <div className={`ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap   ${expanded?"opacity-100 w-auto ":"w-0 opacity-0"}`}>{text}</div>
+            <div className={`ml-3 transition-all duration-300 ease-in-out text-sm md:text-base overflow-hidden whitespace-nowrap   ${expanded?"opacity-100  w-auto ":"w-0 opacity-0"}`}>{text}</div>
         </li>
     )
 }
