@@ -100,10 +100,11 @@ const Register = () => {
     </div>
             {passerror && <p className='text-red-500'>The confirm password must be the same as the password.</p>}
             {error && <p className='text-red-500'>{ error}</p>}
-
+          
             <button className='mx-auto cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit' disabled={isLoading}>
               {!passerror && !error && isLoading ?     <LoaderCircle className='animate-spin mx-auto ' size={24} /> : "Register" }
-            </button>
+              </button>
+             
             <p className='mx-auto mt-5'>Already have an Account ? 
 
 <span onClick={()=>navigate('/login')}className='cursor-pointer text-blue-500 hover:text-blue-700 hover:underline'>Click here to login</span></p>

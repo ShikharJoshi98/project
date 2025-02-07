@@ -4,10 +4,26 @@ import Sidebar, { SidebarItem } from '../components/Sidebar'
 import { FaUserDoctor, FaUsers } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { Banknote, Box, CalendarDays, ListTodo, MapPin, PillBottle, ShoppingCart } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
+import { useStore } from '../store/UpdateStore';
 
 const HRDashboard = () => {
+  
+  const columns = ['name', 'phone', 'email', 'gender', 'age', 'status', 'department'];
+  const { getDetails, users } = useStore();
+  console.log(users[0]?._id);
+  useEffect(() => {
+    getDetails();
+  },[getDetails])
+  const [name, setname] = useState("");
+  const [number, setnumber] = useState("");
+  const [email, setemail] = useState("");
+  const [gender, setgender] = useState("");
+  const [age, setage] = useState("");
+  const [active, setactive] = useState("");
+  const [dept, setdept] = useState("");
   const [currentDate, setCurrentDate] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const updateDate = () => {
       const date = new Date().toLocaleDateString("en-GB", {
@@ -28,13 +44,13 @@ const HRDashboard = () => {
         <Sidebar>
           <SidebarItem icon={<ShoppingCart />} text={"ITEMS STOCK"} />
           <SidebarItem icon={<PillBottle />} text={"MEDICINE STOCK"} />
-          <SidebarItem icon={ <ListTodo /> } text={"TASK DETAILS"} />
-          <SidebarItem icon={    <CalendarDays />} text={"APPLY LEAVE"} />
-          <SidebarItem icon={    <Box />} text={"COURIER LIST"} />
-          <SidebarItem icon={    <Banknote />} text={"COLLECTIONS"} />
+          <SidebarItem icon={<ListTodo /> } text={"TASK DETAILS"} />
+          <SidebarItem icon={<CalendarDays />} text={"APPLY LEAVE"} />
+          <SidebarItem icon={<Box />} text={"COURIER LIST"} />
+          <SidebarItem icon={<Banknote />} text={"COLLECTIONS"} />
 
         </Sidebar>
-        <div className='bg-blue-400 min-h-screen  w-full overflow-hidden '>
+        <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
           <div className='flex md:flex-row  h-fit flex-col items-center justify-between '>
             <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome to the HR Admin Panel</h1>
             <h1 className='text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-3xl m-2 md:m-10   bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span>    <MapPin />
@@ -80,7 +96,7 @@ const HRDashboard = () => {
         <thead className="bg-[#337ab7]  text-white">
           <tr >
             <th className="px-2 py-4 ">NAME</th>
-            <th className=" py-4 ">CONTACT NUMBER</th>
+            <th className="px-2 py-4 ">CONTACT NUMBER</th>
             <th className="px-4 py-4 ">EMAIL</th>
             <th className="px-2 py-4 ">GENDER</th>
             <th className="px-2 py-4 ">AGE</th>
@@ -90,30 +106,25 @@ const HRDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="hover:bg-blue-200 text-lg bg-blue-300 transition">
-            <td className="px-2 py-4  text-center">Dr. Santosh K. Yadav</td>
-            <td className=" py-4  text-center">9876546372</td>
-            <td className="px-4 py-4  text-center">giyab22845@wlmycn.com</td>
-            <td className="px-2 py-4  text-center">Male</td>
-            <td className="px-2 py-4  text-center">44</td>
-            <td className="px-2 py-4  text-center text-green-600 font-semibold">Active</td>
-            <td className="px-2 py-4  text-center">Homeopathic</td>
+                  {users.map((user, idx) => (
+          
+            <tr key={idx} className="hover:bg-blue-300 text-lg bg-blue-200 transition-all">
+              {columns.map((col) => (
+                <td key={col} className={`border border-gray-300 px-4 py-4 ${
+                  col === "status"? user[col].toLowerCase() === "active"
+                    ? "text-green-600 "
+                    : "text-red-600":""
+                }`}>
+                  {user[col]}
+                </td>
+                
+              ))}
             <td className="px-2 py-4  text-center">
-              <button className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
+              <button onClick={()=>navigate(`/update/${user?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
             </td>
-          </tr>
-          <tr className="hover:bg-blue-200 text-lg bg-blue-300 transition">
-            <td className="px-4 py-4  text-center">Dr. Mohit</td>
-            <td className="px-4 py-4  text-center">777765678</td>
-            <td className="px-4 py-4  text-center">mohit@abc.com</td>
-            <td className="px-4 py-4  text-center">Male</td>
-            <td className="px-4 py-4  text-center">30</td>
-            <td className="px-4 py-4  text-center text-green-600 font-semibold">Active</td>
-            <td className="px-4 py-4  text-center">Homeopathic</td>
-            <td className="px-4 py-4  text-center">
-              <button className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
-            </td>
-          </tr>
+            </tr>
+          ))}
+          
         </tbody>
       </table>
             </div>
@@ -134,7 +145,7 @@ const HRDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="hover:bg-blue-200 text-lg bg-blue-300 transition">
+          <tr className="hover:bg-blue-300 text-lg bg-blue-200 transition">
             <td className="px-2 py-4  text-center">Raman Singh</td>
             <td className=" py-4  text-center">979867113</td>
             <td className="px-4 py-4  text-center">giyab22845@wlmycn.com</td>

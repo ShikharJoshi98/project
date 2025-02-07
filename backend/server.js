@@ -4,6 +4,7 @@ import connectDB from "./config/mongoDB.js";
 import dotenv from "dotenv";
 import router from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
+import HRrouter from "./routes/HR.route.js";
 dotenv.config();
 const app = express();
 connectDB();
@@ -14,7 +15,7 @@ app.use(cors({origin: "http://localhost:5173",
     credentials: true,}));
 app.use(cookieParser());
 app.use('/api/auth', router);
-
+app.use('/api/hr', HRrouter);
 //api endpoints
 app.get('/', (req, res) => {
     res.send("Server working");
