@@ -10,18 +10,13 @@ import { useStore } from '../store/UpdateStore';
 const HRDashboard = () => {
   
   const columns = ['name', 'phone', 'email', 'gender', 'age', 'status', 'department'];
-  const { getDetails, users } = useStore();
-  console.log(users[0]?._id);
+  const { getDoctorDetails, getReceptionistDetails,docusers,receptionistusers } = useStore();
+  console.log(docusers[0]?._id);
   useEffect(() => {
-    getDetails();
-  },[getDetails])
-  const [name, setname] = useState("");
-  const [number, setnumber] = useState("");
-  const [email, setemail] = useState("");
-  const [gender, setgender] = useState("");
-  const [age, setage] = useState("");
-  const [active, setactive] = useState("");
-  const [dept, setdept] = useState("");
+    getDoctorDetails();
+    getReceptionistDetails();
+  },[getDoctorDetails,getReceptionistDetails])
+  const doctorCount = docusers.length;
   const [currentDate, setCurrentDate] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
@@ -68,7 +63,7 @@ const HRDashboard = () => {
                 <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span>    <FaUserDoctor />
 
 
-                </span>2</h1>
+                </span>{ doctorCount}</h1>
                 
               </div>
               
@@ -106,7 +101,7 @@ const HRDashboard = () => {
           </tr>
         </thead>
         <tbody>
-                  {users.map((user, idx) => (
+                  {docusers.map((user, idx) => (
           
             <tr key={idx} className="hover:bg-blue-300 text-lg bg-blue-200 transition-all">
               {columns.map((col) => (
