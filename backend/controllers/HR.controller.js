@@ -1,6 +1,8 @@
 import Doctor from "../models/doctorModel.js"
 import bcryptjs from "bcryptjs"
 import Receptionist from "../models/receptionistModel.js";
+import { Item, ItemStock, Order, Unit } from "../models/ItemModel.js";
+import { ItemVendor } from "../models/VendorModel.js";
 export const detail_doctors = async (req, res) => {
     
     try {
@@ -94,7 +96,7 @@ export const register_receptionist = async (req, res) => {
     }
 }
 
-export const update = async (req, res) => {
+export const update_doctor = async (req, res) => {
     try {
         const { username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password, role, name } = req.body;
         const updatedUser = await Doctor.findByIdAndUpdate(
@@ -108,7 +110,153 @@ export const update = async (req, res) => {
         res.json(updatedUser);
 
     } catch (error) {
+        console.log(error.message);
         res.status(500).json({ error: error.message });
 
     }
+}
+
+export const update_receptionist = async (req, res) => {
+    try {
+        const { fullname, phone,email,  address, branch } = req.body;
+        const updatedUser = await Receptionist.findByIdAndUpdate(
+            req.params.id,
+            { fullname, phone,email,  address, branch },
+            { new: true, runValidators: true } // Return updated document
+        );
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(updatedUser);
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+
+    }
+}
+
+export const add_item = async (req, res) => {
+    try {
+        const { item } = req.body;
+        const itemexists = await Item.findOne({ item });
+        if (itemexists) {
+            return res.json({ success: false, message: "Item already exists" });
+        }
+        const newItem = new Item({
+            itemName:item
+        })
+        await newItem.save();
+        res.json({
+            success: true,
+            newItem
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }   
+
+}
+
+export const add_unit = async (req, res) => {
+    try {
+        const { unit } = req.body;
+        const unitexists = await Unit.findOne({ unit });
+        if (unitexists) {
+            return res.json({ success: false, message: "Unit already exists" });
+        }
+        const newUnit = new Unit({
+             unit
+        })
+        await newUnit.save();
+        res.json({
+            success: true,
+            newUnit
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }   
+
+}
+
+export const add_item_vendor = async (req,res) => {
+    try {
+        const { name,contact,email,address } = req.body;
+        const vendorexists = await ItemVendor.findOne({ name,email });
+        if (vendorexists) {
+            return res.json({ success: false, message: "Vendor already exists" });
+        }
+        const newVendor = new ItemVendor({
+            vendorname: name,
+            contact,
+            email,
+            address
+        })
+        await newVendor.save();
+        res.json({
+            success: true,
+            newVendor
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    } 
+}
+
+export const add_item_stock = async (req, res) => {
+    try {
+        const { item, unit, quantity } = req.body;
+        const itemexists = await Item.findOne({ itemName:item });
+        const unitexists = await Unit.findOne({ unit });
+        
+        if (!itemexists || !unitexists) {
+        
+        return res.json({ success: false, message: "Stock does not have these" });
+    }
+    const newStock = new ItemStock({
+        itemName:item,
+        unit,
+        quantity
+    })
+    await newStock.save();
+    res.json({
+        success: true,
+        newStock
+    })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+    
+
+}
+
+export const place_item_order = async (req, res) => {
+    
+    try {
+        const { itemName, vendor, quantity,unit, orderDate, deliveryDate } = req.body;
+        const itemexists = await Item.findOne({ itemName });
+        const unitexists = await Unit.findOne({ unit });
+        const vendorexists = await ItemVendor.findOne({ vendorname: vendor });
+        if (!itemexists || !unitexists || !vendorexists) {
+            return res.json({ success: false, message: "Enter appropraite fields" });
+        }
+        const newOrder = new Order({
+            itemName,
+            vendor,
+            quantity,
+            unit,
+            orderDate,
+            deliveryDate
+        })
+        await newOrder.save();
+        res.json({
+            success: true,
+            newOrder
+        }) 
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+
 }

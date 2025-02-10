@@ -9,13 +9,17 @@ import { useStore } from '../store/UpdateStore';
 
 const HRDashboard = () => {
   
-  const columns = ['name', 'phone', 'email', 'gender', 'age', 'status', 'department'];
+  const doccolumns = ['name', 'phone', 'email', 'gender', 'age', 'status', 'department'];
   const { getDoctorDetails, getReceptionistDetails,docusers,receptionistusers } = useStore();
-  console.log(docusers[0]?._id);
   useEffect(() => {
     getDoctorDetails();
+    
+  }, [getDoctorDetails]);
+  useEffect(() => {
     getReceptionistDetails();
-  },[getDoctorDetails,getReceptionistDetails])
+    
+  }, [getReceptionistDetails])
+  console.log(receptionistusers[0]?._id);
   const doctorCount = docusers.length;
   const [currentDate, setCurrentDate] = useState("");
   const navigate = useNavigate();
@@ -104,7 +108,7 @@ const HRDashboard = () => {
                   {docusers.map((user, idx) => (
           
             <tr key={idx} className="hover:bg-blue-300 text-lg bg-blue-200 transition-all">
-              {columns.map((col) => (
+              {doccolumns.map((col) => (
                 <td key={col} className={`border border-gray-300 px-4 py-4 ${
                   col === "status"? user[col].toLowerCase() === "active"
                     ? "text-green-600 "
@@ -115,7 +119,7 @@ const HRDashboard = () => {
                 
               ))}
             <td className="px-2 py-4  text-center">
-              <button onClick={()=>navigate(`/update/${user?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
+              <button onClick={()=>navigate(`/update-doctor/${user?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
             </td>
             </tr>
           ))}
@@ -140,15 +144,15 @@ const HRDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="hover:bg-blue-300 text-lg bg-blue-200 transition">
-            <td className="px-2 py-4  text-center">Raman Singh</td>
-            <td className=" py-4  text-center">979867113</td>
-            <td className="px-4 py-4  text-center">giyab22845@wlmycn.com</td>
-            <td className="px-2 py-4  text-center">snt 2nd floor new</td>
-            <td className="px-2 py-4  text-center">Dombivali</td>
+        <tr className="hover:bg-blue-300 text-lg bg-blue-200 transition">
+            <td className="px-2 py-4  text-center">{receptionistusers[0]?.fullname }</td>
+            <td className=" py-4  text-center">{receptionistusers[0]?.phone }</td>
+            <td className="px-4 py-4  text-center">{receptionistusers[0]?.email }</td>
+            <td className="px-2 py-4  text-center">{receptionistusers[0]?.address }</td>
+            <td className="px-2 py-4  text-center">{receptionistusers[0]?.branch }</td>
             <td className="px-2 py-4  text-center">Receptionist1</td>
             <td className="px-2 py-4  text-center">
-              <button className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
+              <button onClick={()=>navigate(`/update-receptionist/${receptionistusers[0]?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
             </td>
           </tr>
           

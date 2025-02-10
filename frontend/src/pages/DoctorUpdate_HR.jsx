@@ -8,11 +8,11 @@ import { useStore } from '../store/UpdateStore';
 
 const DoctorUpdate_HR = () => {
   const { id } = useParams();
-  const { getDoctorDetails, users, updateDoctor } = useStore();
-  console.log("id",users[0]?._id);
+  const { getDoctorDetails, docusers, updateDoctor } = useStore();
+  
     
   console.log(id);
-  const doctor = users.find(user => user?._id === id) || {};
+  const doctor = docusers.find(user => user?._id === id) || {};
 
   console.log(doctor);
   const [fullname, setfullname] = useState(doctor?.name);
@@ -69,9 +69,10 @@ const DoctorUpdate_HR = () => {
     }
   };
   return (
-      <div className='relative overflow-hidden bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 '>
+    <div className='min-h-screen flex flex-col  bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 '>
+      <div>
       <HRnavbar />
-          <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-8  h-auto bg-white p-8 md:max-w-[500px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg ' >
+          <form onSubmit={handleSubmit} className=' relative z-10 my-8 mx-auto bg-white p-8 max-w-72 md:max-w-[500px] border rounded-xl text-zinc-600 text-sm shadow-lg ' >
           <h1 className='text-3xl font-semibold mb-5 text-center'>Update Doctor Details
           </h1>
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
@@ -150,7 +151,7 @@ const DoctorUpdate_HR = () => {
             </div>
             <div className='flex flex-col gap-2 '>
              <h1>Salary</h1>     
-             <Input icon={User} onChange={(e)=>setIncom(e.target.value)} type='number' required value={income}  />
+             <Input icon={User} onChange={(e)=>setIncome(e.target.value)} type='number' required value={income}  />
             </div>
             <div className='flex flex-col gap-2 '>
              <h1>Attendance</h1>     
@@ -188,12 +189,14 @@ const DoctorUpdate_HR = () => {
 
             
 
-        </div >
+          </div >
+          <div className='w-full '>
         <button  className='ml-28 cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit' >
           Update
           </button>
-          
-      </form>
+          </div>
+        </form>
+        </div>
     </div>
   )
 }

@@ -46,7 +46,7 @@ const Register = () => {
     setUsername(text);
   }
   return (
-    <div className='min-h-screen  bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-400 via-blue-400 to-sky-700  relative overflow-hidden ' >
+    <div className='flex flex-col min-h-screen bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700    ' >
       <Navbar/>
       <div  >
       <FloatingShape color='bg-blue-500' size='w-64 h-64' top='-5%' left='10%' delay={0} />
