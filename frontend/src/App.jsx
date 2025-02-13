@@ -4,15 +4,17 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PatientDashboard from "./pages/PatientDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
-import HRDashboard from "./pages/HRDashboard";
 import ReceptionistDashboard from "./pages/ReceptionistDashboard";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import DoctorUpdate_HR from "./pages/DoctorUpdate_HR";
 import LoadingSpinner from "./components/LoadingSpinner";
-import ReceptionistUpdate from "./pages/ReceptionistUpdate";
+import ItemStock from "./pages/HR/ItemStock";
+import MedicineStock from "./pages/HR/MedicineStock";
+import HRDashboard from "./pages/HR/HRDashboard";
+import ReceptionistUpdate from "./pages/HR/ReceptionistUpdate";
+import DoctorUpdate_HR from "./pages/HR/DoctorUpdate_HR";
 
 
 const ProtectedRoute = ({children,allowedRoles}) => {
@@ -69,6 +71,9 @@ function App() {
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['hr']}><DoctorUpdate_HR /></ProtectedRoute>} />
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['hr']}><ReceptionistUpdate /></ProtectedRoute>} />
+          <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />
+          <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock/></ProtectedRoute>} />
+
           <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
 
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import HRnavbar from '../components/HR/HRnavbar'
-import Sidebar, { SidebarItem } from '../components/Sidebar'
+import HRnavbar from '../../components/HR/HRnavbar'
+import Sidebar, { SidebarItem } from '../../components/Sidebar'
 import { FaUserDoctor, FaUsers } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { Banknote, Box, CalendarDays, ListTodo, MapPin, PillBottle, ShoppingCart } from 'lucide-react'
-import { useNavigate } from 'react-router-dom';
-import { useStore } from '../store/UpdateStore';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useStore } from '../../store/UpdateStore';
 
 const HRDashboard = () => {
   
@@ -21,8 +21,10 @@ const HRDashboard = () => {
   }, [getReceptionistDetails])
   console.log(receptionistusers[0]?._id);
   const doctorCount = docusers.length;
+
   const [currentDate, setCurrentDate] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     const updateDate = () => {
       const date = new Date().toLocaleDateString("en-GB", {
@@ -36,13 +38,14 @@ const HRDashboard = () => {
 
     updateDate();
   }, []);
+
   return (
     <div >
       <HRnavbar />
       <div className='flex '>
         <Sidebar>
-          <SidebarItem icon={<ShoppingCart />} text={"ITEMS STOCK"} />
-          <SidebarItem icon={<PillBottle />} text={"MEDICINE STOCK"} />
+          <SidebarItem onClick={() => navigate("/items-stock")}   icon={<ShoppingCart />} text={"ITEMS STOCK"} />
+          <SidebarItem onClick={() => navigate("/medicine-stock")}  icon={<PillBottle />} text={"MEDICINE STOCK"} />
           <SidebarItem icon={<ListTodo /> } text={"TASK DETAILS"} />
           <SidebarItem icon={<CalendarDays />} text={"APPLY LEAVE"} />
           <SidebarItem icon={<Box />} text={"COURIER LIST"} />

@@ -1,12 +1,13 @@
 import { Hospital } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '../../store/authStore';
+import {  useNavigate } from 'react-router-dom';
 
 const HRnavbar = () => {
     const [isOpen, setOpen] = useState(false);
     const menuRef = useRef(null);
       const { user, logout } = useAuthStore();
-    
+    const navigate = useNavigate();
     function handleLogout() {
         logout();
         navigate('/login');
@@ -32,7 +33,7 @@ const HRnavbar = () => {
           <div className='relative'>
           <ul className=' hidden lg:flex  items-center gap-6 text-white text-base'>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Home</li>
-                  <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Dashboard</li>
+                  <li onClick={()=>navigate('/dashboard-HR')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Dashboard</li>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Balance History</li>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Medicine</li>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Courier Mail</li>

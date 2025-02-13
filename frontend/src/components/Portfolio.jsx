@@ -8,7 +8,7 @@ import 'swiper/css/navigation';
 import { Autoplay, Pagination } from 'swiper/modules';
 
 const Portfolio = () => {
-    const images = ["/src/public/image-2.jpeg", "/src/public/image-3.jpeg", "/src/public/image-4.jpeg", "/src/public/image-5.jpeg", "/src/public/image-8 (1).jpeg", "/src/public/image-8 (3).jpeg"];
+    const images = ["/image-2.jpeg", "/image-3.jpeg", "/image-4.jpeg", "/image-5.jpeg", "/image-8 (1).jpeg", "/image-8 (3).jpeg"];
 
   return (
     <div  >

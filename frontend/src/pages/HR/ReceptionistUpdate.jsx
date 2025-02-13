@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import HRnavbar from '../components/HR/HRnavbar'
+import HRnavbar from '../../components/HR/HRnavbar'
 import { Hospital, Mail, Phone, User } from 'lucide-react'
-import Input from '../components/Input'
+import Input from '../../components/Input'
 import { useParams } from 'react-router-dom'
-import { useStore } from '../store/UpdateStore'
+import { useStore } from '../../store/UpdateStore'
 
 const ReceptionistUpdate = () => {
   const { id } = useParams();

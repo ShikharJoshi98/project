@@ -24,10 +24,11 @@ const Sidebar = ({ children }) => {
     );
 };
 
-export function SidebarItem({ icon, text, active }) {
+export function SidebarItem({ icon, text,onClick, active }) {
     const { expanded } = useContext(SidebarContext);
+    
     return (
-        <li
+        <li onClick={onClick}
             className={`h-10 flex items-center py-2 px-2 my-1 transition-colors font-medium rounded-md cursor-pointer ${active ? 'bg-blue-400' : 'hover:bg-blue-400'}`}
         >
             <div className='flex-shrink-0'>{icon}</div>

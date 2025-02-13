@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import HRnavbar from '../components/HR/HRnavbar'
+import HRnavbar from '../../components/HR/HRnavbar'
 import { Calendar, Hospital, Lock, Mail, MapPinHouse, Phone, User } from 'lucide-react';
-import Input from '../components/Input';
+import Input from '../../components/Input';
 import { MdOutlineBloodtype } from "react-icons/md";
 import { useParams } from 'react-router-dom';
-import { useStore } from '../store/UpdateStore';
+import { useStore } from '../../store/UpdateStore';
 
 const DoctorUpdate_HR = () => {
   const { id } = useParams();

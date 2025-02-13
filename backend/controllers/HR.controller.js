@@ -2,7 +2,8 @@ import Doctor from "../models/doctorModel.js"
 import bcryptjs from "bcryptjs"
 import Receptionist from "../models/receptionistModel.js";
 import { Item, ItemStock, Order, Unit } from "../models/ItemModel.js";
-import { ItemVendor } from "../models/VendorModel.js";
+import { ItemVendor, MedicalVendor } from "../models/VendorModel.js";
+import { MedicalStock, Medicine, Potency } from "../models/MedicineModel.js";
 export const detail_doctors = async (req, res) => {
     
     try {
@@ -156,6 +157,28 @@ export const add_item = async (req, res) => {
     }   
 
 }
+export const getItems = async (req, res) => {
+    try {
+        const items = await Item.find();
+        res.json({
+            items
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+}
+export const getUnits = async (req, res) => {
+    try {
+        const units = await Unit.find();
+        res.json({
+            units
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+}
 
 export const add_unit = async (req, res) => {
     try {
@@ -181,13 +204,13 @@ export const add_unit = async (req, res) => {
 
 export const add_item_vendor = async (req,res) => {
     try {
-        const { name,contact,email,address } = req.body;
-        const vendorexists = await ItemVendor.findOne({ name,email });
+        const { vendorname,contact,email,address } = req.body;
+        const vendorexists = await ItemVendor.findOne({ vendorname,email });
         if (vendorexists) {
             return res.json({ success: false, message: "Vendor already exists" });
         }
         const newVendor = new ItemVendor({
-            vendorname: name,
+            vendorname,
             contact,
             email,
             address
@@ -202,19 +225,50 @@ export const add_item_vendor = async (req,res) => {
         res.json({ success: false, message: error.message });
     } 
 }
+export const get_vendor = async (req, res) => {
+    try {
+        const vendors = await ItemVendor.find();
+        res.json({
+            success: true,
+            vendors
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+export const edit_vendor = async (req, res) => {
+    try {
+        const { id,vendorname, contact, email, address } = req.body;
+        const updatedVendor = await ItemVendor.findByIdAndUpdate(
+             id,
+            { vendorname, contact, email, address },
+            { new: true, runValidators: true } // Return updated document
+        );
+        if (!updatedVendor) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(updatedVendor);
+    } catch (error) {
+        console.log(error.message);
+        res.json({ error: error.message });
+    }
+}
 
 export const add_item_stock = async (req, res) => {
     try {
-        const { item, unit, quantity } = req.body;
-        const itemexists = await Item.findOne({ itemName:item });
+        const { itemName, unit, quantity } = req.body;
+        const itemexists = await Item.findOne({ itemName});
         const unitexists = await Unit.findOne({ unit });
         
-        if (!itemexists || !unitexists) {
-        
+        if (!itemexists || !unitexists) {        
         return res.json({ success: false, message: "Stock does not have these" });
     }
     const newStock = new ItemStock({
-        itemName:item,
+        itemName,
         unit,
         quantity
     })
@@ -234,29 +288,166 @@ export const add_item_stock = async (req, res) => {
 export const place_item_order = async (req, res) => {
     
     try {
-        const { itemName, vendor, quantity,unit, orderDate, deliveryDate } = req.body;
-        const itemexists = await Item.findOne({ itemName });
-        const unitexists = await Unit.findOne({ unit });
-        const vendorexists = await ItemVendor.findOne({ vendorname: vendor });
-        if (!itemexists || !unitexists || !vendorexists) {
-            return res.json({ success: false, message: "Enter appropraite fields" });
+        const { items } = req.body;
+        if (!items || items.length === 0) {
+            return res.status(400).json({ message: "Order items are required" });
         }
-        const newOrder = new Order({
-            itemName,
-            vendor,
-            quantity,
-            unit,
-            orderDate,
-            deliveryDate
-        })
+        const newOrder = new Order({ items });
         await newOrder.save();
-        res.json({
-            success: true,
-            newOrder
-        }) 
+        res.status(201).json({ message: "Order placed successfully",  newOrder });
+
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message });
     }
+
+}
+
+export const add_medicine = async (req, res) => {
+    try {
+        const { medicine } = req.body;
+        const medicineexists = await Medicine.findOne({ medicine });
+        if (medicineexists) {
+            return res.json({ success: false, message: "Medicine already exists" });
+        }
+        const newMedicine = new Medicine({
+            medicine
+        })
+        await newMedicine.save();
+        res.json({
+            success: true,
+            newMedicine
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }   
+
+}
+export const getMedicine = async (req, res) => {
+    try {
+        const medicines = await Medicine.find();
+        res.json({
+            medicines
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+}
+export const getPotency = async (req, res) => {
+    try {
+        const potencys = await Potency.find();
+        res.json({
+            potencys
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export const add_potency = async (req, res) => {
+    try {
+        const { potency } = req.body;
+        const potencyexists = await Potency.findOne({ potency });
+        if (potencyexists) {
+            return res.json({ success: false, message: "Potency already exists" });
+        }
+        const newPotency = new Potency({
+            potency
+        })
+        await newPotency.save();
+        res.json({
+            success: true,
+            newPotency
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }   
+
+}
+
+export const add_medical_vendor = async (req,res) => {
+    try {
+        const { vendorname,contact,email,address } = req.body;
+        const vendorexists = await MedicalVendor.findOne({ vendorname,email });
+        if (vendorexists) {
+            return res.json({ success: false, message: "Vendor already exists" });
+        }
+        const newVendor = new MedicalVendor({
+            vendorname,
+            contact,
+            email,
+            address
+        })
+        await newVendor.save();
+        res.json({
+            success: true,
+            newVendor
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    } 
+}
+export const get_medical_vendor = async (req, res) => {
+    try {
+        const vendors = await MedicalVendor.find();
+        res.json({
+            success: true,
+            vendors
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+export const edit_medical_vendor = async (req, res) => {
+    try {
+        const { id,vendorname, contact, email, address } = req.body;
+        const updatedVendor = await MedicalVendor.findByIdAndUpdate(
+             id,
+            { vendorname, contact, email, address },
+            { new: true, runValidators: true } // Return updated document
+        );
+        if (!updatedVendor) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(updatedVendor);
+    } catch (error) {
+        console.log(error.message);
+        res.json({ error: error.message });
+    }
+}
+
+export const add_medical_stock = async (req, res) => {
+    try {
+        const { medicineName, potency, quantity } = req.body;
+        const medicineexists = await Medicine.findOne({ medicine:medicineName});
+        const potencyexists = await Potency.findOne({ potency });
+        
+        if (!medicineexists || !potencyexists) {        
+        return res.json({ success: false, message: "Stock does not have these" });
+    }
+    const newStock = new MedicalStock({
+        medicineName,
+        potency,
+        quantity
+    })
+    await newStock.save();
+    res.json({
+        success: true,
+        newStock
+    })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+    
 
 }

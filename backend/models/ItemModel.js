@@ -15,12 +15,16 @@ const StockSchema = new mongoose.Schema({
 })
 
 const orderSchema = new mongoose.Schema({
-    itemName: { type: String, required: true },
-    vendor: { type: String, required: true },
-    quantity: { type: Number, required: true },
-    unit: { type: String },
-    orderDate: {type: String, required: true},
-    deliveryDate: {type: String, required: true}
+    items: [
+        {
+            itemName: { type: String, required: true },
+            unit: { type: String, required: true },
+            vendor: { type: String, required: true },            
+            quantity: { type: Number, required: true },
+            deliveryDate: { type: Date, required: true },
+        }
+    ],
+    orderDate: { type: Date, default: Date.now }
 })
 
 export const Order = mongoose.model('Order', orderSchema);

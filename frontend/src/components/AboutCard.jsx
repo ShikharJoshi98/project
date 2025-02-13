@@ -8,7 +8,7 @@ const AboutCard = () => {
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm  w-28 ' />
           <h1 className='text-xl text-center md:text-2xl font-semibold text-slate-800'>"Service to the Patient is Service to Nation "</h1>
           <div className='flex flex-col items-center gap-[6px]'>
-            <img src="/src/public/Dr. Santosh Yadav.png" alt="" className='object-contain border-4 shadow-md shadow-zinc-500 border-zinc-500 rounded-md' />
+            <img src="/Dr. Santosh Yadav.png" alt="" className='object-contain border-4 shadow-md shadow-zinc-500 border-zinc-500 rounded-md' />
             <h1 className='text-2xl font-semibold'>Dr. Santosh K Yadav</h1>
             <h1 className='text-xl text-blue-600 font-bold'>M.D. (Homeopathy)</h1>
             <h1 className='text-xl text-blue-600 font-bold'>Ph.D.(Homeopathy)</h1>
