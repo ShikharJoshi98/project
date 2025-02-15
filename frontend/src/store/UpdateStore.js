@@ -6,48 +6,35 @@ const HR_API_URL = 'http://localhost:4000/api/hr';
 axios.defaults.withCredentials = true;
 
 export const useStore = create((set) => ({
-  docusers: [],
-  receptionistusers: [],
+  employees: [],
   items: [],
   vendors: [],
   vendor:null,
   Item: null,
   stock: null,
-  Unit:null,
+  Unit: null,
+  Tasks:[],
   units: [],
   order: [],
   medicines: [],
   Medicine: null,
+  medicalitems: [],
   potencys: [],
   Potency: null,
-  getDoctorDetails: async () => {
-    try {
-       
-       const  response = await axios.get(`${HR_API_URL}/get-details-doctor`);
-          
-      
-        
-        set({ docusers: response.data.detail });
-    } catch (error) {
-      console.log(error.message);
-    }
+  getDetails: async () => {
+     try {
+       const response = await axios.get(`${HR_API_URL}/get-details`);
+       set({employees:response.data.detail})
+     } catch (error) {
+       console.log(error.message)
+     }
   },
-  getReceptionistDetails: async () => {
-    try {     
-       
-      const  response = await axios.get(`${HR_API_URL}/get-details-receptionist`);
-      
-        set({ receptionistusers: response.data.detail });
-    } catch (error) {
-      console.log(error.message);
-    }
-  },
-  updateDoctor: async (id, updatedData) => {
+  update: async (id, updatedData) => {
     
     try {
-      const response = await axios.put(`${HR_API_URL}/update-doctor/${id}`, updatedData);
+      const response = await axios.put(`${HR_API_URL}/update/${id}`, updatedData);
       set((state) => ({
-        docusers: state.docusers.map((user) =>
+        employees: state.employees.map((user) =>
           user._id === id ? response.data : user
         ),
       }));
@@ -57,20 +44,7 @@ export const useStore = create((set) => ({
       throw error;
     }
   },
-  updateReceptionist: async (id, updatedData) => {
-    try {
-      const response = await axios.put(`${HR_API_URL}/update-receptionist/${id}`, updatedData);
-      set((state) => ({
-        receptionistusers: state.receptionistusers.map((user) =>
-          user._id === id ? response.data : user
-        ),
-      }));
-      return response.data;
-    } catch (error) {
-      console.error("Error updating receptionist:", error);
-      throw error;
-    }
-  },
+  
   getItems: async () => {
     
      try {
@@ -239,5 +213,29 @@ export const useStore = create((set) => ({
     } catch (error) {
       console.log(error.message);
     }
-}
+  },
+  getMedicalItem: async() => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/get-medicine-item`)
+      set({ medicalitems: response.data.medical_items });
+    } catch (error) {
+      console.log(error.message); 
+    }
+  },
+  placeOrder: async (medicine) => {
+    try {
+      const response = await axios.post(`${HR_API_URL}/place-medical-order`, {medicine});
+      console.log(response.data.newOrder)
+      set({order:response.data.newOrder})
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getTasks: async ()=>{
+    try {
+      const response = await axios.get(`${HR_API_URL}/place-medical-order`)
+    } catch (error) {
+      
+    }
+  }
 }));

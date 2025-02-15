@@ -62,7 +62,7 @@ const ItemStock = () => {
       <Sidebar>
           <SidebarItem onClick={() => { navigate('/items-stock');   }} active icon={<ShoppingCart />} text={"ITEMS STOCK"} />
           <SidebarItem onClick={() => { navigate('/medicine-stock');   }} icon={<PillBottle />} text={"MEDICINE STOCK"} />
-          <SidebarItem icon={<ListTodo /> } text={"TASK DETAILS"} />
+          <SidebarItem onClick={() => navigate("/task-details-HR")} icon={<ListTodo /> } text={"TASK DETAILS"} />
           <SidebarItem icon={<CalendarDays />} text={"APPLY LEAVE"} />
           <SidebarItem icon={<Box />} text={"COURIER LIST"} />
           <SidebarItem icon={<Banknote />} text={"COLLECTIONS"} />

@@ -4,27 +4,26 @@ import Sidebar, { SidebarItem } from '../../components/Sidebar'
 import { FaUserDoctor, FaUsers } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { Banknote, Box, CalendarDays, ListTodo, MapPin, PillBottle, ShoppingCart } from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/UpdateStore';
+import { useAuthStore } from '../../store/authStore';
 
 const HRDashboard = () => {
   
-  const doccolumns = ['name', 'phone', 'email', 'gender', 'age', 'status', 'department'];
-  const { getDoctorDetails, getReceptionistDetails,docusers,receptionistusers } = useStore();
+  const doccolumns = ['fullname', 'phone', 'email', 'gender', 'age', 'status', 'department'];
+  const { getDetails, employees } = useStore();
+  const { login, user } = useAuthStore();
+  console.log(user?.branch);
   useEffect(() => {
-    getDoctorDetails();
+    getDetails();
     
-  }, [getDoctorDetails]);
-  useEffect(() => {
-    getReceptionistDetails();
-    
-  }, [getReceptionistDetails])
-  console.log(receptionistusers[0]?._id);
-  const doctorCount = docusers.length;
+  }, [getDetails]);
+  
+  const doctors = employees.filter(emp => emp?.role === 'doctor');
+  const receptionists = employees.filter(emp => emp?.role === 'receptionist');
 
   const [currentDate, setCurrentDate] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
   useEffect(() => {
     const updateDate = () => {
       const date = new Date().toLocaleDateString("en-GB", {
@@ -46,7 +45,7 @@ const HRDashboard = () => {
         <Sidebar>
           <SidebarItem onClick={() => navigate("/items-stock")}   icon={<ShoppingCart />} text={"ITEMS STOCK"} />
           <SidebarItem onClick={() => navigate("/medicine-stock")}  icon={<PillBottle />} text={"MEDICINE STOCK"} />
-          <SidebarItem icon={<ListTodo /> } text={"TASK DETAILS"} />
+          <SidebarItem onClick={() => navigate("/task-details-HR")} icon={<ListTodo /> } text={"TASK DETAILS"} />
           <SidebarItem icon={<CalendarDays />} text={"APPLY LEAVE"} />
           <SidebarItem icon={<Box />} text={"COURIER LIST"} />
           <SidebarItem icon={<Banknote />} text={"COLLECTIONS"} />
@@ -56,7 +55,7 @@ const HRDashboard = () => {
           <div className='flex md:flex-row  h-fit flex-col items-center justify-between '>
             <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome to the HR Admin Panel</h1>
             <h1 className='text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-3xl m-2 md:m-10   bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span>    <MapPin />
-            </span>Dombivali</h1>
+            </span>{ user?.branch}</h1>
           </div>
           <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg '>
             <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Dashboard</h1>
@@ -70,7 +69,7 @@ const HRDashboard = () => {
                 <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span>    <FaUserDoctor />
 
 
-                </span>{ doctorCount}</h1>
+                </span>{ doctors.length}</h1>
                 
               </div>
               
@@ -86,7 +85,7 @@ const HRDashboard = () => {
                 <span className='text-zinc-800  mb-3 flex text-lg'>On Duty Doctors</span>
                 <hr className='h-0.5 border-none mb-4 bg-white' />  
                 <h1 className='text-base sm:text-2xl   flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span>    <FaRegCheckCircle />
-                </span>2</h1>
+                </span>{ doctors.length}</h1>
                 
               </div>
             </div>
@@ -108,21 +107,21 @@ const HRDashboard = () => {
           </tr>
         </thead>
         <tbody>
-                  {docusers.map((user, idx) => (
+                  {doctors.map((emp, idx) => (
           
             <tr key={idx} className="hover:bg-blue-300 text-lg bg-blue-200 transition-all">
               {doccolumns.map((col) => (
                 <td key={col} className={`border border-gray-300 px-4 py-4 ${
-                  col === "status"? user[col].toLowerCase() === "active"
+                  col === "status"? emp[col].toLowerCase() === "active"
                     ? "text-green-600 "
                     : "text-red-600":""
                 }`}>
-                  {user[col]}
+                  {emp[col]}
                 </td>
                 
               ))}
             <td className="px-2 py-4  text-center">
-              <button onClick={()=>navigate(`/update-doctor/${user?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
+              <button onClick={()=>navigate(`/update-doctor/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
             </td>
             </tr>
           ))}
@@ -148,14 +147,14 @@ const HRDashboard = () => {
         </thead>
         <tbody>
         <tr className="hover:bg-blue-300 text-lg bg-blue-200 transition">
-            <td className="px-2 py-4  text-center">{receptionistusers[0]?.fullname }</td>
-            <td className=" py-4  text-center">{receptionistusers[0]?.phone }</td>
-            <td className="px-4 py-4  text-center">{receptionistusers[0]?.email }</td>
-            <td className="px-2 py-4  text-center">{receptionistusers[0]?.address }</td>
-            <td className="px-2 py-4  text-center">{receptionistusers[0]?.branch }</td>
-            <td className="px-2 py-4  text-center">Receptionist1</td>
+            <td className="px-2 py-4  text-center">{receptionists[0]?.fullname }</td>
+            <td className=" py-4  text-center">{receptionists[0]?.phone }</td>
+            <td className="px-4 py-4  text-center">{receptionists[0]?.email }</td>
+            <td className="px-2 py-4  text-center">{receptionists[0]?.address }</td>
+            <td className="px-2 py-4  text-center">{receptionists[0]?.branch }</td>
+            <td className="px-2 py-4  text-center">{receptionists[0]?.username }</td>
             <td className="px-2 py-4  text-center">
-              <button onClick={()=>navigate(`/update-receptionist/${receptionistusers[0]?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
+              <button onClick={()=>navigate(`/update-receptionist/${receptionists[0]?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
             </td>
           </tr>
           

@@ -7,6 +7,7 @@ import HR from "../models/hrModel.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { sendPasswordResetEmail } from "../utils/sendPasswordReset.js";
 import { sendResetSuccessEmail } from "../utils/sendResetSuccessful.js";
+import { Employee } from "../models/EmployeeModel.js";
 
 export const register = async (req, res) => {
     try {
@@ -33,70 +34,24 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { username, password, role } = req.body;
-        if(role==='patient'){
-        const User = await Patient.findOne({ username });
-        if (!User) {
-            return res.status(400).json({success:false,message:"Invalid Credentials."})
-        }
-        const isPasswordValid = await bcryptjs.compare(password, User.password);
-        if (!isPasswordValid) {
-            return res.status(404).json({ success: false, message: "Password incorrect" });
-            }
-            generateTokenAndSetCookie(res, User._id,role);
 
-            User.lastLogin = new Date();
-            await User.save();
-            res.status(200).json({
-                success: true, message: "Logged in Successfully", User: {
-                    ...User._doc,
-                    password:undefined
-            } });
+        const user = await Employee.findOne({ username, role });
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid Credentials." });
         }
-        else if (role === 'doctor') {
-            const User = await Doctor.findOne({ username });
-            if (!User) {
-                return res.status(400).json({success:false,message:"Invalid Credentials."})
-            }
-            const isPasswordValid = await bcryptjs.compare(password, User.password);
-            if (!isPasswordValid) {
-                return res.status(404).json({ success: false, message: "Password incorrect" });
-            }
-            generateTokenAndSetCookie(res, User._id,role);
-            User.lastLogin = new Date();
-            await User.save();
-                res.status(200).json({ success: true, message: "Logged in Successfully", User }); 
+        const isPasswordValid = await bcryptjs.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ success: false, message: "Password incorrect" });
         }
-        else if (role === 'hr') {
-            const User = await HR.findOne({ username });
-            if (!User) {
-                return res.status(400).json({success:false,message:"Invalid Credentials."})
-            }
-            const isPasswordValid = await bcryptjs.compare(password, User.password);
-            if (!isPasswordValid) {
-                return res.status(404).json({ success: false, message: "Password incorrect" });
-            }
-            generateTokenAndSetCookie(res, User._id,role);
-            User.lastLogin = new Date();
-            await User.save();
-                res.status(200).json({ success: true, message: "Logged in Successfully", User }); 
-        }
-        else if (role === 'receptionist') {
-            const User = await Receptionist.findOne({ username });
-            if (!User) {
-                return res.status(400).json({success:false,message:"Invalid Credentials."})
-            }
-            const isPasswordValid = await bcryptjs.compare(password, User.password);
-            if (!isPasswordValid) {
-                return res.status(404).json({ success: false, message: "Password incorrect" });
-            }
-            generateTokenAndSetCookie(res, User._id,role);
-            User.lastLogin = new Date();
-            await User.save();
-                res.status(200).json({ success: true, message: "Logged in Successfully", User }); 
-        }
-        else{
-            res.status(400).json({ success: false, message: "Wrong role" });
-        }
+        generateTokenAndSetCookie(res, user._id, role);
+        user.lastLogin = new Date();
+        await user.save();
+        res.status(200).json({
+            success: true, message: "Logged in Successfully", User: {
+                ...user._doc,
+                password:undefined
+        } });
+        
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -168,25 +123,16 @@ export const resetPassword = async (req, res) => {
 export const checkAuth = async (req, res) => {
     try {
         let user;
-        if(req.role==='patient'){
-             user = await Patient.findById(req.userId).select("-password");
+        user = await Employee.findById(req.userId).select("-password");
+        
+        if (req.role === user.role) {
+            res.status(200).json({ success: true, user });
         }
-        else if (req.role === 'doctor') {
-             user = await Doctor.findById(req.userId).select("-password");
-
-        }
-        else if (req.role === 'hr') {
-             user = await HR.findById(req.userId).select("-password");
-
-        }
-        else if (req.role === 'receptionist') {
-             user = await Receptionist.findById(req.userId).select("-password");
-
-        }
-        if (!user) {
+        else {
             return res.status(400).json({ success: false, message: "Not found" });
+
         }
-        res.status(200).json({ success: true, user });
+        
     } catch (error) {
         res.status(400).json({
             success: false,

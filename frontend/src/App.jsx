@@ -15,6 +15,7 @@ import MedicineStock from "./pages/HR/MedicineStock";
 import HRDashboard from "./pages/HR/HRDashboard";
 import ReceptionistUpdate from "./pages/HR/ReceptionistUpdate";
 import DoctorUpdate_HR from "./pages/HR/DoctorUpdate_HR";
+import TaskDetails from "./pages/HR/TaskDetails";
 
 
 const ProtectedRoute = ({children,allowedRoles}) => {
@@ -73,6 +74,7 @@ function App() {
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['hr']}><ReceptionistUpdate /></ProtectedRoute>} />
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />
           <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock/></ProtectedRoute>} />
+          <Route path="/task-details-HR" element={<ProtectedRoute allowedRoles={['hr']}><TaskDetails/></ProtectedRoute>} />
 
           <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
 

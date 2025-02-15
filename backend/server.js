@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import router from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import HRrouter from "./routes/HR.route.js";
+import Docrouter from "./routes/Doctor.route.js";
 dotenv.config();
 const app = express();
 connectDB();
@@ -16,6 +17,8 @@ app.use(cors({origin: "http://localhost:5173",
 app.use(cookieParser());
 app.use('/api/auth', router);
 app.use('/api/hr', HRrouter);
+app.use('/api/doctor', Docrouter);
+
 //api endpoints
 app.get('/', (req, res) => {
     res.send("Server working");

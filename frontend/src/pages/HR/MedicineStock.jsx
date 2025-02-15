@@ -5,10 +5,10 @@ import { Banknote, Box, CalendarDays, ListTodo, MapPin, PillBottle, ShoppingCart
 
 
 import AddMedicalStockModel from '../../components/HR/AddMedicalStockModel';
-import OrderModal from '../../components/HR/OrderModal';
 import { useNavigate } from 'react-router-dom';
 import AddMedicineModal from '../../components/HR/AddMedicineModal';
 import VendorMedicalModal from '../../components/HR/VendorMedicalModal';
+import OrderMedicalModal from '../../components/HR/OrderMedicalModal';
 
 const MedicineStock = () => {
     const [currentDate, setCurrentDate] = useState("");
@@ -63,7 +63,7 @@ const MedicineStock = () => {
       <Sidebar>
           <SidebarItem onClick={() => { navigate('/items-stock');   }}  icon={<ShoppingCart />} text={"ITEMS STOCK"} />
           <SidebarItem onClick={() => { navigate('/medicine-stock');   }} active icon={<PillBottle />} text={"MEDICINE STOCK"} />
-          <SidebarItem icon={<ListTodo /> } text={"TASK DETAILS"} />
+          <SidebarItem onClick={() => navigate("/task-details-HR")} icon={<ListTodo /> } text={"TASK DETAILS"} />
           <SidebarItem icon={<CalendarDays />} text={"APPLY LEAVE"} />
           <SidebarItem icon={<Box />} text={"COURIER LIST"} />
           <SidebarItem icon={<Banknote />} text={"COLLECTIONS"} />
@@ -93,7 +93,7 @@ const MedicineStock = () => {
       {isMedicineModalOpen && <AddMedicineModal onClose={() => setMedicineModalIsOpen(false)} />}
       {isVendorModalOpen && <VendorMedicalModal onClose={() => setVendorModalIsOpen(false)} />}
       {isAddStockModalOpen && <AddMedicalStockModel onClose={() => setAddStockModalIsOpen(false)} />}
-      {isOrderModalOpen && <OrderModal onClose={() => setOrderModalIsOpen(false)} />}
+      {isOrderModalOpen && <OrderMedicalModal onClose={() => setOrderModalIsOpen(false)} />}
 
     </div>
   )

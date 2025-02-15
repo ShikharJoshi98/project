@@ -8,13 +8,13 @@ import { useStore } from '../../store/UpdateStore';
 
 const DoctorUpdate_HR = () => {
   const { id } = useParams();
-  const { getDoctorDetails, docusers, updateDoctor } = useStore();
+  const { getDetails, employees, update } = useStore();
   
     
   console.log(id);
-  const doctor = docusers.find(user => user?._id === id) || {};
+  const doctor = employees.find(user => user?._id === id) || {};
 
-  console.log(doctor);
+  
   const [fullname, setfullname] = useState(doctor?.name);
   console.log(fullname);
   const [Number, setnumber] = useState(doctor?.phone);
@@ -29,12 +29,12 @@ const DoctorUpdate_HR = () => {
     const [Active, setactive] = useState(doctor?.status);
   const [Dept, setdept] = useState(doctor?.department);
   useEffect(() => {
-    getDoctorDetails();
+    getDetails();
     
-  }, [getDoctorDetails]);
+  }, [getDetails]);
   useEffect(() => {
     if (doctor) {
-      setfullname(doctor.name || "");
+      setfullname(doctor.fullname || "");
       setemail(doctor.email || "");
       setIncome(doctor.Salary || "");
       setnumber(doctor.phone || "");
@@ -50,8 +50,8 @@ const DoctorUpdate_HR = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateDoctor(id, {
-        name: fullname,
+      await update(id, {
+        fullname: fullname,
         email: Email,
         phone: Number,
         age: Age,

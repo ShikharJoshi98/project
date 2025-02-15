@@ -7,8 +7,8 @@ import { useStore } from '../../store/UpdateStore'
 
 const ReceptionistUpdate = () => {
   const { id } = useParams();
-    const { getReceptionistDetails, receptionistusers, updateReceptionist } = useStore();
-    const receptionist = receptionistusers.find(user => user?._id === id) || {};
+    const { getDetails, employees, update } = useStore();
+    const receptionist = employees.find(user => user?._id === id) || {};
 
   const [Fullname, setfullname] = useState(receptionist?.fullname);
   const [Phonenum, setphone] = useState(receptionist?.phone);
@@ -16,9 +16,9 @@ const ReceptionistUpdate = () => {
   const [Address, setaddress] = useState(receptionist?.address);
   const [Branch, setbranch] = useState(receptionist?.branch);
   useEffect(() => {
-    getReceptionistDetails();
+    getDetails();
       
-    }, [getReceptionistDetails]);
+    }, [getDetails]);
   useEffect(() => {
       if (receptionist) {
         setfullname(receptionist.fullname || "");
@@ -31,7 +31,7 @@ const ReceptionistUpdate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateReceptionist(id, {
+      await update(id, {
         fullname: Fullname,
         phone: Phonenum,
         email: Email, 

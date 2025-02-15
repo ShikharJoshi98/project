@@ -3,11 +3,14 @@ import bcryptjs from "bcryptjs"
 import Receptionist from "../models/receptionistModel.js";
 import { Item, ItemStock, Order, Unit } from "../models/ItemModel.js";
 import { ItemVendor, MedicalVendor } from "../models/VendorModel.js";
-import { MedicalStock, Medicine, Potency } from "../models/MedicineModel.js";
-export const detail_doctors = async (req, res) => {
+import { medicalItem, medicalOrder, MedicalStock, Medicine, Potency } from "../models/MedicineModel.js";
+import { Employee } from "../models/EmployeeModel.js";
+import { Task } from "../models/TaskModel.js";
+export const details= async (req, res) => {
     
     try {
-        const detail = await Doctor.find().select("-password");
+        
+        const detail = await Employee.find().select("-password");
         res.json({
             detail
          });
@@ -16,93 +19,38 @@ export const detail_doctors = async (req, res) => {
     }
 }
 
-export const detail_receptionist = async (req, res) => {
+export const register = async (req, res) => {
     
     try {
-        const detail = await Receptionist.find().select("-password");
+        const { fullname,username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password,branch ,role } = req.body;
+        const employeeExists = await Employee.findOne({ username });
+        if (employeeExists) {
+            res.json({ success: false, message: "Employee Already Exists" });
+        } 
+        const hashedPassword = await bcryptjs.hash(password, 11);
+
+        const newEmployee = new Employee({
+            fullname,username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password:hashedPassword,branch ,role        })
+        await newEmployee.save();
         res.json({
-            detail
-         });
+            success: true,
+            newEmployee
+        })
     } catch (error) {
-        console.log(error.message);
-    }
-}
-
-export const register_doctor = async (req, res) => {
-    try {
-        
-   
-    const { username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password, role, name } = req.body;
-    const existDoctor = await Doctor.findOne({ email });
-    if (existDoctor) {
-        return res.json({ success: false, message: "Doctor already exists" });
-    }
-    const hashedPassword = await bcryptjs.hash(password, 11);
-    const newDoctor = new Doctor({
-        username,
-        email,
-        phone,
-        age,
-        gender,
-        bloodGroup,
-        address,
-        department,
-        Salary,
-        attendance,
-        status,
-        password: hashedPassword,
-        role,
-        name
-    });
-        await newDoctor.save();
-        res.status(200).json({
-            
-            newDoctor:newDoctor._doc
+        res.json({
+            success: false,
+            error:error.message
         })
     }
-    catch (error) {
-        return res.status(400).json({ success: false, message: error.message });
-    }
 }
 
-export const register_receptionist = async (req, res) => {
+export const update = async (req, res) => {
     try {
-        
-   
-    const { fullname,username,email,phone,address,password,branch,role } = req.body;
-    const existReceptionist = await Receptionist.findOne({ email });
-    if (existReceptionist) {
-        return res.json({ success: false, message: "Receptionist already exists" });
-    }
-    const hashedPassword = await bcryptjs.hash(password, 11);
-    const newReceptionist = new Receptionist({
-        fullname,
-        username,
-        email,
-        phone,
-        address,        
-        password: hashedPassword,
-        branch,
-        role
-        
-    });
-        await newReceptionist.save();
-        res.status(200).json({
-            
-            newReceptionist:newReceptionist._doc
-        })
-    }
-    catch (error) {
-        return res.status(400).json({ success: false, message: error.message });
-    }
-}
+        const { fullname, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status,branch ,role } = req.body;
 
-export const update_doctor = async (req, res) => {
-    try {
-        const { username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password, role, name } = req.body;
-        const updatedUser = await Doctor.findByIdAndUpdate(
+        const updatedUser = await Employee.findByIdAndUpdate(
             req.params.id,
-            { username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password, role, name },
+            { fullname, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status,branch ,role },
             { new: true, runValidators: true } // Return updated document
         );
         if (!updatedUser) {
@@ -117,24 +65,7 @@ export const update_doctor = async (req, res) => {
     }
 }
 
-export const update_receptionist = async (req, res) => {
-    try {
-        const { fullname, phone,email,  address, branch } = req.body;
-        const updatedUser = await Receptionist.findByIdAndUpdate(
-            req.params.id,
-            { fullname, phone,email,  address, branch },
-            { new: true, runValidators: true } // Return updated document
-        );
-        if (!updatedUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        res.json(updatedUser);
 
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-
-    }
-}
 
 export const add_item = async (req, res) => {
     try {
@@ -447,7 +378,38 @@ export const add_medical_stock = async (req, res) => {
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message });
-    }
+    }   
+
+}
+
+export const medical_items_order = async (req, res) => {
+    const { medicine } = req.body;
+    const newmedicine = new medicalItem({
+        medicine
+    })
+    await newmedicine.save();
+    res.json({ newmedicine });
+}
+
+export const medical_items_get = async (req, res) => {
+    const medical_items = await medicalItem.find();
+    res.json({ medical_items });
+}
+
+export const place_medical_order = async (req, res) => {
     
+    try {
+        const { medicine } = req.body;
+        if (!medicine || medicine.length === 0) {
+            return res.status(400).json({ message: "Order items are required" });
+        }
+        const newOrder = new medicalOrder({ medicine });
+        await newOrder.save();
+        res.status(201).json({ message: "Order placed successfully",  newOrder });
+
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
 
 }
