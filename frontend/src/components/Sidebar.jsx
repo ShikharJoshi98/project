@@ -28,12 +28,12 @@ export function SidebarItem({ icon, text,onClick, active }) {
     const { expanded } = useContext(SidebarContext);
     
     return (
-        <li onClick={onClick}
-            className={`h-10 flex items-center py-2 px-2 my-1 transition-colors font-medium rounded-md cursor-pointer ${active ? 'bg-blue-400' : 'hover:bg-blue-400'}`}
+        <li onClick={onClick} title={text}
+            className={`h-10 flex items-center py-2 px-1 my-1 transition-colors font-medium rounded-md cursor-pointer ${active ? 'bg-blue-400' : 'hover:bg-blue-400'}`}
         >
             <div className='flex-shrink-0'>{icon}</div>
             <div
-                className={`ml-3 transition-all duration-300 ease-in-out text-[10px] md:text-base md:whitespace-nowrap ${expanded ? 'opacity-100 w-5 md:w-56' : 'w-0 opacity-0'}`}
+                className={`ml-2 transition-all duration-200 ease-in-out text-[10px] md:text-base md:whitespace-nowrap ${expanded ? 'opacity-100 w-5 md:w-56' : 'w-0 opacity-0'}`}
             >
                 {text}
             </div>

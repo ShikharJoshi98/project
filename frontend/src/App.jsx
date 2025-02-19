@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PatientDashboard from "./pages/PatientDashboard";
-import DoctorDashboard from "./pages/DoctorDashboard";
+import DoctorDashboard from "./pages/Doctor/DoctorDashboard";
 import ReceptionistDashboard from "./pages/ReceptionistDashboard";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
@@ -16,6 +16,10 @@ import HRDashboard from "./pages/HR/HRDashboard";
 import ReceptionistUpdate from "./pages/HR/ReceptionistUpdate";
 import DoctorUpdate_HR from "./pages/HR/DoctorUpdate_HR";
 import TaskDetails from "./pages/HR/TaskDetails";
+import AppointmentDoc from "./pages/Doctor/AppointmentDoc";
+import HomeoMedicine from "./pages/Doctor/HomeoMedicine";
+import HomeoDisease from "./pages/Doctor/HomeoDisease";
+import HomeoRedline from "./pages/Doctor/HomeoRedline";
 
 
 const ProtectedRoute = ({children,allowedRoles}) => {
@@ -70,6 +74,12 @@ function App() {
 
           <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
+          <Route path="/appointment-doctor" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDoc /></ProtectedRoute>} />
+          <Route path="/homeo-book-medicine" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoMedicine /></ProtectedRoute>} />
+          <Route path="/homeo-book-disease" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoDisease /></ProtectedRoute>} />
+          <Route path="/homeo-book-redline" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoRedline /></ProtectedRoute>} />
+
+
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['hr']}><DoctorUpdate_HR /></ProtectedRoute>} />
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['hr']}><ReceptionistUpdate /></ProtectedRoute>} />
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />

@@ -1,10 +1,11 @@
 import express from 'express';
-import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  details,  edit_medical_vendor,  edit_vendor,  get_medical_vendor,  get_vendor,  getItems,  getMedicine,  getPotency,  getUnits,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order,  register,   update} from '../controllers/HR.controller.js';
+import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  details,  edit_medical_vendor,  edit_vendor,  get_medical_vendor,  get_vendor,  getItems,  getMedicine,  getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order,  register,   update} from '../controllers/HR.controller.js';
 
 const HRrouter = express.Router();
 
 HRrouter.get('/get-details',details)
 HRrouter.post('/register', register);
+HRrouter.post('/apply-leave', LeaveApply);
 HRrouter.put('/update/:id', update);
 HRrouter.put('/update-receptionist/:id', update);
 HRrouter.post('/add-item', add_item);

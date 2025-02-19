@@ -1,11 +1,10 @@
-import Doctor from "../models/doctorModel.js"
 import bcryptjs from "bcryptjs"
-import Receptionist from "../models/receptionistModel.js";
 import { Item, ItemStock, Order, Unit } from "../models/ItemModel.js";
 import { ItemVendor, MedicalVendor } from "../models/VendorModel.js";
 import { medicalItem, medicalOrder, MedicalStock, Medicine, Potency } from "../models/MedicineModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Task } from "../models/TaskModel.js";
+import { LeaveApplication } from "../models/LeaveApplyModel.js";
 export const details= async (req, res) => {
     
     try {
@@ -62,6 +61,37 @@ export const update = async (req, res) => {
         console.log(error.message);
         res.status(500).json({ error: error.message });
 
+    }
+}
+
+export const LeaveApply = async (req, res) => {
+    try {
+        let { startDate, endDate, reason, username,status } = req.body;
+        const EmployeeExist = await Employee.findOne({ username });
+        if (!EmployeeExist) {
+            res.json({ success: false, message: "This employee does not exist" });
+        }
+        const convertDateFormat = (dateString) => {
+            const [day, month, year] = dateString.split('-');
+            return new Date(`${year}-${month}-${day}`);
+        };
+
+        startDate = convertDateFormat(startDate);
+        endDate = convertDateFormat(endDate);
+        const newLeave = new LeaveApplication({
+            startDate,
+            endDate,
+            reason,
+            username
+        })
+        await newLeave.save();
+        res.json({
+            success: true,
+            newLeave
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
 }
 

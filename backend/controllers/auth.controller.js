@@ -1,9 +1,6 @@
-import Doctor from "../models/doctorModel.js";
 import Patient from "../models/PatientModel.js";
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
-import Receptionist from "../models/receptionistModel.js";
-import HR from "../models/hrModel.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { sendPasswordResetEmail } from "../utils/sendPasswordReset.js";
 import { sendResetSuccessEmail } from "../utils/sendResetSuccessful.js";
