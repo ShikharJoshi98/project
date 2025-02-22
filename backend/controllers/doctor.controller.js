@@ -2,6 +2,7 @@ import { AppointmentDoctor } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
+import Patient from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 
 export const assignTask = async (req, res) => {
@@ -185,3 +186,48 @@ export const updateHomeoBhagwat = async (req, res) => {
         })
     }
 }
+
+export const uploadCaseImage = async (req, res) => {
+    try{
+    const { id } = req.params; // Patient ID
+    const patient = await Patient.findById(id);
+
+    if (!patient) {
+        return res.status(404).json({ message: "Patient not found" });
+    }
+
+    if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Convert image to Base64
+    const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+    // Store the Base64 image in the database
+    patient.caseImages.push({ imageUrl: base64Image });
+    await patient.save();
+
+    res.status(200).json({ message: "Image uploaded successfully", patient });
+
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+}
+}
+
+export const getPatientImages = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const patient = await Patient.findById(id);
+
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+
+        res.status(200).json({ caseImages: patient.caseImages });
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};

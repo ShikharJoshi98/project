@@ -54,7 +54,7 @@ const DoctorDashboard = () => {
       <Docnavbar />
       <div className='flex '>
         <Sidebar>
-        <SidebarItem onClick={()=>navigate('/appointment-doctor')}   icon={<ClipboardPlus />} text={"APPOINTMENTS "} />
+        <SidebarItem onClick={()=>navigate('/general-appointment')}   icon={<ClipboardPlus />} text={"APPOINTMENTS "} />
           <SidebarItem onClick={()=>setTaskModalIsOpen(true)}  icon={<LayoutList />} text={"ASSIGN TASK"} />
           <SidebarItem onClick={()=>setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"LEAVE REPORTS "} />          
           <SidebarItem  icon={<Users /> } text={"STAFF"} />

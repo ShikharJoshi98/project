@@ -82,7 +82,7 @@ export const docStore = create((set) => ({
         try {
           const response = await axios.post(`${DOC_API_URL}/appointment-doctor`, data);
     
-          if (response.status !== 201) throw new Error("Failed to submit appointment");
+          if (response.status !== 200) throw new Error("Failed to submit appointment");
           set({ appointment: response.data.newAppointment });
 
         } catch (error) {
@@ -118,6 +118,15 @@ export const docStore = create((set) => ({
         } catch (error) {
             console.log(error.message);
 
+        }
+    },
+    uploadCase: async (formData, id) => {
+        try {
+            const response = await axios.post(`${DOC_API_URL}/upload-case-image/${id}`, formData, {
+                headers:{"Content-Type":"multipart/form-data"}
+            })
+        } catch (error) {
+            console.log(error.message);   
         }
     }
     

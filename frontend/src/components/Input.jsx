@@ -7,8 +7,8 @@ const Input = ({icon:Icon,...props}) => {
               <Icon className="size-4 text-blue-500"/>
           </div>
           <input {...props}
-              className='w-full  h-10  pl-9 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
-            duration-200' 
+              className=' w-full  h-10  pl-9 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
+            duration-200'
           />
     </div>
   )

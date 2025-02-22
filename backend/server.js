@@ -6,6 +6,7 @@ import router from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import HRrouter from "./routes/HR.route.js";
 import Docrouter from "./routes/Doctor.route.js";
+import Recrouter from "./routes/Receptionist.route.js";
 dotenv.config();
 const app = express();
 connectDB();
@@ -18,6 +19,8 @@ app.use(cookieParser());
 app.use('/api/auth', router);
 app.use('/api/hr', HRrouter);
 app.use('/api/doctor', Docrouter);
+app.use('/api/receptionist', Recrouter);
+
 
 //api endpoints
 app.get('/', (req, res) => {

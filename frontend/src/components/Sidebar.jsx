@@ -33,7 +33,7 @@ export function SidebarItem({ icon, text,onClick, active }) {
         >
             <div className='flex-shrink-0'>{icon}</div>
             <div
-                className={`ml-2 transition-all duration-200 ease-in-out text-[10px] md:text-base md:whitespace-nowrap ${expanded ? 'opacity-100 w-5 md:w-56' : 'w-0 opacity-0'}`}
+                className={`ml-2 transition-all duration-200 ease-in-out text-[8px] md:text-base md:whitespace-nowrap ${expanded ? 'opacity-100 w-5 md:w-56' : 'w-0 opacity-0'}`}
             >
                 {text}
             </div>

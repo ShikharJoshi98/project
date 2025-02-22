@@ -1,19 +1,30 @@
 import mongoose from "mongoose";
 
 const PatientSchema = new mongoose.Schema({
+    imageData: { type: Buffer},
+    username: { type: String, required:true },
+    casePaperNo: { type: String },
+    caseImages: [
+        {
+            imageUrl: { type: String, required: true }, 
+            uploadedAt: { type: Date, default: Date.now },
+        }
+    ],
     fullname: { type: String, required: true },
+    age: { type: Number },
+    gender: { type: String },
+    address: { type: String},
     phone: { type: String, required: true },
     Altphone: { type: String },
-    email: { type: String, required: true, unique: true },
-    username: { type: String, required: true },
-    lastLogin: {type:Date, default: Date.now()},
-    password: { type: String, required: true },
+    email: { type: String, required: true },
+    qualification: { type: String },
+    occupation: { type: String },
+    dietaryPreference: { type: String },
+    maritalStatus: { type: String },
+    referredBy: { type: String},
+    password: { type: String, required:true },
     branch: { type: String, required: true },
-    role: {
-        type: String,
-        required:true,
-        default: "patient"
-    },
+    
    
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

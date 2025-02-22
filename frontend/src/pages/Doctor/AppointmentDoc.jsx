@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Docnavbar from "../../components/Doctor/DocNavbar";
 import Sidebar, { SidebarItem } from "../../components/Sidebar";
-import { Briefcase, Calendar, CalendarDays, ClipboardPlus, Clock, FileText, LayoutList, MapPin, User, Users } from "lucide-react";
+import { Briefcase, Calendar, CalendarDays, ClipboardPlus, Clock, FileText, LayoutList, MapPin, Plus, User, Users } from "lucide-react";
 import { FaUserDoctor } from "react-icons/fa6";
 import { useAuthStore } from "../../store/authStore";
 import Input from "../../components/Input";
 import { docStore } from "../../store/DocStore";
+import { recStore } from "../../store/RecStore";
+import { useNavigate } from "react-router-dom";
+import AppointmentModal from "../../components/Doctor/AppointmentModal";
+import UploadCase from "../../components/Doctor/UploadCase";
 
 const AppointmentDoc = () => {
   const { user, logout } = useAuthStore();
   const [currentDate, setCurrentDate] = useState("");
-  const {submitAppointment,appointment} = docStore()
-  // State to store form values
-  const [formValues, setFormValues] = useState({
-    AppointmentDate: "",
-    Time: "",
-    PatientCase: "",
-    Doctor: "",
-    AppointmentType: "",
-  });
+  const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
+  const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
+
+  const navigate = useNavigate();
+  
+  const [appointmentType, setappointmentType] = useState("general");
 
   useEffect(() => {
     const updateDate = () => {
@@ -33,23 +34,28 @@ const AppointmentDoc = () => {
 
     updateDate();
   }, []);
+  useEffect(() => {
+          const savedAppointmentState = localStorage.getItem("modalAppointmentState");
+          const savedUploadState = localStorage.getItem("modalUploadState");
 
-  // Handle input change for all form fields
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
+          if (savedAppointmentState === "open") {
+            setAppointmentModalIsOpen(true);
+    }
+    if (savedUploadState === "open") {
+      setUploadModalIsOpen(true);
+}
+      
+          
+  }, []);
+  useEffect(() => {
+           localStorage.setItem("modalAppointmentState", isAppointmentModalOpen ? "open" : "closed");    
+           localStorage.setItem("modalUploadState", isUploadModalOpen ? "open" : "closed");    
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-      await submitAppointment(formValues);
-      alert("appointment created");
-    // Add your API call or logic to save appointment data
-  };
+         }, [isAppointmentModalOpen,isUploadModalOpen]);
+  
+
+ 
+  
 
   return (
     <div>
@@ -66,8 +72,8 @@ const AppointmentDoc = () => {
         </Sidebar>
 
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-          <div className="flex md:flex-row h-fit flex-col items-center justify-between">
-            <h1 className="text-stone-800 w-fit text-lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg">
+          <div className="flex md:flex-row h-fit flex-col items-center justify-between"> 
+          <h1 className="text-stone-800 w-fit text-lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg">
               Welcome {user?.fullname}
             </h1>
             <h1 className="text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg">
@@ -77,103 +83,25 @@ const AppointmentDoc = () => {
               {user?.branch}
             </h1>
           </div>
-
           <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
-            <h1 className="p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl">Create Appointment</h1>
-            <h1 className="text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4">{currentDate}</h1>
+          <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>{ appointmentType.toUpperCase()} APPOINTMENT</h1>
+          <h1 className="text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4">{currentDate}</h1>
             <hr className="h-[0.5px] px-5 border-none bg-blue-500" />
-
-            <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 md:max-w-[500px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
-              <div className="flex flex-col gap-4 m-auto">
-                {/* Date Input */}
-                <div className="flex flex-col gap-2">
-                  <h1>Date</h1>
-                  <Input icon={Calendar} type="date" name="AppointmentDate" value={formValues.AppointmentDate} onChange={handleInputChange} required />
-                </div>
-
-                {/* Time Input */}
-                <div className="flex flex-col gap-2">
-                  <h1>Time</h1>
-                  <Input icon={Clock} type="time" name="Time" value={formValues.Time} onChange={handleInputChange} required />
-                </div>
-
-                {/* Patient Case Paper Number */}
-                <div className="flex flex-col gap-2">
-                  <h1>Patient Case Paper Number</h1>
-                  <div className="relative w-full">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <User className="size-4 text-blue-500" />
-                    </div>
-                    <select
-                      name="PatientCase"
-                      value={formValues.PatientCase}
-                      onChange={handleInputChange}
-                      required
-                      className="py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
-                    >
-                      <option value="" >
-                        Select Case Paper No.
-                                          </option>
-                                          <option value="Mohan Sharma"  >
-Mohan Sharma                      </option>
-                      {/* Add dynamic options here */}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Doctor Selection */}
-                <div className="flex flex-col gap-2">
-                  <h1>Doctor</h1>
-                  <div className="relative w-full">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <FaUserDoctor className="size-4 text-blue-500" />
-                    </div>
-                    <select
-                      name="Doctor"
-                      value={formValues.Doctor}
-                      onChange={handleInputChange}
-                      required
-                      className="py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
-                    >
-                      <option value="" disabled>
-                        Select Doctor
-                      </option>
-                      <option value="Santosh K Yadav">Santosh K. Yadav</option>
-                      <option value="Mohit">Mohit</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Appointment Type */}
-                <div className="flex flex-col gap-2">
-                  <h1>Appointment Type</h1>
-                  <select
-                    name="AppointmentType"
-                    value={formValues.AppointmentType}
-                    onChange={handleInputChange}
-                    required
-                    className="py-2 pl-3 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
-                  >
-                    <option value="" disabled>
-                      Please Select the type
-                    </option>
-                    <option value="general">General</option>
-                    <option value="repeat">Repeat Medicine</option>
-                    <option value="courier">Courier Medicine</option>
-                  </select>
-                </div>
-
-                {/* Submit Button */}
-                <div className="w-full">
-                  <button className="ml-28 cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">
-                    Create
-                  </button>
-                </div>
-              </div>
-            </form>
+            <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-white font-semibold  gap-2 sm:gap-9  items-center justify-center md:gap-9 text-[8px] sm:text-base md:text-lg'>
+            <button onClick={()=>setAppointmentModalIsOpen(true)}  className='cursor-pointer flex items-center md:justify-center justify-between sm:gap-2 hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Appointment <span><Plus/></span>  </button>
+              <button onClick={()=>setUploadModalIsOpen(true)} className='cursor-pointer flex items-center md:justify-center justify-between sm:gap-2 hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Upload <span><Plus/></span></button>
+            </div>
+            <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base md:text-lg'>
+                      <button onClick={() => { setappointmentType('general'); navigate('/general-appointment');  }}  className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${appointmentType==='general'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>GENERAL</button>
+                          <button onClick={() => { setappointmentType('repeat medicine'); navigate('/repeat-medicine-appointment');}}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${appointmentType==='repeat medicine'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>REPEAT MEDICINE</button>
+                          <button onClick={() => { setappointmentType('courier medicine'); navigate('/courier-medicine-appointment'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${appointmentType==='courier medicine'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>COURIER MEDICINE</button>
+            </div>
           </div>
         </div>
       </div>
+      {isAppointmentModalOpen && <AppointmentModal onClose={() => setAppointmentModalIsOpen(false)} />}
+      {isUploadModalOpen && <UploadCase onClose={() => setUploadModalIsOpen(false)} />}
+
     </div>
   );
 };

@@ -1,5 +1,17 @@
 import express from 'express';
-import { AppointmentDoc, assignTask, DeleteTask, getHomeoBhagwat, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus } from '../controllers/doctor.controller.js';
+import { AppointmentDoc, assignTask, DeleteTask, getHomeoBhagwat, getPatientImages, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage } from '../controllers/doctor.controller.js';
+import multer from 'multer';
+
+
+const storage = multer.memoryStorage();
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only images are allowed"), false);
+    }
+};
+const upload = multer({ storage, fileFilter });
 
 
 const Docrouter = express.Router();
@@ -14,6 +26,8 @@ Docrouter.post('/appointment-doctor', AppointmentDoc);
 Docrouter.post('/homeo-book', HomeoBhagwat);
 Docrouter.get('/get-homeo-book', getHomeoBhagwat);
 Docrouter.put('/update-homeo-book/:id', updateHomeoBhagwat);
+Docrouter.post('/upload-case-image/:id',upload.single("caseImage"),uploadCaseImage );
+Docrouter.get("/case-images/:id", getPatientImages);
 
 
 

@@ -20,6 +20,8 @@ import AppointmentDoc from "./pages/Doctor/AppointmentDoc";
 import HomeoMedicine from "./pages/Doctor/HomeoMedicine";
 import HomeoDisease from "./pages/Doctor/HomeoDisease";
 import HomeoRedline from "./pages/Doctor/HomeoRedline";
+import CourierAppointment from "./pages/Doctor/CourierAppointment";
+import MedicineAppointment from "./pages/Doctor/MedicineAppointment";
 
 
 const ProtectedRoute = ({children,allowedRoles}) => {
@@ -74,7 +76,9 @@ function App() {
 
           <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
-          <Route path="/appointment-doctor" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDoc /></ProtectedRoute>} />
+          <Route path="/general-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDoc /></ProtectedRoute>} />
+          <Route path="/repeat-medicine-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><MedicineAppointment/></ProtectedRoute>} />
+          <Route path="/courier-medicine-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><CourierAppointment/></ProtectedRoute>} />
           <Route path="/homeo-book-medicine" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoMedicine /></ProtectedRoute>} />
           <Route path="/homeo-book-disease" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoDisease /></ProtectedRoute>} />
           <Route path="/homeo-book-redline" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoRedline /></ProtectedRoute>} />
