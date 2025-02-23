@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar, { SidebarItem } from '../Sidebar'
-import { Briefcase, CalendarDays, ClipboardPlus, FileText, LayoutList, Users } from 'lucide-react';
+import { Briefcase, CalendarDays, ClipboardPlus, FileText, LayoutDashboard, LayoutList, ListChecks, Users } from 'lucide-react';
 import { FaUserDoctor } from 'react-icons/fa6';
 import AssignTaskModal from './AssignTaskModal';
 import ApproveLeaveModal from './ApproveLeaveModal';
@@ -28,10 +28,10 @@ const DocSidebar = () => {
   
          }, [isTaskModalOpen,isLeaveModalOpen]);
   return (
-    <div>
+    <div >
       <Sidebar>
-        <SidebarItem onClick={()=>navigate('/general-appointment')}   icon={<ClipboardPlus />} text={"APPOINTMENTS "} />
-          <SidebarItem onClick={()=>setTaskModalIsOpen(true)}  icon={<LayoutList />} text={"ASSIGN TASK"} />
+        <SidebarItem onClick={()=>navigate('/dashboard-DOCTOR')}   icon={<LayoutDashboard />} text={"DASHBOARD "} />
+          <SidebarItem onClick={()=>setTaskModalIsOpen(true)}  icon={<ListChecks />} text={"ASSIGN TASK"} />
           <SidebarItem onClick={()=>setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"LEAVE REPORTS "} />          
           <SidebarItem  icon={<Users /> } text={"STAFF"} />
           <SidebarItem icon={<FileText />} text={"CERTIFICATES"} />

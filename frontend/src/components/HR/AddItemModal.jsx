@@ -4,17 +4,18 @@ import Input from "../Input";
 import { useStore } from "../../store/UpdateStore";
 
 const AddItemModal = ({ onClose }) => {
-  const { getItems, items, units, getUnits, AddItem, AddUnit } = useStore();
-  const [NewItem, setitem] = useState("");
+    const { getItems, items, units, getUnits, AddItem, AddUnit } = useStore();
+    const [NewItem, setitem] = useState("");
     const [NewUnit, setunit] = useState("");
     const [searchitemTerm, setSearchitemTerm] = useState("");
     const [searchunitTerm, setSearchunitTerm] = useState("");
 
     const filteredItems = items.filter(item =>
         item.itemName.toLowerCase().includes(searchitemTerm.toLowerCase())
-    );
-    const filteredUnits = units.filter(unit =>
-        unit.unit.toLowerCase().includes(searchunitTerm.toLowerCase())
+  );
+  console.log(units);
+  const filteredUnits = units.filter(unit => (
+        unit.unit.toLowerCase().includes(searchunitTerm.toLowerCase()))
       );
   useEffect(() => {
     getItems();

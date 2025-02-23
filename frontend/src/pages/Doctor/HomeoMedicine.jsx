@@ -10,6 +10,7 @@ import Input from '../../components/Input'
 import { docStore } from '../../store/DocStore'
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import DocSidebar from '../../components/Doctor/DocSidebar'
 
 
 const HomeoMedicine = () => {
@@ -65,6 +66,18 @@ const HomeoMedicine = () => {
               [name]: value,
             }));
   };
+  useEffect(() => {
+      const savedSection = localStorage.getItem("selectedSection");
+      if (savedSection) {
+        setsection(savedSection);
+      }
+    }, []);
+  
+    const handleSectionChange = (newSection, path) => {
+      setsection(newSection);
+      localStorage.setItem("selectedSection", newSection); // Save to localStorage
+      navigate(path);
+    };
   async function handleSave() {
     try {
       await updatehomeobhagwat(editedData._id,editedData);
@@ -172,7 +185,7 @@ const HomeoMedicine = () => {
     window.open(pdfUrl, "_blank");
 
   };
-    async function handleSubmit(e){      
+    async function handleSubmit(){      
         formValues = { ...formValues, "section": section };
         await homeobhagwat(formValues);
   }
@@ -181,16 +194,7 @@ const HomeoMedicine = () => {
       <div>
           <Docnavbar />
           <div className='flex '>
-          <Sidebar>
-        <SidebarItem onClick={()=>navigate('/appointment-doctor')}   icon={<ClipboardPlus />} text={"APPOINTMENTS "} />
-          <SidebarItem onClick={()=>setTaskModalIsOpen(true)}  icon={<LayoutList />} text={"ASSIGN TASK"} />
-          <SidebarItem onClick={()=>setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"LEAVE REPORTS "} />          
-          <SidebarItem  icon={<Users /> } text={"STAFF"} />
-          <SidebarItem icon={<FileText />} text={"CERTIFICATES"} />
-          <SidebarItem icon={<FaUserDoctor size={20}/>} text={"DOCTOR FEES"} />
-          <SidebarItem icon={<Briefcase />} text={"TODAYS COLLECTIONS"} />
-
-              </Sidebar>
+             <DocSidebar/>
               <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
               <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
             <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome {user?.fullname }</h1>
@@ -203,9 +207,9 @@ const HomeoMedicine = () => {
             <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4'>{currentDate}</h1>
                       <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                       <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base md:text-lg'>
-                      <button onClick={() => { setsection('medicine'); navigate('/homeo-book-medicine');  }}  className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='medicine'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>MEDICINE NAME</button>
-                          <button onClick={() => { setsection('disease'); navigate('/homeo-book-disease');}}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='disease'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>DISEASE NAME</button>
-                          <button onClick={() => { setsection('redline'); navigate('/homeo-book-redline'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='redline'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>RED LINE SYMPTOMS</button>
+                      <button  onClick={() => handleSectionChange("medicine", "/homeo-book-medicine")} className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='medicine'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>MEDICINE NAME</button>
+                          <button onClick={() => handleSectionChange("disease", "/homeo-book-disease")}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='disease'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>DISEASE NAME</button>
+                          <button onClick={() => handleSectionChange("redline", "/homeo-book-redline")}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='redline'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>RED LINE SYMPTOMS</button>
                       </div>
                       <div>
                           <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 min-w-full border rounded-xl text-zinc-600 text-sm shadow-lg">
@@ -233,7 +237,7 @@ const HomeoMedicine = () => {
             </div>
             <div>
               <h1 className='text-3xl mb-3 text-blue-600 font-semibold'>Search</h1>
-              <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={Search} type="text" name="name" placeholder='Enter Medicine Name or description' required />
+              <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={Search} type="text" name="name" placeholder='Enter Medicine Name or description'  />
                 <div className='w-full flex justify-center sm:justify-end '>
                   <button onClick={()=>generateTablePDF()} className='bg-blue-500  p-2 text-white rounded-md cursor-pointer sm:text-xl mt-5 flex items-center gap-4'>Generate Pdf<FaRegFilePdf size={25} /></button>
                 </div>

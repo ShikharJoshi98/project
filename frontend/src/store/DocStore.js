@@ -11,7 +11,9 @@ export const docStore = create((set) => ({
     Homeo: [],
     appointment: null,
     section: "medicine",
-    setsection: (newsection)=> set({section:newsection}),
+    setsection: (newsection) => set({ section: newsection }),
+    branch: "",
+    setbranch: (newbranch)=> set({branch:newbranch}),
     getTasks: async () => {
         try {
             const response = await axios.get(`${DOC_API_URL}/task-details`);

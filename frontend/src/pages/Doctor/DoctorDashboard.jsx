@@ -12,7 +12,7 @@ import DocSidebar from '../../components/Doctor/DocSidebar';
 const DoctorDashboard = () => {
   const { user, logout } = useAuthStore();
    
-
+  console.log(user);
   const navigate = useNavigate();
   function handleLogout() {
     logout();

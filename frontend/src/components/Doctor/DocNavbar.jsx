@@ -2,12 +2,27 @@ import { Hospital } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '../../store/authStore';
 import {  useNavigate } from 'react-router-dom';
+import { docStore } from '../../store/DocStore';
 
 const Docnavbar = () => {
     const [isOpen, setOpen] = useState(false);
+    const [appopen, setappopen] = useState(false);
+    const { branch, setbranch } = docStore();
     const menuRef = useRef(null);
       const { user, logout } = useAuthStore();
     const navigate = useNavigate();
+    useEffect(() => {
+          const savedBranch = localStorage.getItem("selectedBranch");
+          if (savedBranch) {
+            setbranch(savedBranch);
+          }
+        }, []);
+      
+        const handleSectionChange = (newBranch) => {
+            setbranch(newBranch);
+            localStorage.setItem("selectedBranch", newBranch); 
+            navigate('/appointment');
+        };
     function handleLogout() {
         logout();
         navigate('/login');
@@ -31,8 +46,14 @@ const Docnavbar = () => {
               <h1 >Wings Classical Homeopathy</h1>
           </div>
           <div className='relative'>
-          <ul className=' hidden lg:flex  items-center gap-6 text-white text-base'>
-                  <li onClick={()=>navigate('/dashboard-DOCTOR')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Dashboard</li>
+              <ul className=' hidden lg:flex  items-center gap-6 text-white text-base'>
+                  <div className='group '>
+                  <li  className="hover:text-gray-300  cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
+                  <div className='absolute opacity-0 group-hover:opacity-100 transition-all duration-300 top-6  rounded-md border-1 border-white z-20 bg-[#404858] w-40 flex flex-col   h-auto'>
+                          <div onClick={() => { handleSectionChange('Dombivali')}} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Dombivali</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> 0</span></div>
+                          <div onClick={() => { handleSectionChange('Mulund'); }} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Mulund</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> 0</span></div>
+                      </div>
+                      </div>
                   <li onClick={()=>navigate('/homeo-book-medicine')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Homeo Bhagwat Gita</li>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Repeat Medicine</li>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Courier Mail</li>
