@@ -10,6 +10,7 @@ import { recStore } from "../../store/RecStore";
 import { useNavigate } from "react-router-dom";
 import AppointmentModal from "../../components/Doctor/AppointmentModal";
 import UploadCase from "../../components/Doctor/UploadCase";
+import DocSidebar from "../../components/Doctor/DocSidebar";
 
 const AppointmentDoc = () => {
   const { user, logout } = useAuthStore();
@@ -61,15 +62,7 @@ const AppointmentDoc = () => {
     <div>
       <Docnavbar />
       <div className="flex">
-        <Sidebar>
-          <SidebarItem onClick={() => navigate("/appointment-doctor")} active icon={<ClipboardPlus />} text={"APPOINTMENTS "} />
-          <SidebarItem onClick={() => setTaskModalIsOpen(true)} icon={<LayoutList />} text={"ASSIGN TASK"} />
-          <SidebarItem onClick={() => setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"LEAVE REPORTS "} />
-          <SidebarItem icon={<Users />} text={"STAFF"} />
-          <SidebarItem icon={<FileText />} text={"CERTIFICATES"} />
-          <SidebarItem icon={<FaUserDoctor size={20} />} text={"DOCTOR FEES"} />
-          <SidebarItem icon={<Briefcase />} text={"TODAYS COLLECTIONS"} />
-        </Sidebar>
+        <DocSidebar/>
 
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
           <div className="flex md:flex-row h-fit flex-col items-center justify-between"> 

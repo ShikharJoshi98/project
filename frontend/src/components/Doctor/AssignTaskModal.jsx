@@ -9,7 +9,6 @@ const AssignTaskModal = ({ onClose }) => {
     const filteredEmployees = employees.filter(employee => employee?.role != 'doctor');
     const [Task, settask] = useState();
     const [username, setusername] = useState();
-    console.log(tasks);
     useEffect(() => {
         getDetails();
         getTasks();

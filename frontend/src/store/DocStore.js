@@ -128,6 +128,14 @@ export const docStore = create((set) => ({
         } catch (error) {
             console.log(error.message);   
         }
+    },
+    deleteHomeo: async ( id) => {
+        try {
+            const response = await axios.delete(`${DOC_API_URL}/homeo-delete/${id}`)
+            
+        } catch (error) {
+            console.log(error.message);   
+        }
     }
     
 }))

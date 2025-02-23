@@ -231,3 +231,16 @@ export const getPatientImages = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const deleteHomeoBhagwatcol = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const homeo = await Homeo.findByIdAndDelete(id);
+        if (!homeo) {
+            res.json({ success: false, message: "Cannot find" });
+        }
+        res.json({ success: true, message: "Deleted Successfully" });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}

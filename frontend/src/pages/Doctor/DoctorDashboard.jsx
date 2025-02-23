@@ -7,11 +7,11 @@ import { FaUserDoctor } from 'react-icons/fa6';
 import Sidebar, { SidebarItem } from '../../components/Sidebar';
 import AssignTaskModal from '../../components/Doctor/AssignTaskModal';
 import ApproveLeaveModal from '../../components/Doctor/ApproveLeaveModal';
+import DocSidebar from '../../components/Doctor/DocSidebar';
 
 const DoctorDashboard = () => {
   const { user, logout } = useAuthStore();
-    const [isTaskModalOpen, setTaskModalIsOpen] = useState(false);
-    const [isLeaveModalOpen, setLeaveModalIsOpen] = useState(false);
+   
 
   const navigate = useNavigate();
   function handleLogout() {
@@ -32,37 +32,11 @@ const DoctorDashboard = () => {
   
       updateDate();
     }, []);
-  useEffect(() => {
-        const savedTaskState = localStorage.getItem("modalTaskState");
-        const savedLeaveState = localStorage.getItem("modalLeaveState");
-
-        if (savedTaskState === "open") {
-          setTaskModalIsOpen(true);
-    }
-    if (savedLeaveState === "open") {
-      setLeaveModalIsOpen(true);
-    }
-        
-  }, []);
-   useEffect(() => {
-         localStorage.setItem("modalTaskState", isTaskModalOpen ? "open" : "closed");    
-         localStorage.setItem("modalLeaveState", isLeaveModalOpen ? "open" : "closed");    
-
-       }, [isTaskModalOpen,isLeaveModalOpen]);
-  return (
+ return(
     <div >
       <Docnavbar />
       <div className='flex '>
-        <Sidebar>
-        <SidebarItem onClick={()=>navigate('/general-appointment')}   icon={<ClipboardPlus />} text={"APPOINTMENTS "} />
-          <SidebarItem onClick={()=>setTaskModalIsOpen(true)}  icon={<LayoutList />} text={"ASSIGN TASK"} />
-          <SidebarItem onClick={()=>setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"LEAVE REPORTS "} />          
-          <SidebarItem  icon={<Users /> } text={"STAFF"} />
-          <SidebarItem icon={<FileText />} text={"CERTIFICATES"} />
-          <SidebarItem icon={<FaUserDoctor size={20}/>} text={"DOCTOR FEES"} />
-          <SidebarItem icon={<Briefcase />} text={"TODAYS COLLECTIONS"} />
-
-        </Sidebar>
+        <DocSidebar/>
         <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
         <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
             <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome {user?.fullname }</h1>
@@ -84,8 +58,7 @@ const DoctorDashboard = () => {
           </div>
         </div>
       </div>
-      {isTaskModalOpen && <AssignTaskModal onClose={() => setTaskModalIsOpen(false)} />}
-      {isLeaveModalOpen && <ApproveLeaveModal onClose={() => setLeaveModalIsOpen(false)} />}
+      
 
       </div>
   )

@@ -8,31 +8,37 @@ import { useNavigate } from 'react-router-dom'
 import { AiFillMedicineBox } from 'react-icons/ai'
 import Input from '../../components/Input'
 import { docStore } from '../../store/DocStore'
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 
 const HomeoMedicine = () => {
   const { user } = useAuthStore();
   const [editingRow, setEditingRow] = useState(null);
   const [editedData, setEditedData] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
   const handleEditClick = (idx, medicine) => {
     setEditingRow(idx);
-    setEditedData({ ...medicine }); // Store initial values
+    setEditedData({ ...medicine }); 
   };
-  // console.log(editedData);
   const handleChange = (e, col) => {
     setEditedData((prev) => ({
       ...prev,
-      [col]: e.target.value,  // Ensure correct field is updated
+      [col]: e.target.value,  
     }));
   };
-    const { homeobhagwat,section,setsection,gethomeobhagwat,Homeo,updatehomeobhagwat } = docStore();
+  const { homeobhagwat, section, setsection, gethomeobhagwat, Homeo, updatehomeobhagwat, deleteHomeo } = docStore();
+  
     const navigate = useNavigate();
     let [formValues, setFormValues] = useState({
         name: "",
         description: "",
               
     });
-  const HomeoMedicine = Homeo.filter((item) =>  item.section === 'medicine' );
+  const HomeoMedicine = Homeo.filter((item) => item.section === 'medicine');
   console.log(HomeoMedicine);
+  const filteredMedicine = HomeoMedicine.filter((item) =>item.name.toLowerCase().includes(searchTerm)||item.description.toLowerCase().includes(searchTerm));
+
     const [currentDate, setCurrentDate] = useState("");
         useEffect(() => {
           const updateDate = () => {
@@ -68,11 +74,109 @@ const HomeoMedicine = () => {
       alert("Failed to update details.");
     }
   }
-    async function handleSubmit(e){
-        e.preventDefault();
+  async function deleteCol(id) {
+    try {
+      await deleteHomeo(id);
+           
+      const updatedMedicines = HomeoMedicine.filter((medicine) => medicine._id !== id);
+    docStore.setState((prevState) => ({
+      ...prevState,
+      Homeo: updatedMedicines, 
+    }));
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  const generateTablePDF = () => {
+    const doc = new jsPDF();
+  
+    doc.setFontSize(34);
+    doc.text("Homeo Bhagwat Gita", 50, 20);
+  
+    doc.setFontSize(18);
+    doc.text("Medicine Details", 14, 40);
+  
+    // Define table columns
+    const tableColumn = ["Serial No.", "Medicine", "Description"];
+    const tableRows = HomeoMedicine.map((medicine, index) => [
+      index + 1,
+      medicine.name,
+      medicine.description,
+    ]);
+  
+    // Generate table with data
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 60,
+      styles: {
+        fontSize: 14,
+        textColor: [0, 0, 0],
+        fillColor: [255, 255, 255],
+        lineWidth: 0.5,
+        lineColor: [0, 0, 0],
+      },
+      headStyles: {
+        fontSize: 18,
+        fontStyle: "bold",
+        textColor: [0, 0, 0],
+        fillColor: [255, 255, 255],
+        lineWidth: 0.5,
+        lineColor: [0, 0, 0],
+      },
+    });
+  
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    window.open(pdfUrl, "_blank");
+  };
+  
+
+  const generatePDF = (medicine) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(34);
+    doc.text("Homeo Bhagwat Gita", 50, 20);
+  
+    doc.setFontSize(18);
+    doc.text("Medicine Details", 14, 40);
+  
+    const tableColumn = ["Serial No.", "Medicine", "Description"];
+    const tableRows = [[1, medicine.name, medicine.description]];
+  
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 60,
+      styles: {
+        fontSize: 14,
+        textColor: [0, 0, 0],
+        fillColor: [255, 255, 255], 
+        lineWidth: 0.5, 
+        lineColor: [0, 0, 0]
+      },
+      headStyles: {
+        fontSize: 18, 
+        fontStyle: "bold",
+        textColor: [0, 0, 0],
+        fillColor: [255, 255, 255],
+        lineWidth: 0.5, 
+        lineColor: [0, 0, 0]
+      },
+    });
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    window.open(pdfUrl, "_blank");
+
+  };
+    async function handleSubmit(e){      
         formValues = { ...formValues, "section": section };
         await homeobhagwat(formValues);
-    }
+  }
+  console.log(searchTerm);
   return (
       <div>
           <Docnavbar />
@@ -129,7 +233,10 @@ const HomeoMedicine = () => {
             </div>
             <div>
               <h1 className='text-3xl mb-3 text-blue-600 font-semibold'>Search</h1>
-              <Input icon={Search} type="text"  name="name"  placeholder='Enter Medicine Name or description'    required />
+              <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={Search} type="text" name="name" placeholder='Enter Medicine Name or description' required />
+                <div className='w-full flex justify-center sm:justify-end '>
+                  <button onClick={()=>generateTablePDF()} className='bg-blue-500  p-2 text-white rounded-md cursor-pointer sm:text-xl mt-5 flex items-center gap-4'>Generate Pdf<FaRegFilePdf size={25} /></button>
+                </div>
             </div>
             <div className="overflow-x-auto p-4 mt-3">
       <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
@@ -144,7 +251,7 @@ const HomeoMedicine = () => {
           </tr>
                 </thead>
                 <tbody>
-  {HomeoMedicine.map((medicine, idx) => (
+  {filteredMedicine.map((medicine, idx) => (
     <tr key={idx} className="bg-blue-100">
       <td className="py-3 px-4 border text-center">{idx + 1}</td>
       <td className="py-3 px-4 border text-center">
@@ -165,8 +272,8 @@ const HomeoMedicine = () => {
             value={editedData.description || ""}
             onChange={(e) => handleChange(e, "description")}
             onInput={(e) => {
-              e.target.style.height = "auto"; // Reset height
-              e.target.style.height = e.target.scrollHeight + "px"; // Adjust height dynamically
+              e.target.style.height = "auto"; 
+              e.target.style.height = e.target.scrollHeight + "px"; 
             }}
             className="bg-white border rounded p-1 w-full resize-none min-h-20"
             type="text"
@@ -186,8 +293,8 @@ const HomeoMedicine = () => {
           </button>
         )}
       </td>
-      <td className="py-3 px-4 border text-center cursor-pointer border-black text-red-500">{ <Trash />}</td>
-      <td className="py-3 px-4 border text-center cursor-pointer">{ <FaRegFilePdf size={25} />}</td>
+      <td onClick={()=>deleteCol(medicine?._id)} className="py-3 px-4 border text-center cursor-pointer border-black text-red-500">{ <Trash />}</td>
+      <td onClick={() => generatePDF(medicine)} className="py-3 px-4 border text-center cursor-pointer">{ <FaRegFilePdf size={25} />}</td>
     </tr>
   ))}
 </tbody>
