@@ -23,6 +23,7 @@ import GeneralAppointment from "./pages/Doctor/GeneralAppointment";
 import RepeatAppointment from "./pages/Doctor/RepeatAppointment";
 import CourierAppointment from "./pages/Doctor/CourierAppointment";
 import AppointmentDetails from "./pages/Doctor/AppointmentDetails";
+import UploadPatientCase from "./pages/Doctor/UploadPatientCase";
 
 
 
@@ -85,7 +86,8 @@ function App() {
           <Route path="/homeo-book-medicine" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoMedicine /></ProtectedRoute>} />
           <Route path="/homeo-book-disease" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoDisease /></ProtectedRoute>} />
           <Route path="/homeo-book-redline" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoRedline /></ProtectedRoute>} />
-          
+          <Route path="/upload-case-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadPatientCase /></ProtectedRoute>} />
+
 
 
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['hr']}><DoctorUpdate_HR /></ProtectedRoute>} />

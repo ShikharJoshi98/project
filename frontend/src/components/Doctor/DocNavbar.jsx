@@ -7,7 +7,12 @@ import { docStore } from '../../store/DocStore';
 const Docnavbar = () => {
     const [isOpen, setOpen] = useState(false);
     const [appopen, setappopen] = useState(false);
-    const { branch, setbranch } = docStore();
+    const { branch, setbranch, appointments } = docStore();
+    const domappointments = appointments.filter((appointment)=>appointment.PatientCase.branch==='Dombivali'
+    )
+    const mulappointments = appointments.filter((appointment)=>appointment.PatientCase.branch==='Mulund'
+    )
+    console.log(mulappointments);
     const menuRef = useRef(null);
       const { user, logout } = useAuthStore();
     const navigate = useNavigate();
@@ -50,8 +55,8 @@ const Docnavbar = () => {
                   <div className='group '>
                   <li  className="hover:text-gray-300  cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
                   <div className='absolute opacity-0 group-hover:opacity-100 transition-all duration-300 top-6  rounded-md border-1 border-white z-20 bg-[#404858] w-40 flex flex-col   h-auto'>
-                          <div onClick={() => { handleSectionChange('Dombivali')}} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Dombivali</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> 0</span></div>
-                          <div onClick={() => { handleSectionChange('Mulund'); }} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Mulund</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> 0</span></div>
+                          <div onClick={() => { handleSectionChange('Dombivali') }} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Dombivali</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> { domappointments.length}</span></div>
+                          <div onClick={() => { handleSectionChange('Mulund'); }} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Mulund</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> { mulappointments.length}</span></div>
                       </div>
                       </div>
                   <li onClick={()=>navigate('/homeo-book-medicine')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Homeo Bhagwat Gita</li>

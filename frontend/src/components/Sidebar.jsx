@@ -29,7 +29,7 @@ export function SidebarItem({ icon, text,onClick, active }) {
     
     return (
         <li onClick={onClick} title={text}
-            className={`h-10 flex items-center py-2 px-1 my-1 transition-colors font-medium rounded-md cursor-pointer ${active ? 'bg-blue-400' : 'hover:bg-blue-400'}`}
+            className={`h-10 flex items-center py-2 px-1 my-1 transition-colors font-medium rounded-md cursor-pointer ${active ? 'bg-blue-400' : 'hover:bg-gray-400/30'}`}
         >
             <div className='flex-shrink-0'>{icon}</div>
             <div

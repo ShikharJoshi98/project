@@ -30,13 +30,13 @@ const DocSidebar = () => {
   return (
     <div >
       <Sidebar>
-        <SidebarItem onClick={()=>navigate('/dashboard-DOCTOR')}   icon={<LayoutDashboard />} text={"DASHBOARD "} />
-          <SidebarItem onClick={()=>setTaskModalIsOpen(true)}  icon={<ListChecks />} text={"ASSIGN TASK"} />
-          <SidebarItem onClick={()=>setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"LEAVE REPORTS "} />          
-          <SidebarItem  icon={<Users /> } text={"STAFF"} />
-          <SidebarItem icon={<FileText />} text={"CERTIFICATES"} />
-          <SidebarItem icon={<FaUserDoctor size={20}/>} text={"DOCTOR FEES"} />
-          <SidebarItem icon={<Briefcase />} text={"TODAYS COLLECTIONS"} />
+        <SidebarItem onClick={()=>navigate('/dashboard-DOCTOR')}   icon={<LayoutDashboard />} text={"Dashboard "} />
+          <SidebarItem onClick={()=>setTaskModalIsOpen(true)}  icon={<ListChecks />} text={"Assign Task"} />
+          <SidebarItem onClick={()=>setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"Leave Reports "} />          
+          <SidebarItem  icon={<Users /> } text={"Staff"} />
+          <SidebarItem icon={<FileText />} text={"Certificates"} />
+          <SidebarItem icon={<FaUserDoctor size={20}/>} text={"Doctor Fees"} />
+          <SidebarItem icon={<Briefcase />} text={"Todays Collections"} />
 
       </Sidebar>
       {isTaskModalOpen && <AssignTaskModal onClose={() => setTaskModalIsOpen(false)} />}

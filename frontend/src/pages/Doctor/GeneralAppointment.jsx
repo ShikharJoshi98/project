@@ -72,7 +72,6 @@ const GeneralAppointment = () => {
   const GeneralAppointments = appointments.filter((appointment) => (
      appointment.AppointmentType === "general"
   ));
-console.log(GeneralAppointments);
   
     
 
@@ -106,8 +105,8 @@ console.log(GeneralAppointments);
               <button onClick={()=>setUploadModalIsOpen(true)} className='cursor-pointer flex items-center md:justify-center justify-between sm:gap-2 hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Upload <span><Plus/></span></button>
             </div>
             <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base md:text-lg'>
-                      <button onClick={() => { handleSectionChange('general','/general-appointment');   }}  className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-500 text-white  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>GENERAL</button>
-                          <button onClick={() => { handleSectionChange('repeat medicine','/repeat-appointment'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-300  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>REPEAT MEDICINE</button>
+              <button onClick={() => { handleSectionChange('general', '/general-appointment'); }} className={`cursor-pointer border-1  hover:scale-102 transition-all duration-300 bg-blue-500 text-white  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>GENERAL </button>
+                          <button onClick={() => { handleSectionChange('repeat medicine','/repeat-appointment'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-300  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>REPEAT MEDICINE </button>
                           <button onClick={() => { handleSectionChange('courier medicine','/courier-appointment');  }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-300  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>COURIER MEDICINE</button>
             </div>
             <div className="mt-10">

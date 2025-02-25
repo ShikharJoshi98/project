@@ -1,5 +1,5 @@
 import express from 'express';
-import { AppointmentDoc, assignTask, deleteHomeoBhagwatcol, DeleteTask, getHomeoBhagwat, getPatientAppDetails, getPatientImages, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage } from '../controllers/doctor.controller.js';
+import { AppointmentDoc, assignTask, deleteCaseImages, deleteHomeoBhagwatcol, DeleteTask, getHomeoBhagwat, getPatientAppDetails, getPatientImages, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -30,5 +30,7 @@ Docrouter.post('/upload-case-image/:id',upload.single("caseImage"),uploadCaseIma
 Docrouter.get("/case-images/:id", getPatientImages);
 Docrouter.delete('/homeo-delete/:id', deleteHomeoBhagwatcol);
 Docrouter.get('/get-patient-details/:appointmentType',getPatientAppDetails)
+Docrouter.delete('/patient/:patientId/case-images/:imageId', deleteCaseImages);
+
 
 export default Docrouter

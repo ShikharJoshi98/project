@@ -11,6 +11,7 @@ export const docStore = create((set) => ({
     appointments:[],
     Homeo: [],
     appointment: null,
+    caseImages:[],
     section: "medicine",
     setsection: (newsection) => set({ section: newsection }),
     branch: "",
@@ -36,7 +37,6 @@ export const docStore = create((set) => ({
     addTask: async (task, username) => {
         try {
             const response = await axios.post(`${DOC_API_URL}/new-task`, { task, username });
-            console.log(response.data.newTask);
             set({ task: response.data.newTask })
         } catch (error) {
             console.log(error.message);
@@ -128,6 +128,17 @@ export const docStore = create((set) => ({
             const response = await axios.post(`${DOC_API_URL}/upload-case-image/${id}`, formData, {
                 headers:{"Content-Type":"multipart/form-data"}
             })
+            set((state) => ({
+                caseImages: [...state.caseImages, response.data.patient.caseImages.imageUrl]
+            }));
+        } catch (error) {
+            console.log(error.message);   
+        }
+    },
+    getCaseImages: async (id) => {
+        try {
+            const response = await axios.get(`${DOC_API_URL}/case-images/${id}`)
+            set({ caseImages: response.data.caseImages });
         } catch (error) {
             console.log(error.message);   
         }
@@ -149,6 +160,10 @@ export const docStore = create((set) => ({
         } catch (error) {
             console.log(error);
         }
+    },
+    deleteCaseImage: async (patientId, imageId)=>{
+        let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);
+
     }
     
 }))

@@ -203,9 +203,9 @@ const HomeoDisease = () => {
             <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4'>{currentDate}</h1>
                       <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                       <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base md:text-lg'>
-                      <button  onClick={() => handleSectionChange("medicine", "/homeo-book-medicine")} className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='medicine'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>MEDICINE NAME</button>
-                          <button oonClick={() => handleSectionChange("disease", "/homeo-book-disease")}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='disease'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>DISEASE NAME</button>
-                          <button onClick={() => handleSectionChange("redline", "/homeo-book-redline")}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${section==='redline'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>RED LINE SYMPTOMS</button>
+                      <button  onClick={() => handleSectionChange("medicine", "/homeo-book-medicine")} className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-300  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>MEDICINE NAME</button>
+                          <button oonClick={() => handleSectionChange("disease", "/homeo-book-disease")}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-500 text-white p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>DISEASE NAME</button>
+                          <button onClick={() => handleSectionChange("redline", "/homeo-book-redline")}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-300  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>RED LINE SYMPTOMS</button>
                       </div>
                       <div>
                           <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 min-w-full border rounded-xl text-zinc-600 text-sm shadow-lg">

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { AppointmentDoctor } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
@@ -259,3 +260,31 @@ export const getPatientAppDetails = async (req, res) => {
         });
     }
 }
+
+export const deleteCaseImages = async (req, res) => {
+    const { patientId, imageId } = req.params;
+  
+    try {
+      if (!mongoose.Types.ObjectId.isValid(imageId)) {
+        return res.status(400).json({ message: "Invalid Image ID" });
+      }
+      const objectIdImageId = new mongoose.Types.ObjectId(imageId);
+  
+      const patient = await Patient.findById(patientId);
+      if (!patient) {
+        return res.status(404).json({ message: "Patient not found" });
+      }
+  
+     
+  
+      // Ensure `_id` comparison is done correctly
+      patient.caseImages = patient.caseImages.filter(img => img._id.toString() !== imageId);
+  
+      await patient.save();
+  
+      res.json({ success: true, message: "Image deleted successfully", updatedPatient: patient });
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      res.status(500).json({ error: "Failed to delete image" });
+    }
+  };
