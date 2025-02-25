@@ -22,7 +22,15 @@ const AppointmentModal = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
       await submitAppointment(formValues);
-      alert("appointment created");
+    alert("appointment created");
+    setFormValues({
+      AppointmentDate: "",
+      Time: "",
+      PatientCase: "",
+      Doctor: "",
+      AppointmentType: "",
+    })
+    
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +82,7 @@ const AppointmentModal = ({ onClose }) => {
                                           </option>
                       {  
                         patients.map((patient, idx) => (
-                          <option key={idx} >
+                          <option key={idx} value={patient._id} >
                              {patient?.fullname} / {patient?.casePaperNo} / {patient?.phone} (M)
                              </option>
                         ))
@@ -100,7 +108,7 @@ const AppointmentModal = ({ onClose }) => {
                       <option value="" disabled>
                         Select Doctor
                       </option>
-                      <option value="Santosh K Yadav">Santosh K. Yadav</option>
+                      <option value="67af90fb17878c8d22bc68c1">Santosh K. Yadav</option>
                       <option value="Mohit">Mohit</option>
                     </select>
                   </div>

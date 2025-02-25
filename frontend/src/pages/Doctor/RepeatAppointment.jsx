@@ -11,7 +11,7 @@ import AppointmentModal from "../../components/Doctor/AppointmentModal";
 import UploadCase from "../../components/Doctor/UploadCase";
 import DocSidebar from "../../components/Doctor/DocSidebar";
 
-const CourierAppointment = () => {
+const RepeatAppointment = () => {
   const { user } = useAuthStore();
   const [currentDate, setCurrentDate] = useState("");
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
@@ -69,9 +69,10 @@ const CourierAppointment = () => {
 
     getAppdetails(appointmentType);
   }, [getAppdetails])
-  const CourierAppointments = appointments.filter((appointment) => (
-     appointment.AppointmentType === "courier"
+  const RepeatAppointments = appointments.filter((appointment) => (
+     appointment.AppointmentType === "repeat"
   ));
+console.log(RepeatAppointments);
   
     
 
@@ -95,7 +96,7 @@ const CourierAppointment = () => {
           </div>
           <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>{
-`COURIER MEDICINE ${branch.toUpperCase()}`
+`REPEAT MEDICINE ${branch.toUpperCase()}`
 }
             </h1>
           <h1 className="text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4">{currentDate}</h1>
@@ -105,9 +106,9 @@ const CourierAppointment = () => {
               <button onClick={()=>setUploadModalIsOpen(true)} className='cursor-pointer flex items-center md:justify-center justify-between sm:gap-2 hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Upload <span><Plus/></span></button>
             </div>
             <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base md:text-lg'>
-                      <button onClick={() => { handleSectionChange('general','/general-appointment');   }}  className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-300  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>GENERAL</button>
-                          <button onClick={() => { handleSectionChange('repeat medicine','/repeat-appointment'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-300  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>REPEAT MEDICINE</button>
-                          <button onClick={() => { handleSectionChange('courier medicine','/courier-appointment'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 bg-blue-500  p-2 hover:bg-blue-600 text-white rounded-lg`}>COURIER MEDICINE</button>
+                      <button onClick={() => { handleSectionChange('general','/general-appointment');   }}  className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${appointmentType==='general'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>GENERAL</button>
+                          <button onClick={() => { handleSectionChange('repeat medicine','/repeat-appointment'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${appointmentType==='repeat medicine'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>REPEAT MEDICINE</button>
+                          <button onClick={() => { handleSectionChange('courier medicine','/courier-appointment'); }}   className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${appointmentType==='courier medicine'?"bg-blue-500 text-white":"bg-blue-300"}  p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>COURIER MEDICINE</button>
             </div>
             <div className="mt-10">
                 <Input icon={Search}  placeholder="Search for Patient's Name/Case Paper No./Mobile No."/>
@@ -129,7 +130,7 @@ const CourierAppointment = () => {
                 </thead>
                 <tbody className=" bg-gray-200  text-black  ">
                   {
-                    CourierAppointments.map((appointment, idx) => (
+                    RepeatAppointments.map((appointment, idx) => (
                       <tr key={idx}>
                         <td className="py-2 px-4 border">{ idx+1}</td>
                      <td  className="py-2 px-4 border">PATIENT'S IMAGE</td>
@@ -156,4 +157,4 @@ const CourierAppointment = () => {
   );
 };
 
-export default CourierAppointment;
+export default RepeatAppointment;

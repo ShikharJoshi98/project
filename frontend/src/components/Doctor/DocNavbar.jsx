@@ -21,7 +21,7 @@ const Docnavbar = () => {
         const handleSectionChange = (newBranch) => {
             setbranch(newBranch);
             localStorage.setItem("selectedBranch", newBranch); 
-            navigate('/appointment');
+            navigate('/general-appointment');
         };
     function handleLogout() {
         logout();

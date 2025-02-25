@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import HRrouter from "./routes/HR.route.js";
 import Docrouter from "./routes/Doctor.route.js";
 import Recrouter from "./routes/Receptionist.route.js";
+import { AppointmentDoctor } from "./models/AppointmentModel.js";
 dotenv.config();
 const app = express();
 connectDB();
@@ -25,6 +26,22 @@ app.use('/api/receptionist', Recrouter);
 //api endpoints
 app.get('/', (req, res) => {
     res.send("Server working");
+})
+
+app.get("/test-api", async (req, res) => {
+    try {
+
+        const appointment = await AppointmentDoctor.find({AppointmentType:"general"}).populate('PatientCase').populate('Doctor');
+
+        // const patientCases = appointment.map(appointment => appointment.PatientCase).reverse();
+
+        return res.json(appointment);       
+    } catch (error) {
+        console.log("Error in test API", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
 })
 
 

@@ -52,7 +52,6 @@ export const updatePatient = async (req, res) => {
     
         }
 }
-
 export const getPatients = async(req,res)=> {
     try {
         const patients = await Patient.find();

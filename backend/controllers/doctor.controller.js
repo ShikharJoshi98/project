@@ -107,7 +107,7 @@ export const updateleave= async (req, res) => {
 }
 export const AppointmentDoc = async (req, res) => {
     try {
-        let { AppointmentDate, Time, PatientCase, Doctor, AppointmentType } = req.body;
+        let { AppointmentDate, Time, PatientCase, Doctor, AppointmentType} = req.body;
         console.log("Incoming Data:", req.body);
 
        
@@ -242,5 +242,20 @@ export const deleteHomeoBhagwatcol = async (req, res) => {
         res.json({ success: true, message: "Deleted Successfully" });
     } catch (error) {
         res.json({ success: false, message: error.message });
+    }
+}
+export const getPatientAppDetails = async (req, res) => {
+    try {
+        const { AppointmentType } = req.params;
+        const appointment = await AppointmentDoctor.find(AppointmentType).populate('PatientCase').populate('Doctor');
+        
+        // const patientCases = appointment.map(appointment => appointment.PatientCase).reverse();
+
+        return res.json(appointment);       
+    } catch (error) {
+        console.log("Error in test API", error.message);
+        return res.json({
+            message: error.message
+        });
     }
 }

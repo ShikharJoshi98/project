@@ -16,10 +16,13 @@ import HRDashboard from "./pages/HR/HRDashboard";
 import ReceptionistUpdate from "./pages/HR/ReceptionistUpdate";
 import DoctorUpdate_HR from "./pages/HR/DoctorUpdate_HR";
 import TaskDetails from "./pages/HR/TaskDetails";
-import AppointmentDoc from "./pages/Doctor/AppointmentDoc";
 import HomeoMedicine from "./pages/Doctor/HomeoMedicine";
 import HomeoDisease from "./pages/Doctor/HomeoDisease";
 import HomeoRedline from "./pages/Doctor/HomeoRedline";
+import GeneralAppointment from "./pages/Doctor/GeneralAppointment";
+import RepeatAppointment from "./pages/Doctor/RepeatAppointment";
+import CourierAppointment from "./pages/Doctor/CourierAppointment";
+import AppointmentDetails from "./pages/Doctor/AppointmentDetails";
 
 
 
@@ -75,8 +78,10 @@ function App() {
 
           <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
-          <Route path="/appointment" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDoc /></ProtectedRoute>} />
-          
+          <Route path="/general-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><GeneralAppointment /></ProtectedRoute>} />
+          <Route path="/repeat-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><RepeatAppointment /></ProtectedRoute>} />
+          <Route path="/courier-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><CourierAppointment /></ProtectedRoute>} />
+          <Route path="/appointment-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDetails /></ProtectedRoute>} />
           <Route path="/homeo-book-medicine" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoMedicine /></ProtectedRoute>} />
           <Route path="/homeo-book-disease" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoDisease /></ProtectedRoute>} />
           <Route path="/homeo-book-redline" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoRedline /></ProtectedRoute>} />

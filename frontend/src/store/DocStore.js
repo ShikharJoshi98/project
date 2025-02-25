@@ -8,6 +8,7 @@ export const docStore = create((set) => ({
     tasks: [],
     task: null,
     leaves: [],
+    appointments:[],
     Homeo: [],
     appointment: null,
     section: "medicine",
@@ -137,6 +138,16 @@ export const docStore = create((set) => ({
             
         } catch (error) {
             console.log(error.message);   
+        }
+    },
+    getAppdetails: async (appointmentType) => {
+        try {
+            // console.log(appointmentType);
+            const response = await axios.get(`${DOC_API_URL}/get-patient-details/${appointmentType}`);
+            // console.log(response.data);
+            set({appointments:response.data})
+        } catch (error) {
+            console.log(error);
         }
     }
     
