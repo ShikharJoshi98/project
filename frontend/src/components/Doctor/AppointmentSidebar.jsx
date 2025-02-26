@@ -11,7 +11,7 @@ const AppointmentSidebar = () => {
   const [isLeaveModalOpen, setLeaveModalIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useParams();
-    console.log("id",location.id);
+  const path = useLocation();
    useEffect(() => {
           const savedTaskState = localStorage.getItem("modalTaskState");
           const savedLeaveState = localStorage.getItem("modalLeaveState");
@@ -38,9 +38,9 @@ const AppointmentSidebar = () => {
           <SidebarItem  icon={<History/>} text={"History Details"} />
           <SidebarItem  icon={<PlusCircle />} text={"Follow up "} />          
           <SidebarItem  icon={<NotebookIcon /> } text={"Present Complaints"} />
-          <SidebarItem  onClick={()=>navigate(`/upload-case-image/${location.id}`)} icon={<ImagesIcon />} text={"Case Paper Images"} />
+          <SidebarItem  active={path.pathname===`/upload-case-image/${location.id}`} onClick={()=>navigate(`/upload-case-image/${location.id}`)} icon={<ImagesIcon />} text={"Case Paper Images"} />
           <SidebarItem icon={<FaMagnifyingGlass size={20}/>} text={"Investigation"} />
-          <SidebarItem icon={<Stethoscope />} text={"Diagnosis Images"} />
+          <SidebarItem active={path.pathname===`/upload-diagnosis-image/${location.id}`} onClick={()=>navigate(`/upload-diagnosis-image/${location.id}`)} icon={<Stethoscope />} text={"Diagnosis Images"} />
           <SidebarItem icon={<ScrollTextIcon />} text={"Case Paper Report"} />
 
       </Sidebar>

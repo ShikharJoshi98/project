@@ -7,10 +7,10 @@ import { docStore } from '../../store/DocStore';
 const Docnavbar = () => {
     const [isOpen, setOpen] = useState(false);
     const [appopen, setappopen] = useState(false);
-    const { branch, setbranch, appointments } = docStore();
-    const domappointments = appointments.filter((appointment)=>appointment.PatientCase.branch==='Dombivali'
+    const {  setbranch, appointments } = docStore();
+    const domappointments = appointments.filter((appointment)=>appointment?.PatientCase?.branch==='Dombivali'
     )
-    const mulappointments = appointments.filter((appointment)=>appointment.PatientCase.branch==='Mulund'
+    const mulappointments = appointments.filter((appointment)=>appointment?.PatientCase?.branch==='Mulund'
     )
     console.log(mulappointments);
     const menuRef = useRef(null);
@@ -44,6 +44,8 @@ const Docnavbar = () => {
                     document.removeEventListener("mousedown", handleClikcOutside);
                 };
         }, []);
+        const [isHovered, setIsHovered] = useState(false);
+
   return (
     <div className='bg-[#404858]   w-full px-14 md:px-20 py-5 sticky top-0 z-50 flex items-center justify-between'>
           <div  className='text-white cursor-pointer font-semibold text-sm md:text-2xl flex items-center gap-2 '>
@@ -52,13 +54,33 @@ const Docnavbar = () => {
           </div>
           <div className='relative'>
               <ul className=' hidden lg:flex  items-center gap-6 text-white text-base'>
-                  <div className='group '>
-                  <li  className="hover:text-gray-300  cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
-                  <div className='absolute opacity-0 group-hover:opacity-100 transition-all duration-300 top-6  rounded-md border-1 border-white z-20 bg-[#404858] w-40 flex flex-col   h-auto'>
-                          <div onClick={() => { handleSectionChange('Dombivali') }} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Dombivali</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> { domappointments.length}</span></div>
-                          <div onClick={() => { handleSectionChange('Mulund'); }} className='flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between'><h1>Mulund</h1> <span className='bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold '> { mulappointments.length}</span></div>
-                      </div>
-                      </div>
+                  <div className="relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}>
+                  <li  className="hover:text-gray-300 group   cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
+                  {isHovered && (
+        <div className="absolute top-6 left-0 rounded-md border border-white z-50 bg-[#404858] w-40 flex flex-col h-auto">
+          <div
+            onClick={() => handleSectionChange("Dombivali")}
+            className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between"
+          >
+            <h1>Dombivali</h1>
+            <span className="bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold">
+              {domappointments.length}
+            </span>
+          </div>
+          <div
+            onClick={() => handleSectionChange("Mulund")}
+            className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between"
+          >
+            <h1>Mulund</h1>
+            <span className="bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold">
+              {mulappointments.length}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
                   <li onClick={()=>navigate('/homeo-book-medicine')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Homeo Bhagwat Gita</li>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Repeat Medicine</li>
                   <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Courier Mail</li>

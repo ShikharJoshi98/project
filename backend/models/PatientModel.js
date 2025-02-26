@@ -10,6 +10,13 @@ const PatientSchema = new mongoose.Schema({
             uploadedAt: { type: Date, default: Date.now },
         }
     ],
+    diagnosisImages: [
+        {
+            imageUrl: { type: String, required: true }, 
+            uploadedAt: { type: Date, default: Date.now },
+        }
+    ],
+    
     fullname: { type: String, required: true },
     age: { type: Number },
     gender: { type: String },
@@ -20,6 +27,13 @@ const PatientSchema = new mongoose.Schema({
     qualification: { type: String },
     occupation: { type: String },
     dietaryPreference: { type: String },
+    healthRecords: [
+        {
+            weight: { type: String },
+            bloodPressure: { type: String },
+            date:{type:String},
+        }
+    ],
     maritalStatus: { type: String },
     referredBy: { type: String},
     password: { type: String, required:true },

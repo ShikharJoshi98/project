@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import Docnavbar from '../../components/Doctor/DocNavbar';
-import { Briefcase, CalendarDays, ClipboardPlus, FileText, LayoutList, MapPin, Users } from 'lucide-react';
-import { FaUserDoctor } from 'react-icons/fa6';
-import Sidebar, { SidebarItem } from '../../components/Sidebar';
-import AssignTaskModal from '../../components/Doctor/AssignTaskModal';
-import ApproveLeaveModal from '../../components/Doctor/ApproveLeaveModal';
+import {  MapPin } from 'lucide-react';
 import DocSidebar from '../../components/Doctor/DocSidebar';
 
 const DoctorDashboard = () => {
@@ -14,10 +10,7 @@ const DoctorDashboard = () => {
    
   console.log(user);
   const navigate = useNavigate();
-  function handleLogout() {
-    logout();
-    navigate('/login');
-  }
+  
   const [currentDate, setCurrentDate] = useState("");
     useEffect(() => {
       const updateDate = () => {

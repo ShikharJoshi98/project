@@ -8,11 +8,12 @@ import { docStore } from '../../store/DocStore';
 const UploadCase = ({ onClose }) => {
   const { patients, getPatientDetails } = recStore();
   const { uploadCase } = docStore();
+      const [isSubmit, setSubmit] = useState(false);
+  
   useEffect(() => {
     getPatientDetails();
-  }, [getPatientDetails]);
+  }, [isSubmit]);
 
-  // Map patients for dropdown
   const patientArray = patients.map((patient) => ({
     value: patient._id,
     label: `${patient.fullname} / ${patient.casePaperNo} / ${patient.phone} (M)`,
@@ -22,15 +23,15 @@ const UploadCase = ({ onClose }) => {
   const [selectedPatient, setSelectedPatient] = useState(null); // Store selected patient object
 
   async function handleSubmit(e) {
-    e.preventDefault();
-   
+    
+    
+    try {
+      e.preventDefault(); 
 
     const formData = new FormData();
     formData.append("caseImage", image);
-    
-    try {
       await uploadCase(formData, selectedPatient.value); 
-      alert("Image uploaded successfully!");
+      setSubmit((prev) => !prev);
     } catch (error) {
       console.error("Upload error:", error);
       alert("Failed to upload image.");

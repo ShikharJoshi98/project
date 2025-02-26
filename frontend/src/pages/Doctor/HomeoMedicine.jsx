@@ -18,6 +18,7 @@ const HomeoMedicine = () => {
   const [editingRow, setEditingRow] = useState(null);
   const [editedData, setEditedData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  let [isSubmit, setSubmit] = useState(false);
   const handleEditClick = (idx, medicine) => {
     setEditingRow(idx);
     setEditedData({ ...medicine }); 
@@ -28,7 +29,7 @@ const HomeoMedicine = () => {
       [col]: e.target.value,  
     }));
   };
-  const { homeobhagwat, section, setsection, gethomeobhagwat, Homeo, updatehomeobhagwat, deleteHomeo } = docStore();
+  const { homeobhagwat, section, setsection, gethomeobhagwat ,Homeo, updatehomeobhagwat, deleteHomeo } = docStore();
   
     const navigate = useNavigate();
     let [formValues, setFormValues] = useState({
@@ -36,8 +37,13 @@ const HomeoMedicine = () => {
         description: "",
               
     });
+    useEffect(() => {
+      gethomeobhagwat();
+      
+        }, [isSubmit]);
+          
   const HomeoMedicine = Homeo.filter((item) => item.section === 'medicine');
-  console.log(HomeoMedicine);
+  // console.log(HomeoMedicine);
   const filteredMedicine = HomeoMedicine.filter((item) =>item.name.toLowerCase().includes(searchTerm)||item.description.toLowerCase().includes(searchTerm));
 
     const [currentDate, setCurrentDate] = useState("");
@@ -54,10 +60,7 @@ const HomeoMedicine = () => {
       
           updateDate();
         }, []);
-    useEffect(() => {
-      gethomeobhagwat();
-      
-        }, [gethomeobhagwat]);
+    
     
         const handleInputChange = (e) => {
             const { name, value } = e.target;
@@ -185,9 +188,11 @@ const HomeoMedicine = () => {
     window.open(pdfUrl, "_blank");
 
   };
-    async function handleSubmit(){      
+  async function handleSubmit(e) {    
+    e.preventDefault();
         formValues = { ...formValues, "section": section };
-        await homeobhagwat(formValues);
+    await homeobhagwat(formValues);
+    setSubmit((prev) => !prev);
   }
   console.log(searchTerm);
   return (

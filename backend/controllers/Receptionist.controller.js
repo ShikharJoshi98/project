@@ -34,11 +34,11 @@ export const register = async (req, res) => {
 
 export const updatePatient = async (req, res) => {
     try {
-            const { imageData,username,casePaperNo,fullname,age, gender,address,phone,Altphone,email,qualification,occupation,dietaryPreference,maritalStatus,referredBy,branch } = req.body;
+            const { imageData,username,casePaperNo,fullname,age, gender,address,phone,Altphone,email,qualification,occupation,dietaryPreference,weight,bloodPressure,maritalStatus,referredBy,branch } = req.body;
             
             const updatedpatient = await Patient.findByIdAndUpdate(
                 req.params.id,
-                { imageData,username,casePaperNo,fullname,age, gender,address,phone,Altphone,email,qualification,occupation,dietaryPreference,maritalStatus,referredBy,branch },
+                { imageData,username,casePaperNo,fullname,age, gender,address,phone,Altphone,email,qualification,occupation,dietaryPreference,weight,bloodPressure,maritalStatus,referredBy,branch },
                 { new: true, runValidators: true } 
             );
             if (!updatedpatient) {

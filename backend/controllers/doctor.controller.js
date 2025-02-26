@@ -190,7 +190,7 @@ export const updateHomeoBhagwat = async (req, res) => {
 
 export const uploadCaseImage = async (req, res) => {
     try{
-    const { id } = req.params; // Patient ID
+        const { id } = req.params; 
     const patient = await Patient.findById(id);
 
     if (!patient) {
@@ -201,11 +201,35 @@ export const uploadCaseImage = async (req, res) => {
         return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Convert image to Base64
     const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
     // Store the Base64 image in the database
     patient.caseImages.push({ imageUrl: base64Image });
+    await patient.save();
+
+    res.status(200).json({ message: "Image uploaded successfully", patient });
+
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+}
+}
+export const uploadDiagnosisImage = async (req, res) => {
+    try{
+        const { id } = req.params; 
+    const patient = await Patient.findById(id);
+
+    if (!patient) {
+        return res.status(404).json({ message: "Patient not found" });
+    }
+
+    if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+    patient.diagnosisImages.push({ imageUrl: base64Image });
     await patient.save();
 
     res.status(200).json({ message: "Image uploaded successfully", patient });
@@ -232,6 +256,22 @@ export const getPatientImages = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+export const getDiagnosisImages = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const patient = await Patient.findById(id);
+
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+
+        res.status(200).json({ diagnosisImages: patient.diagnosisImages });
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
 
 export const deleteHomeoBhagwatcol = async (req, res) => {
     try {
@@ -248,10 +288,9 @@ export const deleteHomeoBhagwatcol = async (req, res) => {
 export const getPatientAppDetails = async (req, res) => {
     try {
         const { AppointmentType } = req.params;
-        const appointment = await AppointmentDoctor.find(AppointmentType).populate('PatientCase').populate('Doctor');
+        let appointment = await AppointmentDoctor.find(AppointmentType).populate('PatientCase').populate('Doctor');
         
-        // const patientCases = appointment.map(appointment => appointment.PatientCase).reverse();
-
+        appointment = appointment.reverse();
         return res.json(appointment);       
     } catch (error) {
         console.log("Error in test API", error.message);
@@ -268,23 +307,84 @@ export const deleteCaseImages = async (req, res) => {
       if (!mongoose.Types.ObjectId.isValid(imageId)) {
         return res.status(400).json({ message: "Invalid Image ID" });
       }
-      const objectIdImageId = new mongoose.Types.ObjectId(imageId);
   
       const patient = await Patient.findById(patientId);
       if (!patient) {
         return res.status(404).json({ message: "Patient not found" });
       }
   
-     
-  
-      // Ensure `_id` comparison is done correctly
       patient.caseImages = patient.caseImages.filter(img => img._id.toString() !== imageId);
   
       await patient.save();
   
-      res.json({ success: true, message: "Image deleted successfully", updatedPatient: patient });
+      res.json({ success: true, message: "Image deleted successfully" });
     } catch (error) {
       console.error("Error deleting image:", error);
       res.status(500).json({ error: "Failed to delete image" });
     }
-  };
+};
+export const deleteDiagnosisImages = async (req, res) => {
+    const { patientId, imageId } = req.params;
+    try {
+      if (!mongoose.Types.ObjectId.isValid(imageId)) {
+        return res.status(400).json({ message: "Invalid Image ID" });
+      }
+  
+      const patient = await Patient.findById(patientId);
+      if (!patient) {
+        return res.status(404).json({ message: "Patient not found" });
+      }
+  
+      patient.diagnosisImages = patient.diagnosisImages.filter(img => img._id.toString() !== imageId);
+  
+      await patient.save();
+      res.json({ success: true, message: "Image deleted successfully"});
+
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      res.status(500).json({ error: "Failed to delete image" });
+    }
+};
+  
+export const addHealthRecord = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {  weight, bloodPressure,date } = req.body;
+
+        const patient = await Patient.findById(id);
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+
+        patient.healthRecords.push({
+            weight,
+            bloodPressure,
+            date
+        });
+
+        await patient.save();
+
+        res.status(200).json({ message: "Health record updated successfully", patient });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+export const deleteHealthRecord = async (req, res) => {
+    try {
+        const { id,recordId } = req.params;
+
+        const patient = await Patient.findById(id);
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+
+        patient.healthRecords = patient.healthRecords.filter(record => record._id.toString() !== recordId);
+
+
+        await patient.save();
+
+        res.status(200).json({ message: "Health record updated successfully", patient });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};

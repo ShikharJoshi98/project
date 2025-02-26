@@ -1,17 +1,18 @@
 import axios  from "axios";
 import { create } from "zustand";
 
-const DOC_API_URL = "http://localhost:4000/api/doctor";
+export const DOC_API_URL = "http://localhost:4000/api/doctor";
 axios.defaults.withCredentials = true;
 
-export const docStore = create((set) => ({
+export const docStore = create((set,get) => ({
     tasks: [],
     task: null,
     leaves: [],
     appointments:[],
     Homeo: [],
     appointment: null,
-    caseImages:[],
+    caseImages: [],
+    diagnosisImages:[],
     section: "medicine",
     setsection: (newsection) => set({ section: newsection }),
     branch: "",
@@ -94,8 +95,9 @@ export const docStore = create((set) => ({
     },
     homeobhagwat: async (data) => {
         try {
-            await axios.post(`${DOC_API_URL}/homeo-book`, data);
+            await axios.post(`${DOC_API_URL}/homeo-book`, data);        
     
+            
         } catch (error) {
             console.log(error.message);
 
@@ -143,6 +145,14 @@ export const docStore = create((set) => ({
             console.log(error.message);   
         }
     },
+    getDiagnosisImages: async (id) => {
+        try {
+            const response = await axios.get(`${DOC_API_URL}/diagnosis-images/${id}`)
+            set({ diagnosisImages: response.data.diagnosisImages });
+        } catch (error) {
+            console.log(error.message);   
+        }
+    },
     deleteHomeo: async ( id) => {
         try {
             const response = await axios.delete(`${DOC_API_URL}/homeo-delete/${id}`)
@@ -155,7 +165,6 @@ export const docStore = create((set) => ({
         try {
             // console.log(appointmentType);
             const response = await axios.get(`${DOC_API_URL}/get-patient-details/${appointmentType}`);
-            // console.log(response.data);
             set({appointments:response.data})
         } catch (error) {
             console.log(error);

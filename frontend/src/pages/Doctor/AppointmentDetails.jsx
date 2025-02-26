@@ -4,15 +4,13 @@ import DocSidebar from '../../components/Doctor/DocSidebar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
 import {  useLocation, useParams } from 'react-router-dom'
 import { recStore } from '../../store/RecStore'
+import HealthAssessment from '../../components/Doctor/HealthAssessment'
 
 const AppointmentDetails = () => {
-    const { patients, getPatientDetails } = recStore();
-    useEffect(() => {
-        getPatientDetails();
-    }, [getPatientDetails]);
+    const { patients } = recStore();
+    
     const location = useParams();
     const patient = patients.filter((cand => (cand._id) === location.id));
-    console.log(patient);
   return (
       <div>
           <Docnavbar />
@@ -51,6 +49,12 @@ const AppointmentDetails = () => {
                               </div>
                           </div>
                       </div>
+                      <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
+                      <div className='mt-12'>
+                          <HealthAssessment/>
+                      </div>
+                      <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
+
                  </div>
               </div>
 

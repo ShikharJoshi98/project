@@ -8,19 +8,20 @@ const AssignTaskModal = ({ onClose }) => {
     const { addTask, tasks,getTasks,DeleteTask } = docStore();
     const filteredEmployees = employees.filter(employee => employee?.role != 'doctor');
     const [Task, settask] = useState();
+  const [isSubmit, setIsSubmit] = useState(false);
     const [username, setusername] = useState();
     useEffect(() => {
         getDetails();
         getTasks();
-    }, [getDetails,getTasks]);
+    }, [isSubmit]);
     async function handleSubmit(e) {
         try {
-            
-            await addTask(Task, username);
-            alert("Task Added Successfully")
+            e.preventDefault();
+          await addTask(Task, username);
+          setIsSubmit((prev)=>!prev);
         } catch (error) {
             console.log(error.message);
-        }        
+        } 
     }
     async function Delete(id){
        await DeleteTask(id);
@@ -87,7 +88,8 @@ const AssignTaskModal = ({ onClose }) => {
   <th className="border border-gray-500 p-2">Status</th>
   <th className="border border-gray-500 p-2">Delete</th>
 </tr>
-                          </thead>
+              </thead>
+              
                           <tbody>
                               {tasks.map((task,idx) => (
                            <tr key={idx} className="hover:bg-blue-300  bg-blue-200 transition-all">

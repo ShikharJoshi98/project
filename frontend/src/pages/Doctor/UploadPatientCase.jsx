@@ -8,22 +8,23 @@ import { docStore } from '../../store/DocStore';
 
 const UploadPatientCase = () => {
     const { getCaseImages,caseImages,uploadCase,deleteCaseImage } = docStore();
-    const location = useParams();
+  const location = useParams();
+        const [isSubmit, setSubmit] = useState(false);
     useEffect(() => {
         getCaseImages(location.id);
-    }, [getCaseImages])
+    }, [isSubmit])
       const [image, setImage] = useState(null);
     
-    async function handleSubmit() {
+    async function handleSubmit(e) {
         
    
-
+      e.preventDefault();
         const formData = new FormData();
         formData.append("caseImage", image);
         
         try {
           await uploadCase(formData, location.id); 
-          alert("Image uploaded successfully!");
+          setSubmit((prev) => !prev);
         } catch (error) {
           console.error("Upload error:", error);
           alert("Failed to upload image.");
@@ -52,15 +53,16 @@ const UploadPatientCase = () => {
             </div>
             </div>
                       </form>
-                      <div className='flex items-center gap-20 flex-wrap mt-10'>  
-                          {
+            <div className='flex items-center gap-20 flex-wrap mt-10'>  
+              {    
                               caseImages.map((image, idx) => (
                                   <div className='flex flex-col items-center gap-2'>
                                   <img src={image?.imageUrl} className='size-64' alt="" key={idx} />
-                                  <div title='delete' onClick={async () => { await deleteCaseImage(location.id, image?._id); const newImages = caseImages.filter(img => img._id !== image?._id);  docStore.setState({caseImages:newImages})}} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2/></div>
+                                  <div title='delete' onClick={async () => { await deleteCaseImage(location.id, image?._id); setSubmit((prev)=>!prev)}} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2/></div>
                                 </div>
                               ))
-                          }
+                
+              }
                       </div>
               </div>
               </div>
