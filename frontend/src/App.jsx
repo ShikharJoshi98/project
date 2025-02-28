@@ -25,6 +25,7 @@ import CourierAppointment from "./pages/Doctor/CourierAppointment";
 import AppointmentDetails from "./pages/Doctor/AppointmentDetails";
 import UploadPatientCase from "./pages/Doctor/UploadPatientCase";
 import UploadDiagnosis from "./pages/Doctor/UploadDiagnosis";
+import FollowUp from "./pages/Doctor/FollowUp";
 
 
 
@@ -89,6 +90,7 @@ function App() {
           <Route path="/homeo-book-redline" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoRedline /></ProtectedRoute>} />
           <Route path="/upload-case-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadPatientCase /></ProtectedRoute>} />
           <Route path="/upload-diagnosis-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadDiagnosis /></ProtectedRoute>} />
+          <Route path="/follow-up/:id" element={<ProtectedRoute allowedRoles={['doctor']}><FollowUp /></ProtectedRoute>} />
 
 
 

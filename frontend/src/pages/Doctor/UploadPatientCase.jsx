@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
-import { useLocation, useParams } from 'react-router-dom';
-import { Delete, DeleteIcon, Image, Trash2 } from 'lucide-react';
+import {  useParams } from 'react-router-dom';
+import {  Image, Trash2 } from 'lucide-react';
 import Input from '../../components/Input';
 import { docStore } from '../../store/DocStore';
 
