@@ -5,6 +5,7 @@ import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
 import {  useLocation, useParams } from 'react-router-dom'
 import { recStore } from '../../store/RecStore'
 import HealthAssessment from '../../components/Doctor/HealthAssessment'
+import PreviousPrescriptions from '../../components/Doctor/PreviousPrescriptions'
 
 const AppointmentDetails = () => {
     const { patients } = recStore();
@@ -52,6 +53,10 @@ const AppointmentDetails = () => {
                       <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
                       <div className='mt-12'>
                           <HealthAssessment/>
+                      </div>
+                      <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
+                      <div className='mt-12'>
+                          <PreviousPrescriptions/>
                       </div>
                       <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
 

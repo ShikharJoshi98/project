@@ -72,7 +72,7 @@ const HealthAssessment = () => {
          <div className='p-2  overflow-x-auto w-full mt-5'>
               <table className="border-collapse  w-full border-2 border-gray-500 ">
                   <thead>
-                  <tr className="bg-blue-500 text-white">
+                  <tr className="bg-blue-500 text-lg text-white">
                     <th className="border border-gray-500 p-2">SNo.</th>
                     <th className="border border-gray-500 p-2">Assesment Date</th>
                     <th className="border border-gray-500 p-2">Blood Pressure</th>
@@ -83,7 +83,7 @@ const HealthAssessment = () => {
                   <tbody>
                   {patient.map((el, idx) => (
   el.healthRecords.map((healthRecord, recordIdx) => (
-    <tr key={`${idx}-${recordIdx}`} className="bg-blue-200">
+    <tr key={`${idx}-${recordIdx}`} className="bg-blue-200 text-lg">
       <td className="border border-gray-300 px-4 py-2 text-center">{recordIdx+1}</td>
       <td className="border border-gray-300 px-4 py-2 text-center">{healthRecord?.date}</td>
       <td className="border border-gray-300 px-4 py-2 text-center">
