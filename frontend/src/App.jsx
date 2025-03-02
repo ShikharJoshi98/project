@@ -27,6 +27,7 @@ import UploadPatientCase from "./pages/Doctor/UploadPatientCase";
 import UploadDiagnosis from "./pages/Doctor/UploadDiagnosis";
 import FollowUp from "./pages/Doctor/FollowUp";
 import HistoryDetails from "./pages/Doctor/HistoryDetails";
+import PresentComplaints from "./pages/Doctor/PresentComplaints";
 
 
 
@@ -93,6 +94,7 @@ function App() {
           <Route path="/upload-diagnosis-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadDiagnosis /></ProtectedRoute>} />
           <Route path="/follow-up/:id" element={<ProtectedRoute allowedRoles={['doctor']}><FollowUp /></ProtectedRoute>} />
           <Route path="/history-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><HistoryDetails /></ProtectedRoute>} />
+          <Route path="/present-complaints/:id" element={<ProtectedRoute allowedRoles={['doctor']}><PresentComplaints /></ProtectedRoute>} />
 
 
 

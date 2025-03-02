@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import AppointmentSidebar from "../../components/Doctor/AppointmentSidebar"
 import Docnavbar from "../../components/Doctor/DocNavbar"
 import SignatureCanvas from 'react-signature-canvas';
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { DOC_API_URL } from "../../store/DocStore";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const modules = {
   toolbar: [
@@ -23,8 +26,37 @@ const modules = {
 
 
 const FollowUp = () => {
-  const [pad, setpad] = useState('scribble');
-  const [value, setvalue] = useState('');
+  const scribbleRef = useRef(null);
+  const [scribble, setscribble] = useState(null);
+  const [pad, setpad] = useState("scribble");
+  const [value, setvalue] = useState("");
+  const [isSubmit, setSubmit] = useState(false);
+  const location = useParams();
+  const handleClear = () => {
+    if (scribbleRef.current) {
+      scribbleRef.current.clear();
+      setscribble(null);
+    }
+  };  
+
+  async function handleSave(e) {
+    e.preventDefault();
+      const res = scribbleRef.current.getCanvas().toDataURL("image/png");
+      setscribble(res);
+      const blob = await fetch(res).then((r) => r.blob());
+      const file = new File([blob], "followUpImage.png", { type: "image/png" });
+    const formData = new FormData();
+    formData.append("followUpImage", file);
+    try {
+      await axios.post(`${DOC_API_URL}/upload-followup-image/${location.id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
+      alert('Uploaded');
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   return (
     <div>
       <Docnavbar />
@@ -42,6 +74,7 @@ const FollowUp = () => {
             {pad === 'scribble' &&
               <div className="border-1 border-stone-700 rounded-lg   mx-auto mt-10 bg-white">
                 <SignatureCanvas penColor='black'
+                  ref={scribbleRef}
                   canvasProps={{ className: 'sigCanvas w-[80vw]  h-[40vh] md:h-[85vh]' }} />
               </div>
             }
@@ -57,9 +90,10 @@ const FollowUp = () => {
               </div>
             }
             <div className="flex mt-7 items-center justify-center gap-5 ">
-              <button className={`p-2 cursor-pointer bg-green-500  text-white font-semibold hover:bg-green-600 hover:scale-102 rounded-md text-sm sm:text-xl `}>Save</button>
-              <button className={`p-2 cursor-pointer bg-red-500  text-white font-semibold hover:bg-red-600 hover:scale-102 rounded-md text-sm sm:text-xl `}>Clear</button>
+              <button onClick={handleSave} className={`p-2 cursor-pointer bg-green-500  text-white font-semibold hover:bg-green-600 hover:scale-102 rounded-md text-sm sm:text-xl `}>Save</button>
+              <button onClick={handleClear} className={`p-2 cursor-pointer bg-red-500  text-white font-semibold hover:bg-red-600 hover:scale-102 rounded-md text-sm sm:text-xl `}>Clear</button>
             </div>
+
           </div>
         </div>
       </div>

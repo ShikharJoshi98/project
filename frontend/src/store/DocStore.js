@@ -12,7 +12,8 @@ export const docStore = create((set,get) => ({
     Homeo: [],
     appointment: null,
     caseImages: [],
-    diagnosisImages:[],
+    diagnosisImages: [],
+    followUpImages:[],
     section: "medicine",
     setsection: (newsection) => set({ section: newsection }),
     branch: "",
@@ -163,7 +164,6 @@ export const docStore = create((set,get) => ({
     },
     getAppdetails: async (appointmentType) => {
         try {
-            // console.log(appointmentType);
             const response = await axios.get(`${DOC_API_URL}/get-patient-details/${appointmentType}`);
             set({appointments:response.data})
         } catch (error) {
@@ -173,6 +173,15 @@ export const docStore = create((set,get) => ({
     deleteCaseImage: async (patientId, imageId)=>{
         let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);
 
-    }
+    },
+    getFollowUpImages: async (id) => {
+        try {
+            const response = await axios.get(`${DOC_API_URL}/followup-images/${id}`)
+            set({ followUpImages : response.data.followUpImages
+            });
+        } catch (error) {
+            console.log(error.message);   
+        }
+    },
     
 }))

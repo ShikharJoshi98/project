@@ -16,7 +16,18 @@ const PatientSchema = new mongoose.Schema({
             uploadedAt: { type: Date, default: Date.now },
         }
     ],
-    
+    followUpImages: [
+        {
+            imageUrl: { type: String, required: true }, 
+            uploadedAt: { type: Date, default: Date.now },
+        }
+    ],  
+    complaintImages: [
+        {
+            imageUrl: { type: String, required: true }, 
+            uploadedAt: { type: Date, default: Date.now },
+        }
+    ],
     fullname: { type: String, required: true },
     age: { type: Number },
     gender: { type: String },

@@ -37,7 +37,7 @@ const AppointmentSidebar = () => {
         <SidebarItem   icon={<FaMoneyBill size={20}/>} text={"Consultation Charges "} />
           <SidebarItem active={path.pathname===`/history-details/${location.id}`} onClick={()=>navigate(`/history-details/${location.id}`)}   icon={<History/>} text={"History Details"} />
           <SidebarItem active={path.pathname===`/follow-up/${location.id}`} onClick={()=>navigate(`/follow-up/${location.id}`)} icon={<PlusCircle />} text={"Follow up "} />          
-          <SidebarItem  icon={<NotebookIcon /> } text={"Present Complaints"} />
+          <SidebarItem active={path.pathname===`/present-complaints/${location.id}`} onClick={()=>navigate(`/present-complaints/${location.id}`)}  icon={<NotebookIcon /> } text={"Present Complaints"} />
           <SidebarItem  active={path.pathname===`/upload-case-image/${location.id}`} onClick={()=>navigate(`/upload-case-image/${location.id}`)} icon={<ImagesIcon />} text={"Case Paper Images"} />
           <SidebarItem icon={<FaMagnifyingGlass size={20}/>} text={"Investigation"} />
           <SidebarItem active={path.pathname===`/upload-diagnosis-image/${location.id}`} onClick={()=>navigate(`/upload-diagnosis-image/${location.id}`)} icon={<Stethoscope />} text={"Diagnosis Images"} />
