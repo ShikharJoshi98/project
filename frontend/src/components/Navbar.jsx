@@ -33,7 +33,7 @@ const Navbar = () => {
               </ul>
               
                   
-                  <button onClick={() => setOpen(!isOpen)} class="md:hidden cursor-pointer hover:text-gray-200 text-white font-semibold text-xl">☰</button>
+                  <button onClick={() => setOpen(!isOpen)} className="md:hidden cursor-pointer hover:text-gray-200 text-white font-semibold text-xl">☰</button>
                   {isOpen && <div ref={menuRef} className='absolute md:hidden border-white border-1 rounded-md w-28 z-10 bg-[#404858] p-4 text-white  right-5 overflow-hidden"'>
                   <p onClick={()=>navigate('/')} className='text-center  hover:text-gray-300 cursor-pointer'>Home</p>                         
                  <p onClick={()=>navigate('/register')} className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Register</p>
