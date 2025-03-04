@@ -1,28 +1,33 @@
-import React, { useState } from 'react'
-import MultiSelectDropdown from './MultiSelectInput'
+import { Calendar, Clock, Pill, Plus, Tablets, TestTube, X } from 'lucide-react';
+import React, { useEffect } from 'react';
+import MultiSelectDropdown from './MultiSelectInput';
 import Input from '../Input';
-import { Calendar, Clock, Pill, Plus, Tablets, TestTube } from 'lucide-react';
-import DiagnosisModal from './PrescriptionModal';
 
-const PrescribeMedicine = () => {
-  const [isDiagnosisModalOpen, setDiagnosisModalIsOpen] = useState(false);
-
+const PrescriptionModal = ({ onClose }) => {
     const options = ["Boils", "Diarrhea", "Appendix", "Fever", "Cough", "Flu", "Cold"];
-    const handleSubmit = () => {
 
-    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+  }
 
-    return (
-        <div>
-            <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>
-                PRESCRIBE MEDICINE
-            </h1>
-            <form onSubmit={handleSubmit}>
+  return (
+    <div className="bg-black/50 fixed inset-0 flex items-center justify-center p-4 z-[9999]">
+      <div className="bg-[#e9ecef] max-h-[90vh] max-w-[80vw] overflow-y-auto flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
+        >
+          <X size={24} />
+        </button>
+        <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
+          Add Prescription
+        </h1>
+        <form onSubmit={handleSubmit}>
                 <div className='sm:grid flex flex-col pl-10 gap-y-5 gap-x-2 grid-cols-2'>
                     <div>
-                        <div className='flex items-center justify-between mb-2 pr-10'>
+                        <div className='flex items-center justify-between mb-2 pr-5'>
                             <h1 className='text-black font-semibold '>Diagnosis:</h1>
-                            <button onClick={()=>setDiagnosisModalIsOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus/></button>
+                            <button  type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus/></button>
                             </div>
                         <MultiSelectDropdown options={options} />
                     </div>
@@ -98,12 +103,11 @@ const PrescribeMedicine = () => {
                 <div className='flex justify-center mt-5 '>
                     <button className='bg-blue-500 cursor-pointer text-lg hover:bg-blue-600 rounded-md text-white p-2'>Submit</button>
                 </div>
-                {isDiagnosisModalOpen && <DiagnosisModal onClose={() => setDiagnosisModalIsOpen(false)} />}
 
             </form>
+      </div>
+    </div>
+  );
+};
 
-        </div>
-    )
-}
-
-export default PrescribeMedicine
+export default PrescriptionModal;
