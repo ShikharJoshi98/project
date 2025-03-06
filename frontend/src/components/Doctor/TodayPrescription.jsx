@@ -10,7 +10,7 @@ const TodayPrescriptions = () => {
             <div className="overflow-x-auto p-4 mt-3">
                 <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                     <thead>
-                        <tr className="text-lg bg-blue-500 text-white ">
+                        <tr className=" bg-blue-500 text-white ">
                             <th className="py-2 px-4 border">Diagnosis</th>
                             <th className="py-2 px-4 border">Medicine</th>
                             <th className="py-2 px-4 border">Potency</th>

@@ -8,7 +8,8 @@ export const docStore = create((set,get) => ({
     tasks: [],
     task: null,
     leaves: [],
-    appointments:[],
+    appointments: [],
+    Diagnosis: [],
     Homeo: [],
     appointment: null,
     caseImages: [],
@@ -183,5 +184,13 @@ export const docStore = create((set,get) => ({
             console.log(error.message);   
         }
     },
+    getDiagnosis: async (id) => {
+        try {
+            const response = await axios.get(`${DOC_API_URL}/get-diagnosis/${id}`)
+            set({ Diagnosis : response.data.diagnosis });
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
     
 }))

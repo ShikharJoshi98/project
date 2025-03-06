@@ -38,6 +38,11 @@ const PatientSchema = new mongoose.Schema({
     qualification: { type: String },
     occupation: { type: String },
     dietaryPreference: { type: String },
+    prescription: [
+        {
+           diagnosis: [{type:String}]
+       }
+    ],
     healthRecords: [
         {
             weight: { type: String },

@@ -1,5 +1,5 @@
 import express from 'express';
-import { addHealthRecord, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpImages, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, getDiagnosisImages, getFollowUpImages, getHomeoBhagwat, getPatientAppDetails, getPatientImages, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addDiagnosis, addHealthRecord, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpImages, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, getDiagnosis, getDiagnosisImages, getFollowUpImages, getHomeoBhagwat, getPatientAppDetails, getPatientImages, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -41,5 +41,8 @@ Docrouter.post('/upload-complaint-image/:id',upload.single("complaintImage"),upl
 Docrouter.get("/followup-images/:id", getFollowUpImages);
 Docrouter.get("/compaint-images/:id", getDiagnosisImages);
 Docrouter.delete('/patient/:patientId/followup-images/:imageId', deleteFollowUpImages);
+Docrouter.post('/add-diagnosis/:id', addDiagnosis);
+Docrouter.get("/get-diagnosis/:id", getDiagnosis);
+
 
 export default Docrouter

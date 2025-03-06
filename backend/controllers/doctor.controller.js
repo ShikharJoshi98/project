@@ -482,3 +482,38 @@ export const deleteFollowUpImages = async (req, res) => {
         res.status(500).json({ error: "Failed to delete image" });
     }
 };
+
+export const addDiagnosis = async (req, res) => {
+    
+    try {
+        const { diagnosis } = req.body;
+        const { id } = req.params;
+        const patient = await Patient.findById(id);
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+
+        if (patient.prescription.length === 0) {
+            patient.prescription.push({ diagnosis: [] });
+        }
+
+        patient.prescription[0].diagnosis.push(diagnosis);
+        await patient.save();
+        
+        res.status(200).json({ message: "Diagnosis added successfully", patient });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+}
+
+export const getDiagnosis = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const patient = await Patient.findById(id);
+        res.status(200).json({
+            diagnosis : patient.prescription[0].diagnosis
+        });
+    } catch (error) {
+        
+    }
+}
