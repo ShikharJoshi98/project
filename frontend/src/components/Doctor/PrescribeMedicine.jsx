@@ -1,109 +1,159 @@
-import React, { useState } from 'react'
-import MultiSelectDropdown from './MultiSelectInput'
-import Input from '../Input';
 import { Calendar, Clock, Pill, Plus, Tablets, TestTube } from 'lucide-react';
-import DiagnosisModal from './PrescriptionModal';
+import React, { useEffect, useState } from 'react';
+import MultiSelectDropdown from './MultiSelectInput';
+import Input from '../Input';
+import axios from 'axios';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
+import { useParams } from 'react-router-dom';
+
+const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
+const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day'];
+const doseArray = ['Single Dose', '3 Dose Half-Hour Interval', '2 Dose Half-Hour Interval'];
 
 const PrescribeMedicine = () => {
-  const [isDiagnosisModalOpen, setDiagnosisModalIsOpen] = useState(false);
+    const [isDiagnosisOpen, setDiagnosisOpen] = useState(false);
+    const [selectedDiagnosisOptions, setSelectedDiagnosisOptions] = useState([]);
+    const location = useParams();
+    const { Diagnosis, getDiagnosis } = docStore();
+    const [submit, setsubmit] = useState(false);
+    const [formData, setFormData] = useState({
+        medicine: '',
+        potency: '',
+        startDate: '',
+        dose: '',
+        duration: '',
+        note: ''
+    });
 
-    const options = ["Boils", "Diarrhea", "Appendix", "Fever", "Cough", "Flu", "Cold"];
-    const handleSubmit = () => {
+    useEffect(() => {
+        getDiagnosis(location.id);
+    }, [getDiagnosis, submit]);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(`${DOC_API_URL}/add-prescription/${location.id}`, 
+                formData, 
+                {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleDiagnosisSubmit = async () => {
+        try {
+            await axios.post(`${DOC_API_URL}/add-diagnosis/${location.id}`, { diagnosis: formData.diagnosis });
+            setFormData(prev => ({ ...prev, diagnosis: '' }));
+            setsubmit(prev => !prev);
+        } catch (error) {
+            console.error("Error adding diagnosis:", error.response?.data || error.message);
+        }
+    }
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value, selectedDiagnosisOptions }));
     }
 
     return (
         <div>
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>
-                PRESCRIBE MEDICINE
+            PRESCRIBE MEDICINE
             </h1>
             <form onSubmit={handleSubmit}>
                 <div className='sm:grid flex flex-col pl-10 gap-y-5 gap-x-2 grid-cols-2'>
                     <div>
-                        <div className='flex items-center justify-between mb-2 pr-10'>
+                        <div className='flex  items-center justify-between mb-2 pr-5'>
                             <h1 className='text-black font-semibold '>Diagnosis:</h1>
-                            <button onClick={()=>setDiagnosisModalIsOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus/></button>
+                            <div className='relative'>
+                                <button onClick={() => setDiagnosisOpen(prev => !prev)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
+                                {isDiagnosisOpen && <div className='bg-white w-56 z-60 left-10 border border-black rounded-md absolute p-2'>
+                                    <div className='flex items-center flex-col gap-3'>
+                                        <Input onChange={(e) => handleChange(e)} value={formData.diagnosis} name='diagnosis' icon={Plus} placeholder='Add diagnosis' />
+                                        <button onClick={() => { handleDiagnosisSubmit(); setDiagnosisOpen(prev => !prev)}} type="button"  className='p-1 w-fit cursor-pointer bg-blue-500 text-white rounded-md'>Add</button>
+                                    </div>
+                                </div>}
                             </div>
-                        <MultiSelectDropdown options={options} />
+                        </div>
+                        <MultiSelectDropdown Diagnosis={Diagnosis} selectedOptions={selectedDiagnosisOptions} setSelectedOptions={setSelectedDiagnosisOptions} />
                     </div>
                     <div>
-                        <h1 className='text-black font-semibold mb-2'>Medicine:</h1>
-                        <Input icon={Pill} placeholder='Enter Medicine Name' />
+                        <h1 className='text-black font-semibold mb-4'>Medicine:</h1>
+                        <Input icon={Pill} placeholder='Enter Medicine Name' name='medicine' value={formData.medicine} onChange={handleChange} />
                     </div>
                     <div>
                         <h1 className='text-black font-semibold mb-2'>Potency:</h1>
                         <div className='relative mt-2   w-full '>
 
-                            <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                <TestTube className="size-4 text-blue-500" />
-                            </div>
-                            <select
-                                name="potency" required id="potency" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                <option value="Select Potency">Select Potency</option>
-                                <option value="3X">3X</option>
-                                <option value="6X">6X</option>
-                            </select>
+                        <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
+                            <TestTube className="size-4 text-blue-500" />
                         </div>
+                        <select name="potency" required className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full' value={formData.potency} onChange={handleChange}>
+                            <option value="">Select Potency</option>
+                            {potencyArray.map((potency, index) => <option key={index} value={potency}>{potency}</option>)}
+                            </select>
+                            </div>
                     </div>
                     <div>
                         <h1 className='text-black font-semibold mb-2'>Start Date:</h1>
                         <div className='relative mt-2   w-full '>
 
-                            <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                <Calendar className="size-4 text-blue-500" />
-                            </div>
-                            <select
-                                name="potency" required id="potency" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                <option value="today">Today</option>
-                                <option value="2nd day">2nd Day</option>
-                                <option value="3rd day">3rd Day</option>
-                            </select>
+                        <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
+                            <Calendar className="size-4 text-blue-500" />
                         </div>
+                        <select name="startDate" required className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full' value={formData.startDate} onChange={handleChange}>
+                            {dateArray.map((date, index) => <option key={index} value={date}>{date}</option>)}
+                            </select>
+                            </div>
                     </div>
                     <div>
                         <h1 className='text-black font-semibold mb-2'>Dose:</h1>
                         <div className='relative mt-2   w-full '>
 
-                            <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                <Tablets className="size-4 text-blue-500" />
-                            </div>
-                            <select
-                                name="dose" required id="dose" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                <option value="today">Single Dose</option>
-                                <option value="3 Dose">3 dose Half-Hour Interval</option>
-                                <option value="2 Dose">2 dose Half-Hour Interval</option>
-                            </select>
+                        <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
+                            <Tablets className="size-4 text-blue-500" />
                         </div>
+                        <select name="dose" required className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full' value={formData.dose} onChange={handleChange}>
+                            <option value="">Select Dose</option>
+                            {doseArray.map((dose, index) => <option key={index} value={dose}>{dose}</option>)}
+                            </select>
+                            </div>
                     </div>
                     <div>
                         <h1 className='text-black font-semibold mb-2'>Duration:</h1>
                         <div className='relative mt-2   w-full '>
 
-                            <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                <Clock className="size-4 text-blue-500" />
-                            </div>
-                            <select
-                                name="duration" required id="duration" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                <option value="select duration">Select Duration</option>
-                                <option value="7">7 Days</option>
-                                <option value="15">15 Days</option>
-                            </select>
+                        <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
+                            <Clock className="size-4 text-blue-500" />
                         </div>
+                        <select name="duration" required className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full' value={formData.duration} onChange={handleChange}>
+                            <option value="">Select Duration</option>
+                            <option value="7">7 Days</option>
+                            <option value="15">15 Days</option>
+                            <option value="21">21 Days</option>
+                            <option value="30">30 Days</option>
+                            <option value="45">45 Days</option>
+                            <option value="60">2 Months</option>
+                            <option value="90">3 Months</option>
+                            </select>
+                            </div>
                     </div>
                     <div className='col-span-2'>
                         <h1 className='text-black font-semibold mb-2'>Note:</h1>
-                        <textarea placeholder='Mention if any' className='py-2 pl-3 min-h-20 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'></textarea>
+                        <textarea name="note" placeholder='Mention if any' className='py-2 pl-3 min-h-20 bg-white rounded-lg border border-gray-400 w-full' value={formData.note} onChange={handleChange}></textarea>
                     </div>
                 </div>
-                <div className='flex justify-center mt-5 '>
-                    <button className='bg-blue-500 cursor-pointer text-lg hover:bg-blue-600 rounded-md text-white p-2'>Submit</button>
+                <div className='flex justify-center mt-5'>
+                    <button className='bg-blue-500 text-lg hover:bg-blue-600 rounded-md text-white p-2'>Submit</button>
                 </div>
-                {isDiagnosisModalOpen && <DiagnosisModal onClose={() => setDiagnosisModalIsOpen(false)} />}
-
             </form>
-
         </div>
-    )
-}
+    );
+};
 
-export default PrescribeMedicine
+export default PrescribeMedicine;

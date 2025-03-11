@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const PatientSchema = new mongoose.Schema({
     imageData: { type: Buffer},
     username: { type: String, required:true },
@@ -38,10 +39,10 @@ const PatientSchema = new mongoose.Schema({
     qualification: { type: String },
     occupation: { type: String },
     dietaryPreference: { type: String },
-    prescription: [
+    patientDiagnosis: [
         {
-           diagnosis: [{type:String}]
-       }
+            type: String, 
+        },
     ],
     healthRecords: [
         {

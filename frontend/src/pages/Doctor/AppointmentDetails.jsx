@@ -9,7 +9,6 @@ import PreviousPrescriptions from '../../components/Doctor/PreviousPrescriptions
 import TodayPrescriptions from '../../components/Doctor/TodayPrescription'
 import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
 import { Plus } from 'lucide-react'
-import PrescriptionModal from '../../components/Doctor/PrescriptionModal'
 
 const AppointmentDetails = () => {
     const { patients } = recStore();
@@ -64,12 +63,8 @@ const AppointmentDetails = () => {
                             <PreviousPrescriptions />
                         </div>
                         <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
-                        <div className='mt-12 flex flex-col items-center'>
-                            <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>
-                                PRESCRIBE MEDICINE
-                            </h1>
-                            <button onClick={()=>setDiagnosisModalIsOpen(true)} className='bg-blue-500  flex items-center cursor-pointer text-lg hover:bg-blue-600 rounded-md text-white p-2'>Prescribe <Plus/></button>
-
+                        <div className='mt-12 '>
+                            <PrescribeMedicine/>
                         </div>
                         <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
                         <div className='mt-12'>

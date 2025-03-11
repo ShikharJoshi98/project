@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 
-const MultiSelectDropdown = ({Diagnosis }) => {
-  const [selectedOptions, setSelectedOptions] = useState([]);
+const MultiSelectDropdown = ({ Diagnosis,selectedOptions,setSelectedOptions }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
+
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -20,26 +21,35 @@ const MultiSelectDropdown = ({Diagnosis }) => {
 
   // Toggle selection
   const toggleSelection = (option) => {
-    setSelectedOptions((prev) =>
-      prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
-    );
+    setSelectedOptions((prev) => {
+      const updated = prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option];
+      
+      return updated;
+    });
   };
 
   // Remove from selected items
   const removeOption = (option) => {
-    setSelectedOptions((prev) => prev.filter((item) => item !== option));
+    setSelectedOptions((prev) => {
+      const updated = prev.filter((item) => item !== option);
+      return updated;
+    });
   };
 
   // Filter options based on search term
-  const filteredOptions = Diagnosis.filter((option) =>
-    option.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOptions = Diagnosis
+    ? Diagnosis.filter((option) =>
+        option.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   return (
-    <div className="relative " ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       {/* Selected Items */}
       <div
-        className="w-full bg-white border p-2 rounded-md flex flex-wrap gap-2 cursor-pointer"
+        className="w-full bg-white border border-gray-400 p-2 rounded-md flex flex-wrap gap-2 cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
         {selectedOptions.length > 0 ? (
@@ -91,7 +101,7 @@ const MultiSelectDropdown = ({Diagnosis }) => {
                   <input
                     type="checkbox"
                     checked={selectedOptions.includes(option)}
-                    onChange={() => toggleSelection(option)}
+                    readOnly
                     className="mr-2 cursor-pointer"
                   />
                   {option}
@@ -107,4 +117,4 @@ const MultiSelectDropdown = ({Diagnosis }) => {
   );
 };
 
-export default MultiSelectDropdown
+export default MultiSelectDropdown;
