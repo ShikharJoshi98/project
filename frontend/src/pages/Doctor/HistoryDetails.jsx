@@ -39,7 +39,7 @@ const HistoryDetails = () => {
                             {
                                 followUpImages.map((image, idx) => (
                                     <div className='flex  items-center gap-2'>
-                                        <img src={image?.imageUrl} className='w-[80vw] rounded-md h-[40vh] md:h-[85vh]  bg-white' alt="" key={idx} />
+                                        <img src={image?.follow_string} className='w-[80vw] rounded-md h-[40vh] md:h-[85vh]  bg-white' alt="" key={idx} />
                                         <div title='delete' onClick={async () => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
                                     </div>
                                 ))

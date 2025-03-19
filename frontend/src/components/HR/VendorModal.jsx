@@ -9,7 +9,7 @@ const VendorModal = ({ onClose }) => {
 
   const handleEditClick = (idx, vendor) => {
     setEditingRow(idx);
-    setEditedData({ ...vendor }); // Store initial values
+    setEditedData({ ...vendor }); 
   };
   
   const handleChange = (e, col) => {

@@ -25,22 +25,25 @@ const PrescribeMedicine = () => {
     const { patients } = recStore();
     const patient = patients.filter((cand => (cand._id) === location.id));
     const diagnosisRef = useRef(null);
+    const searchMedicineRef = useRef(null);
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if (diagnosisRef.current && !diagnosisRef.current.contains(event.target)) {
+            if ((diagnosisRef.current && !diagnosisRef.current.contains(event.target))||(searchMedicineRef.current && !searchMedicineRef.current.contains(event.target))) {
                 setDiagnosisOpen(false);
+                setSearchMedicine("")
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, []);    
 
     useEffect(() => {
         fetchPrescription(location.id);
     }, []);
+    
     const [formData, setFormData] = useState({
         medicine: '',
         potency: '',
@@ -135,7 +138,7 @@ const PrescribeMedicine = () => {
                     <div className='relative'>
                         <h1 className='text-black font-semibold mb-4'>Medicine:</h1>
                         <Input icon={Pill} placeholder='Enter Medicine Name' name='medicine' value={formData.medicine} onChange={(e) => { setSearchMedicine(e.target.value); handleChange(e)}} />
-                        {searchMedicine && <div className='bg-gray-300 shadow-2xl p-2 flex flex-col gap-2 w-full absolute top-20.5 z-10 border-l border-b border-r border-blue-400 rounded-md'>
+                        {searchMedicine && <div ref={searchMedicineRef} className='bg-gray-300 shadow-2xl p-2 flex flex-col gap-2 w-full absolute top-20.5 z-10 border-l border-b border-r border-blue-400 rounded-md'>
                             {
                                 filteredPrescription.map((pres, index) => (
                                     <SearchMedicine pres={pres} index={index} patientName={patient[0].fullname} />

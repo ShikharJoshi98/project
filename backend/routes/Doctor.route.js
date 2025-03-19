@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpImages, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -40,7 +40,7 @@ Docrouter.post('/upload-followup-image/:id', upload.single("followUpImage"), upl
 Docrouter.post('/upload-complaint-image/:id',upload.single("complaintImage"),uploadComplaintImage );
 Docrouter.get("/followup-images/:id", getFollowUpImages);
 Docrouter.get("/compaint-images/:id", getDiagnosisImages);
-Docrouter.delete('/patient/:patientId/followup-images/:imageId', deleteFollowUpImages);
+Docrouter.delete('/patient/:patientId/followup-images/:imageId', deleteFollowUpPatient);
 Docrouter.post('/add-diagnosis/:id', addDiagnosis);
 Docrouter.get("/get-diagnosis/:id", getDiagnosis);
 Docrouter.post("/add-new-prescription/:id", addNewPrescription);

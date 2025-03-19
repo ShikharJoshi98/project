@@ -15,7 +15,8 @@ export const docStore = create((set) => ({
     caseImages: [],
     prescription:[],
     diagnosisImages: [],
-    followUpImages:[],
+    followUpImages: [],
+    allPrescriptions: [],
     section: "medicine",
     prescriptionSubmit: false,
     setsection: (newsection) => set({ section: newsection }),
@@ -180,9 +181,8 @@ export const docStore = create((set) => ({
     },
     getFollowUpImages: async (id) => {
         try {
-            const response = await axios.get(`${DOC_API_URL}/followup-images/${id}`)
-            set({ followUpImages : response.data.followUpImages
-            });
+            const response = await axios.get(`${DOC_API_URL}/get-follow-up-patient/${id}`)
+            set({ followUpImages : response.data.followUpImages});
         } catch (error) {
             console.log(error.message);   
         }
@@ -198,6 +198,11 @@ export const docStore = create((set) => ({
     fetchPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);        
         set({prescription:response.data.presToday})
+    },
+    getPastPrescription: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);
+        
+        set({ allPrescriptions: response.data.presToday });
     }
     
 }))

@@ -459,27 +459,31 @@ export const getFollowUpImages = async (req, res) => {
     }
 };
 
-export const deleteFollowUpImages = async (req, res) => {
-    const { patientId, imageId } = req.params;
+export const deleteFollowUpPatient = async (req, res) => {
     try {
+        const { patientId, imageId } = req.params;
+
         if (!mongoose.Types.ObjectId.isValid(imageId)) {
-            
             return res.status(400).json({ message: "Invalid Image ID" });
         }
-       
-        const patient = await Patient.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
-        patient.followUpImages = patient.followUpImages.filter(img => img._id.toString() !== imageId);
-    
 
-        await patient.save();
-        res.json({ success: true, message: "Image deleted successfully" });
+        const deletedFollowUp = await FollowUpPatient.findOneAndDelete({
+            patient: patientId,
+            _id: imageId,
+        });
+
+        if (!deletedFollowUp) {
+            return res.status(404).json({ message: "Follow-up record not found" });
+        }
+
+        return res.json({
+            success: true,
+            message: "Follow-up record deleted successfully",
+        });
 
     } catch (error) {
-        console.error("Error deleting image:", error);
-        res.status(500).json({ error: "Failed to delete image" });
+        console.error("Error in deleteFollowUpPatient controller:", error.message);
+        return res.status(500).json({ error: "Failed to delete follow-up record" });
     }
 };
 
