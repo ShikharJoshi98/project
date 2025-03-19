@@ -3,7 +3,7 @@ import { AppointmentDoctor } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient, { Prescription } from "../models/PatientModel.js";
+import Patient, { FollowUpPatient, Prescription } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 
 export const assignTask = async (req, res) => {
@@ -569,3 +569,53 @@ export const getPrescriptionToday = async (req, res) => {
         })
     }
 }
+
+export const addFollowUpPatient = async(req,res) => {
+    try {
+        const id  = req.params.id;
+        const image = req.body.savedImage;
+
+        const date = new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+        });             
+
+        const addFollowUp = await FollowUpPatient.create({
+            patient: id,
+            follow_string: image,
+            date
+        })
+
+        return res.json({
+            success: true
+        })
+        
+    } catch (error) {
+        console.log("Error in addFollowUpPatient controller",error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const getFollowUpPatient = async (req,res) => {
+    try {
+        const id = req.params.id;
+
+        const followUpImages = await FollowUpPatient.find({
+            patient: id
+        })
+
+        return res.json({
+            followUpImages
+        })
+        
+    } catch (error) {
+        console.log("Error in getFollowUpPatient controller",error.message);
+        return res.json({
+            message : error.message
+        });
+    }
+} 

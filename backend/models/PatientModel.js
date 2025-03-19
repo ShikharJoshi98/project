@@ -93,6 +93,20 @@ const prescriptionSchema = new mongoose.Schema({
     }
 });
 
+const followUpPatientSchema = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    follow_string: {
+        type: String
+    },
+    date: {
+        type:String
+    }
+});
+
 const Patient = mongoose.model('Patient', PatientSchema);
 export const Prescription = mongoose.model('Prescription', prescriptionSchema);
+export const FollowUpPatient = mongoose.model('FollowUpPatient',followUpPatientSchema);
 export default Patient

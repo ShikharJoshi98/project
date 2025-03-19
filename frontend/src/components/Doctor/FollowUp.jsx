@@ -2,11 +2,25 @@ import { KeyboardIcon, Pen } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import ScribbleModal from './ScribbleModal';
 import WritingModal from './WritingModal';
+import axios from 'axios';
+import { DOC_API_URL } from '../../store/DocStore';
+import { useParams } from 'react-router-dom';
 
 const FollowUp = () => {
 
+    const location = useParams();
     const [isScribbleModalOpen, setScribbleModalIsOpen] = useState(false);
     const [isWritingModalOpen, setWritingModalIsOpen] = useState(false);
+    const [followUpImages, setFollowUpImages] = useState([]);
+
+    const fetchImageAPI = async () => {
+        const response = await axios.get(`${DOC_API_URL}/get-follow-up-patient/${location.id}`)
+        setFollowUpImages(response.data.followUpImages)
+    }
+
+    useEffect(()=>{
+        fetchImageAPI();
+    },[location.id]);
 
 
     useEffect(() => {
@@ -36,6 +50,27 @@ const FollowUp = () => {
             </div>
             {isScribbleModalOpen && <ScribbleModal onClose={() => setScribbleModalIsOpen(false)} />}
             {isWritingModalOpen && <WritingModal onClose={() => setWritingModalIsOpen(false)} />}
+            
+            <div>
+                {
+                    followUpImages.length !== 0
+                    ?
+                    <div className='grid grid-cols-5 gap-5'>
+                    {
+                        followUpImages.map(value =>(
+                            <img src={value.follow_string} alt="Follow-up Scribble" className="w-96 h-auto border"/>
+                        ))
+                    }
+                    </div>
+                    :
+                    (<div className='flex justify-center'>
+                        <p>No scribble saved yet.</p>
+
+                    </div>
+                    )
+                }
+
+            </div>
 
         </div>
     )

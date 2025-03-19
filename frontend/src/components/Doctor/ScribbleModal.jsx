@@ -2,15 +2,20 @@ import React, { useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { Eraser, Pen, Redo, SaveIcon, Trash, Undo, X } from "lucide-react";
 import { ReactSketchCanvas } from "react-sketch-canvas";
+import axios from "axios";
+import { DOC_API_URL } from "../../store/DocStore";
+import { useParams } from "react-router-dom";
 
 const ScribbleModal = ({ onClose }) => {
 
+    const location = useParams();
     const canvasRef = useRef(null);
     const [eraseMode, setEraseMode] = useState(false);
-    const [savedImage, setSavedImage] = useState(null);
+    
 
     const handlePenClick = () => {
         setEraseMode(false);
+        console.log(location.id)
         canvasRef.current?.eraseMode(false);
     }
 
@@ -35,8 +40,12 @@ const ScribbleModal = ({ onClose }) => {
         if (canvasRef.current) {
             try {
                 const imageData = await canvasRef.current.exportImage("png"); 
-                setSavedImage(imageData); 
-                console.log("Saved Image:", imageData);
+                const response = await axios.post(`${DOC_API_URL}/add-follow-up-patient/${location.id}`,{
+                    savedImage : imageData
+                });
+                console.log(response.data)
+                alert("Saved Successfully.Continue Writing...")
+                canvasRef.current?.clearCanvas();
             } catch (error) {
                 console.error("Error saving image:", error);
             }
