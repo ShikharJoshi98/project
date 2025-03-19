@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpImages, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpImages, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -45,6 +45,7 @@ Docrouter.post('/add-diagnosis/:id', addDiagnosis);
 Docrouter.get("/get-diagnosis/:id", getDiagnosis);
 Docrouter.post("/add-new-prescription/:id", addNewPrescription);
 Docrouter.get("/get-today-prescription/:id", getPrescriptionToday);
+Docrouter.delete("/delete-today-prescription/:id",deleteTodayPrescription);
 Docrouter.post("/add-follow-up-patient/:id",addFollowUpPatient);
 Docrouter.get("/get-follow-up-patient/:id",getFollowUpPatient);
 

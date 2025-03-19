@@ -7,10 +7,11 @@ import { Pen, Trash } from 'lucide-react';
 const TodayPrescriptions = () => {
     const location = useParams();
     const { prescriptionSubmit, fetchPrescription, prescription } = docStore();
+    const [deleteFlag, setDeleteFlag] = useState(false);
 
     useEffect(() => {
         fetchPrescription(location.id);
-    }, [prescriptionSubmit]);
+    }, [prescriptionSubmit,deleteFlag]);
 
     const addDays = (dateStr, days)=>{
         days = parseInt(days, 10);
@@ -26,6 +27,16 @@ const TodayPrescriptions = () => {
     
         return `${newDay}/${newMonth}/${newYear}`;
     }
+
+    const handleDelete = async (id) => {
+        
+        const submitDelete = confirm("Are you sure you want to delete prescription ? ");
+
+        if(submitDelete){
+            const response = await axios.delete(`${DOC_API_URL}/delete-today-prescription/${id}`)
+            setDeleteFlag(prev => !prev);            
+        }
+    };
     
     return (
         <div>
@@ -66,7 +77,7 @@ const TodayPrescriptions = () => {
                                 <td className="py-4 px-2 border text-center">{value.duration}</td>
                                 <td className="py-4 px-2 border text-center">{addDays(value.prescription_date, value.duration)}</td>
                                 <td className="py-4 px-2 border text-center ">{<Pen className='border p-1 size-7 rounded-md cursor-pointer'/>}</td>
-                                <td className="py-4 px-2 border text-center ">{<Trash className='border p-1 size-7 text-red-500 rounded-md cursor-pointer'/>}</td>
+                                <td className="py-4 px-2 border text-center " onClick={() => handleDelete(value._id)}>{<Trash className='border p-1 size-7 text-red-500 rounded-md cursor-pointer'/>}</td>
                             </tr>
                         ))}
                     </tbody>

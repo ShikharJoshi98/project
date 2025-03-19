@@ -553,9 +553,16 @@ export const addNewPrescription = async (req, res) => {
 export const getPrescriptionToday = async (req, res) => {
     try {
         const { id } = req.params;
+        const date = new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+        });
 
         const presToday = await Prescription.find({
-            patient: id
+            patient: id,
+            prescription_date:date
         });
 
         return res.json({
@@ -567,6 +574,21 @@ export const getPrescriptionToday = async (req, res) => {
         return res.json({
             message: error.message
         })
+    }
+}
+
+export const deleteTodayPrescription = async (req,res) => {
+    try {
+        const id = req.params.id;        
+        const deletePrescription = await Prescription.findByIdAndDelete(id);
+        return res.json({
+            message: "Deleted Successfully"            
+        });
+     } catch (error) {
+        console.log("Error in deleteTodayPrescription controller",error.message);
+        return res.json({
+            message: error.message
+        });
     }
 }
 
