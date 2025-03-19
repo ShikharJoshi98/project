@@ -3,7 +3,7 @@ import { AppointmentDoctor } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient from "../models/PatientModel.js";
+import Patient, { Prescription } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 
 export const assignTask = async (req, res) => {
@@ -520,40 +520,52 @@ export const getDiagnosis = async (req, res) => {
 };
 
 
-export const addPrescription = async (req, res) => {
+export const addNewPrescription = async (req, res) => {
     try {
-        const { patientId } = req.params; 
-
-        const {
-            medicine,
-            potency,
-            dose,
-            duration,
-            startDate,
-            selectedDiagnosisOptions,
-            note
-        } = req.body;
-        const patient = await Patient.findById(patientId);
-
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
-
-        const newPrescription = {
-            medicine,
-            potency,
-            dose,
-            duration,
-            startDate,
-            selectedDiagnosisOptions,
-            note
-        };
-        console.log()
-        patient.prescription.push(newPrescription);
-        await patient.save();
-
-        res.status(201).json({ message: "Prescription added successfully", prescription: newPrescription });
-    } catch (error) {
-        res.status(500).json({ message: "Server Error", error: error.message });
-    }
+        const { formData, currentDate } = req.body;
+        const { id } = req.params;
+        
+        const newPatient = await Prescription.create({
+            patient: id,
+            diagnosis: formData.selectedDiagnosisOptions,
+            medicine: formData.medicine,
+            potency: formData.potency,
+            start_date: formData.startDate,
+            dose: formData.dose,
+            duration: formData.duration,
+            note: formData.note,
+            prescription_date: currentDate
+        });     
+                
+        
+        return res.json({
+            message: "Prescription Created Successfully"            
+        });
+        
+      } catch (error) {
+          console.log("Error in addNewPrescription controller", error.message);
+        return res.json({
+            message: error.message
+        });
+      }
 };
+
+export const getPrescriptionToday = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const presToday = await Prescription.find({
+            patient: id
+        });
+
+        return res.json({
+            presToday
+        })
+        
+    } catch (error) {
+        console.log("Error in getPrescriptionToday", error.message);
+        return res.json({
+            message: error.message
+        })
+    }
+}

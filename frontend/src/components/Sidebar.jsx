@@ -6,16 +6,11 @@ const Sidebar = ({ children }) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
-        <div className='sticky h-screen top-18 z-60  bg-[#404858]'>
-            
+        <div className='sticky h-screen top-18 z-50  bg-[#404858]'>            
             <div className={`${expanded ? "w-32 md:w-56" : "w-18"} min-h-screen text-white transition-all duration-300 `}>
-                <div
-                    onClick={() => setExpanded(!expanded)}
-                    className={`p-4 text-xl pb-2 cursor-pointer`}
-                >
+                <div onClick={() => setExpanded(!expanded)} className={`p-4 text-xl pb-2 cursor-pointer`}>
                     ☰
                 </div>
-
                 <SidebarContext.Provider value={{ expanded }}>
                     <ul className='px-3'>{children}</ul>
                 </SidebarContext.Provider>
@@ -24,7 +19,8 @@ const Sidebar = ({ children }) => {
     );
 };
 
-export function SidebarItem({ icon, text,onClick, active }) {
+export function SidebarItem({ icon, text, onClick, active }) {
+    
     const { expanded } = useContext(SidebarContext);
     
     return (

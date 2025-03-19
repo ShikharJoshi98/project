@@ -25,9 +25,9 @@ import CourierAppointment from "./pages/Doctor/CourierAppointment";
 import AppointmentDetails from "./pages/Doctor/AppointmentDetails";
 import UploadPatientCase from "./pages/Doctor/UploadPatientCase";
 import UploadDiagnosis from "./pages/Doctor/UploadDiagnosis";
-import FollowUp from "./pages/Doctor/FollowUp";
 import HistoryDetails from "./pages/Doctor/HistoryDetails";
 import PresentComplaints from "./pages/Doctor/PresentComplaints";
+import VideoAudioRecorder from "./pages/Doctor/VideoAudioRecorder";
 
 
 
@@ -92,11 +92,9 @@ function App() {
           <Route path="/homeo-book-redline" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoRedline /></ProtectedRoute>} />
           <Route path="/upload-case-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadPatientCase /></ProtectedRoute>} />
           <Route path="/upload-diagnosis-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadDiagnosis /></ProtectedRoute>} />
-          <Route path="/follow-up/:id" element={<ProtectedRoute allowedRoles={['doctor']}><FollowUp /></ProtectedRoute>} />
           <Route path="/history-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><HistoryDetails /></ProtectedRoute>} />
           <Route path="/present-complaints/:id" element={<ProtectedRoute allowedRoles={['doctor']}><PresentComplaints /></ProtectedRoute>} />
-
-
+          <Route path="/record-media/:id" element={<ProtectedRoute allowedRoles={['doctor']}><VideoAudioRecorder/></ProtectedRoute>} />
 
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['hr']}><DoctorUpdate_HR /></ProtectedRoute>} />
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['hr']}><ReceptionistUpdate /></ProtectedRoute>} />

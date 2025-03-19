@@ -4,7 +4,7 @@ import { create } from "zustand";
 export const DOC_API_URL = "http://localhost:4000/api/doctor";
 axios.defaults.withCredentials = true;
 
-export const docStore = create((set,get) => ({
+export const docStore = create((set) => ({
     tasks: [],
     task: null,
     leaves: [],
@@ -13,10 +13,13 @@ export const docStore = create((set,get) => ({
     Homeo: [],
     appointment: null,
     caseImages: [],
+    prescription:[],
     diagnosisImages: [],
     followUpImages:[],
     section: "medicine",
+    prescriptionSubmit: false,
     setsection: (newsection) => set({ section: newsection }),
+    togglePrescriptionSubmit: () => set((state) => ({ prescriptionSubmit: !state.prescriptionSubmit })), 
     branch: "",
     setbranch: (newbranch)=> set({branch:newbranch}),
     getTasks: async () => {
@@ -191,6 +194,10 @@ export const docStore = create((set,get) => ({
         } catch (error) {
             console.log(error.message);
         }
+    },
+    fetchPrescription: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);        
+        set({prescription:response.data.presToday})
     }
     
 }))

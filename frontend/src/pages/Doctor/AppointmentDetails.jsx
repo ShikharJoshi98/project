@@ -1,19 +1,16 @@
 import React, { useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
-import DocSidebar from '../../components/Doctor/DocSidebar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { recStore } from '../../store/RecStore'
 import HealthAssessment from '../../components/Doctor/HealthAssessment'
 import PreviousPrescriptions from '../../components/Doctor/PreviousPrescriptions'
 import TodayPrescriptions from '../../components/Doctor/TodayPrescription'
 import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
-import { Plus } from 'lucide-react'
+import FollowUp from '../../components/Doctor/FollowUp'
 
 const AppointmentDetails = () => {
     const { patients } = recStore();
-  const [isDiagnosisModalOpen, setDiagnosisModalIsOpen] = useState(false);
-
     const location = useParams();
     const patient = patients.filter((cand => (cand._id) === location.id));
     return (
@@ -29,8 +26,8 @@ const AppointmentDetails = () => {
                         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                             <div className='flex gap-3 w-full md:w-1/5 px-5 py-13.5 rounded-lg bg-gray-300 flex-col items-center'>
                                 <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
-                                <h1 className='text-lg md:text-xl  font-semibold'>Rakesh</h1>
-                                <h1 className='text-sm md:text-base '>DOM-1001</h1>
+                                <h1 className='text-lg md:text-xl  font-semibold'>{patient[0]?.fullname}</h1>
+                                <h1 className='text-sm md:text-base '>{patient[0]?.casePaperNo}</h1>
                             </div>
                             <div className='w-full md:w-4/5 gap-2 flex flex-col '>
                                 <div className='flex flex-wrap p-5 rounded-lg bg-gray-300 text-xs lg:text-lg items-center justify-around'>
@@ -60,24 +57,24 @@ const AppointmentDetails = () => {
                         </div>
                         <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
                         <div className='mt-12'>
+                            <FollowUp />
+                        </div>
+                        <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
+                        <div className='mt-12'>
                             <PreviousPrescriptions />
                         </div>
                         <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
                         <div className='mt-12 '>
-                            <PrescribeMedicine/>
+                            <PrescribeMedicine />
                         </div>
                         <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
                         <div className='mt-12'>
                             <TodayPrescriptions />
                         </div>
-                        <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
-
                     </div>
                 </div>
 
             </div>
-            {isDiagnosisModalOpen && <PrescriptionModal onClose={() => setDiagnosisModalIsOpen(false)} />}
-
 
         </div>
     )

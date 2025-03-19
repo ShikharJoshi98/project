@@ -1,7 +1,6 @@
 import { useState } from "react";
 import AppointmentSidebar from "../../components/Doctor/AppointmentSidebar"
 import Docnavbar from "../../components/Doctor/DocNavbar"
-import SignatureCanvas from 'react-signature-canvas';
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 

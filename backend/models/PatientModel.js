@@ -60,7 +60,39 @@ const PatientSchema = new mongoose.Schema({
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     
-} ,{ timestamps: true });
+}, { timestamps: true });
+
+const prescriptionSchema = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    diagnosis: {
+        type: [String]
+    },
+    medicine: {
+        type: String
+    },
+    potency: {
+        type: String
+    },
+    start_date: {
+        type: String
+    },
+    dose: {
+        type: String,
+    },
+    duration: {
+        type: String
+    },
+    note: {
+        type: String
+    },
+    prescription_date: {
+        type: String
+    }
+});
 
 const Patient = mongoose.model('Patient', PatientSchema);
+export const Prescription = mongoose.model('Prescription', prescriptionSchema);
 export default Patient
