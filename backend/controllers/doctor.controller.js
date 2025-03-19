@@ -577,6 +577,26 @@ export const getPrescriptionToday = async (req, res) => {
     }
 }
 
+export const getAllPrescription =async (req,res) => {
+    try {
+        const { id } = req.params;        
+
+        const presToday = await Prescription.find({
+            patient: id            
+        });
+
+        return res.json({
+            presToday
+        })
+        
+    } catch (error) {
+        console.log("Error in getAllPrescription controller", error.message);
+        return res.json({
+            message: error.message
+        })
+    }
+}
+
 export const deleteTodayPrescription = async (req,res) => {
     try {
         const id = req.params.id;        
