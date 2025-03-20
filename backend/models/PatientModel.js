@@ -106,7 +106,21 @@ const followUpPatientSchema = new mongoose.Schema({
     }
 });
 
+const writeUpPatientSchema = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    writeUp_value: {
+        type: String
+    },
+    date: {
+        type:String
+    }
+})
+
 const Patient = mongoose.model('Patient', PatientSchema);
 export const Prescription = mongoose.model('Prescription', prescriptionSchema);
 export const FollowUpPatient = mongoose.model('FollowUpPatient',followUpPatientSchema);
+export const WriteUpPatient = mongoose.model('WriteUpPatient',writeUpPatientSchema);
 export default Patient

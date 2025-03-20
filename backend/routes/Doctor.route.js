@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -48,7 +48,15 @@ Docrouter.get("/get-today-prescription/:id", getPrescriptionToday);
 //get all Presciption new api to be integrated for all prescription without date filter
 Docrouter.get("/get-all-prescription/:id",getAllPrescription);
 Docrouter.delete("/delete-today-prescription/:id",deleteTodayPrescription);
+Docrouter.patch("/update-prescription/:id",updateTodayPrescription);
 Docrouter.post("/add-follow-up-patient/:id",addFollowUpPatient);
 Docrouter.get("/get-follow-up-patient/:id",getFollowUpPatient);
+//At add data from writing pad
+Docrouter.post("/add-write-up-patient/:id",addWriteUpPatient);
+//get all write up patient endpoint to be integrate Frontend
+Docrouter.get("/get-write-up-patient/:id",getWriteUpPatient);
+//get data to edit write up patient
+Docrouter.get('/get-write-up-update/:id',getWriteUpUpdate);
+
 
 export default Docrouter

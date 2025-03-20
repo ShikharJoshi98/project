@@ -1,12 +1,21 @@
+import axios from "axios";
 import { X } from "lucide-react";
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import { DOC_API_URL } from "../../store/DocStore";
+import { useParams } from "react-router-dom";
 
 const WritingModal = ({ onClose }) => {
+    const location = useParams();
     const [value, setValue] = useState("");
      
-    const handleSave = () => {
+    const handleSave = async() => {
         console.log(value);
+        const response  = await axios.post(`${DOC_API_URL}//add-write-up-patient/${location.id}`,{
+            value
+        });
+        alert(response.data.message);
+        onClose();
     }
 
     return ReactDOM.createPortal(

@@ -3,7 +3,7 @@ import { AppointmentDoctor } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient, { FollowUpPatient, Prescription } from "../models/PatientModel.js";
+import Patient, { FollowUpPatient, Prescription, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 
 export const assignTask = async (req, res) => {
@@ -523,7 +523,7 @@ export const getDiagnosis = async (req, res) => {
     }
 };
 
-
+//PRESCRIPTIONS
 export const addNewPrescription = async (req, res) => {
     try {
         const { formData, currentDate } = req.body;
@@ -616,6 +616,29 @@ export const deleteTodayPrescription = async (req,res) => {
     }
 }
 
+export const updateTodayPrescription = async (req,res) => {
+    try {
+        const {editedData} = req.body;
+        const {id} = req.params;     
+        delete editedData._id;
+        delete editedData.patient;
+        delete editedData.__v;       
+
+        const updatePrescription = await Prescription.findByIdAndUpdate(id,editedData);
+
+        return res.json({
+            message: "Updated Successfully"
+        })
+        
+    } catch (error) {
+        console.log("Error in updateTodayPrescription", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+//FOLLOW-UP SCRIBBLE
 export const addFollowUpPatient = async(req,res) => {
     try {
         const id  = req.params.id;
@@ -665,3 +688,72 @@ export const getFollowUpPatient = async (req,res) => {
         });
     }
 } 
+
+//FOLLOW-UP WRITE PAD
+export const addWriteUpPatient = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const {value} = req.body;
+
+        const date = new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+        });
+        
+        const addWriteUp = await WriteUpPatient.create({
+            patient:id,
+            writeUp_value:value,
+            date
+        });
+
+        return res.json({
+            message: "Added Successfully"
+        })
+        
+    } catch (error) {
+        console.log("Error in addWriteUpPatient controller",error.message);
+        return res.json({
+            message:error.message
+        })
+    }
+}
+
+export const getWriteUpPatient = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        const writeUpData = await WriteUpPatient.find({
+            patient: id
+        })
+
+        return res.json({
+            writeUpData
+        });
+        
+    } catch (error) {
+        console.log("Error in getWriteUpPatient controller",error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const getWriteUpUpdate = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        const updateWriteUp = await WriteUpPatient.findById(id);
+
+        return res.json({
+            updateWriteUp
+        });
+        
+    } catch (error) {
+        console.log("Error in getWriteUpUpdate controller", error.message);
+        return res.json({
+            message : error.message
+        });
+    }
+}

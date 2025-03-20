@@ -8,12 +8,13 @@ const TodayPrescriptions = () => {
     const location = useParams();
     const { prescriptionSubmit, fetchPrescription, prescription } = docStore();
     const [deleteFlag, setDeleteFlag] = useState(false);
+    const [updateFlag, setUpdateFlag] = useState(false);
     const [editingRow, setEditingRow] = useState(null);
     const [editedData, setEditedData] = useState({});
 
     useEffect(() => {
         fetchPrescription(location.id);
-    }, [prescriptionSubmit, deleteFlag]);
+    }, [prescriptionSubmit, deleteFlag,updateFlag]);
 
     const addDays = (dateStr, days) => {
         days = parseInt(days, 10);
@@ -46,11 +47,22 @@ const TodayPrescriptions = () => {
         }
     };
 
+    const handleUpdate = async (id) => {
+        const submitUpdate = confirm("Are you sure you want to update prescription?");
+        if (submitUpdate) {
+            const response = await axios.patch(`${DOC_API_URL}/update-prescription/${id}`,{
+                editedData
+            });
+            setUpdateFlag(prev => !prev);            
+        }
+    }
+
     return (
         <div>
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>
                 TODAY'S PRESCRIPTION
             </h1>
+            
             <div className="overflow-x-auto p-4 mt-3">
                 <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                     <thead>
@@ -159,7 +171,10 @@ const TodayPrescriptions = () => {
                                     {editingRow === index ? (
                                         <div className="flex justify-center gap-2">
                                             <Check
-                                                onClick={() => setEditingRow(false)}
+                                                onClick={() => {
+                                                    handleUpdate(value._id)
+                                                    setEditingRow(false)
+                                                }}
                                                 className="border p-1 size-7 text-green-500 rounded-md cursor-pointer"
                                             />
                                             <X
