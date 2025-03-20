@@ -16,6 +16,7 @@ export const docStore = create((set) => ({
     prescription:[],
     diagnosisImages: [],
     followUpImages: [],
+    writeUp:[],
     allPrescriptions: [],
     section: "medicine",
     prescriptionSubmit: false,
@@ -200,9 +201,11 @@ export const docStore = create((set) => ({
         set({prescription:response.data.presToday})
     },
     getPastPrescription: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);
-        
+        const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);        
         set({ allPrescriptions: response.data.presToday });
-    }
-    
+    },
+    getWriteUp: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/get-write-up-patient/${id}`);        
+        set({ writeUp: response.data.writeUpData });
+    }    
 }))

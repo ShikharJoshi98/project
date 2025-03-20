@@ -5,25 +5,20 @@ import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { Trash2 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import History from './History';
 
 const HistoryDetails = () => {
-  const { getFollowUpImages, followUpImages } = docStore();
+  const { getFollowUpImages, followUpImages, writeUp, getWriteUp } = docStore();
   const location = useParams();
+  const [isHistoryModalOpen, setHistoryModalIsOpen] = useState(false);
   const [isSubmit, setSubmit] = useState(false);
 
-  console.log(followUpImages);
   useEffect(() => {
     getFollowUpImages(location.id);
-  }, [getFollowUpImages,isSubmit])
-  
-  async function deleteImage(id) {
-    try {
-        await axios.delete(`${DOC_API_URL}/patient/${location.id}/followup-images/${id}`);
-        setSubmit((prev) => !prev);
-    } catch (error) {
-        console.error("Delete request failed:", error.response?.data || error.message);
-    }
-}
+    getWriteUp(location.id);
+  }, [getFollowUpImages, getWriteUp, isSubmit])
+
+
 
   return (
     <div>
@@ -35,24 +30,22 @@ const HistoryDetails = () => {
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>
               HISTORY DETAILS
             </h1>
-            <div className='flex items-center gap-20 flex-wrap mt-10'>
-                            {
-                                followUpImages.map((image, idx) => (
-                                    <div className='flex  items-center gap-2'>
-                                        <img src={image?.follow_string} className='w-[80vw] rounded-md h-[40vh] md:h-[85vh]  bg-white' alt="" key={idx} />
-                                        <div title='delete' onClick={async () => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
-                                    </div>
-                                ))
-
-                            }
-                        </div>
-
+            <div className='flex flex-wrap gap-10 px-20 items-center mt-20'>
+              {
+                followUpImages.map((image, index) => (
+                  <button onClick={()=>setHistoryModalIsOpen(true)} className='p-2 bg-blue-500 cursor-pointer rounded-lg text-white'>{image.date}</button>
+                ))
+              }
             </div>
-            
+
           </div>
+
         </div>
-        </div>
-    
+      </div>
+      {isHistoryModalOpen && <History onClose={() => setHistoryModalIsOpen(false)} />}
+
+    </div>
+
   )
 }
 
