@@ -1,18 +1,20 @@
 import { Search } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../Input";
 import { docStore } from "../../store/DocStore";
 import { useParams } from "react-router-dom";
 
 const PreviousPrescriptions = () => {
   const location = useParams();
-  const { getPastPrescription, allPrescriptions } = docStore();
+  const { getPastPrescription, allPrescriptions,prescriptionSubmit } = docStore();
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredPrescription = allPrescriptions.filter((medicine) => medicine.medicine.toLowerCase().includes(searchTerm.toLowerCase()));
 
   useEffect(() => {
     getPastPrescription(location.id);
-  }, [location.id]); 
+  }, [location.id,prescriptionSubmit]); 
 
-  const groupedPrescriptions = allPrescriptions.reduce((acc, prescription) => {
+  const groupedPrescriptions = filteredPrescription.reduce((acc, prescription) => {
     if (!acc[prescription.prescription_date]) {
       acc[prescription.prescription_date] = [];
     }
@@ -28,7 +30,7 @@ const PreviousPrescriptions = () => {
       <h1 className="text-2xl mb-3 text-blue-600 font-semibold">
         Medicine (Search Here)
       </h1>
-      <Input icon={Search} type="text" name="name" placeholder="Enter Medicine Name" />
+      <Input onChange={(e) => setSearchTerm(e.target.value)} icon={Search} type="text" name="name" placeholder="Enter Medicine Name" />
       <div className="overflow-x-auto p-4 mt-3">
         <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
           <thead>

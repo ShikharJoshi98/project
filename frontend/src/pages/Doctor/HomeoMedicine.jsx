@@ -77,7 +77,7 @@ const HomeoMedicine = () => {
 
   const handleSectionChange = (newSection, path) => {
     setsection(newSection);
-    localStorage.setItem("selectedSection", newSection); // Save to localStorage
+    localStorage.setItem("selectedSection", newSection); 
     navigate(path);
   };
   async function handleSave() {
@@ -191,7 +191,6 @@ const HomeoMedicine = () => {
     await homeobhagwat(formValues);
     setSubmit((prev) => !prev);
   }
-  console.log(searchTerm);
   return (
     <div>
       <Docnavbar />

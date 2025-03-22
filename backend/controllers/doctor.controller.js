@@ -7,7 +7,6 @@ import Patient, { FollowUpPatient, Prescription, WriteUpPatient } from "../model
 import { Task } from "../models/TaskModel.js";
 
 export const assignTask = async (req, res) => {
-
     try {
         const { task, username } = req.body;
         const employeeExists = await Employee.findOne({ username });
@@ -29,7 +28,6 @@ export const assignTask = async (req, res) => {
 }
 export const taskDetails = async (req, res) => {
     try {
-
         const tasks = await Task.find()
         res.json({
             success: true,
@@ -109,8 +107,6 @@ export const updateleave = async (req, res) => {
 export const AppointmentDoc = async (req, res) => {
     try {
         let { AppointmentDate, Time, PatientCase, Doctor, AppointmentType } = req.body;
-        console.log("Incoming Data:", req.body);
-
 
         const newAppointment = new AppointmentDoctor({
             AppointmentDate, Time, PatientCase, Doctor, AppointmentType
@@ -125,6 +121,22 @@ export const AppointmentDoc = async (req, res) => {
         res.json({
             success: false,
             message: error.message
+        })
+    }
+}
+
+export const getAllAppointments = async (req, res) => {
+    try {
+        const appointments =await AppointmentDoctor.find();
+        res.json({
+            success: true,
+            appointments
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.json({
+            success: false,
+            error:error.message
         })
     }
 }

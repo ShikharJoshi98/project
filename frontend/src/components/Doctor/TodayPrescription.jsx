@@ -6,7 +6,7 @@ import { Pen, Trash, Check, X } from 'lucide-react';
 
 const TodayPrescriptions = () => {
     const location = useParams();
-    const { prescriptionSubmit, fetchPrescription, prescription } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, togglePrescriptionSubmit } = docStore();
     const [deleteFlag, setDeleteFlag] = useState(false);
     const [updateFlag, setUpdateFlag] = useState(false);
     const [editingRow, setEditingRow] = useState(null);
@@ -44,6 +44,8 @@ const TodayPrescriptions = () => {
         if (submitDelete) {
             await axios.delete(`${DOC_API_URL}/delete-today-prescription/${id}`);
             setDeleteFlag(prev => !prev);
+            togglePrescriptionSubmit();
+
         }
     };
 
@@ -53,7 +55,8 @@ const TodayPrescriptions = () => {
             const response = await axios.patch(`${DOC_API_URL}/update-prescription/${id}`,{
                 editedData
             });
-            setUpdateFlag(prev => !prev);            
+            setUpdateFlag(prev => !prev); 
+            togglePrescriptionSubmit();
         }
     }
 

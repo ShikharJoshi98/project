@@ -9,6 +9,7 @@ export const docStore = create((set) => ({
     task: null,
     leaves: [],
     appointments: [],
+    allAppointments: [],
     Diagnosis: [],
     Homeo: [],
     appointment: null,
@@ -20,8 +21,10 @@ export const docStore = create((set) => ({
     allPrescriptions: [],
     section: "medicine",
     prescriptionSubmit: false,
+    appointmentSubmit: false,
     setsection: (newsection) => set({ section: newsection }),
-    togglePrescriptionSubmit: () => set((state) => ({ prescriptionSubmit: !state.prescriptionSubmit })), 
+    togglePrescriptionSubmit: () => set((state) => ({ prescriptionSubmit: !state.prescriptionSubmit })),
+    toggleAppointmentSubmit: () => set((state) => ({ appointmentSubmit: !state.appointmentSubmit })), 
     branch: "",
     setbranch: (newbranch)=> set({branch:newbranch}),
     getTasks: async () => {
@@ -166,6 +169,15 @@ export const docStore = create((set) => ({
             
         } catch (error) {
             console.log(error.message);   
+        }
+    },
+    getAllAppointments: async () => {
+        try {
+            const response = await axios.get(`${DOC_API_URL}/get-appointments`);
+            set({allAppointments:response.data.appointments})
+
+        } catch (error) {
+            console.log(error.message);
         }
     },
     getAppdetails: async (appointmentType) => {

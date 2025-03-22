@@ -6,12 +6,12 @@ import { docStore } from '../../store/DocStore';
 
 const Docnavbar = () => {
   const [isOpen, setOpen] = useState(false);
-  const { setbranch, appointments } = docStore();
+  const { setbranch, appointments,getAllAppointments,allAppointments } = docStore();
+  const [isSubmit, setSubmit] = useState(false);
   const domappointments = appointments.filter((appointment) => appointment?.PatientCase?.branch === 'Dombivali'
   )
   const mulappointments = appointments.filter((appointment) => appointment?.PatientCase?.branch === 'Mulund'
   )
-  console.log(mulappointments);
   const menuRef = useRef(null);
   const { logout } = useAuthStore();
   const navigate = useNavigate();
@@ -21,7 +21,10 @@ const Docnavbar = () => {
       setbranch(savedBranch);
     }
   }, []);
-
+  useEffect(() => {
+    getAllAppointments();
+  }, [getAllAppointments])
+  console.log(allAppointments);
   const handleSectionChange = (newBranch) => {
     setbranch(newBranch);
     localStorage.setItem("selectedBranch", newBranch);
@@ -56,6 +59,7 @@ const Docnavbar = () => {
           <div className="relative"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}>
+            {allAppointments.length>0 && (<div className='absolute w-5 h-5 left-24 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{allAppointments.length }</div>)}
             <li className="hover:text-gray-300 group  cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
             {isHovered && (
               <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-40 flex flex-col h-auto">
@@ -64,7 +68,7 @@ const Docnavbar = () => {
                   className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between"
                 >
                   <h1>Dombivali</h1>
-                  <span className="bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold">
+                  <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">
                     {domappointments.length}
                   </span>
                 </div>
@@ -73,7 +77,7 @@ const Docnavbar = () => {
                   className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between"
                 >
                   <h1>Mulund</h1>
-                  <span className="bg-blue-400 py-0.5 px-2 rounded-full text-white font-semibold">
+                  <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">
                     {mulappointments.length}
                   </span>
                 </div>

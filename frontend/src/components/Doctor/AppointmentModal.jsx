@@ -6,7 +6,7 @@ import { docStore } from '../../store/DocStore';
 import { recStore } from '../../store/RecStore';
 
 const AppointmentModal = ({ onClose }) => {
-    const { submitAppointment } = docStore();
+    const { submitAppointment,toggleAppointmentSubmit } = docStore();
     const { patients, getPatientDetails } = recStore();
   
   const [formValues, setFormValues] = useState({
@@ -30,6 +30,7 @@ const AppointmentModal = ({ onClose }) => {
       Doctor: "",
       AppointmentType: "",
     })
+    toggleAppointmentSubmit();
     
   };
   const handleInputChange = (e) => {

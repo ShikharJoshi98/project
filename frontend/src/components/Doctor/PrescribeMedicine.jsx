@@ -13,7 +13,6 @@ const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day
 const doseArray = ['Single Dose', '3 Dose Half-Hour Interval', '2 Dose Half-Hour Interval'];
 
 const PrescribeMedicine = () => {
-
     const [isDiagnosisOpen, setDiagnosisOpen] = useState(false);
     const [selectedDiagnosisOptions, setSelectedDiagnosisOptions] = useState([]);
     const location = useParams();
@@ -21,7 +20,7 @@ const PrescribeMedicine = () => {
     const [submit, setsubmit] = useState(false);
     const [searchMedicine, setSearchMedicine] = useState("");    
     const [currentDate, setCurrentDate] = useState("");
-    const { fetchPrescription, prescription } = docStore();
+    const { getPastPrescription, allPrescriptions } = docStore();
     const { patients } = recStore();
     const patient = patients.filter((cand => (cand._id) === location.id));
     const diagnosisRef = useRef(null);
@@ -41,7 +40,7 @@ const PrescribeMedicine = () => {
     }, []);    
 
     useEffect(() => {
-        fetchPrescription(location.id);
+        getPastPrescription(location.id);
     }, []);
     
     const [formData, setFormData] = useState({
@@ -63,7 +62,6 @@ const PrescribeMedicine = () => {
             });
             setCurrentDate(date);
         };
-
         updateDate();
     }, []);
 
@@ -96,7 +94,7 @@ const PrescribeMedicine = () => {
         }
     }
     
-    const filteredPrescription = prescription.filter((pres) => pres.medicine.toLowerCase().includes(searchMedicine.toLowerCase()));
+    const filteredPrescription = allPrescriptions.filter((pres) => pres.medicine.toLowerCase().includes(searchMedicine.toLowerCase()));
     
     const handleDiagnosisSubmit = async () => {
         try {
