@@ -111,7 +111,7 @@ export const AppointmentDoc = async (req, res) => {
         const newAppointment = new AppointmentDoctor({
             AppointmentDate, Time, PatientCase, Doctor, AppointmentType
         })
-
+        console.log(newAppointment);
         await newAppointment.save();
         res.json({
             success: true,
@@ -127,7 +127,7 @@ export const AppointmentDoc = async (req, res) => {
 
 export const getAllAppointments = async (req, res) => {
     try {
-        const appointments =await AppointmentDoctor.find();
+        const appointments =await AppointmentDoctor.find().populate('PatientCase');
         res.json({
             success: true,
             appointments

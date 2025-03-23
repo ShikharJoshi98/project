@@ -35,7 +35,7 @@ const AppointmentSidebar = () => {
     <div >
       <Sidebar>
         <SidebarItem onClick={() => navigate('/dashboard-DOCTOR')} icon={<LayoutDashboardIcon size={20} />} text={"Dashboard "} />
-        <SidebarItem icon={<FaMoneyBill size={20} />} text={"Consultation Charges "} />
+        <SidebarItem active={path.pathname === `/consulation-charges/${location.id}`} onClick={() => navigate(`/consultation-charges/${location.id}`)} icon={<FaMoneyBill size={20} />} text={"Consultation Charges "} />
         <SidebarItem active={path.pathname === `/history-details/${location.id}`} onClick={() => navigate(`/history-details/${location.id}`)} icon={<History />} text={"History Details"} />
         <SidebarItem active={path.pathname === `/present-complaints/${location.id}`} onClick={() => navigate(`/present-complaints/${location.id}`)} icon={<NotebookIcon />} text={"Present Complaints"} />
         <SidebarItem active={path.pathname === `/upload-case-image/${location.id}`} onClick={() => navigate(`/upload-case-image/${location.id}`)} icon={<ImagesIcon />} text={"Case Paper Images"} />

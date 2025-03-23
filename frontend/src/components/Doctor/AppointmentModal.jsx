@@ -30,8 +30,7 @@ const AppointmentModal = ({ onClose }) => {
       Doctor: "",
       AppointmentType: "",
     })
-    toggleAppointmentSubmit();
-    
+    toggleAppointmentSubmit();    
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;

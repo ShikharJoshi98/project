@@ -6,12 +6,13 @@ import { docStore } from '../../store/DocStore';
 
 const Docnavbar = () => {
   const [isOpen, setOpen] = useState(false);
-  const { setbranch, appointments,getAllAppointments,allAppointments } = docStore();
+  const { setbranch, appointments,getAllAppointments,allAppointments,appointmentSubmit } = docStore();
   const [isSubmit, setSubmit] = useState(false);
-  const domappointments = appointments.filter((appointment) => appointment?.PatientCase?.branch === 'Dombivali'
-  )
-  const mulappointments = appointments.filter((appointment) => appointment?.PatientCase?.branch === 'Mulund'
-  )
+  useEffect(() => {
+    getAllAppointments();
+  },[getAllAppointments])
+  const domappointments = allAppointments.filter((appointment) => (appointment.PatientCase.branch==='Dombivali'))
+  const mulappointments = allAppointments.filter((appointment) => appointment?.PatientCase?.branch === 'Mulund')
   const menuRef = useRef(null);
   const { logout } = useAuthStore();
   const navigate = useNavigate();
@@ -23,8 +24,7 @@ const Docnavbar = () => {
   }, []);
   useEffect(() => {
     getAllAppointments();
-  }, [getAllAppointments])
-  console.log(allAppointments);
+  }, [getAllAppointments,appointmentSubmit])
   const handleSectionChange = (newBranch) => {
     setbranch(newBranch);
     localStorage.setItem("selectedBranch", newBranch);
