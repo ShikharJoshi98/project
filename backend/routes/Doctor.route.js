@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, getAllAppointments, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addDiagnosis, addFollowUpPatient, addHealthRecord, addNewPrescription, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getPatientAppDetails, getPatientImages, getPrescriptionToday, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -58,6 +58,7 @@ Docrouter.post("/add-write-up-patient/:id",addWriteUpPatient);
 Docrouter.get("/get-write-up-patient/:id",getWriteUpPatient);
 //get data to edit write up patient
 Docrouter.get('/get-write-up-update/:id',getWriteUpUpdate);
+Docrouter.delete('/patient/:patientId/write-up-delete/:imageId',deleteWriteUp);
 
 
 export default Docrouter

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect } from 'react'
-import { docStore } from '../../store/DocStore';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { Trash2, X } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
@@ -17,8 +17,18 @@ const History = ({ date, onClose }) => {
   const Texts = writeUp.filter((data) => data.date === date);
   async function deleteImage(id) {
     try {
+      console.log("I got hit",id);
       await axios.delete(`${DOC_API_URL}/patient/${location.id}/followup-images/${id}`);
-      setSubmit((prev) => !prev);
+      
+    } catch (error) {
+      console.error("Delete request failed:", error.response?.data || error.message);
+    }
+  }
+  async function deleteWriteUp(id) {
+    try {
+      console.log("I got hit",id);
+      await axios.delete(`${DOC_API_URL}/patient/${location.id}/write-up-delete/${id}`);
+      
     } catch (error) {
       console.error("Delete request failed:", error.response?.data || error.message);
     }
@@ -42,7 +52,7 @@ const History = ({ date, onClose }) => {
             <>
               <div className='flex  items-center gap-2'>
                 <img src={image?.follow_string} className='w-[80vw] rounded-md h-[40vh] md:h-[85vh]  bg-white' alt="" key={idx} />
-                <div title='delete' onClick={async () => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
+                <div title='delete' onClick={() => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
               </div>
             </>
           ))
@@ -53,7 +63,7 @@ const History = ({ date, onClose }) => {
               <>
                 <div className='flex  items-center gap-2'>
                   <h1 className='w-[80vw] rounded-md p-5  bg-white' key={idx} >{data.writeUp_value}</h1>
-                  <div title='delete' onClick={async () => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
+                  <div title='delete' onClick={() => deleteWriteUp(data?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
                 </div>
               </>
             ))

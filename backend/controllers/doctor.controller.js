@@ -299,8 +299,12 @@ export const deleteHomeoBhagwatcol = async (req, res) => {
 }
 export const getPatientAppDetails = async (req, res) => {
     try {
-        const { AppointmentType } = req.params;
-        let appointment = await AppointmentDoctor.find(AppointmentType).populate('PatientCase').populate('Doctor');
+        const { appointmentType } = req.params;
+        const date = new Date().toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata",
+        });        
+        
+        let appointment = await AppointmentDoctor.find({AppointmentType:appointmentType,AppointmentDate:date}).populate('PatientCase').populate('Doctor');
 
         appointment = appointment.reverse();
         return res.json(appointment);
@@ -769,3 +773,31 @@ export const getWriteUpUpdate = async (req,res) => {
         });
     }
 }
+
+export const deleteWriteUp = async (req, res) => {
+    try {
+        const { patientId, imageId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(imageId)) {
+            return res.status(400).json({ message: "Invalid Image ID" });
+        }
+
+        const deletedFollowUp = await WriteUpPatient.findOneAndDelete({
+            patient: patientId,
+            _id: imageId,
+        });
+
+        if (!deletedFollowUp) {
+            return res.status(404).json({ message: "Write-up record not found" });
+        }
+
+        return res.json({
+            success: true,
+            message: "Write-up record deleted successfully",
+        });
+
+    } catch (error) {
+        console.error("Error in deleteFollowUpPatient controller:", error.message);
+        return res.status(500).json({ error: "Failed to delete Write-up record" });
+    }
+};
