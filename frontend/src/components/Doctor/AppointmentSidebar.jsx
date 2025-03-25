@@ -39,7 +39,7 @@ const AppointmentSidebar = () => {
         <SidebarItem active={path.pathname === `/history-details/${location.id}`} onClick={() => navigate(`/history-details/${location.id}`)} icon={<History />} text={"History Details"} />
         <SidebarItem active={path.pathname === `/present-complaints/${location.id}`} onClick={() => navigate(`/present-complaints/${location.id}`)} icon={<NotebookIcon />} text={"Present Complaints"} />
         <SidebarItem active={path.pathname === `/upload-case-image/${location.id}`} onClick={() => navigate(`/upload-case-image/${location.id}`)} icon={<ImagesIcon />} text={"Case Paper Images"} />
-        <SidebarItem icon={<FaMagnifyingGlass size={20} />} text={"Investigation"} />
+        <SidebarItem active={path.pathname === `/investigation/${location.id}`} onClick={() => navigate(`/investigation/${location.id}`)}  icon={<FaMagnifyingGlass size={20} />} text={"Investigation"} />
         <SidebarItem active={path.pathname === `/upload-diagnosis-image/${location.id}`} onClick={() => navigate(`/upload-diagnosis-image/${location.id}`)} icon={<Stethoscope />} text={"Diagnosis Images"} />
         <SidebarItem icon={<ScrollTextIcon />} text={"Case Paper Report"} />
         <SidebarItem active={path.pathname === `/record-media/${location.id}`} onClick={() => navigate(`/record-media/${location.id}`)} icon={<Video />} text={"Record Media"} />
