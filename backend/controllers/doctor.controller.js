@@ -127,7 +127,13 @@ export const AppointmentDoc = async (req, res) => {
 
 export const getAllAppointments = async (req, res) => {
     try {
-        const appointments =await AppointmentDoctor.find().populate('PatientCase');
+        const date = new Date().toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata",
+        });        
+        const appointments =await AppointmentDoctor.find({
+            AppointmentType:"general",
+            AppointmentDate:date
+            }).populate('PatientCase');
         res.json({
             success: true,
             appointments
