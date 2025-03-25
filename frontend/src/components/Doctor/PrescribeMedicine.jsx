@@ -131,7 +131,7 @@ const PrescribeMedicine = () => {
                                 </div>}
                             </div>
                         </div>
-                        <MultiSelectDropdown Diagnosis={Diagnosis} selectedOptions={selectedDiagnosisOptions} setSelectedOptions={setSelectedDiagnosisOptions} />
+                        <MultiSelectDropdown Options={Diagnosis} selectedOptions={selectedDiagnosisOptions} setSelectedOptions={setSelectedDiagnosisOptions} />
                     </div>
                     <div className='relative'>
                         <h1 className='text-black font-semibold mb-4'>Medicine:</h1>

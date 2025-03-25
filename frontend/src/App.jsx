@@ -29,7 +29,7 @@ import HistoryDetails from "./pages/Doctor/HistoryDetails";
 import PresentComplaints from "./pages/Doctor/PresentComplaints";
 import VideoAudioRecorder from "./pages/Doctor/VideoAudioRecorder";
 import ConsultationCharges from "./pages/Doctor/ConsultationCharges";
-import Investigation from "./components/Doctor/Investigation";
+import Investigation from "./pages/Doctor/Investigation";
 
 
 

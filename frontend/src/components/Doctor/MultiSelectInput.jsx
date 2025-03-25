@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const MultiSelectDropdown = ({ Diagnosis,selectedOptions,setSelectedOptions }) => {
+const MultiSelectDropdown = ({ Options,selectedOptions,setSelectedOptions }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
@@ -39,8 +39,8 @@ const MultiSelectDropdown = ({ Diagnosis,selectedOptions,setSelectedOptions }) =
   };
 
   // Filter options based on search term
-  const filteredOptions = Diagnosis
-    ? Diagnosis.filter((option) =>
+  const filteredOptions = Options
+    ? Options.filter((option) =>
         option.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
