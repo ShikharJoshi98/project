@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import Docnavbar from '../../components/Doctor/DocNavbar';
 import {  MapPin } from 'lucide-react';
 import DocSidebar from '../../components/Doctor/DocSidebar';
+import ApproveButton from '../../components/Doctor/ApproveButton';
+import { FaCartPlus } from 'react-icons/fa6';
+import { AiFillMedicineBox } from "react-icons/ai";
 
 const DoctorDashboard = () => {
   const { user, logout } = useAuthStore();
@@ -46,8 +49,13 @@ const DoctorDashboard = () => {
               <button  className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>DIAGNOSE HISTORY</button>
               <button className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>COURIER LIST DOMBIVALI</button>
               <button className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>COURIER LIST MULUND</button>
-
-            </div>
+           </div>
+           <div className='mt-20 grid grid-cols-1 lg:grid-cols-2 w-fit mx-auto gap-x-56 gap-y-10'>
+             <ApproveButton title='Approve Items' icon={<FaCartPlus size={40}/>} branch='Dombivali' bgColor='#60aeff' />
+             <ApproveButton title='Approve Items' icon={<FaCartPlus size={40}/>} branch='Mulund' bgColor='#ff7b91'/>
+             <ApproveButton title='Approve Medicine' icon={<AiFillMedicineBox size={40}/>} branch='Dombivali' bgColor='#4fdec1'/>
+             <ApproveButton title='Approve Medicine' icon={<AiFillMedicineBox size={40}/>} branch='Mulund' bgColor='#f0a436'/>
+           </div>
           </div>
         </div>
       </div>

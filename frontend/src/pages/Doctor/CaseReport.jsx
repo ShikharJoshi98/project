@@ -1,22 +1,34 @@
 import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
-import { useParams } from 'react-router-dom'
+import { FaAngleDoubleLeft } from 'react-icons/fa'
 import { recStore } from '../../store/RecStore'
+import { useNavigate, useParams } from 'react-router-dom'
 import HealthAssessment from '../../components/Doctor/HealthAssessment'
-import PreviousPrescriptions from '../../components/Doctor/PreviousPrescriptions'
-import TodayPrescriptions from '../../components/Doctor/TodayPrescription'
-import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
-import FollowUp from '../../components/Doctor/FollowUp'
 
-const AppointmentDetails = () => {
-    const { patients,getPatientDetails } = recStore();
+const CaseReport = () => {
+    const { patients, getPatientDetails } = recStore();
     const location = useParams();
+    const navigate = useNavigate();
+    const [currentDate, setCurrentDate] = useState("");
 
     useEffect(() => {
         getPatientDetails();
     }, [getPatientDetails])
-    
+    useEffect(() => {
+        const updateDate = () => {
+            const date = new Date().toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                timeZone: "Asia/Kolkata",
+            });
+            setCurrentDate(date);
+        };
+
+        updateDate();
+    }, []);
+
     const patient = patients.filter((cand => (cand._id) === location.id));
     return (
         <div>
@@ -25,9 +37,7 @@ const AppointmentDetails = () => {
                 <AppointmentSidebar />
                 <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
                     <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
-                        <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>
-                            PATIENT DETAILS
-                        </h1>
+                        <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>Patient Details</h1>
                         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                             <div className='flex gap-3 w-full md:w-1/5 px-5 py-13.5 rounded-lg bg-gray-300 flex-col items-center'>
                                 <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
@@ -56,33 +66,38 @@ const AppointmentDetails = () => {
                                 </div>
                             </div>
                         </div>
-                        <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
-                        <div className='mt-12'>
-                            <HealthAssessment />
+                    </div>
+                    <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
+                        <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
+                        <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>New Case - Final Report</h1>
+                        <div className='flex items-center justify-between my-5'>
+                            <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl '>{currentDate}</h1>
+                            <button className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
                         </div>
-                        <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
+                        <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                         <div className='mt-12'>
-                            <FollowUp />
-                        </div>
-                        <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
-                        <div className='mt-12'>
-                            <PreviousPrescriptions />
-                        </div>
-                        <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
-                        <div className='mt-12 '>
-                            <PrescribeMedicine />
-                        </div>
-                        <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
-                        <div className='mt-12'>
-                            <TodayPrescriptions />
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Health Assessment</h1>
+                            <div className='p-2  overflow-x-auto w-full mt-5'>
+                                <table className="border-collapse  w-full border-2 border-gray-500 ">
+                                    <thead>
+                                        <tr className="bg-blue-500 text-lg text-white">
+                                            <th className="border border-gray-500 p-2">SNo.</th>
+                                            <th className="border border-gray-500 p-2">Assesment Date</th>
+                                            <th className="border border-gray-500 p-2">Blood Pressure</th>
+                                            <th className="border border-gray-500 p-2">Weight</th>
+                                            <th className="border border-gray-500 p-2">Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     )
 }
 
-export default AppointmentDetails
+export default CaseReport
