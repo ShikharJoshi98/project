@@ -31,6 +31,7 @@ import VideoAudioRecorder from "./pages/Doctor/VideoAudioRecorder";
 import ConsultationCharges from "./pages/Doctor/ConsultationCharges";
 import Investigation from "./pages/Doctor/Investigation";
 import CaseReport from "./pages/Doctor/CaseReport";
+import StaffManagment from "./pages/Doctor/StaffManagment";
 
 
 
@@ -101,6 +102,7 @@ function App() {
           <Route path="/consultation-charges/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ConsultationCharges/></ProtectedRoute>} />
           <Route path="/investigation/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Investigation/></ProtectedRoute>} />
           <Route path="/report/:id" element={<ProtectedRoute allowedRoles={['doctor']}><CaseReport/></ProtectedRoute>} />
+          <Route path="/staff-update" element={<ProtectedRoute allowedRoles={['doctor']}><StaffManagment/></ProtectedRoute>} />
 
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['hr']}><DoctorUpdate_HR /></ProtectedRoute>} />
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['hr']}><ReceptionistUpdate /></ProtectedRoute>} />

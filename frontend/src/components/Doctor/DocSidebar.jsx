@@ -32,7 +32,7 @@ const DocSidebar = () => {
         <SidebarItem onClick={() => navigate('/dashboard-DOCTOR')} icon={<LayoutDashboard />} text={"Dashboard "} />
         <SidebarItem onClick={() => setTaskModalIsOpen(true)} icon={<ListChecks />} text={"Assign Task"} />
         <SidebarItem onClick={() => setLeaveModalIsOpen(true)} icon={<CalendarDays />} text={"Leave Reports "} />
-        <SidebarItem icon={<Users />} text={"Staff"} />
+        <SidebarItem onClick={() => navigate('/staff-update')} icon={<Users />} text={"Staff"} />
         <SidebarItem icon={<FileText />} text={"Certificates"} />
         <SidebarItem icon={<FaUserDoctor size={20} />} text={"Doctor Fees"} />
         <SidebarItem icon={<Briefcase />} text={"Todays Collections"} />

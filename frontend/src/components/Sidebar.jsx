@@ -28,11 +28,11 @@ export function SidebarItem({ icon, text, onClick, active }) {
             className={`h-10 flex items-center py-2 px-1 my-1 transition-colors text-white font-medium rounded-md cursor-pointer ${active ? 'bg-gray-500/70 text-white' : 'hover:bg-gray-400/30 hover:text-white'}`}
         >
             <div className='flex-shrink-0'>{icon}</div>
-            <div
+            {expanded && <div
                 className={`ml-2 transition-all duration-200 ease-in-out text-[8px] md:text-base md:whitespace-nowrap ${expanded ? 'opacity-100 w-5 md:w-56' : 'w-0 opacity-0'}`}
             >
                 {text}
-            </div>
+            </div>}
         </li>
     );
 }
