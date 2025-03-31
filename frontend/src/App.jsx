@@ -14,7 +14,6 @@ import ItemStock from "./pages/HR/ItemStock";
 import MedicineStock from "./pages/HR/MedicineStock";
 import HRDashboard from "./pages/HR/HRDashboard";
 import ReceptionistUpdate from "./pages/HR/ReceptionistUpdate";
-import DoctorUpdate_HR from "./pages/HR/DoctorUpdate_HR";
 import TaskDetails from "./pages/HR/TaskDetails";
 import HomeoMedicine from "./pages/Doctor/HomeoMedicine";
 import HomeoDisease from "./pages/Doctor/HomeoDisease";
@@ -32,6 +31,12 @@ import ConsultationCharges from "./pages/Doctor/ConsultationCharges";
 import Investigation from "./pages/Doctor/Investigation";
 import CaseReport from "./pages/Doctor/CaseReport";
 import StaffManagment from "./pages/Doctor/StaffManagment";
+import DoctorUpdate from "./pages/HR/DoctorUpdate_HR";
+import BillInvoice from "./pages/Doctor/BillInvoice";
+import BillInfo from "./pages/Doctor/BillInfo";
+import PreviousIssuedInvoice from "./pages/Doctor/PreviousIssuedInvoice";
+import AddCertificate from "./pages/Doctor/AddCertificate";
+import PreviousIssuedCertificates from "./pages/Doctor/PreviousIssuedCertificates";
 
 
 
@@ -103,9 +108,14 @@ function App() {
           <Route path="/investigation/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Investigation/></ProtectedRoute>} />
           <Route path="/report/:id" element={<ProtectedRoute allowedRoles={['doctor']}><CaseReport/></ProtectedRoute>} />
           <Route path="/staff-update" element={<ProtectedRoute allowedRoles={['doctor']}><StaffManagment/></ProtectedRoute>} />
+          <Route path="/bill-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><BillInvoice/></ProtectedRoute>} />
+          <Route path="/bill-info" element={<ProtectedRoute allowedRoles={['doctor']}><BillInfo/></ProtectedRoute>} />
+          <Route path="/previous-issued-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedInvoice/></ProtectedRoute>} />
+          <Route path="/add-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><AddCertificate/></ProtectedRoute>} />
+          <Route path="/previous-issued-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedCertificates/></ProtectedRoute>} />
 
-          <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['hr']}><DoctorUpdate_HR /></ProtectedRoute>} />
-          <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['hr']}><ReceptionistUpdate /></ProtectedRoute>} />
+          <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorUpdate/></ProtectedRoute>} />
+          <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ReceptionistUpdate /></ProtectedRoute>} />
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />
           <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock/></ProtectedRoute>} />
           <Route path="/task-details-HR" element={<ProtectedRoute allowedRoles={['hr']}><TaskDetails/></ProtectedRoute>} />
