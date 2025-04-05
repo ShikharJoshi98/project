@@ -72,7 +72,6 @@ const AddCertificate = () => {
                             </div>
                             <button className='py-2 px-6 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer'>Submit</button>
                         </form>
-
                     </div>
                 </div>
             </div>

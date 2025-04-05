@@ -37,6 +37,12 @@ import BillInfo from "./pages/Doctor/BillInfo";
 import PreviousIssuedInvoice from "./pages/Doctor/PreviousIssuedInvoice";
 import AddCertificate from "./pages/Doctor/AddCertificate";
 import PreviousIssuedCertificates from "./pages/Doctor/PreviousIssuedCertificates";
+import Pricing from "./pages/Doctor/Pricing";
+import TodayCollection from "./pages/Doctor/TodayCollection";
+import BalanceList from "./pages/Doctor/BalanceList";
+import DiagnoseHistory from "./pages/Doctor/DiagnoseHistory";
+import CourierDetails from "./pages/Doctor/CourierDetails";
+import CourierMail from "./pages/Doctor/CourierMail";
 
 
 
@@ -113,6 +119,12 @@ function App() {
           <Route path="/previous-issued-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedInvoice/></ProtectedRoute>} />
           <Route path="/add-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><AddCertificate/></ProtectedRoute>} />
           <Route path="/previous-issued-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedCertificates/></ProtectedRoute>} />
+          <Route path="/pricing" element={<ProtectedRoute allowedRoles={['doctor']}><Pricing/></ProtectedRoute>} />
+          <Route path="/collection/:location" element={<ProtectedRoute allowedRoles={['doctor']}><TodayCollection/></ProtectedRoute>} />
+          <Route path="/balance-list/:location" element={<ProtectedRoute allowedRoles={['doctor']}><BalanceList/></ProtectedRoute>} />
+          <Route path="/doctor-diagnose-history" element={<ProtectedRoute allowedRoles={['doctor']}><DiagnoseHistory/></ProtectedRoute>} />
+          <Route path="/view-courier-details/:location" element={<ProtectedRoute allowedRoles={['doctor']}><CourierDetails/></ProtectedRoute>} />
+          <Route path="/doc-courier-mail" element={<ProtectedRoute allowedRoles={['doctor']}><CourierMail/></ProtectedRoute>} />
 
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorUpdate/></ProtectedRoute>} />
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ReceptionistUpdate /></ProtectedRoute>} />

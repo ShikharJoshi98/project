@@ -49,14 +49,14 @@ const DocSidebar = () => {
             <li onClick={()=>navigate('/previous-issued-certificate')} className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Previous Issued Certificates</li>
           </ul>
         </div>
-        <SidebarItem icon={<FaUserDoctor size={20} />} text={"Doctor Fees"} />
+        <SidebarItem active={path.pathname === '/pricing'} onClick={()=>navigate('/pricing')} icon={<FaUserDoctor size={20} />} text={"Doctor Fees"} />
         <div>
           <div onClick={() => setCollectionDropdown(prev => !prev)} className="cursor-pointer rounded-md transition-all duration-300">
-            <SidebarItem icon={<Briefcase />} text={<div className='flex items-center gap-1'>Todays Collections <IoIosArrowDown size={16} className={`transition-transform duration-300 ${collectionDropdown ? "rotate-180" : "rotate-0"}`} /></div>} />
+            <SidebarItem active={path.pathname === '/collection/Dombivili'||path.pathname === '/collection/Mulund'} icon={<Briefcase />} text={<div className='flex items-center gap-1'>Todays Collections <IoIosArrowDown size={16} className={`transition-transform duration-300 ${collectionDropdown ? "rotate-180" : "rotate-0"}`} /></div>} />
           </div>
           <ul className={`ml-8 overflow-hidden transition-all duration-300 ${collectionDropdown ? "max-h-40 opacity-100" : "max-h-0 opacity-0"} `}>
-            <li className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Dombivili</li>
-            <li className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Mulund</li>
+            <li onClick={()=>navigate('/collection/Dombivili')} className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Dombivili</li>
+            <li onClick={()=>navigate('/collection/Mulund')} className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Mulund</li>
           </ul>
         </div>
       </Sidebar>

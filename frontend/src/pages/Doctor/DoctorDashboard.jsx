@@ -43,12 +43,12 @@ const DoctorDashboard = () => {
             <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Dashboard</h1>
             <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4'>{currentDate}</h1>
             <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
-            <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[6px] sm:text-[8px] md:text-sm'>
-              <button className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>BALANCE LIST DOMBIVALI</button>
-              <button className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>BALANCE LIST MULUND</button>
-              <button className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>DIAGNOSE HISTORY</button>
-              <button className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>COURIER LIST DOMBIVALI</button>
-              <button className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>COURIER LIST MULUND</button>
+            <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-white font-semibold  gap-2 justify-between items-center text-[6px] sm:text-[8px] md:text-sm'>
+              <button onClick={()=>navigate('/balance-list/Dombivali')} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>BALANCE LIST DOMBIVALI</button>
+              <button onClick={()=>navigate('/balance-list/Mulund')} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>BALANCE LIST MULUND</button>
+              <button onClick={()=>navigate('/doctor-diagnose-history')} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>DIAGNOSE HISTORY</button>
+              <button onClick={()=>navigate('/view-courier-details/Dombivali')} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>COURIER LIST DOMBIVALI</button>
+              <button onClick={()=>navigate('/view-courier-details/Mulund')} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>COURIER LIST MULUND</button>
             </div>
             <div className='mt-20 grid grid-cols-1 lg:grid-cols-2 w-fit mx-auto gap-x-56 gap-y-10'>
               <ApproveButton title='Approve Items' icon={<FaCartPlus size={40} />} branch='Dombivali' bgColor='#60aeff' />
