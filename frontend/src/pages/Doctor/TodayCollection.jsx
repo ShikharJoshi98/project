@@ -7,6 +7,7 @@ import { User } from 'lucide-react'
 const TodayCollection = () => {
     const location = useParams();
     const [collectionType, setCollectionType] = useState('Collections');
+    
     return (
         <div>
             <Docnavbar />

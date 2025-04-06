@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import AddMedicineModal from '../../components/HR/AddMedicineModal';
 import VendorMedicalModal from '../../components/HR/VendorMedicalModal';
 import OrderMedicalModal from '../../components/HR/OrderMedicalModal';
+import HRSidebar from '../../components/HR/HRSidebar';
 
 const MedicineStock = () => {
     const [currentDate, setCurrentDate] = useState("");
@@ -60,15 +61,7 @@ const MedicineStock = () => {
     <div>
       <HRnavbar />
       <div className='flex'>
-      <Sidebar>
-          <SidebarItem onClick={() => { navigate('/items-stock');   }}  icon={<ShoppingCart />} text={"ITEMS STOCK"} />
-          <SidebarItem onClick={() => { navigate('/medicine-stock');   }} active icon={<PillBottle />} text={"MEDICINE STOCK"} />
-          <SidebarItem onClick={() => navigate("/task-details-HR")} icon={<ListTodo /> } text={"TASK DETAILS"} />
-          <SidebarItem icon={<CalendarDays />} text={"APPLY LEAVE"} />
-          <SidebarItem icon={<Box />} text={"COURIER LIST"} />
-          <SidebarItem icon={<Banknote />} text={"COLLECTIONS"} />
-
-        </Sidebar>
+      <HRSidebar/>
         <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
         <div className='flex md:flex-row  h-fit flex-col items-center justify-between '>
             <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome to the HR Admin Panel</h1>

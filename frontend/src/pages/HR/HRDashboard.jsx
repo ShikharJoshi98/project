@@ -1,29 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
-import Sidebar, { SidebarItem } from '../../components/Sidebar'
 import { FaUserDoctor, FaUsers } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
-import { Banknote, Box, CalendarDays, ListTodo, MapPin, PillBottle, ShoppingCart } from 'lucide-react'
-import { useNavigate } from 'react-router-dom';
+import { MapPin } from 'lucide-react'
 import { useStore } from '../../store/UpdateStore';
 import { useAuthStore } from '../../store/authStore';
+import HRSidebar from '../../components/HR/HRSidebar';
 
 const HRDashboard = () => {
 
-  const doccolumns = ['fullname', 'phone', 'email', 'gender', 'age', 'status', 'department'];
   const { getDetails, employees } = useStore();
-  const { login, user } = useAuthStore();
-  console.log(user?.branch);
+  const { user } = useAuthStore();
+  const [currentDate, setCurrentDate] = useState("");
+  const doctors = employees.filter(emp => emp?.role === 'doctor');
+
   useEffect(() => {
     getDetails();
-
   }, [getDetails]);
-
-  const doctors = employees.filter(emp => emp?.role === 'doctor');
-  const receptionists = employees.filter(emp => emp?.role === 'receptionist');
-
-  const [currentDate, setCurrentDate] = useState("");
-  const navigate = useNavigate();
   useEffect(() => {
     const updateDate = () => {
       const date = new Date().toLocaleDateString("en-GB", {
@@ -34,7 +27,6 @@ const HRDashboard = () => {
       });
       setCurrentDate(date);
     };
-
     updateDate();
   }, []);
 
@@ -42,15 +34,7 @@ const HRDashboard = () => {
     <div >
       <HRnavbar />
       <div className='flex '>
-        <Sidebar>
-          <SidebarItem onClick={() => navigate("/items-stock")} icon={<ShoppingCart />} text={"ITEMS STOCK"} />
-          <SidebarItem onClick={() => navigate("/medicine-stock")} icon={<PillBottle />} text={"MEDICINE STOCK"} />
-          <SidebarItem onClick={() => navigate("/task-details-HR")} icon={<ListTodo />} text={"TASK DETAILS"} />
-          <SidebarItem icon={<CalendarDays />} text={"APPLY LEAVE"} />
-          <SidebarItem icon={<Box />} text={"COURIER LIST"} />
-          <SidebarItem icon={<Banknote />} text={"COLLECTIONS"} />
-
-        </Sidebar>
+        <HRSidebar />
         <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
           <div className='flex md:flex-row  h-fit flex-col items-center justify-between '>
             <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome to the HR Admin Panel</h1>
@@ -67,10 +51,7 @@ const HRDashboard = () => {
                 <span className='text-zinc-800  mb-3 flex text-lg'>Total Doctors</span>
                 <hr className='h-0.5 border-none mb-4 bg-white' />
                 <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span>    <FaUserDoctor />
-
-
                 </span>{doctors.length}</h1>
-
               </div>
 
               <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300  py-5 px-8  rounded-lg bg-[#ffc36d] '>
