@@ -12,8 +12,8 @@ const HRSidebar = () => {
                 <SidebarItem onClick={() => navigate("/medicine-stock")} icon={<PillBottle />} text={"Medicine Stock"} />
                 <SidebarItem onClick={() => navigate("/task-details-HR")} icon={<ListTodo />} text={"Task Details"} />
                 <SidebarItem onClick={() => navigate("/apply-leave-HR")} icon={<CalendarDays />} text={"Apply Leave"} />
-                <SidebarItem icon={<Box />} text={"Courier List"} />
-                <SidebarItem icon={<Banknote />} text={"Collections"} />
+                <SidebarItem onClick={() => navigate("/all-courier/Dombivali")} icon={<Box />} text={"Courier List"} />
+                <SidebarItem onClick={() => navigate("/collections-HR")} icon={<Banknote />} text={"Collections"} />
             </Sidebar>
         </div>
     )

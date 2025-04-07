@@ -46,6 +46,10 @@ import CourierMail from "./pages/Doctor/CourierMail";
 import ApproveItems from "./pages/Doctor/ApproveItems";
 import ApproveMedicines from "./pages/Doctor/ApproveMedicines";
 import ApplyLeave from "./pages/HR/ApplyLeave";
+import CourierList from "./pages/HR/CourierList";
+import Collections from "./pages/HR/Collections";
+import BalanceHistory from "./pages/HR/BalanceHistory";
+import EmailCourierDetails from "./pages/HR/EmailCourierDetails";
 
 
 
@@ -130,15 +134,18 @@ function App() {
           <Route path="/doc-courier-mail" element={<ProtectedRoute allowedRoles={['doctor']}><CourierMail/></ProtectedRoute>} />
           <Route path="/approve-items/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveItems/></ProtectedRoute>} />
           <Route path="/approve-medicines/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveMedicines/></ProtectedRoute>} />
-
+         
+          <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorUpdate/></ProtectedRoute>} />
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ReceptionistUpdate /></ProtectedRoute>} />
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />
           <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock/></ProtectedRoute>} />
           <Route path="/task-details-HR" element={<ProtectedRoute allowedRoles={['hr']}><TaskDetails/></ProtectedRoute>} />
           <Route path="/apply-leave-HR" element={<ProtectedRoute allowedRoles={['hr']}><ApplyLeave/></ProtectedRoute>} />
-
-          <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
+          <Route path="/all-courier/:location" element={<ProtectedRoute allowedRoles={['hr']}><CourierList/></ProtectedRoute>} />
+          <Route path="/collections-HR" element={<ProtectedRoute allowedRoles={['hr']}><Collections/></ProtectedRoute>} />
+          <Route path="/HR-balance" element={<ProtectedRoute allowedRoles={['hr']}><BalanceHistory/></ProtectedRoute>} />
+          <Route path="/email-courier-details" element={<ProtectedRoute allowedRoles={['hr']}><EmailCourierDetails/></ProtectedRoute>} />
 
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />
 
