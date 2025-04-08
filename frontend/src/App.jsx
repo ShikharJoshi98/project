@@ -4,7 +4,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PatientDashboard from "./pages/PatientDashboard";
 import DoctorDashboard from "./pages/Doctor/DoctorDashboard";
-import ReceptionistDashboard from "./pages/ReceptionistDashboard";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -51,6 +50,9 @@ import Collections from "./pages/HR/Collections";
 import BalanceHistory from "./pages/HR/BalanceHistory";
 import EmailCourierDetails from "./pages/HR/EmailCourierDetails";
 import HRMedicine from "./pages/HR/HRMedicine";
+import ReceptionistDashboard from "./pages/Receptionist/ReceptionistDashboard";
+import RegisterPatient from "./pages/Receptionist/RegisterPatient";
+import PatientDetails from "./pages/Receptionist/PatientDetails";
 
 
 
@@ -150,6 +152,8 @@ function App() {
           <Route path="/HR-medicine" element={<ProtectedRoute allowedRoles={['hr']}><HRMedicine/></ProtectedRoute>} />
 
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />
+          <Route path="/register-patient" element={<ProtectedRoute allowedRoles={['receptionist']}><RegisterPatient /></ProtectedRoute>} />
+          <Route path="/patient-details" element={<ProtectedRoute allowedRoles={['receptionist']}><PatientDetails /></ProtectedRoute>} />
 
 
       </Routes>

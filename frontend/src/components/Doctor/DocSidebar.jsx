@@ -49,7 +49,7 @@ const DocSidebar = () => {
             <li onClick={()=>navigate('/previous-issued-certificate')} className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Previous Issued Certificates</li>
           </ul>
         </div>
-        <SidebarItem active={path.pathname === '/pricing'} onClick={()=>navigate('/pricing')} icon={<FaUserDoctor size={20} />} text={"Doctor Fees"} />
+        <SidebarItem  onClick={()=>navigate('/pricing')} icon={<FaUserDoctor size={20} />} text={"Doctor Fees"} />
         <div>
           <div onClick={() => setCollectionDropdown(prev => !prev)} className="cursor-pointer rounded-md transition-all duration-300">
             <SidebarItem active={path.pathname === '/collection/Dombivili'||path.pathname === '/collection/Mulund'} icon={<Briefcase />} text={<div className='flex items-center gap-1'>Todays Collections <IoIosArrowDown size={16} className={`transition-transform duration-300 ${collectionDropdown ? "rotate-180" : "rotate-0"}`} /></div>} />
