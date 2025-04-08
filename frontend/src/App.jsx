@@ -50,6 +50,7 @@ import CourierList from "./pages/HR/CourierList";
 import Collections from "./pages/HR/Collections";
 import BalanceHistory from "./pages/HR/BalanceHistory";
 import EmailCourierDetails from "./pages/HR/EmailCourierDetails";
+import HRMedicine from "./pages/HR/HRMedicine";
 
 
 
@@ -146,6 +147,7 @@ function App() {
           <Route path="/collections-HR" element={<ProtectedRoute allowedRoles={['hr']}><Collections/></ProtectedRoute>} />
           <Route path="/HR-balance" element={<ProtectedRoute allowedRoles={['hr']}><BalanceHistory/></ProtectedRoute>} />
           <Route path="/email-courier-details" element={<ProtectedRoute allowedRoles={['hr']}><EmailCourierDetails/></ProtectedRoute>} />
+          <Route path="/HR-medicine" element={<ProtectedRoute allowedRoles={['hr']}><HRMedicine/></ProtectedRoute>} />
 
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />
 

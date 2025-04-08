@@ -21,6 +21,8 @@ export const useStore = create((set) => ({
   medicalitems: [],
   potencys: [],
   Potency: null,
+  medSection: "General",
+  setMedSection: (newsection) => set({ medSection: newsection }),
   getDetails: async () => {
      try {
        const response = await axios.get(`${HR_API_URL}/get-details`);
