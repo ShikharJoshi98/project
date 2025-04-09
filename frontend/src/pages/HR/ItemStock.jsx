@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
-import Sidebar, { SidebarItem } from '../../components/Sidebar';
-import { Banknote, Box, CalendarDays, ListTodo, MapPin, PillBottle, ShoppingCart } from 'lucide-react';
-
+import { MapPin } from 'lucide-react';
 import AddItemModal from '../../components/HR/AddItemModal';
 import VendorModal from '../../components/HR/VendorModal';
 import AddItemStockModal from '../../components/HR/AddItemStockModal';
@@ -53,7 +51,6 @@ const ItemStock = () => {
     localStorage.setItem("modalVendorState", isVendorModalOpen ? "open" : "closed");
     localStorage.setItem("modalStockState", isAddStockModalOpen ? "open" : "closed");
     localStorage.setItem("modalOrderState", isOrderModalOpen ? "open" : "closed");
-
   }, [isItemModalOpen, isVendorModalOpen, isAddStockModalOpen, isOrderModalOpen]);
   return (
     <div>
@@ -76,8 +73,6 @@ const ItemStock = () => {
               <button onClick={() => setAddStockModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>ADD STOCK</button>
               <button onClick={() => setOrderModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>PLACE ORDER</button>
             </div>
-
-
           </div>
         </div>
       </div>
@@ -85,7 +80,6 @@ const ItemStock = () => {
       {isVendorModalOpen && <VendorModal onClose={() => setVendorModalIsOpen(false)} />}
       {isAddStockModalOpen && <AddItemStockModal onClose={() => setAddStockModalIsOpen(false)} />}
       {isOrderModalOpen && <OrderModal onClose={() => setOrderModalIsOpen(false)} />}
-
     </div>
   )
 }

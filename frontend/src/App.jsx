@@ -53,6 +53,10 @@ import HRMedicine from "./pages/HR/HRMedicine";
 import ReceptionistDashboard from "./pages/Receptionist/ReceptionistDashboard";
 import RegisterPatient from "./pages/Receptionist/RegisterPatient";
 import PatientDetails from "./pages/Receptionist/PatientDetails";
+import ItemStockRec from "./pages/Receptionist/ItemStockRec";
+import MedicineStockRec from "./pages/Receptionist/MedicineStockRec";
+import TaskDetailsRec from "./pages/Receptionist/TaskDetailsRec";
+import ApplyLeaveRec from "./pages/Receptionist/ApplyLeaveRec";
 
 
 
@@ -154,7 +158,10 @@ function App() {
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />
           <Route path="/register-patient" element={<ProtectedRoute allowedRoles={['receptionist']}><RegisterPatient /></ProtectedRoute>} />
           <Route path="/patient-details" element={<ProtectedRoute allowedRoles={['receptionist']}><PatientDetails /></ProtectedRoute>} />
-
+          <Route path="/items-stock-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ItemStockRec /></ProtectedRoute>} />
+          <Route path="/medicine-stock-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><MedicineStockRec /></ProtectedRoute>} />
+          <Route path="/task-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><TaskDetailsRec /></ProtectedRoute>} />
+          <Route path="/apply-leave-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ApplyLeaveRec /></ProtectedRoute>} />
 
       </Routes>
         </Router>

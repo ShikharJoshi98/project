@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { MapPin } from 'lucide-react';
 import { TbPencilPlus } from "react-icons/tb";
 import { useAuthStore } from '../../store/authStore';
@@ -6,9 +6,10 @@ import RecNavbar from '../../components/Receptionist/RecNavbar';
 import RecSidebar from '../../components/Receptionist/RecSidebar';
 import { FaUserDoctor } from 'react-icons/fa6';
 import { FaRegCheckCircle, FaUsers } from 'react-icons/fa';
-
+import AppointmentModal from '../../components/Doctor/AppointmentModal';
 
 const ReceptionistDashboard = () => {
+  const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const { user } = useAuthStore();
 
   return (
@@ -21,8 +22,8 @@ const ReceptionistDashboard = () => {
             <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome {user?.fullname}</h1>
             <h1 className='text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span><MapPin /></span>{user?.branch}</h1>
           </div>
-          <div className='mb-10 md:pl-10'>
-            <button className='cursor-pointer flex items-center gap-3 text-white font-semibold text-2xl hover:scale-102 transition-all duration-300 shadow-gray-600 shadow-md border-1 border-gray-600 bg-blue-500 p-2 hover:bg-blue-700 rounded-lg'>Create Appointment <TbPencilPlus /></button>
+          <div className='mb-10 p-5 md:pl-10'>
+            <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold text-lg md:text-2xl hover:scale-102 transition-all duration-300 shadow-gray-600 shadow-md border-1 border-gray-600 bg-blue-500 p-2 hover:bg-blue-700 rounded-lg'>Create Appointment <TbPencilPlus /></button>
           </div>
           <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
             <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Dashboard</h1>
@@ -49,6 +50,7 @@ const ReceptionistDashboard = () => {
           </div>
         </div>
       </div>
+      {isAppointmentModalOpen && <AppointmentModal onClose={() => setAppointmentModalIsOpen(false)} />}
     </div>
   )
 }
