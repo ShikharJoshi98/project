@@ -57,6 +57,8 @@ import ItemStockRec from "./pages/Receptionist/ItemStockRec";
 import MedicineStockRec from "./pages/Receptionist/MedicineStockRec";
 import TaskDetailsRec from "./pages/Receptionist/TaskDetailsRec";
 import ApplyLeaveRec from "./pages/Receptionist/ApplyLeaveRec";
+import CourierListRec from "./pages/Receptionist/CourierListRec";
+import UploadCaseRec from "./pages/Receptionist/UploadCaseRec";
 
 
 
@@ -162,6 +164,8 @@ function App() {
           <Route path="/medicine-stock-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><MedicineStockRec /></ProtectedRoute>} />
           <Route path="/task-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><TaskDetailsRec /></ProtectedRoute>} />
           <Route path="/apply-leave-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ApplyLeaveRec /></ProtectedRoute>} />
+          <Route path="/courier-list-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><CourierListRec /></ProtectedRoute>} />
+          <Route path="/upload-case-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><UploadCaseRec /></ProtectedRoute>} />
 
       </Routes>
         </Router>
