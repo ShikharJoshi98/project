@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import PatientDashboard from "./pages/PatientDashboard";
+import PatientDashboard from "./pages/Patient/PatientDashboard";
 import DoctorDashboard from "./pages/Doctor/DoctorDashboard";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
@@ -59,17 +59,16 @@ import TaskDetailsRec from "./pages/Receptionist/TaskDetailsRec";
 import ApplyLeaveRec from "./pages/Receptionist/ApplyLeaveRec";
 import CourierListRec from "./pages/Receptionist/CourierListRec";
 import UploadCaseRec from "./pages/Receptionist/UploadCaseRec";
+import AppointmentList from "./pages/Receptionist/AppointmentList";
 
 
 
 const ProtectedRoute = ({children,allowedRoles}) => {
   const { isAuthenticated, user } = useAuthStore();
-  
   if (!isAuthenticated) {
     return <Navigate to='/login' replace />
   }
-  if (!allowedRoles.includes(user?.role)) {
-   
+  if (!allowedRoles.includes(user?.role)) {   
     return <Navigate to="/dashboard-HR" replace />;
   }
   return children;
@@ -98,7 +97,6 @@ const RedirectAuthenticatedUser = ({children}) => {
 function App() {
   const { isCheckingAuth, checkAuth, user, isAuthenticated } = useAuthStore();
   useEffect(() => { checkAuth() }, [checkAuth]);
-
   if (isCheckingAuth) return <LoadingSpinner />;
   
   return (
@@ -113,6 +111,7 @@ function App() {
           <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>}/>
 
           <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
+
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/general-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><GeneralAppointment /></ProtectedRoute>} />
           <Route path="/repeat-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><RepeatAppointment /></ProtectedRoute>} />
@@ -143,10 +142,10 @@ function App() {
           <Route path="/doc-courier-mail" element={<ProtectedRoute allowedRoles={['doctor']}><CourierMail/></ProtectedRoute>} />
           <Route path="/approve-items/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveItems/></ProtectedRoute>} />
           <Route path="/approve-medicines/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveMedicines/></ProtectedRoute>} />
-         
-          <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
           <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorUpdate/></ProtectedRoute>} />
           <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ReceptionistUpdate /></ProtectedRoute>} />
+          
+          <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />          
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />
           <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock/></ProtectedRoute>} />
           <Route path="/task-details-HR" element={<ProtectedRoute allowedRoles={['hr']}><TaskDetails/></ProtectedRoute>} />
@@ -166,6 +165,7 @@ function App() {
           <Route path="/apply-leave-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ApplyLeaveRec /></ProtectedRoute>} />
           <Route path="/courier-list-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><CourierListRec /></ProtectedRoute>} />
           <Route path="/upload-case-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><UploadCaseRec /></ProtectedRoute>} />
+          <Route path="/appointment-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><AppointmentList /></ProtectedRoute>} />
 
       </Routes>
         </Router>

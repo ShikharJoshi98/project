@@ -31,9 +31,9 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { username, password, role } = req.body;
-
-        const user = await Employee.findOne({ username, role });
-        if (!user) {
+        if (role === 'patient') {
+            const user = await Patient.findOne({ username });
+            if (!user) {
             return res.status(400).json({ success: false, message: "Invalid Credentials." });
         }
         const isPasswordValid = await bcryptjs.compare(password, user.password);
@@ -48,7 +48,24 @@ export const login = async (req, res) => {
                 ...user._doc,
                 password:undefined
         } });
-        
+        }
+        else {
+            const user = await Employee.findOne({ username, role });
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid Credentials." });
+        }
+        const isPasswordValid = await bcryptjs.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ success: false, message: "Password incorrect" });
+        }
+        generateTokenAndSetCookie(res, user._id, role);
+        user.lastLogin = new Date();
+        await user.save();
+        res.status(200).json({
+            success: true, message: "Logged in Successfully", User: {
+                ...user._doc,
+                password:undefined
+        } });}      
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }

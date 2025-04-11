@@ -1,10 +1,11 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../../store/authStore';
 
 const PatientDashboard = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  console.log(user);
   function handleLogout() {
     logout();
     navigate('/login');
