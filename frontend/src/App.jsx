@@ -60,6 +60,9 @@ import ApplyLeaveRec from "./pages/Receptionist/ApplyLeaveRec";
 import CourierListRec from "./pages/Receptionist/CourierListRec";
 import UploadCaseRec from "./pages/Receptionist/UploadCaseRec";
 import AppointmentList from "./pages/Receptionist/AppointmentList";
+import UpdateProfile from "./pages/Patient/UpdateProfile";
+import PatientAppointment from "./pages/Patient/PatientAppointment";
+import UploadPatientImage from "./pages/Patient/UploadPatientImage";
 
 
 
@@ -110,7 +113,10 @@ function App() {
           <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>}/>
           <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>}/>
 
-          <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard-PATIENT" element={<PatientDashboard />} />
+          <Route path="/update-profile" element={<UpdateProfile />} />
+          <Route path="/patient-appointment" element={<PatientAppointment />} />
+          <Route path="/upload-patient-image" element={<UploadPatientImage />} />
 
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/general-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><GeneralAppointment /></ProtectedRoute>} />
