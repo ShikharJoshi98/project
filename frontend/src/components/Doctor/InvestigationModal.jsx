@@ -1,11 +1,23 @@
 import { Plus, Trash, X } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import Input from '../Input'
+import axios from 'axios';
+import { DOC_API_URL } from '../../store/DocStore';
 
-const InvestigationModal = ({ list, onClose }) => {
+const InvestigationModal = ({type ,list , onClose }) => {
 
-    const handleSubmit = (e) => {
+    const [inputData, setInputData] = useState("");
+    const handleSubmit = async(e) => {
         e.preventDefault();
+
+        const response = await axios.post(`${DOC_API_URL}/addInvestigationAdvised`,{
+            success: "Go ahead",
+            inputData,
+            type
+        });
+
+        setInputData("");
+
     }
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
@@ -13,12 +25,12 @@ const InvestigationModal = ({ list, onClose }) => {
                 <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1">
                     <X size={24}/>
                 </button>
-                <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">Add Investigation</h1>
+                <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">Add {type}</h1>
                 <div className='flex  w-full gap-10 mt-10 mb-2 pr-5'>
                     <form onSubmit={handleSubmit} className='w-1/2 ' >
                         <h1 className="text-black mb-2 text-lg font-semibold">Mention Here :</h1>
                         <div className='flex flex-col items-center'>
-                            <Input icon={Plus} placeholder='Add' />
+                            <Input onChange={(e) => setInputData(e.target.value)} value={inputData} icon={Plus} placeholder={`Add ${type}`} />
                             <button className="bg-blue-500 transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>
                         </div>
                     </form>

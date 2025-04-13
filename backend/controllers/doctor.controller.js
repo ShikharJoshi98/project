@@ -3,7 +3,7 @@ import { AppointmentDoctor } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient, { FollowUpPatient, Prescription, WriteUpPatient } from "../models/PatientModel.js";
+import Patient, { FollowUpPatient, Investigation, Prescription, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 
 export const assignTask = async (req, res) => {
@@ -807,3 +807,105 @@ export const deleteWriteUp = async (req, res) => {
         return res.status(500).json({ error: "Failed to delete Write-up record" });
     }
 };
+
+
+export const addInvestigationAdvised = async (req,res) => {
+    try {
+        const {success,inputData,type} = req.body;
+
+        const existing = await Investigation.findOne();
+        if(!existing){
+            const newInvestigation = new Investigation({
+                investigationAdvised: [],
+                ultraSonography: [],
+                dopplerStudies: [],
+                obstetrics: [],
+                sonography: [],
+                ctScan: [],
+                mriScan: []
+            });
+            await newInvestigation.save();
+        }else {
+            switch(type){
+                case "Investigation Advised":
+                    await Investigation.findOneAndUpdate(
+                        {},
+                        { $push: { investigationAdvised: inputData.trim()}},
+                        {new:true, upsert:true}
+                    )
+                    break;
+                
+                case "Ultra-Sonography":
+                    await Investigation.findOneAndUpdate(
+                        {},
+                        { $push: { ultraSonography: inputData.trim()}},
+                        {new:true, upsert:true}
+                    )
+                    break;
+
+                case "Doppler Studies":
+                    await Investigation.findOneAndUpdate(
+                        {},
+                        { $push: { dopplerStudies: inputData.trim()}},
+                        {new:true, upsert:true}
+                    )
+                    break;
+                
+                case "Obstetrics(Pregnancy)":
+                    await Investigation.findOneAndUpdate(
+                        {},
+                        { $push: { obstetrics: inputData.trim()}},
+                        {new:true, upsert:true}
+                    )
+                    break;
+
+                case "Sonography":
+                    await Investigation.findOneAndUpdate(
+                        {},
+                        { $push: { sonography: inputData.trim()}},
+                        {new:true, upsert:true}
+                    )
+                    break;
+                
+                case "16 Slice C.T Scan":
+                    await Investigation.findOneAndUpdate(
+                        {},
+                        { $push: { ctScan: inputData.trim()}},
+                        {new:true, upsert:true}
+                    )
+                    break;
+
+                case "1.5 MRI Scan":
+                    await Investigation.findOneAndUpdate(
+                        {},
+                        { $push: { mriScan: inputData.trim()}},
+                        {new:true, upsert:true}
+                    )
+                    break;
+            }            
+        }       
+        
+        return res.json({
+            message: `Added ${type} Successfully`
+        })
+    } catch (error) {
+        console.log("Error in addInvestigationAdvised controller", error.message);
+        return res.json({
+            message:error.message
+        });
+    }
+} 
+
+export const getInvestigationAdvised = async (req,res) => {
+    try {
+        const inv = await Investigation.findOne();
+        return res.json({
+            inv
+        });        
+    } catch (error) {
+        console.log("Error in getInvestigationAdvised", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}

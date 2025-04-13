@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,6 +6,8 @@ import { FaAngleDoubleLeft } from 'react-icons/fa';
 import MultiSelectDropdown from '../../components/Doctor/MultiSelectInput';
 import { MdAssignmentAdd } from 'react-icons/md';
 import InvestigationModal from '../../components/Doctor/InvestigationModal';
+import axios from 'axios';
+import { DOC_API_URL } from '../../store/DocStore';
 
 const investigationList = ['CBC', 'ESR', 'PS for MP'];
 const ultrasonographyList = ['Abdomen', 'Pelvis', 'KUB'];
@@ -14,19 +16,51 @@ const ObstetricsList = ['For gestational age / Dating Scan', 'For growth assesme
 const SonographyList = ['3D SONOGRAPHY', '4D SONOGRAPHY'];
 const sliceList = ['Brain - Plain', 'Brain - Plain & Contrast', 'Brain - Cerebral Angiography'];
 const mriList = ['Brain - Plain SOS Contrast', 'Brain - Plain & Contrast', 'Brain - Dynamic Pituitary Study'];
-const testArray = [{title:'Investigation Advised',color:'blue',list:investigationList}, {title:'Ultra-Sonography',color:'red',list:ultrasonographyList}, {title:'Doppler Studies',color:'green',list:dopplerStudiesList}, {title:'Obstetrics(Pregnancy)',color:'orange',list:ObstetricsList}, {title:'Sonography',color:'black',list:SonographyList}, {title:'16 Slice C.T Scan',color:'brown',list:sliceList}, {title:'1.5 MRI Scan',color:'purple',list:mriList}];
+// const testArray = [{title:'Investigation Advised',color:'blue',list:investigationList}, {title:'Ultra-Sonography',color:'red',list:ultrasonographyList}, {title:'Doppler Studies',color:'green',list:dopplerStudiesList}, {title:'Obstetrics(Pregnancy)',color:'orange',list:ObstetricsList}, {title:'Sonography',color:'black',list:SonographyList}, {title:'16 Slice C.T Scan',color:'brown',list:sliceList}, {title:'1.5 MRI Scan',color:'purple',list:mriList}];
 
 const Investigation = () => {
   const location = useParams();
   const navigate = useNavigate();
+  const [data,setData] = useState({
+    "investigationList": [],
+    "ultrasonographyList":[],
+    "dopplerStudiesList": [],
+    "ObstetricsList":[],
+    "SonographyList":[],
+    "sliceList":[],
+    "mriList":[],
+  });
   const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
   const [isAddInvestigationModalOpen, setAddInvestigationModalIsOpen] = useState(false);
   const [investigationType, setInvestigationType] = useState('Investigation Advised')
-  const [listType, setListType] = useState(investigationList);
+  const [listType, setListType] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
   }
+
+  const fetchInvesigation = async () => {
+    const response = await axios.get(`${DOC_API_URL}/getInvestigationAdvised`)
+    const {investigationAdvised,ultraSonography,dopplerStudies,obstetrics,sonography,ctScan,mriScan} = response.data.inv;
+
+    setData({
+      "investigationList": investigationAdvised,
+      "ultrasonographyList":ultraSonography,
+      "dopplerStudiesList": dopplerStudies,
+      "ObstetricsList":obstetrics,
+      "SonographyList":sonography,
+      "sliceList":ctScan,
+      "mriList":mriScan
+    });
+
+    setListType(investigationAdvised);
+  }
+  useEffect(()=>{
+    fetchInvesigation();
+  },[]);
+
+  const testArray = [{title:'Investigation Advised',color:'blue',list:data?.investigationList}, {title:'Ultra-Sonography',color:'red',list:data?.ultrasonographyList}, {title:'Doppler Studies',color:'green',list:data?.dopplerStudiesList}, {title:'Obstetrics(Pregnancy)',color:'orange',list:data?.ObstetricsList}, {title:'Sonography',color:'black',list:data?.SonographyList}, {title:'16 Slice C.T Scan',color:'brown',list:data?.sliceList}, {title:'1.5 MRI Scan',color:'purple',list:data?.mriList}];
+
 
   return (
     <div>
@@ -78,7 +112,7 @@ const Investigation = () => {
           </div>
         </div>
       </div>
-      {isAddInvestigationModalOpen && <InvestigationModal list={investigationList} onClose={() => setAddInvestigationModalIsOpen(false)} />}
+      {isAddInvestigationModalOpen && <InvestigationModal type={investigationType} list={listType} onClose={() => setAddInvestigationModalIsOpen(false)} />}
     </div>
   )
 }

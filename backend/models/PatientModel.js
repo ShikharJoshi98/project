@@ -119,8 +119,33 @@ const writeUpPatientSchema = new mongoose.Schema({
     }
 })
 
+const investigationSchema = new mongoose.Schema({
+    investigationAdvised :{
+        type: [String]
+    },
+    ultraSonography : {
+        type: [String]
+    },
+    dopplerStudies : {
+        type: [String]
+    },
+    obstetrics : {
+        type: [String]
+    },
+    sonography: {
+        type: [String]
+    },
+    ctScan: {
+        type: [String]
+    },
+    mriScan: {
+        type: [String]
+    }
+});
+
 const Patient = mongoose.model('Patient', PatientSchema);
 export const Prescription = mongoose.model('Prescription', prescriptionSchema);
 export const FollowUpPatient = mongoose.model('FollowUpPatient',followUpPatientSchema);
 export const WriteUpPatient = mongoose.model('WriteUpPatient',writeUpPatientSchema);
+export const Investigation = mongoose.model('Investigation',investigationSchema);
 export default Patient

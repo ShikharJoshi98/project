@@ -71,6 +71,7 @@ const ProtectedRoute = ({children,allowedRoles}) => {
   if (!isAuthenticated) {
     return <Navigate to='/login' replace />
   }
+  console.log(user.role)
   if (!allowedRoles.includes(user?.role)) {   
     return <Navigate to="/dashboard-HR" replace />;
   }
@@ -113,10 +114,10 @@ function App() {
           <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>}/>
           <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>}/>
 
-          <Route path="/dashboard-PATIENT" element={<PatientDashboard />} />
-          <Route path="/update-profile" element={<UpdateProfile />} />
-          <Route path="/patient-appointment" element={<PatientAppointment />} />
-          <Route path="/upload-patient-image" element={<UploadPatientImage />} />
+          <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
+          <Route path="/update-profile" element={<ProtectedRoute allowedRoles={['patient']}><UpdateProfile /></ProtectedRoute>} />
+          <Route path="/patient-appointment" element={<ProtectedRoute allowedRoles={['patient']}><PatientAppointment /></ProtectedRoute>} />
+          <Route path="/upload-patient-image" element={<ProtectedRoute allowedRoles={['patient']}><UploadPatientImage /></ProtectedRoute>} />
 
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/general-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><GeneralAppointment /></ProtectedRoute>} />

@@ -46,7 +46,8 @@ export const login = async (req, res) => {
         res.status(200).json({
             success: true, message: "Logged in Successfully", User: {
                 ...user._doc,
-                password:undefined
+                password:undefined,
+                role: "patient"
         } });
         }
         else {
@@ -137,16 +138,22 @@ export const resetPassword = async (req, res) => {
 export const checkAuth = async (req, res) => {
     try {
         let user;
-        user = await Employee.findById(req.userId).select("-password");
-        
-        if (req.role === user.role) {
-            res.status(200).json({ success: true, user });
-        }
-        else {
-            return res.status(400).json({ success: false, message: "Not found" });
-
-        }
-        
+        if(req.role === 'patient'){
+            user = await Patient.findById(req.userId).select("-password");
+            if(user){
+                res.status(200).json({ success: true, user: {...user, role: "patient"} });
+            }
+        }else {
+            user = await Employee.findById(req.userId).select("-password");
+            
+            if (req.role === user.role) {
+                res.status(200).json({ success: true, user });
+            }
+            else {
+                return res.status(400).json({ success: false, message: "Not found" });
+    
+            }
+        }       
     } catch (error) {
         res.status(400).json({
             success: false,
