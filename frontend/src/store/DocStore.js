@@ -1,7 +1,7 @@
 import axios  from "axios";
 import { create } from "zustand";
 
-export const DOC_API_URL = "http://localhost:4000/api/doctor";
+export const DOC_API_URL = `${import.meta.env.VITE_API_URL}/api/doctor`;
 axios.defaults.withCredentials = true;
 
 export const docStore = create((set) => ({

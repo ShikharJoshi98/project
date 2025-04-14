@@ -2,7 +2,7 @@ import axios  from "axios";
 import { create } from "zustand";
 
 
-const HR_API_URL = 'http://localhost:4000/api/hr';
+const HR_API_URL = `${import.meta.env.VITE_API_URL}/api/hr`;
 axios.defaults.withCredentials = true;
 
 export const useStore = create((set) => ({
