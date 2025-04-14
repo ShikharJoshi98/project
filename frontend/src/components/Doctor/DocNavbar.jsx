@@ -137,7 +137,7 @@ const Docnavbar = () => {
           <p className='text-center  hover:text-gray-300 cursor-pointer'>Home</p>
           <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Dashboard</p>
           <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Balance History</p>
-          <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Medicine</p>
+          <p onClick={() => handleSectionChange("Dombivali")} className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Medicine</p>
           <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Courier Mail</p>
           <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Login</p>
         </div>}
