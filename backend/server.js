@@ -26,7 +26,7 @@ app.use('/api/receptionist', Recrouter);
 
 //api endpoints
 app.get('/', (req, res) => {
-    res.send("Server working");
+    res.send("api working");
 })
 
 app.get("/test-api", async (req, res) => {
