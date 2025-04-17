@@ -29,7 +29,7 @@ const FollowUp = () => {
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>
                 FOLLOW UP
             </h1>
-            <div className='flex my-20 items-center justify-center gap-10'>
+            <div className='flex sm:flex-row flex-col my-20 items-center justify-center gap-10'>
                 <button onClick={()=>setScribbleModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
                 <button onClick={()=>setWritingModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Writing Pad <KeyboardIcon size={20} /> </button>
             </div>

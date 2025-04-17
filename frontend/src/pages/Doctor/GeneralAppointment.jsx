@@ -10,7 +10,6 @@ import UploadCase from "../../components/Doctor/UploadCase";
 import DocSidebar from "../../components/Doctor/DocSidebar";
 
 const GeneralAppointment = () => {
-  const { user } = useAuthStore();
   const [currentDate, setCurrentDate] = useState("");
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -64,9 +63,12 @@ const GeneralAppointment = () => {
   useEffect(() => {
     getAppdetails(appointmentType);
   }, [getAppdetails, appointmentSubmit])
-
-  const GeneralAppointments = appointments.filter((appointment) => (
-    appointment.AppointmentType === "general"
+   
+  const domGeneralAppointments = appointments.filter((appointment) => (
+    appointment.AppointmentType === "general" && appointment?.PatientCase?.branch === "Dombivali"
+  ));
+  const mulGeneralAppointments = appointments.filter((appointment) => (
+    appointment.AppointmentType === "general" && appointment?.PatientCase?.branch === "Mulund"
   ));
   
   return (
@@ -76,17 +78,7 @@ const GeneralAppointment = () => {
         <DocSidebar />
 
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-          <div className="flex md:flex-row h-fit flex-col items-center justify-between">
-            <h1 className="text-stone-800 w-fit text-lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg">
-              Welcome {user?.fullname}
-            </h1>
-            <h1 className="text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg">
-              <span>
-                <MapPin />
-              </span>
-              {user?.branch}
-            </h1>
-          </div>
+          
           <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>{
               `GENERAL APPOINTMENT ${branch.toUpperCase()}`
@@ -123,7 +115,7 @@ const GeneralAppointment = () => {
                 </thead>
                 <tbody className=" bg-gray-200  text-black  ">
                   {
-                    GeneralAppointments.map((appointment, idx) => (
+                    branch==='Dombivali' && (domGeneralAppointments.map((appointment, idx) => (
                       <tr key={idx}>
                         <td className="py-2 px-4 border">{idx + 1}</td>
                         <td className="py-2 px-4 border">PATIENT'S IMAGE</td>
@@ -135,7 +127,22 @@ const GeneralAppointment = () => {
                         <td onClick={() => navigate(`/appointment-details/${appointment.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
                         <td className="py-2 px-4 border">{appointment.PatientCase.email}</td>
                       </tr>
-                    ))
+                    )))
+                  }
+                  {
+                    branch==='Mulund' && (mulGeneralAppointments.map((appointment, idx) => (
+                      <tr key={idx}>
+                        <td className="py-2 px-4 border">{idx + 1}</td>
+                        <td className="py-2 px-4 border">PATIENT'S IMAGE</td>
+                        <td className="py-2 px-4 border">{appointment.PatientCase.casePaperNo}</td>
+                        <td className="py-2 px-4 border">{appointment.PatientCase.phone}</td>
+                        <td className="py-2 px-4 border">{appointment.PatientCase.fullname}</td>
+                        <td className="py-2 px-4 border">{appointment.AppointmentType}</td>
+                        <td className="py-2 px-4 border">{appointment.PatientCase.branch}</td>
+                        <td onClick={() => navigate(`/appointment-details/${appointment.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
+                        <td className="py-2 px-4 border">{appointment.PatientCase.email}</td>
+                      </tr>
+                    )))
                   }
                 </tbody>
               </table>

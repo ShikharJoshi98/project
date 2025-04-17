@@ -119,11 +119,11 @@ const PrescribeMedicine = () => {
             <form onSubmit={handleSubmit}>
                 <div className='sm:grid flex flex-col pl-10 gap-y-5 gap-x-2 grid-cols-2'>
                     <div>
-                        <div className='flex  items-center justify-between mb-2 pr-5'>
+                        <div className='flex sm:flex-row flex-col  items-center justify-between mb-2 pr-5'>
                             <h1 className='text-black font-semibold '>Diagnosis:</h1>
                             <div className='relative'>
-                                <button onClick={() => setDiagnosisOpen(prev => !prev)}  type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
-                                {isDiagnosisOpen && <div ref={diagnosisRef} className='bg-white w-56 z-60 left-10 border border-black rounded-md absolute p-2'>
+                                <button onClick={() => setDiagnosisOpen(!isDiagnosisOpen)}  type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
+                                {isDiagnosisOpen && <div ref={diagnosisRef} className='bg-white w-56 z-60 -left-10 border border-black rounded-md absolute p-2'>
                                     <div className='flex items-center flex-col gap-3'>
                                         <Input onChange={(e) => handleChange(e)} value={formData.diagnosis} name='diagnosis' icon={Plus} placeholder='Add diagnosis' />
                                         <button onClick={() => { handleDiagnosisSubmit(); setDiagnosisOpen(prev => !prev) }} type="button" className='p-1 w-fit cursor-pointer bg-blue-500 text-white rounded-md'>Add</button>

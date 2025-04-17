@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BiSolidUserDetail } from "react-icons/bi";
 import { LuScrollText } from "react-icons/lu";
 import Sidebar, { SidebarItem } from '../Sidebar';
 import { Box, CalendarDays, ListTodo, PillBottle, ShoppingCart } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UploadCase from '../Doctor/UploadCase';
 
 const RecSidebar = () => {
+    const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
     const navigate = useNavigate();
     const path = useLocation();
 
@@ -17,7 +19,9 @@ const RecSidebar = () => {
             <SidebarItem active={path.pathname === '/task-details-rec'} onClick={()=>navigate('/task-details-rec')} icon={<ListTodo />} text={"Task Details"} />
             <SidebarItem active={path.pathname === '/apply-leave-rec'} onClick={()=>navigate('/apply-leave-rec')} icon={<CalendarDays />} text={"Apply Leave"} />
             <SidebarItem active={path.pathname === '/courier-list-rec'} onClick={()=>navigate('/courier-list-rec')} icon={<Box />} text={"Courier List"} />
-            <SidebarItem active={path.pathname === '/upload-case-rec'} onClick={()=>navigate('/upload-case-rec')} icon={<LuScrollText size={25} />} text={"Upload Old Case Paper"} />
+            <SidebarItem onClick={() => setUploadModalIsOpen(true)} icon={<LuScrollText size={25} />} text={"Upload Old Case Paper"} />
+            {isUploadModalOpen && <UploadCase onClose={() => setUploadModalIsOpen(false)} />}
+
         </Sidebar>
     )
 }

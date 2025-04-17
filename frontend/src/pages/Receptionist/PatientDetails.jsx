@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import RecNavbar from '../../components/Receptionist/RecNavbar'
 import RecSidebar from '../../components/Receptionist/RecSidebar'
 import Input from '../../components/Input'
@@ -6,10 +6,22 @@ import { SearchIcon } from 'lucide-react'
 import { TbPencilPlus } from 'react-icons/tb'
 import PatientUpdateModal from '../../components/Receptionist/PatientUpdateModal'
 import AppointmentModal from '../../components/Doctor/AppointmentModal'
+import { recStore } from '../../store/RecStore'
+import { LuSquarePen } from 'react-icons/lu'
 
 const PatientDetails = () => {
+    const { getPatientDetails, patients, update } = recStore();
     const [isPatientUpdateModalOpen, setPatientUpdateModalIsOpen] = useState(false);
     const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
+    const [patientId, setPatientId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        getPatientDetails();
+    }, [getPatientDetails, update]);
+
+    const filteredPatient = patients.filter((patient) => (patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
+
 
     return (
         <div>
@@ -23,8 +35,7 @@ const PatientDetails = () => {
                     <div className='bg-[#e9ecef] w-auto p-5 mx-10  rounded-lg'>
                         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Patient's Details</h1>
                         <div className='flex items-center gap-2 mt-10'>
-                            <Input icon={SearchIcon} placeholder="Search for Patient's Name/Case Paper No./Mobile No." />
-                            <button className='py-2 px-4 bg-blue-500 font-semibold rounded-lg text-white'>Search</button>
+                            <Input icon={SearchIcon} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search for Patient's Name/Case Paper No./Mobile No." />
                         </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
@@ -43,16 +54,27 @@ const PatientDetails = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td onClick={() => setPatientUpdateModalIsOpen(true)}>Update</td>
-                                    </tr>
+                                    {filteredPatient.map((patient, index) => (
+                                        <tr key={index} className="hover:bg-blue-300 bg-blue-200 transition-all">
+                                            <td className="px-1 py-2 text-center">{index + 1}.</td>
+                                            <td className="px-1 py-2 text-center">{patient?.casePaperNo}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.username}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.fullname}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.phone}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.email}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.gender}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.age}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.address}</td>
+                                            <td className="px-1 py-2" onClick={() => { setPatientUpdateModalIsOpen(true); setPatientId(patient?._id) }}><LuSquarePen size={32} className='mx-auto bg-blue-500 text-white p-1 rounded-md cursor-pointer' /></td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-            {isPatientUpdateModalOpen && <PatientUpdateModal onClose={() => setPatientUpdateModalIsOpen(false)} />}
+            {isPatientUpdateModalOpen && <PatientUpdateModal patientId={patientId} onClose={() => setPatientUpdateModalIsOpen(false)} />}
             {isAppointmentModalOpen && <AppointmentModal onClose={() => setAppointmentModalIsOpen(false)} />}
         </div>
     )

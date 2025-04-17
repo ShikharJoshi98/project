@@ -41,7 +41,7 @@ const AssignTaskModal = ({ onClose }) => {
         <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
           Assign Task
         </h1>
-        <div className="flex flex-col  md:justify-around md:flex-row gap-4">
+        <div className="flex flex-col  md:justify-around md:flex-row ">
           <div className="bg-white p-5 rounded-lg md:w-96 ">
             <h1 className='text-lg text-center font-semibold text-blue-600 mb-4'>Add Task</h1>
             <form onSubmit={handleSubmit} >
@@ -81,28 +81,26 @@ const AssignTaskModal = ({ onClose }) => {
             <table className="border-collapse w-[734px]  border-2 border-gray-500 ">
               <thead>
                 <tr className="bg-blue-500 ">
-                  <th className="border border-gray-500 p-2">Serial No.</th>
-                  <th className="border border-gray-500 p-2">Task</th>
-                  <th className="border border-gray-500 p-2">Assigned To</th>
-                  <th className="border border-gray-500 p-2">Assigned On</th>
-                  <th className="border border-gray-500 p-2">Status</th>
-                  <th className="border border-gray-500 p-2">Delete</th>
+                  <th className="border border-gray-500 px-1 py-2">Serial No.</th>
+                  <th className="border border-gray-500 px-1 py-2">Task</th>
+                  <th className="border border-gray-500 px-1 py-2">Assigned To</th>
+                  <th className="border border-gray-500 px-1 py-2">Assigned On</th>
+                  <th className="border border-gray-500 px-1 py-2">Status</th>
+                  <th className="border border-gray-500 px-1 py-2">Delete</th>
                 </tr>
               </thead>
-
               <tbody>
                 {tasks.map((task, idx) => (
                   <tr key={idx} className="hover:bg-blue-300  bg-blue-200 transition-all">
-                    <td className="border border-gray-300 px-4 py-2 text-center">{idx + 1}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-center">{task?.task}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-center">{task?.username}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-center">{new Date(task?.AssignedOn).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</td>
-                    <td className={`px-4 py-2 text-center ${task?.status === 'INCOMPLETE' ? "text-red-600" : "text-green-600"}`}>{task?.status}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-center"><button onClick={() => Delete(task?._id)} type='button' className='cursor-pointer text-red-500  hover:text-red-700'><Trash2 /></button></td>
+                    <td className="border border-gray-300 px-1 py-2 text-center">{idx + 1}</td>
+                    <td className="border border-gray-300 px-1 py-2 text-center">{task?.task}</td>
+                    <td className="border border-gray-300 px-1 py-2 text-center">{task?.username}</td>
+                    <td className="border border-gray-300 px-1 py-2 text-center">{new Date(task?.AssignedOn).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</td>
+                    <td className={`px-1 py-2 text-center ${task?.status === 'INCOMPLETE' ? "text-red-600" : "text-green-600"}`}>{task?.status}</td>
+                    <td className="border border-gray-300 px-1 py-2 text-center"><button onClick={() => Delete(task?._id)} type='button' className='cursor-pointer text-red-500  hover:text-red-700'><Trash2 /></button></td>
                   </tr>
-
-                ))
-                }                          </tbody>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>

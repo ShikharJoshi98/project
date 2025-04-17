@@ -24,7 +24,7 @@ export function SidebarItem({ icon, text, onClick, active }) {
     const { expanded } = useContext(SidebarContext);
     
     return (
-        <li onClick={onClick} title={text}
+        <li onClick={onClick}
             className={`h-10 flex items-center py-2 px-1 my-1 transition-colors text-white font-medium rounded-md cursor-pointer ${active ? 'bg-gray-500/70 text-white' : 'hover:bg-gray-400/30 hover:text-white'}`}
         >
             <div className='flex-shrink-0'>{icon}</div>

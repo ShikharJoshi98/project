@@ -909,3 +909,16 @@ export const getInvestigationAdvised = async (req,res) => {
         });
     }
 }
+
+export const deleteEmployee = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const employee = await Employee.findByIdAndDelete(id);
+        if (!employee) {
+            res.json({ success: false, message: "Cannot find" });
+        }
+        res.json({ success: true, message: "Deleted Successfully" });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}

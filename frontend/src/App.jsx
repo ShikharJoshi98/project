@@ -12,7 +12,6 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import ItemStock from "./pages/HR/ItemStock";
 import MedicineStock from "./pages/HR/MedicineStock";
 import HRDashboard from "./pages/HR/HRDashboard";
-import ReceptionistUpdate from "./pages/HR/ReceptionistUpdate";
 import TaskDetails from "./pages/HR/TaskDetails";
 import HomeoMedicine from "./pages/Doctor/HomeoMedicine";
 import HomeoDisease from "./pages/Doctor/HomeoDisease";
@@ -30,7 +29,6 @@ import ConsultationCharges from "./pages/Doctor/ConsultationCharges";
 import Investigation from "./pages/Doctor/Investigation";
 import CaseReport from "./pages/Doctor/CaseReport";
 import StaffManagment from "./pages/Doctor/StaffManagment";
-import DoctorUpdate from "./pages/HR/DoctorUpdate_HR";
 import BillInvoice from "./pages/Doctor/BillInvoice";
 import BillInfo from "./pages/Doctor/BillInfo";
 import PreviousIssuedInvoice from "./pages/Doctor/PreviousIssuedInvoice";
@@ -58,11 +56,12 @@ import MedicineStockRec from "./pages/Receptionist/MedicineStockRec";
 import TaskDetailsRec from "./pages/Receptionist/TaskDetailsRec";
 import ApplyLeaveRec from "./pages/Receptionist/ApplyLeaveRec";
 import CourierListRec from "./pages/Receptionist/CourierListRec";
-import UploadCaseRec from "./pages/Receptionist/UploadCaseRec";
 import AppointmentList from "./pages/Receptionist/AppointmentList";
 import UpdateProfile from "./pages/Patient/UpdateProfile";
 import PatientAppointment from "./pages/Patient/PatientAppointment";
 import UploadPatientImage from "./pages/Patient/UploadPatientImage";
+import AccessDenied from "./pages/AccessDenied";
+import UpdateEmployee from "./pages/Doctor/UpdateEmployee";
 
 
 
@@ -71,9 +70,8 @@ const ProtectedRoute = ({children,allowedRoles}) => {
   if (!isAuthenticated) {
     return <Navigate to='/login' replace />
   }
-  console.log(user.role)
   if (!allowedRoles.includes(user?.role)) {   
-    return <Navigate to="/dashboard-HR" replace />;
+    return <Navigate to="/access-denied" replace />;
   }
   return children;
 }
@@ -104,8 +102,7 @@ function App() {
   if (isCheckingAuth) return <LoadingSpinner />;
   
   return (
-    <div >
-      
+    <div >      
       <Router>
       <Routes>
           <Route path="/" element={<Home />} />
@@ -113,6 +110,7 @@ function App() {
           <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />
           <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>}/>
           <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>}/>
+          <Route path="/access-denied" element={<AccessDenied />}/>
 
           <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/update-profile" element={<ProtectedRoute allowedRoles={['patient']}><UpdateProfile /></ProtectedRoute>} />
@@ -149,9 +147,8 @@ function App() {
           <Route path="/doc-courier-mail" element={<ProtectedRoute allowedRoles={['doctor']}><CourierMail/></ProtectedRoute>} />
           <Route path="/approve-items/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveItems/></ProtectedRoute>} />
           <Route path="/approve-medicines/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveMedicines/></ProtectedRoute>} />
-          <Route path="/update-doctor/:id" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorUpdate/></ProtectedRoute>} />
-          <Route path="/update-receptionist/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ReceptionistUpdate /></ProtectedRoute>} />
-          
+          <Route path="/update-employee/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UpdateEmployee /></ProtectedRoute>} />
+
           <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />          
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />
           <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock/></ProtectedRoute>} />
@@ -171,7 +168,6 @@ function App() {
           <Route path="/task-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><TaskDetailsRec /></ProtectedRoute>} />
           <Route path="/apply-leave-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ApplyLeaveRec /></ProtectedRoute>} />
           <Route path="/courier-list-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><CourierListRec /></ProtectedRoute>} />
-          <Route path="/upload-case-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><UploadCaseRec /></ProtectedRoute>} />
           <Route path="/appointment-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><AppointmentList /></ProtectedRoute>} />
 
       </Routes>

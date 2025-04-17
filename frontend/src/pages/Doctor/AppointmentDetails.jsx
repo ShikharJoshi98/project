@@ -10,13 +10,13 @@ import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
 import FollowUp from '../../components/Doctor/FollowUp'
 
 const AppointmentDetails = () => {
-    const { patients,getPatientDetails } = recStore();
+    const { patients, getPatientDetails } = recStore();
     const location = useParams();
 
     useEffect(() => {
         getPatientDetails();
     }, [getPatientDetails])
-    
+
     const patient = patients.filter((cand => (cand._id) === location.id));
     return (
         <div>
@@ -29,7 +29,7 @@ const AppointmentDetails = () => {
                             PATIENT DETAILS
                         </h1>
                         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
-                            <div className='flex gap-3 w-full md:w-1/5 px-5 py-13.5 rounded-lg bg-gray-300 flex-col items-center'>
+                            <div className='flex gap-3 w-full md:w-1/5 px-5 py-10 lg:py-16.5 rounded-lg bg-gray-300 flex-col items-center'>
                                 <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
                                 <h1 className='text-lg md:text-xl  font-semibold'>{patient[0]?.fullname}</h1>
                                 <h1 className='text-sm md:text-base '>{patient[0]?.casePaperNo}</h1>
@@ -78,9 +78,7 @@ const AppointmentDetails = () => {
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     )
 }

@@ -7,7 +7,6 @@ HRrouter.get('/get-details',details)
 HRrouter.post('/register', register);
 HRrouter.post('/apply-leave', LeaveApply);
 HRrouter.put('/update/:id', update);
-HRrouter.put('/update-receptionist/:id', update);
 HRrouter.post('/add-item', add_item);
 HRrouter.post('/add-unit', add_unit);
 HRrouter.post('/add-item-vendor', add_item_vendor);

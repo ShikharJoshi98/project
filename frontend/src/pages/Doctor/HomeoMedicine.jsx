@@ -77,7 +77,7 @@ const HomeoMedicine = () => {
 
   const handleSectionChange = (newSection, path) => {
     setsection(newSection);
-    localStorage.setItem("selectedSection", newSection); 
+    localStorage.setItem("selectedSection", newSection);
     navigate(path);
   };
   async function handleSave() {

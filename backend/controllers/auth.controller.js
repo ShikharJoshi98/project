@@ -8,14 +8,15 @@ import { Employee } from "../models/EmployeeModel.js";
 
 export const register = async (req, res) => {
     try {
-        const { fullname,phone,Altphone,email,username,lastLogin,  password,branch } = req.body;
+        const { fullname, phone, Altphone, email, username, lastLogin, password, branch } = req.body;
         const existUser = await Patient.findOne({ username });
+        console.log(existUser);
         if (existUser) {
             return res.status(400).json({success:false,message:"Already exists try logging in."})
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         const newUser = new Patient({
-            fullname,phone,Altphone,email,username,lastLogin,  password:hashedPassword,branch
+            fullname,phone,Altphone,email,username,lastLogin, password:hashedPassword,branch
         })
         await newUser.save();
         generateTokenAndSetCookie(res, newUser._id);

@@ -18,8 +18,7 @@ export const details= async (req, res) => {
     }
 }
 
-export const register = async (req, res) => {
-    
+export const register = async (req, res) => {    
     try {
         const { fullname,username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password,branch ,role } = req.body;
         const employeeExists = await Employee.findOne({ username });
@@ -29,7 +28,9 @@ export const register = async (req, res) => {
         const hashedPassword = await bcryptjs.hash(password, 11);
 
         const newEmployee = new Employee({
-            fullname,username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password:hashedPassword,branch ,role        })
+            fullname, username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password: hashedPassword, branch, role
+        })
+        console.log(newEmployee);
         await newEmployee.save();
         res.json({
             success: true,
