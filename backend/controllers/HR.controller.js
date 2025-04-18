@@ -30,7 +30,6 @@ export const register = async (req, res) => {
         const newEmployee = new Employee({
             fullname, username, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, password: hashedPassword, branch, role
         })
-        console.log(newEmployee);
         await newEmployee.save();
         res.json({
             success: true,
@@ -67,22 +66,30 @@ export const update = async (req, res) => {
 
 export const LeaveApply = async (req, res) => {
     try {
-        let { startDate, endDate, reason, username,status } = req.body;
+        let { startDate, endDate, reason,duration, username } = req.body;
         const EmployeeExist = await Employee.findOne({ username });
+
         if (!EmployeeExist) {
             res.json({ success: false, message: "This employee does not exist" });
         }
         const convertDateFormat = (dateString) => {
-            const [day, month, year] = dateString.split('-');
-            return new Date(`${year}-${month}-${day}`);
+            const [year, month, date] = dateString.split('-');
+            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
         };
 
+        const parseDate = (dateStr) => {
+            const [day, month, year] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day); // month is 0-indexed
+        };
+        
         startDate = convertDateFormat(startDate);
         endDate = convertDateFormat(endDate);
+        duration= Math.abs(parseDate(endDate)-parseDate(startDate)) / (1000 * 60 * 60 * 24);
         const newLeave = new LeaveApplication({
             startDate,
             endDate,
             reason,
+            duration,
             username
         })
         await newLeave.save();
@@ -95,8 +102,6 @@ export const LeaveApply = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
-
-
 
 export const add_item = async (req, res) => {
     try {

@@ -35,6 +35,7 @@ const RegisterPatient = () => {
             [name]: value,
         }));
     };
+    
     function usernameCreator(newName, newPhone) {
         let text = "";
         let firstName = newName.split(" ")[0] || "";

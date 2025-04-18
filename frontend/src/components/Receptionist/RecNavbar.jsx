@@ -1,16 +1,26 @@
 import { Hospital } from 'lucide-react';
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { recStore } from '../../store/RecStore';
+import { docStore } from '../../store/DocStore';
 
 const RecNavbar = () => {
-    const { logout } = useAuthStore();
+    const { logout, user } = useAuthStore();
     const [isOpen, setOpen] = useState(false);
     const menuRef = useRef(null);
     const [isMedicineHovered, setIsMedicineHovered] = useState(false);
-    const { setAppointmentSection } = recStore();
     const navigate = useNavigate();
+    const { getAllAppointments, allAppointments, appointmentSubmit } = docStore();
+    const { setAppointmentSection, appointmentSection } = recStore();
+
+    useEffect(() => {
+        getAllAppointments();
+    }, [getAllAppointments, appointmentSubmit]);
+
+    const generalAppointments = allAppointments.filter((appointment) => ((appointment.PatientCase.branch === user?.branch) && (appointment.AppointmentType === 'general')));
+    const repeatAppointments = allAppointments.filter((appointment) => ((appointment.AppointmentType === 'repeat') && (appointment.PatientCase.branch === user?.branch)))
+    console.log(allAppointments);
     function handleLogout() {
         logout();
         navigate('/login');
@@ -31,11 +41,11 @@ const RecNavbar = () => {
                             <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-52 flex flex-col h-auto">
                                 <div onClick={() => { navigate('/appointment-details-rec'); setAppointmentSection('General') }} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                                     <h1>General</h1>
-                                    <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">0</span>
+                                    <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">{generalAppointments.length}</span>
                                 </div>
                                 <div onClick={() => { navigate('/appointment-details-rec'); setAppointmentSection('Repeat Medicine') }} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                                     <h1>Repeat Medicine</h1>
-                                    <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">0</span>
+                                    <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">{repeatAppointments.length}</span>
                                 </div>
                                 <div onClick={() => { navigate('/appointment-details-rec'); setAppointmentSection('Courier Medicine') }} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                                     <h1>Courier Medicine</h1>

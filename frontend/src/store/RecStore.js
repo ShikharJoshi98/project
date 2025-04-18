@@ -6,7 +6,7 @@ axios.defaults.withCredentials = true;
 
 export const recStore = create((set) => ({
     patients: [],
-    appointmentSection: "General",
+    appointmentSection: "general",
     update: false,
     setUpdate: (updateStatus) => set({ update: updateStatus }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),

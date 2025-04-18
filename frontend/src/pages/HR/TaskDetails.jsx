@@ -10,8 +10,9 @@ import HRSidebar from '../../components/HR/HRSidebar';
 const TaskDetails = () => {
   const [currentDate, setCurrentDate] = useState("");
   const { tasks, getTasks,updateTaskStatus } = docStore();
-  const { login, user } = useAuthStore();
-  const [task, setTask] = useState(false);
+  const { user } = useAuthStore();
+  const hrTasks = tasks.filter((task) => task?.username === user?.username);
+  console.log(hrTasks);
   useEffect(() => {
           const updateDate = () => {
             const date = new Date().toLocaleDateString("en-GB", {
@@ -27,8 +28,8 @@ const TaskDetails = () => {
   }, []);
   useEffect(() => {
     getTasks(user?.username);
-  },[getTasks])
-  const navigate = useNavigate(); 
+  }, [getTasks])
+  
   return (
       <div>
       <HRnavbar />
@@ -58,7 +59,7 @@ const TaskDetails = () => {
                 </thead>
                 <tbody>
                     {
-                      tasks.map((task, idx) => (
+                      hrTasks.map((task, idx) => (
                         <tr className="hover:bg-blue-300 text-lg font-medium bg-blue-200 transition-all " >
                           <td className='px-4 py-2 text-center'>{idx + 1}</td>
                           <td className='px-4 py-2 text-center'>{task?.task}</td>
