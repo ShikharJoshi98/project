@@ -15,6 +15,8 @@ const History = ({ date, onClose }) => {
   
   const Images = followUpImages.filter((image) => image.date === date);
   const Texts = writeUp.filter((data) => data.date === date);
+  console.log(Texts);
+
   async function deleteImage(id) {
     try {
       console.log("I got hit",id);

@@ -20,6 +20,7 @@ const HistoryDetails = () => {
     getWriteUp(location.id);
   }, [getFollowUpImages, getWriteUp, isSubmit])
 
+
   return (
     <div>
       <Docnavbar />
