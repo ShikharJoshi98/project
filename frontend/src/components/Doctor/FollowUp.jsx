@@ -2,12 +2,14 @@ import { KeyboardIcon, Pen } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import ScribbleModal from './ScribbleModal';
 import WritingModal from './WritingModal';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const FollowUp = () => {
-
+    const navigate = useNavigate();
+    const location = useParams();
     const [isScribbleModalOpen, setScribbleModalIsOpen] = useState(false);
     const [isWritingModalOpen, setWritingModalIsOpen] = useState(false);
-    
+
     useEffect(() => {
         const savedScribbleState = localStorage.getItem("modalScribbleState");
         const savedWritingState = localStorage.getItem("modalWritingState");
@@ -30,7 +32,7 @@ const FollowUp = () => {
                 FOLLOW UP
             </h1>
             <div className='flex sm:flex-row flex-col my-20 items-center justify-center gap-10'>
-                <button onClick={()=>setScribbleModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
+                <button onClick={() => navigate(`/scribble-pad/${location.id}`)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
                 <button onClick={()=>setWritingModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Writing Pad <KeyboardIcon size={20} /> </button>
             </div>
             {isScribbleModalOpen && <ScribbleModal onClose={() => setScribbleModalIsOpen(false)} />}

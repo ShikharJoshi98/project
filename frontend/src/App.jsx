@@ -62,6 +62,7 @@ import PatientAppointment from "./pages/Patient/PatientAppointment";
 import UploadPatientImage from "./pages/Patient/UploadPatientImage";
 import AccessDenied from "./pages/AccessDenied";
 import UpdateEmployee from "./pages/Doctor/UpdateEmployee";
+import Scribble from "./pages/Doctor/Scribble";
 
 
 
@@ -148,6 +149,7 @@ function App() {
           <Route path="/approve-items/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveItems/></ProtectedRoute>} />
           <Route path="/approve-medicines/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveMedicines/></ProtectedRoute>} />
           <Route path="/update-employee/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UpdateEmployee /></ProtectedRoute>} />
+          <Route path="/scribble-pad/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Scribble /></ProtectedRoute>} />
 
           <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />          
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />

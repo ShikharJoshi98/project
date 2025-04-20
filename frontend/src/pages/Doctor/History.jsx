@@ -8,29 +8,29 @@ const History = ({ date, onClose }) => {
 
   const { getFollowUpImages, followUpImages, writeUp, getWriteUp } = docStore();
   const location = useParams();
- useEffect(() => {
-     getFollowUpImages(location.id);
-     getWriteUp(location.id);
- }, [getFollowUpImages, getWriteUp])
-  
+  useEffect(() => {
+    getFollowUpImages(location.id);
+    getWriteUp(location.id);
+  }, [getFollowUpImages, getWriteUp])
+
   const Images = followUpImages.filter((image) => image.date === date);
   const Texts = writeUp.filter((data) => data.date === date);
   console.log(Texts);
 
   async function deleteImage(id) {
     try {
-      console.log("I got hit",id);
+      console.log("I got hit", id);
       await axios.delete(`${DOC_API_URL}/patient/${location.id}/followup-images/${id}`);
-      
+
     } catch (error) {
       console.error("Delete request failed:", error.response?.data || error.message);
     }
   }
   async function deleteWriteUp(id) {
     try {
-      console.log("I got hit",id);
+      console.log("I got hit", id);
       await axios.delete(`${DOC_API_URL}/patient/${location.id}/write-up-delete/${id}`);
-      
+
     } catch (error) {
       console.error("Delete request failed:", error.response?.data || error.message);
     }
@@ -49,17 +49,17 @@ const History = ({ date, onClose }) => {
           {date}
         </h1>
         <div className='flex flex-col items-center gap-5'>
-        {
-          Images.map((image, idx) => (
-            <>
-              <div className='flex  items-center gap-2'>
-                <img src={image?.follow_string} className='w-[80vw] rounded-md h-[40vh] md:h-[85vh]  bg-white' alt="" key={idx} />
-                <div title='delete' onClick={() => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
-              </div>
-            </>
-          ))
+          {
+            Images.map((image, idx) => (
+              <>
+                <div className='flex  items-center gap-2'>
+                  <img src={image?.follow_string} className='w-[80vw] rounded-md h-[40vh] md:h-[1073px]  bg-white' alt="" key={idx} />
+                  <div title='delete' onClick={() => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
+                </div>
+              </>
+            ))
 
-        }
+          }
           {
             Texts.map((data, idx) => (
               <>

@@ -19,7 +19,6 @@ const ScribbleModal = ({ onClose }) => {
   const canvasRef = useRef(null);
   const [eraseMode, setEraseMode] = useState(false);
 
-  // 👇 BLOCK TOUCH INPUT (finger)
   useEffect(() => {
     const wrapper = document.getElementById("canvas-wrapper");
     const handlePointerDown = (e) => {
