@@ -15,14 +15,11 @@ const AppointmentList = () => {
     const { user } = useAuthStore();
     const { setAppointmentSection, appointmentSection } = recStore();
     const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
+    const domAppointmentList = appointments.filter((appointment) => { return appointment?.AppointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch })
 
     useEffect(() => {
         getAppdetails(appointmentSection);
-    }, [getAppdetails,appointmentSection,appointmentSubmit]);
-
-    const appointmentList  = appointments.filter((appointment)=>(appointment?.AppointmentType===appointmentSection && appointment?.PatientCase?.branch===user?.branch))
-    console.log(appointments);
-
+    }, [getAppdetails, appointmentSection, appointmentSubmit]);
     useEffect(() => {
         const updateDate = () => {
             const date = new Date().toLocaleDateString("en-GB", {
@@ -34,6 +31,7 @@ const AppointmentList = () => {
             setCurrentDate(date);
         };
         updateDate();}, []);
+
     return (
         <div>
             <RecNavbar />
@@ -70,20 +68,26 @@ const AppointmentList = () => {
                                 </thead>
                                 <tbody className="bg-gray-200 text-black">
                                     {
-                                        appointmentList.map((appointment, index) => (
-                                            <tr key={index}>
-                                                <td className="px-1 py-2 text-center">{index+1}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.PatientCase?.casePaperNo||'-'}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.Time||'-'}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.Doctor?.fullname||'-'}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.PatientCase?.fullname||'-'}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.PatientCase?.phone||'-'}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.AppointmentType?.toUpperCase()||'-'}</td>
+                                        domAppointmentList.map((appointment, index) => (
+                                            <tr key={index} className={`${appointment?.PatientCase?.First_Appointment_Flag === true ? 'bg-yellow-200' : 'bg-green-300'}`}>
+                                                <td className="px-1 py-2 text-center">{index + 1}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.PatientCase?.casePaperNo || '-'}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.Time || '-'}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.Doctor?.fullname || '-'}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.PatientCase?.fullname || '-'}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.PatientCase?.phone || '-'}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.AppointmentType?.toUpperCase() || '-'}</td>
                                             </tr>
                                         ))
                                     }
                                 </tbody>
                             </table>
+                        </div>
+                        <div className='flex flex-col gap-4 mt-20'>
+                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-yellow-200'></div><div>New Patient Appointment</div></div>
+                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-green-200'></div><div>Follow Up Appointment</div></div>
+                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-blue-200'></div><div>Medicine Not Issued</div></div>
+                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-red-200'></div><div>Medicine Issued</div></div>
                         </div>
                     </div>
                 </div>

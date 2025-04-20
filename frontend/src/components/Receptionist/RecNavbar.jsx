@@ -20,7 +20,7 @@ const RecNavbar = () => {
 
     const generalAppointments = allAppointments.filter((appointment) => ((appointment.PatientCase.branch === user?.branch) && (appointment.AppointmentType === 'general')));
     const repeatAppointments = allAppointments.filter((appointment) => ((appointment.AppointmentType === 'repeat') && (appointment.PatientCase.branch === user?.branch)))
-    console.log(allAppointments);
+
     function handleLogout() {
         logout();
         navigate('/login');

@@ -60,7 +60,7 @@ const Docnavbar = () => {
       <div>
         <ul className=' hidden lg:flex items-center gap-6 text-white text-sm xl:text-base'>
           <div className="relative" onMouseEnter={() => setIsAppointmentHovered(true)} onMouseLeave={() => setIsAppointmentHovered(false)}>
-            {(domGeneralAppointments.length+mulGeneralAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-24 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{(domGeneralAppointments.length+mulGeneralAppointments.length)}</div>)}
+            {(domGeneralAppointments.length+mulGeneralAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-20 xl:left-24 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{(domGeneralAppointments.length+mulGeneralAppointments.length)}</div>)}
             <li className="hover:text-gray-300 group  cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
             {isAppointmentHovered && (
               <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-40 flex flex-col h-auto">

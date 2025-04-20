@@ -85,7 +85,7 @@ const RegisterPatient = () => {
                                     </div>
                                     <select onChange={(e) => { handleInputChange(e); passwordCreator(formValues.fullname, formValues.phone, e.target.value) }} value={formValues.branch} name="branch" required id="branch" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
                                         <option value="" disabled selected className='font-normal' >Select Branch</option>
-                                        <option value="Dombivili">Dombivili</option>
+                                        <option value="Dombivali">Dombivali</option>
                                         <option value="Mulund">Mulund</option>
                                     </select>
                                 </div>

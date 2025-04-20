@@ -39,6 +39,7 @@ const PatientSchema = new mongoose.Schema({
     qualification: { type: String },
     occupation: { type: String },
     dietaryPreference: { type: String },
+    First_Appointment_Flag: { type: Boolean, default: true },
     patientDiagnosis: [
         {
             type: String, 

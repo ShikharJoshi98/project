@@ -10,7 +10,6 @@ export const register = async (req, res) => {
     try {
         const { fullname, phone, Altphone, email, username, lastLogin, password, branch } = req.body;
         const existUser = await Patient.findOne({ username });
-        console.log(existUser);
         if (existUser) {
             return res.status(400).json({success:false,message:"Already exists try logging in."})
         }

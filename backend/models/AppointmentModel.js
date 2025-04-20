@@ -13,7 +13,10 @@ const AppointmentSchema = new mongoose.Schema({
     Time: { type: String },
     PatientCase: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
     Doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
-    AppointmentType: { type: String, required: true }    
+    AppointmentType: { type: String, required: true },   
+    Appointment_Booked_Flag: { type: Boolean, default: false },
+    Followup_Appointment_Flag: { type: Boolean, default: false },
+    Medicine_Issued_Flag: { type: Boolean, default: false }
 })
 
 export const AppointmentDoctor = mongoose.model('AppointmentDoctor', AppointmentSchema);

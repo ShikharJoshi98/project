@@ -2,33 +2,16 @@ import { KeyboardIcon, Pen } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import AppointmentSidebar from "../../components/Doctor/AppointmentSidebar"
 import Docnavbar from "../../components/Doctor/DocNavbar"
-import ScribbleModal from '../../components/Doctor/ScribbleModal'
 import WritingModal from '../../components/Doctor/WritingModal'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FaAngleDoubleLeft } from 'react-icons/fa'
 
 
 const PresentComplaints = () => {
-    const [isScribbleModalOpen, setScribbleModalIsOpen] = useState(false);
     const [isWritingModalOpen, setWritingModalIsOpen] = useState(false);
     const navigate = useNavigate();
     const location = useParams();
 
-    useEffect(() => {
-        const savedScribbleState = localStorage.getItem("modalScribbleState");
-        const savedWritingState = localStorage.getItem("modalWritingState");
-        if (savedScribbleState === "open") {
-            setScribbleModalIsOpen(true);
-        }
-        if (savedWritingState === "open") {
-            setWritingModalIsOpen(true);
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem("modalScribbleState", isScribbleModalOpen ? "open" : "closed");
-        localStorage.setItem("modalWritingState", isWritingModalOpen ? "open" : "closed");
-    }, [isScribbleModalOpen, isWritingModalOpen]);
     return (
         <div>
             <Docnavbar />
@@ -41,10 +24,9 @@ const PresentComplaints = () => {
                             PRESENT COMPLAINTS
                         </h1>
                         <div className='flex my-20 items-center justify-center gap-10'>
-                            <button onClick={() => setScribbleModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
+                            <button onClick={() => navigate(navigate(`/scribble-pad/${location.id}`))} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
                             <button onClick={() => setWritingModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Writing Pad <KeyboardIcon size={20} /> </button>
                         </div>
-                        {isScribbleModalOpen && <ScribbleModal onClose={() => setScribbleModalIsOpen(false)} />}
                         {isWritingModalOpen && <WritingModal onClose={() => setWritingModalIsOpen(false)} />}
                     </div>
                 </div>
