@@ -10,22 +10,22 @@ const ScribbleModal = ({ onClose }) => {
   const { id } = useParams();
   const canvasRef = useRef(null);
   const [eraseMode, setEraseMode] = useState(false);
-  const [allowDraw, setAllowDraw] = useState(true);
 
+  // Ignore finger touches
   useEffect(() => {
     const canvasWrapper = document.getElementById("input-filter-wrapper");
 
     const handlePointerDown = (e) => {
-      // Allow only mouse and pen
-      if (e.pointerType === "pen" || e.pointerType === "mouse") {
-        setAllowDraw(true);
-      } else {
-        setAllowDraw(false);
+      if (e.pointerType === "touch") {
+        e.preventDefault();
+        e.stopPropagation();
       }
     };
 
     if (canvasWrapper) {
-      canvasWrapper.addEventListener("pointerdown", handlePointerDown);
+      canvasWrapper.addEventListener("pointerdown", handlePointerDown, {
+        passive: false,
+      });
     }
 
     return () => {
@@ -44,9 +44,10 @@ const ScribbleModal = ({ onClose }) => {
   const handleSaveClick = async () => {
     try {
       const imageData = await canvasRef.current.exportImage("png");
-      const response = await axios.post(`${DOC_API_URL}/add-follow-up-patient/${id}`, {
-        savedImage: imageData
-      });
+      const response = await axios.post(
+        `${DOC_API_URL}/add-follow-up-patient/${id}`,
+        { savedImage: imageData }
+      );
       alert("Saved Successfully. Continue writing...");
       canvasRef.current?.clearCanvas();
     } catch (error) {
@@ -58,22 +59,20 @@ const ScribbleModal = ({ onClose }) => {
     <div className="bg-black/50 fixed inset-0 z-50 flex items-center justify-center p-5">
       <div className="bg-white rounded-xl shadow-lg p-2 flex gap-2 w-full max-w-[90vw] max-h-[90vh] overflow-hidden">
         
-        <div id="input-filter-wrapper" className="flex-1" style={{ touchAction: "none" }}>
-          {allowDraw ? (
-            <ReactSketchCanvas
-              ref={canvasRef}
-              width="100%"
-              height="573px"
-              strokeColor="black"
-              canvasColor="white"
-              eraserWidth={20}
-              className="!rounded-md !border-2 !border-blue-400"
-            />
-          ) : (
-            <div className="w-full h-[573px] flex items-center justify-center border-2 border-dashed border-red-400 rounded-md bg-gray-100 text-red-500 font-semibold text-center px-4">
-              Only mouse or stylus input is allowed. Finger touch is disabled.
-            </div>
-          )}
+        <div
+          id="input-filter-wrapper"
+          className="flex-1"
+          style={{ touchAction: "none" }}
+        >
+          <ReactSketchCanvas
+            ref={canvasRef}
+            width="100%"
+            height="573px"
+            strokeColor="black"
+            canvasColor="white"
+            eraserWidth={20}
+            className="!rounded-md !border-2 !border-blue-400"
+          />
         </div>
 
         <div className="flex flex-col items-center justify-start gap-4 p-2">
