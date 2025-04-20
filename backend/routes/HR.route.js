@@ -1,5 +1,5 @@
 import express from 'express';
-import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  details,  edit_medical_vendor,  edit_vendor,  get_medical_vendor,  get_vendor,  getItems,  getMedicine,  getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order,  register,   update} from '../controllers/HR.controller.js';
+import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  details,  edit_medical_vendor,  edit_vendor,  get_item_stock,  get_medical_vendor,  get_vendor,  getItems,  getMedicine,  getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order,  register,   update} from '../controllers/HR.controller.js';
 
 const HRrouter = express.Router();
 
@@ -11,6 +11,7 @@ HRrouter.post('/add-item', add_item);
 HRrouter.post('/add-unit', add_unit);
 HRrouter.post('/add-item-vendor', add_item_vendor);
 HRrouter.post('/add-item-stock', add_item_stock);
+HRrouter.get('/get-item-stock',get_item_stock);
 HRrouter.post('/place-item-order', place_item_order);
 HRrouter.get('/get-items', getItems);
 HRrouter.get('/get-units', getUnits);

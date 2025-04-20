@@ -11,8 +11,19 @@ const unitSchema = new mongoose.Schema({
 const StockSchema = new mongoose.Schema({
     itemName: { type: String, required: true },
     unit: { type: String, required: true },
-    quantity: { type: Number, required: true }
-})
+    quantity: { type: Number, required: true },
+    branch: { type: String, required: true },
+    receive_quantity: { type: Number, default: 0 },
+    issue_quantity: { type: Number, default: 0 },
+    reorder_level: { type: Number, default: 0 },
+    approval_flag_new: { type: Boolean, default: true },
+    approval_flag_issue: { type: Boolean, default: false },
+    approval_flag_receive: { type: Boolean, default: false },
+    is_order_able: { type: Boolean, default: false }
+}, {
+    timestamps: { createdAt: 'timestamp', updatedAt: 'last_updated' }
+});
+
 
 const orderSchema = new mongoose.Schema({
     items: [

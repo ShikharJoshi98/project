@@ -237,7 +237,9 @@ export const add_item_stock = async (req, res) => {
     const newStock = new ItemStock({
         itemName,
         unit,
-        quantity
+        quantity,
+        branch:"Dombivali",
+        receive_quantity:quantity,
     })
     await newStock.save();
     res.json({
@@ -250,6 +252,19 @@ export const add_item_stock = async (req, res) => {
     }
     
 
+}
+
+// Get Item Stock
+export const get_item_stock = async (req,res) => {
+    try {
+        const itemStock = await ItemStock.find({}); 
+        return res.json({
+            itemStock
+        });        
+    } catch (error) {
+        console.log(error.message);
+        return res.json({success:false, message:error.message})        
+    }
 }
 
 export const place_item_order = async (req, res) => {
