@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Sidebar, { SidebarItem } from '../Sidebar'
-import { Briefcase, CalendarDays, ClipboardPlus, FileText, LayoutDashboard, LayoutList, ListChecks, Users } from 'lucide-react';
+import { Briefcase, CalendarDays, FileText, LayoutDashboard,  ListChecks, Users } from 'lucide-react';
 import { FaUserDoctor } from 'react-icons/fa6';
 import { IoIosArrowDown } from "react-icons/io";
 import AssignTaskModal from './AssignTaskModal';
@@ -15,22 +15,7 @@ const DocSidebar = () => {
   const navigate = useNavigate();
   const path = useLocation();
 
-  useEffect(() => {
-    const savedTaskState = localStorage.getItem("modalTaskState");
-    const savedLeaveState = localStorage.getItem("modalLeaveState");
-
-    if (savedTaskState === "open") {
-      setTaskModalIsOpen(true);
-    }
-    if (savedLeaveState === "open") {
-      setLeaveModalIsOpen(true);
-    }
-
-  }, []);
-  useEffect(() => {
-    localStorage.setItem("modalTaskState", isTaskModalOpen ? "open" : "closed");
-    localStorage.setItem("modalLeaveState", isLeaveModalOpen ? "open" : "closed");
-  }, [isTaskModalOpen, isLeaveModalOpen]);
+  
   return (
     <div >
       <Sidebar>

@@ -22,7 +22,6 @@ const PatientDetails = () => {
 
     const filteredPatient = patients.filter((patient) => (patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
 
-
     return (
         <div>
             <RecNavbar />

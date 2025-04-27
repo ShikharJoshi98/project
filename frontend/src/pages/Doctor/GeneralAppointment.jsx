@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Docnavbar from "../../components/Doctor/DocNavbar";
-import { MapPin, Plus, Search } from "lucide-react";
-import { useAuthStore } from "../../store/authStore";
+import { Plus, Search } from "lucide-react";
 import Input from "../../components/Input";
 import { docStore } from "../../store/DocStore";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +14,7 @@ const GeneralAppointment = () => {
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
   const { branch, appointmentSubmit, getAppdetails, appointments } = docStore();
   const navigate = useNavigate();
+
   useEffect(() => {
     const savedType = localStorage.getItem("selectedType");
     if (savedType) {
@@ -43,34 +43,18 @@ const GeneralAppointment = () => {
 
     updateDate();
   }, []);
-  useEffect(() => {
-    const savedAppointmentState = localStorage.getItem("modalAppointmentState");
-    const savedUploadState = localStorage.getItem("modalUploadState");
-
-    if (savedAppointmentState === "open") {
-      setAppointmentModalIsOpen(true);
-    }
-    if (savedUploadState === "open") {
-      setUploadModalIsOpen(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("modalAppointmentState", isAppointmentModalOpen ? "open" : "closed");
-    localStorage.setItem("modalUploadState", isUploadModalOpen ? "open" : "closed");
-  }, [isAppointmentModalOpen, isUploadModalOpen]);
 
   useEffect(() => {
     getAppdetails(appointmentType);
   }, [getAppdetails, appointmentSubmit])
-   
+
   const domGeneralAppointments = appointments.filter((appointment) => (
-    appointment.AppointmentType === "general" && appointment?.PatientCase?.branch === "Dombivali"
+    appointment?.AppointmentType === "general" && appointment?.PatientCase?.branch === "Dombivali"
   ));
   const mulGeneralAppointments = appointments.filter((appointment) => (
-    appointment.AppointmentType === "general" && appointment?.PatientCase?.branch === "Mulund"
+    appointment?.AppointmentType === "general" && appointment?.PatientCase?.branch === "Mulund"
   ));
-  
+
   return (
     <div>
       <Docnavbar />
@@ -78,7 +62,7 @@ const GeneralAppointment = () => {
         <DocSidebar />
 
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-          
+
           <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>{
               `GENERAL APPOINTMENT ${branch.toUpperCase()}`
@@ -115,32 +99,32 @@ const GeneralAppointment = () => {
                 </thead>
                 <tbody className=" bg-gray-200  text-black  ">
                   {
-                    branch==='Dombivali' && (domGeneralAppointments.map((appointment, idx) => (
+                    branch === 'Dombivali' && (domGeneralAppointments.map((appointment, idx) => (
                       <tr key={idx}>
                         <td className="py-2 px-4 border">{idx + 1}</td>
                         <td className="py-2 px-4 border">PATIENT'S IMAGE</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.casePaperNo}</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.phone}</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.fullname}</td>
-                        <td className="py-2 px-4 border">{appointment.AppointmentType}</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.branch}</td>
-                        <td onClick={() => navigate(`/appointment-details/${appointment.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.email}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.casePaperNo}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.phone}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.fullname}</td>
+                        <td className="py-2 px-4 border">{appointment?.AppointmentType}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.branch}</td>
+                        <td onClick={() => navigate(`/appointment-details/${appointment?.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.email}</td>
                       </tr>
                     )))
                   }
                   {
-                    branch==='Mulund' && (mulGeneralAppointments.map((appointment, idx) => (
+                    branch === 'Mulund' && (mulGeneralAppointments.map((appointment, idx) => (
                       <tr key={idx}>
                         <td className="py-2 px-4 border">{idx + 1}</td>
                         <td className="py-2 px-4 border">PATIENT'S IMAGE</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.casePaperNo}</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.phone}</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.fullname}</td>
-                        <td className="py-2 px-4 border">{appointment.AppointmentType}</td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.branch}</td>
-                        <td onClick={() => navigate(`/appointment-details/${appointment.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
-                        <td className="py-2 px-4 border">{appointment.PatientCase.email}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.casePaperNo}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.phone}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.fullname}</td>
+                        <td className="py-2 px-4 border">{appointment?.AppointmentType}</td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.branch}</td>
+                        <td onClick={() => navigate(`/appointment-details/${appointment?.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
+                        <td className="py-2 px-4 border">{appointment?.PatientCase?.email}</td>
                       </tr>
                     )))
                   }

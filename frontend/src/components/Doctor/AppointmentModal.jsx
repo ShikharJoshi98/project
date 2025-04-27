@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Input from '../Input';
 import { Calendar, Clock, User, X } from 'lucide-react';
 import { FaUserDoctor } from 'react-icons/fa6';
-import { docStore } from '../../store/DocStore';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { recStore } from '../../store/RecStore';
+import axios from 'axios';
 
 const AppointmentModal = ({ onClose }) => {
     const { submitAppointment,toggleAppointmentSubmit } = docStore();
@@ -21,7 +22,10 @@ const AppointmentModal = ({ onClose }) => {
   },[getPatientDetails])
   const handleSubmit = async (e) => {
     e.preventDefault();
-      await submitAppointment(formValues);
+    const response = await axios.post(`${DOC_API_URL}/appointment-doctor`, formValues);
+    
+    toggleAppointmentSubmit(!submitAppointment);
+    
     alert("appointment created");
     setFormValues({
       AppointmentDate: "",
@@ -30,7 +34,6 @@ const AppointmentModal = ({ onClose }) => {
       Doctor: "",
       AppointmentType: "",
     })
-    toggleAppointmentSubmit();    
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -91,7 +94,6 @@ const AppointmentModal = ({ onClose }) => {
                   </div>
                 </div>
 
-                {/* Doctor Selection */}
                 <div className="flex flex-col gap-2">
                   <h1>Doctor</h1>
                   <div className="relative w-full">

@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { recStore } from '../../store/RecStore'
 import HealthAssessment from '../../components/Doctor/HealthAssessment'
 import PreviousPrescriptions from '../../components/Doctor/PreviousPrescriptions'
 import TodayPrescriptions from '../../components/Doctor/TodayPrescription'
 import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
 import FollowUp from '../../components/Doctor/FollowUp'
+import { Pen } from 'lucide-react'
 
 const AppointmentDetails = () => {
     const { patients, getPatientDetails } = recStore();
     const location = useParams();
-
+    const navigate = useNavigate();
     useEffect(() => {
         getPatientDetails();
     }, [getPatientDetails])
 
     const patient = patients.filter((cand => (cand._id) === location.id));
+    
     return (
         <div>
             <Docnavbar />
@@ -28,6 +30,7 @@ const AppointmentDetails = () => {
                         <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>
                             PATIENT DETAILS
                         </h1>
+                        {patient[0]?.First_Appointment_Flag && <button onClick={()=>navigate(`/new-case-details/${patient[0]._id}`)} className='bg-blue-500 text-white text-lg py-2 px-10 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 font-semibold my-10 mx-auto flex items-center gap-5'>New Case <Pen /></button>}
                         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                             <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
                                 <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
