@@ -8,6 +8,11 @@ import ChiefComplaints from '../../components/Doctor/NewCase/ChiefComplaints';
 import PastHistory from '../../components/Doctor/NewCase/PastHistory';
 import PersonalHistory from '../../components/Doctor/NewCase/PersonalHistory';
 import FamilyMedical from '../../components/Doctor/NewCase/FamilyMedical';
+import MentalCausative from '../../components/Doctor/NewCase/MentalCausative';
+import MentalPersonality from '../../components/Doctor/NewCase/MentalPersonality';
+import BriefMindSymptom from '../../components/Doctor/NewCase/BriefMindSymptom';
+import ThermalReaction from '../../components/Doctor/NewCase/ThermalReaction';
+import Miasm from '../../components/Doctor/NewCase/Miasm';
 
 const NewCaseDetails = () => {
     const { patients, getPatientDetails } = recStore();
@@ -60,8 +65,11 @@ const NewCaseDetails = () => {
                 {complaint === 'Past History' && <PastHistory complaint={complaint} />}
                 {complaint === 'Personal History' && <PersonalHistory/>}
                 {complaint === 'Family Medical HO' && <FamilyMedical complaint={complaint}/>}
-
-
+                {complaint === 'Mental Causative Factor' && <MentalCausative complaint={complaint}/>}
+                {complaint === 'Mental Personality Character' && <MentalPersonality complaint={complaint}/>}
+                {complaint === 'Brief Mind Symptoms' && <BriefMindSymptom complaint={complaint}/>}
+                {complaint === 'Thermal Reaction' && <ThermalReaction complaint={complaint}/>}
+                {complaint === 'Miasm' && <Miasm complaint={complaint}/>}
             </div>
             {isHealthAssessmentModalOpen && <HealthAssessmentModal onClose={() => setHealthAssessmentModalIsOpen(false)} />}
 
