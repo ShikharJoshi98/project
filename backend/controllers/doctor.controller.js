@@ -5,6 +5,7 @@ import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { FollowUpPatient, Investigation, Prescription, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
+import { BriefMindSymptomsMaster, FamilyMedicalMaster, MentalCausativeMaster, MentalPersonalityMaster, MiasmMaster, PastHistoryMaster, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster } from "../models/NewCasePatient.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -919,5 +920,80 @@ export const deleteEmployee = async (req, res) => {
         res.json({ success: true, message: "Deleted Successfully" });
     } catch (error) {
         res.json({ success: false, message: error.message });
+    }
+}
+
+//add new case master controllers
+export const addNewCaseMaster = async (req,res) => {
+    try {
+        const {name,type} = req.body;
+        
+        switch(type) {
+            case "PresentComplaintsMaster":
+                await PresentComplaintsMaster.create({name:name.trim()})
+                break;
+            case "PastHistoryMaster":
+                await PastHistoryMaster.create({name:name.trim()})
+                break;
+            case "FamilyMedicalMaster":
+                await FamilyMedicalMaster.create({name:name.trim()})
+                break;
+            case "MentalCausativeMaster":
+                await MentalCausativeMaster.create({name:name.trim()})
+                break;
+            case "MentalPersonalityMaster":
+                await MentalPersonalityMaster.create({name:name.trim()})
+                break;
+            case "BriefMindSymptomsMaster":
+                await BriefMindSymptomsMaster.create({name:name.trim()})
+                break;
+            case "ThermalReactionMaster":
+                await ThermalReactionMaster.create({name:name.trim()})
+                break;
+            case "MiasmMaster":
+                await MiasmMaster.create({name:name.trim()})
+                break;
+            default:
+                console.log("Unexpected Type mentioned in Switch Case addNewCaseMaster")
+        }
+
+        return res.json({
+            name,
+            type
+        });        
+    } catch (error) {
+        console.log("Error in addPresentComplaints controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
+    };
+};
+
+export const addPresentComplaintPatient = async (req,res) =>{
+    const {id} = req.params;
+    const {complaintName,duration,durationSuffix} = req.body;
+    const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+    try {
+        const addData = await PresentComplaintsPatient.create({
+            patient: id,
+            complaintName: complaintName.trim(),
+            duration: duration.trim(),
+            durationSuffix: durationSuffix.trim(),
+            created_at:date
+        })
+        
+        return res.json({
+            message: "Present Complaint Added Successfully",            
+        });
+    } catch (error) {
+        console.log("Error in addPresentComplaints controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
     }
 }
