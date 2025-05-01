@@ -5,7 +5,7 @@ import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { FollowUpPatient, Investigation, Prescription, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
-import { BriefMindSymptomsMaster, FamilyMedicalMaster, MentalCausativeMaster, MentalPersonalityMaster, MiasmMaster, PastHistoryMaster, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster } from "../models/NewCasePatient.js";
+import { BriefMindSymptomsMaster, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalPersonalityMaster, MentalPersonalityPatient, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -971,7 +971,7 @@ export const addNewCaseMaster = async (req,res) => {
 
 export const addPresentComplaintPatient = async (req,res) =>{
     const {id} = req.params;
-    const {complaintName,duration,durationSuffix} = req.body;
+    const {complaintName,duration,durationSuffix} = req.body;    
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -992,6 +992,178 @@ export const addPresentComplaintPatient = async (req,res) =>{
         });
     } catch (error) {
         console.log("Error in addPresentComplaints controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
+    }
+}
+
+export const addPastHistoryPatient = async (req,res) =>{
+    const {id} = req.params;
+    const {complaintName,lastDiagnosed,lastSuffix,duration,durationSuffix,remark} = req.body;    
+    const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+    try {
+        const addData = await PastHistoryPatient.create({
+            patient: id,
+            complaintName: complaintName.trim(),
+            lastDiagnosed,
+            lastSuffix,
+            duration: duration.trim(),
+            durationSuffix: durationSuffix.trim(),
+            remark: remark? remark.trim(): "",
+            created_at:date
+        })
+        
+        return res.json({
+            message: "Past History Added Successfully",            
+        });
+    } catch (error) {
+        console.log("Error in addPastHistoryPatient controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
+    }
+}
+
+export const addFamilyMedicalPatient = async (req,res) =>{
+    const {id} = req.params;
+    const {relation,diseases,anyOther,lifeStatus,age} = req.body;    
+    const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+    try {
+        const addData = await FamilyHistoryPatient.create({
+            patient: id,
+            relation:relation.trim(),
+            diseases,
+            anyOther: anyOther ? anyOther.trim(): "",
+            lifeStatus,
+            age: age ? age.trim(): "",
+            created_at:date
+        })
+        
+        return res.json({
+            message: "Family Medical History Added Successfully",            
+        });
+    } catch (error) {
+        console.log("Error in addFamilyMedicalPatient controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
+    }
+}
+
+export const addMentalCausativePatient = async (req,res) =>{
+    const {id} = req.params;
+    const {selectedInvestigationOptions} = req.body; 
+       
+    const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+    try {
+        const addData = await MentalCausativePatient.create({
+            patient: id,
+            diseases:selectedInvestigationOptions,
+            created_at:date
+        })
+        
+        return res.json({
+            message: "Mental Causative Added Successfully",            
+        });
+    } catch (error) {
+        console.log("Error in addMentalCausativePatient controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
+    }
+}
+
+export const addMentalPersonalityPatient = async (req,res) =>{
+    const {id} = req.params;
+    const {selectedInvestigationOptions} = req.body;       
+    const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+    try {
+        const addData = await MentalPersonalityPatient.create({
+            patient: id,
+            diseases:selectedInvestigationOptions,
+            created_at:date
+        })
+        
+        return res.json({
+            message: "Mental Causative Added Successfully",            
+        });
+    } catch (error) {
+        console.log("Error in addMentalCausativePatient controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
+    }
+}
+
+export const addThermalReactionPatient = async (req,res) =>{
+    const {id} = req.params;
+    const {selectedInvestigationOptions} = req.body;       
+    const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+    try {
+        const addData = await ThermalReactionPatient.create({
+            patient: id,
+            diseases:selectedInvestigationOptions,
+            created_at:date
+        })
+        
+        return res.json({
+            message: "Thermal Reaction Added Successfully",            
+        });
+    } catch (error) {
+        console.log("Error in addThermalReactionPatient controller Doc",error.message);
+        return res.json({
+            message:error.message
+        });
+    }
+}
+
+export const addMiasmPatient = async (req,res) =>{
+    const {id} = req.params;
+    const {selectedInvestigationOptions} = req.body;       
+    const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+    try {
+        const addData = await MiasmPatient.create({
+            patient: id,
+            diseases:selectedInvestigationOptions,
+            created_at:date
+        })
+        
+        return res.json({
+            message: "Thermal Reaction Added Successfully",            
+        });
+    } catch (error) {
+        console.log("Error in addThermalReactionPatient controller Doc",error.message);
         return res.json({
             message:error.message
         });

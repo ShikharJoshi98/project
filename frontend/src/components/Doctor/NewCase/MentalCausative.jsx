@@ -3,6 +3,8 @@ import MultiSelectDropdown from '../MultiSelectInput'
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
 import ScribbleModal from './ScribbleModal';
+import axios from 'axios';
+import { DOC_API_URL } from '../../../store/DocStore';
 
 const MentalCausative = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
@@ -10,8 +12,13 @@ const MentalCausative = ({ complaint }) => {
     const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
     const listType = ["AIDS", "Boils"];
 
-    const handleSubmit = () => {
-
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        let a = '662f47c0fa09dabe7e5c49d4'
+        const response = await axios.post(`${DOC_API_URL}/add-mental-causative-patient/${a}`,{
+            selectedInvestigationOptions
+        })
+        alert(response.data.message);
     }
     return (
         <div>
@@ -20,6 +27,7 @@ const MentalCausative = ({ complaint }) => {
                     <h1 className='text-black text-2xl font-semibold'>Add {complaint}</h1>
                     <div className='flex flex-col gap-2 '>
                         <h1 >List of disease*</h1>
+                        {JSON.stringify(selectedInvestigationOptions)}
                         <MultiSelectDropdown Options={listType} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
                     </div>
                     <button className="bg-blue-500 block mx-auto transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>

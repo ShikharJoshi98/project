@@ -47,7 +47,7 @@ const PastHistoryPatientSchema = new mongoose.Schema({
     lastSuffix: {type:String, required:true},
     duration: {type:String,required:true},
     durationSuffix: {type:String, required:true},
-    remark: {type:String,required:true},
+    remark: {type:String},
     created_at: {type:String, required:true}
 });
 
@@ -55,7 +55,7 @@ const FamilyHistoryPatientSchema = new mongoose.Schema({
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},
     relation: {type:String, required:true},
     diseases: [{type:String, required:true}],
-    anyOther: {type:String,required:true},
+    anyOther: {type:String},
     lifeStatus: {type:String, required:true},    
     age: {type:String,required:true},
     created_at: {type:String, required:true}

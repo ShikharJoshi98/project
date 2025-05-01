@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDiagnosis, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addNewCaseMaster, addNewPrescription, addPresentComplaintPatient, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteEmployee, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getPatientAppDetails, getPatientImages, getPrescriptionToday, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalPersonalityPatient, addMiasmPatient, addNewCaseMaster, addNewPrescription, addPastHistoryPatient, addPresentComplaintPatient, addThermalReactionPatient, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteDiagnosisImages, deleteEmployee, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, DeleteTask, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getDiagnosis, getDiagnosisImages, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getPatientAppDetails, getPatientImages, getPrescriptionToday, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -68,6 +68,13 @@ Docrouter.delete('/delete-employee/:id', deleteEmployee);
 //Add Data to new case master api
 Docrouter.post('/addNewCaseMaster',addNewCaseMaster);
 Docrouter.post('/add-present-complaints-patient/:id',addPresentComplaintPatient);
+Docrouter.post('/add-past-history-patient/:id',addPastHistoryPatient);
+Docrouter.post('/add-family-history-patient/:id',addFamilyMedicalPatient);
+Docrouter.post('/add-mental-causative-patient/:id',addMentalCausativePatient);
+Docrouter.post('/add-mental-personality-patient/:id',addMentalPersonalityPatient);
+Docrouter.post('/add-thermal-reaction-patient/:id',addThermalReactionPatient);
+Docrouter.post('/add-miasm-patient/:id',addMiasmPatient);
+
 
 
 
