@@ -72,7 +72,6 @@ const NewCaseDetails = () => {
                 {complaint === 'Miasm' && <Miasm complaint={complaint}/>}
             </div>
             {isHealthAssessmentModalOpen && <HealthAssessmentModal onClose={() => setHealthAssessmentModalIsOpen(false)} />}
-
         </div>
     )
 }

@@ -927,30 +927,29 @@ export const deleteEmployee = async (req, res) => {
 export const addNewCaseMaster = async (req,res) => {
     try {
         const {name,type} = req.body;
-        
         switch(type) {
-            case "PresentComplaintsMaster":
+            case "Present Complaints":
                 await PresentComplaintsMaster.create({name:name.trim()})
                 break;
-            case "PastHistoryMaster":
+            case "Past History":
                 await PastHistoryMaster.create({name:name.trim()})
                 break;
-            case "FamilyMedicalMaster":
+            case "Family Medical HO":
                 await FamilyMedicalMaster.create({name:name.trim()})
                 break;
-            case "MentalCausativeMaster":
+            case "Mental Causative Factor":
                 await MentalCausativeMaster.create({name:name.trim()})
                 break;
-            case "MentalPersonalityMaster":
+            case "Mental Personality Character":
                 await MentalPersonalityMaster.create({name:name.trim()})
                 break;
-            case "BriefMindSymptomsMaster":
+            case "Brief Mind Symptoms":
                 await BriefMindSymptomsMaster.create({name:name.trim()})
                 break;
-            case "ThermalReactionMaster":
+            case "Thermal Reaction":
                 await ThermalReactionMaster.create({name:name.trim()})
                 break;
-            case "MiasmMaster":
+            case "Miasm":
                 await MiasmMaster.create({name:name.trim()})
                 break;
             default:
@@ -968,6 +967,47 @@ export const addNewCaseMaster = async (req,res) => {
         });
     };
 };
+
+export const getCaseMaster = async (req, res) => {    
+    try {
+        const { id } = req.params;
+        let caseData;
+    switch (id) {
+        case 'PresentComplaints':
+            caseData = await PresentComplaintsMaster.find();
+            break;
+        default:
+            console.log('Error in getting the Case Master');
+        }
+        return res.json({
+            success: true,
+            caseData
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const deleteCaseMaster = async (req,res) => {
+    try {
+        let { id,type } = req.params;
+        switch (type) {
+            case 'Present Complaints':
+                await PresentComplaintsMaster.findByIdAndDelete(id);
+                break;
+            default:
+                console.log('Could not find the type')
+        }
+        return res.send({
+            message:"Deleted Successfully"
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 export const addPresentComplaintPatient = async (req,res) =>{
     const {id} = req.params;
@@ -995,6 +1035,38 @@ export const addPresentComplaintPatient = async (req,res) =>{
         return res.json({
             message:error.message
         });
+    }
+}
+
+export const getPresentComplaintPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const presentComplaintData = await PresentComplaintsPatient.find({patient:id});
+        res.json({
+            success: true,
+            presentComplaintData
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const deletePresentComplaintPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await PresentComplaintsPatient.findByIdAndDelete(id);
+        res.json({
+            success: true,
+            message:"Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
     }
 }
 

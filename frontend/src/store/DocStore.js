@@ -19,6 +19,8 @@ export const docStore = create((set) => ({
     followUpImages: [],
     writeUp:[],
     allPrescriptions: [],
+    list: [],
+    PresentComplaintData:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -219,5 +221,14 @@ export const docStore = create((set) => ({
     getWriteUp: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-write-up-patient/${id}`);        
         set({ writeUp: response.data.writeUpData });
-    }    
+    },
+    getCaseData : async (complaint) => {
+        const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(" ", "")}`);
+        set({ list: response.data.caseData });
+    },
+    getPresentComplaintData : async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/presentComplaints/${id}`);
+        set({ PresentComplaintData: response.data.presentComplaintData });
+    }
+    
 }))

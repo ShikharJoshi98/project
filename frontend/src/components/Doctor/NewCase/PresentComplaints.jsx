@@ -1,32 +1,63 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from '../../Input'
-import { Calendar, ClipboardPlus } from 'lucide-react'
+import { Calendar, ClipboardPlus, Trash } from 'lucide-react'
 import { BiCalendar } from 'react-icons/bi'
 import { MdAssignmentAdd } from 'react-icons/md'
 import AddComplaintModal from './AddComplaintModal'
+import axios from 'axios'
+import { DOC_API_URL, docStore } from '../../../store/DocStore'
+import { useParams } from 'react-router-dom'
 
 const PresentComplaints = ({ complaint }) => {
     const [presentComplaintInput, setpresentComplaintInput] = useState("");
+    const [duration, setDuration] = useState("");
+    const [durationType, setDurationType] = useState("");
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
+    const { id } = useParams();
+    const { getCaseData, list, getPresentComplaintData, PresentComplaintData } = docStore();
+    const [submit, setSubmit] = useState(false);
 
-    const listType = ["AIDS", "Boils"];
-
-    const handleSubmit = () => {
-
+    useEffect(() => { getCaseData(complaint); getPresentComplaintData(id) },
+        [getCaseData,getPresentComplaintData, submit]);
+    const handleSubmit = async (e) => {
+        try {
+            e.preventDefault();
+            await axios.post(`${DOC_API_URL}/add-present-complaints-patient/${id}`,
+                {
+                    complaintName: presentComplaintInput,
+                    duration,
+                    durationSuffix:durationType
+                }
+            )
+            setSubmit(prev => !prev);
+            setDuration("");
+            setDurationType("");
+            setpresentComplaintInput("");
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+    const deletePresentComplaint = async (id) => {
+        try {
+            const respose = await axios.delete(`${DOC_API_URL}/deletepresentComplaints/${id}`);
+            setSubmit(prev => !prev);
+        } catch (error) {
+            console.log(error.message);
+        }
     }
     return (
         <div>
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold mb-9'>Add {complaint}</h1>
-                    <button className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg mt-3 text-white">Clear Form</button>
+                    <button onClick={()=>{setDuration(""); setDurationType(""); setpresentComplaintInput("");}} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg mt-3 text-white">Clear Form</button>
                     <div className='flex flex-col gap-2 '>
                         <h1>Complaint*</h1>
-                        <Input icon={ClipboardPlus} type="text" placeholder="Enter Complaint" value={presentComplaintInput} required />
+                        <Input icon={ClipboardPlus} onChange={(e) => setpresentComplaintInput(e.target.value)} type="text" placeholder="Enter Complaint" value={presentComplaintInput} required />
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Duration*</h1>
-                        <Input icon={Calendar} type="text" placeholder="Enter Number for Duration" required />
+                        <Input icon={Calendar} onChange={(e) => setDuration(e.target.value)} value={duration} type="text" placeholder="Enter Number for Duration" required />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Duration Suffix* </h1>
@@ -34,7 +65,7 @@ const PresentComplaints = ({ complaint }) => {
                             <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                 <BiCalendar className="size-4 text-blue-500" />
                             </div>
-                            <select className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
+                            <select onChange={(e) => setDurationType(e.target.value)} value={durationType} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
                                 <option value="" disabled selected className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
                                 <option value="Days">Days</option>
                                 <option value="Weeks">Week</option>
@@ -51,9 +82,9 @@ const PresentComplaints = ({ complaint }) => {
                         <MdAssignmentAdd onClick={() => setComplaintModalIsOpen(true)} size={30} className='text-blue-500 cursor-pointer' />
                     </div>
                     <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
-                        {listType.map((investigation, index) => (
+                        {list?.map((investigation, index) => (
                             <>
-                                <h1 onClick={() => setpresentComplaintInput(investigation)} className='text-xl cursor-pointer p-1' key={index}>{investigation}</h1>
+                                <h1 onClick={() => setpresentComplaintInput(investigation?.name)} className='text-xl cursor-pointer p-1' key={index}>{investigation?.name}</h1>
                                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
                             </>
                         ))}
@@ -68,12 +99,22 @@ const PresentComplaints = ({ complaint }) => {
                         <tr >
                             <th className="px-1 py-4 ">Date</th>
                             <th className="px-2 py-4 ">Complain</th>
-                            <th className="px-4 py-4 ">Duration</th>
-                            <th className="px-2 py-4 ">Remarks</th>
+                            <th className="px-2 py-4 ">Duration</th>
                             <th className="py-4 ">Delete</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        {
+                            PresentComplaintData.map((complaint, index) => (
+                                <tr className="bg-blue-200 text-lg">
+                                    <td className='py-2 px-1 text-center'>{complaint?.created_at}</td>
+                                    <td className='py-2 px-2 text-center'>{complaint?.complaintName}</td>
+                                    <td className='py-2 px-2 text-center'>{complaint?.duration} {complaint?.durationSuffix}</td>
+                                    <td onClick={()=>deletePresentComplaint(complaint?._id)} className='py-2 px-1 place-items-center'><Trash/></td>
+                                </tr>
+                            ))
+                       }
+                    </tbody>
                 </table>
             </div>
             {isComplaintModalOpen && <AddComplaintModal onClose={() => setComplaintModalIsOpen(false)} complaint={complaint} />}
