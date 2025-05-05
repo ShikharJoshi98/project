@@ -26,9 +26,8 @@ const NewCaseDetails = () => {
     }, [getPatientDetails])
 
     const patient = patients.filter((cand => (cand._id) === location.id));
-    const testArray = [{ title: 'Present Complaints', color: 'green' }, { title: 'Chief Complaints', color: 'blue' }, { title: 'Past History', color: 'brown' }, { title: 'Personal History', color: 'orange' }, { title: 'Family Medical HO', color: 'blue' }, { title: 'Mental Causative Factor', color: 'black' }, { title: 'Mental Personality Character', color: 'purple' }, { title: 'Brief Mind Symptoms', color: 'green' }, { title: 'Thermal Reaction', color: 'brown' }, { title: 'Miasm', color: 'indigo' }];
+    const testArray = [{ title: 'Present Complaints', color: 'green' }, { title: 'Chief Complaints', color: 'blue' }, { title: 'Past History', color: 'brown' }, { title: 'Personal History', color: 'orange' }, { title: 'Family Medical', color: 'blue' }, { title: 'Mental Causative Factor', color: 'black' }, { title: 'Mental Personality Character', color: 'purple' }, { title: 'Brief Mind Symptoms', color: 'green' }, { title: 'Thermal Reaction', color: 'brown' }, { title: 'Miasm', color: 'indigo' }];
     
-
     return (
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
             <div className='text-stone-800 w-fit text-sm sm:text-xl flex flex-wrap items-center gap-5 font-semibold m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
@@ -64,7 +63,7 @@ const NewCaseDetails = () => {
                 {complaint === 'Chief Complaints' && <ChiefComplaints/>}
                 {complaint === 'Past History' && <PastHistory complaint={complaint} />}
                 {complaint === 'Personal History' && <PersonalHistory/>}
-                {complaint === 'Family Medical HO' && <FamilyMedical complaint={complaint}/>}
+                {complaint === 'Family Medical' && <FamilyMedical complaint={complaint}/>}
                 {complaint === 'Mental Causative Factor' && <MentalCausative complaint={complaint}/>}
                 {complaint === 'Mental Personality Character' && <MentalPersonality complaint={complaint}/>}
                 {complaint === 'Brief Mind Symptoms' && <BriefMindSymptom complaint={complaint}/>}

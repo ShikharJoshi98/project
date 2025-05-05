@@ -50,7 +50,7 @@ const PresentComplaints = ({ complaint }) => {
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold mb-9'>Add {complaint}</h1>
-                    <button onClick={()=>{setDuration(""); setDurationType(""); setpresentComplaintInput("");}} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg mt-3 text-white">Clear Form</button>
+                    <button type='button' onClick={()=>{setDuration(""); setDurationType(""); setpresentComplaintInput("");}} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg mt-3 text-white">Clear Form</button>
                     <div className='flex flex-col gap-2 '>
                         <h1>Complaint*</h1>
                         <Input icon={ClipboardPlus} onChange={(e) => setpresentComplaintInput(e.target.value)} type="text" placeholder="Enter Complaint" value={presentComplaintInput} required />

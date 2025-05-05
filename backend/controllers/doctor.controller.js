@@ -129,11 +129,11 @@ export const getAllAppointments = async (req, res) => {
     try {
         const date = new Date().toLocaleDateString("en-CA", {
             timeZone: "Asia/Kolkata",
-        });        
-        const appointments =await AppointmentDoctor.find({
-            AppointmentType:"general",
-            AppointmentDate:date
-            }).populate('PatientCase');
+        });
+        const appointments = await AppointmentDoctor.find({
+            AppointmentType: "general",
+            AppointmentDate: date
+        }).populate('PatientCase');
         res.json({
             success: true,
             appointments
@@ -142,7 +142,7 @@ export const getAllAppointments = async (req, res) => {
         console.log(error.message);
         res.json({
             success: false,
-            error:error.message
+            error: error.message
         })
     }
 }
@@ -308,9 +308,9 @@ export const getPatientAppDetails = async (req, res) => {
         const { appointmentType } = req.params;
         const date = new Date().toLocaleDateString("en-CA", {
             timeZone: "Asia/Kolkata",
-        });        
-        
-        let appointment = await AppointmentDoctor.find({AppointmentType:appointmentType,AppointmentDate:date}).populate('PatientCase').populate('Doctor');
+        });
+
+        let appointment = await AppointmentDoctor.find({ AppointmentType: appointmentType, AppointmentDate: date }).populate('PatientCase').populate('Doctor');
 
         appointment = appointment.reverse();
         return res.json(appointment);
@@ -472,7 +472,7 @@ export const getFollowUpImages = async (req, res) => {
         }
 
         res.status(200).json({
-            followUpImages : patient.followUpImages
+            followUpImages: patient.followUpImages
         });
 
     } catch (error) {
@@ -511,8 +511,8 @@ export const deleteFollowUpPatient = async (req, res) => {
 
 export const addDiagnosis = async (req, res) => {
     try {
-        const { diagnosis } = req.body; 
-        const { id } = req.params; 
+        const { diagnosis } = req.body;
+        const { id } = req.params;
 
         const patient = await Patient.findById(id);
         if (!patient) {
@@ -550,7 +550,7 @@ export const addNewPrescription = async (req, res) => {
     try {
         const { formData, currentDate } = req.body;
         const { id } = req.params;
-        
+
         const newPatient = await Prescription.create({
             patient: id,
             diagnosis: formData.selectedDiagnosisOptions,
@@ -561,19 +561,19 @@ export const addNewPrescription = async (req, res) => {
             duration: formData.duration,
             note: formData.note,
             prescription_date: currentDate
-        });     
-                
-        
-        return res.json({
-            message: "Prescription Created Successfully"            
         });
-        
-      } catch (error) {
-          console.log("Error in addNewPrescription controller", error.message);
+
+
+        return res.json({
+            message: "Prescription Created Successfully"
+        });
+
+    } catch (error) {
+        console.log("Error in addNewPrescription controller", error.message);
         return res.json({
             message: error.message
         });
-      }
+    }
 };
 
 export const getPrescriptionToday = async (req, res) => {
@@ -588,13 +588,13 @@ export const getPrescriptionToday = async (req, res) => {
 
         const presToday = await Prescription.find({
             patient: id,
-            prescription_date:date
+            prescription_date: date
         });
 
         return res.json({
             presToday
         })
-        
+
     } catch (error) {
         console.log("Error in getPrescriptionToday", error.message);
         return res.json({
@@ -603,18 +603,18 @@ export const getPrescriptionToday = async (req, res) => {
     }
 }
 
-export const getAllPrescription =async (req,res) => {
+export const getAllPrescription = async (req, res) => {
     try {
-        const { id } = req.params;        
+        const { id } = req.params;
 
         const presToday = await Prescription.find({
-            patient: id            
+            patient: id
         });
 
         return res.json({
             presToday
         })
-        
+
     } catch (error) {
         console.log("Error in getAllPrescription controller", error.message);
         return res.json({
@@ -623,35 +623,35 @@ export const getAllPrescription =async (req,res) => {
     }
 }
 
-export const deleteTodayPrescription = async (req,res) => {
+export const deleteTodayPrescription = async (req, res) => {
     try {
-        const id = req.params.id;        
+        const id = req.params.id;
         const deletePrescription = await Prescription.findByIdAndDelete(id);
         return res.json({
-            message: "Deleted Successfully"            
+            message: "Deleted Successfully"
         });
-     } catch (error) {
-        console.log("Error in deleteTodayPrescription controller",error.message);
+    } catch (error) {
+        console.log("Error in deleteTodayPrescription controller", error.message);
         return res.json({
             message: error.message
         });
     }
 }
 
-export const updateTodayPrescription = async (req,res) => {
+export const updateTodayPrescription = async (req, res) => {
     try {
-        const {editedData} = req.body;
-        const {id} = req.params;     
+        const { editedData } = req.body;
+        const { id } = req.params;
         delete editedData._id;
         delete editedData.patient;
-        delete editedData.__v;       
+        delete editedData.__v;
 
-        const updatePrescription = await Prescription.findByIdAndUpdate(id,editedData);
+        const updatePrescription = await Prescription.findByIdAndUpdate(id, editedData);
 
         return res.json({
             message: "Updated Successfully"
         })
-        
+
     } catch (error) {
         console.log("Error in updateTodayPrescription", error.message);
         return res.json({
@@ -661,9 +661,9 @@ export const updateTodayPrescription = async (req,res) => {
 }
 
 //FOLLOW-UP SCRIBBLE
-export const addFollowUpPatient = async(req,res) => {
+export const addFollowUpPatient = async (req, res) => {
     try {
-        const id  = req.params.id;
+        const id = req.params.id;
         const image = req.body.savedImage;
 
         const date = new Date().toLocaleDateString("en-GB", {
@@ -671,7 +671,7 @@ export const addFollowUpPatient = async(req,res) => {
             month: "2-digit",
             year: "numeric",
             timeZone: "Asia/Kolkata",
-        });             
+        });
 
         const addFollowUp = await FollowUpPatient.create({
             patient: id,
@@ -682,16 +682,16 @@ export const addFollowUpPatient = async(req,res) => {
         return res.json({
             success: true
         })
-        
+
     } catch (error) {
-        console.log("Error in addFollowUpPatient controller",error.message);
+        console.log("Error in addFollowUpPatient controller", error.message);
         return res.json({
             message: error.message
         });
     }
 }
 
-export const getFollowUpPatient = async (req,res) => {
+export const getFollowUpPatient = async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -702,20 +702,20 @@ export const getFollowUpPatient = async (req,res) => {
         return res.json({
             followUpImages
         })
-        
+
     } catch (error) {
-        console.log("Error in getFollowUpPatient controller",error.message);
+        console.log("Error in getFollowUpPatient controller", error.message);
         return res.json({
-            message : error.message
+            message: error.message
         });
     }
-} 
+}
 
 //FOLLOW-UP WRITE PAD
-export const addWriteUpPatient = async (req,res) => {
+export const addWriteUpPatient = async (req, res) => {
     try {
-        const {id} = req.params;
-        const {value} = req.body;
+        const { id } = req.params;
+        const { value } = req.body;
 
         const date = new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
@@ -723,28 +723,28 @@ export const addWriteUpPatient = async (req,res) => {
             year: "numeric",
             timeZone: "Asia/Kolkata",
         });
-        
+
         const addWriteUp = await WriteUpPatient.create({
-            patient:id,
-            writeUp_value:value,
+            patient: id,
+            writeUp_value: value,
             date
         });
 
         return res.json({
             message: "Added Successfully"
         })
-        
+
     } catch (error) {
-        console.log("Error in addWriteUpPatient controller",error.message);
+        console.log("Error in addWriteUpPatient controller", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         })
     }
 }
 
-export const getWriteUpPatient = async (req,res) => {
+export const getWriteUpPatient = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         const writeUpData = await WriteUpPatient.find({
             patient: id
@@ -753,29 +753,29 @@ export const getWriteUpPatient = async (req,res) => {
         return res.json({
             writeUpData
         });
-        
+
     } catch (error) {
-        console.log("Error in getWriteUpPatient controller",error.message);
+        console.log("Error in getWriteUpPatient controller", error.message);
         return res.json({
             message: error.message
         });
     }
 }
 
-export const getWriteUpUpdate = async (req,res) => {
+export const getWriteUpUpdate = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         const updateWriteUp = await WriteUpPatient.findById(id);
 
         return res.json({
             updateWriteUp
         });
-        
+
     } catch (error) {
         console.log("Error in getWriteUpUpdate controller", error.message);
         return res.json({
-            message : error.message
+            message: error.message
         });
     }
 }
@@ -809,12 +809,12 @@ export const deleteWriteUp = async (req, res) => {
 };
 
 
-export const addInvestigationAdvised = async (req,res) => {
+export const addInvestigationAdvised = async (req, res) => {
     try {
-        const {success,inputData,type} = req.body;
+        const { success, inputData, type } = req.body;
 
         const existing = await Investigation.findOne();
-        if(!existing){
+        if (!existing) {
             const newInvestigation = new Investigation({
                 investigationAdvised: [],
                 ultraSonography: [],
@@ -825,83 +825,83 @@ export const addInvestigationAdvised = async (req,res) => {
                 mriScan: []
             });
             await newInvestigation.save();
-        }else {
-            switch(type){
+        } else {
+            switch (type) {
                 case "Investigation Advised":
                     await Investigation.findOneAndUpdate(
                         {},
-                        { $push: { investigationAdvised: inputData.trim()}},
-                        {new:true, upsert:true}
+                        { $push: { investigationAdvised: inputData.trim() } },
+                        { new: true, upsert: true }
                     )
                     break;
-                
+
                 case "Ultra-Sonography":
                     await Investigation.findOneAndUpdate(
                         {},
-                        { $push: { ultraSonography: inputData.trim()}},
-                        {new:true, upsert:true}
+                        { $push: { ultraSonography: inputData.trim() } },
+                        { new: true, upsert: true }
                     )
                     break;
 
                 case "Doppler Studies":
                     await Investigation.findOneAndUpdate(
                         {},
-                        { $push: { dopplerStudies: inputData.trim()}},
-                        {new:true, upsert:true}
+                        { $push: { dopplerStudies: inputData.trim() } },
+                        { new: true, upsert: true }
                     )
                     break;
-                
+
                 case "Obstetrics(Pregnancy)":
                     await Investigation.findOneAndUpdate(
                         {},
-                        { $push: { obstetrics: inputData.trim()}},
-                        {new:true, upsert:true}
+                        { $push: { obstetrics: inputData.trim() } },
+                        { new: true, upsert: true }
                     )
                     break;
 
                 case "Sonography":
                     await Investigation.findOneAndUpdate(
                         {},
-                        { $push: { sonography: inputData.trim()}},
-                        {new:true, upsert:true}
+                        { $push: { sonography: inputData.trim() } },
+                        { new: true, upsert: true }
                     )
                     break;
-                
+
                 case "16 Slice C.T Scan":
                     await Investigation.findOneAndUpdate(
                         {},
-                        { $push: { ctScan: inputData.trim()}},
-                        {new:true, upsert:true}
+                        { $push: { ctScan: inputData.trim() } },
+                        { new: true, upsert: true }
                     )
                     break;
 
                 case "1.5 MRI Scan":
                     await Investigation.findOneAndUpdate(
                         {},
-                        { $push: { mriScan: inputData.trim()}},
-                        {new:true, upsert:true}
+                        { $push: { mriScan: inputData.trim() } },
+                        { new: true, upsert: true }
                     )
                     break;
-            }            
-        }       
-        
+            }
+        }
+
         return res.json({
             message: `Added ${type} Successfully`
         })
     } catch (error) {
         console.log("Error in addInvestigationAdvised controller", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
-} 
+}
 
-export const getInvestigationAdvised = async (req,res) => {
+export const getInvestigationAdvised = async (req, res) => {
     try {
         const inv = await Investigation.findOne();
         return res.json({
             inv
-        });        
+        });
     } catch (error) {
         console.log("Error in getInvestigationAdvised", error.message);
         return res.json({
@@ -924,33 +924,33 @@ export const deleteEmployee = async (req, res) => {
 }
 
 //add new case master controllers
-export const addNewCaseMaster = async (req,res) => {
+export const addNewCaseMaster = async (req, res) => {
     try {
-        const {name,type} = req.body;
-        switch(type) {
+        const { name, type } = req.body;
+        switch (type) {
             case "Present Complaints":
-                await PresentComplaintsMaster.create({name:name.trim()})
+                await PresentComplaintsMaster.create({ name: name.trim() })
                 break;
             case "Past History":
-                await PastHistoryMaster.create({name:name.trim()})
+                await PastHistoryMaster.create({ name: name.trim() })
                 break;
-            case "Family Medical HO":
-                await FamilyMedicalMaster.create({name:name.trim()})
+            case "Family Medical":
+                await FamilyMedicalMaster.create({ name: name.trim() })
                 break;
             case "Mental Causative Factor":
-                await MentalCausativeMaster.create({name:name.trim()})
+                await MentalCausativeMaster.create({ name: name.trim() })
                 break;
             case "Mental Personality Character":
-                await MentalPersonalityMaster.create({name:name.trim()})
+                await MentalPersonalityMaster.create({ name: name.trim() })
                 break;
             case "Brief Mind Symptoms":
-                await BriefMindSymptomsMaster.create({name:name.trim()})
+                await BriefMindSymptomsMaster.create({ name: name.trim() })
                 break;
             case "Thermal Reaction":
-                await ThermalReactionMaster.create({name:name.trim()})
+                await ThermalReactionMaster.create({ name: name.trim() })
                 break;
             case "Miasm":
-                await MiasmMaster.create({name:name.trim()})
+                await MiasmMaster.create({ name: name.trim() })
                 break;
             default:
                 console.log("Unexpected Type mentioned in Switch Case addNewCaseMaster")
@@ -959,25 +959,31 @@ export const addNewCaseMaster = async (req,res) => {
         return res.json({
             name,
             type
-        });        
+        });
     } catch (error) {
-        console.log("Error in addPresentComplaints controller Doc",error.message);
+        console.log("Error in addPresentComplaints controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     };
 };
 
-export const getCaseMaster = async (req, res) => {    
+export const getCaseMaster = async (req, res) => {
     try {
         const { id } = req.params;
         let caseData;
-    switch (id) {
-        case 'PresentComplaints':
-            caseData = await PresentComplaintsMaster.find();
-            break;
-        default:
-            console.log('Error in getting the Case Master');
+        switch (id) {
+            case 'PresentComplaints':
+                caseData = await PresentComplaintsMaster.find();
+                break;
+            case 'PastHistory':
+                caseData = await PastHistoryMaster.find();
+                break;
+            case 'FamilyMedical':
+                caseData = await FamilyMedicalMaster.find();
+                break;
+            default:
+                console.log('Error in getting the Case Master');
         }
         return res.json({
             success: true,
@@ -986,32 +992,39 @@ export const getCaseMaster = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
 
-export const deleteCaseMaster = async (req,res) => {
+export const deleteCaseMaster = async (req, res) => {
     try {
-        let { id,type } = req.params;
+        let { id, type } = req.params;
+
         switch (type) {
-            case 'Present Complaints':
+            case 'PresentComplaints':
                 await PresentComplaintsMaster.findByIdAndDelete(id);
+                break;
+            case 'PastHistory':
+                await PastHistoryMaster.findByIdAndDelete(id);
+                break;
+            case 'FamilyMedical':
+                await FamilyMedicalMaster.findByIdAndDelete(id);
                 break;
             default:
                 console.log('Could not find the type')
         }
         return res.send({
-            message:"Deleted Successfully"
+            message: "Deleted Successfully"
         })
     } catch (error) {
         console.log(error.message);
     }
 }
 
-export const addPresentComplaintPatient = async (req,res) =>{
-    const {id} = req.params;
-    const {complaintName,duration,durationSuffix} = req.body;    
+export const addPresentComplaintPatient = async (req, res) => {
+    const { id } = req.params;
+    const { complaintName, duration, durationSuffix } = req.body;
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1024,16 +1037,16 @@ export const addPresentComplaintPatient = async (req,res) =>{
             complaintName: complaintName.trim(),
             duration: duration.trim(),
             durationSuffix: durationSuffix.trim(),
-            created_at:date
+            created_at: date
         })
-        
+
         return res.json({
-            message: "Present Complaint Added Successfully",            
+            message: "Present Complaint Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addPresentComplaints controller Doc",error.message);
+        console.log("Error in addPresentComplaints controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
 }
@@ -1041,7 +1054,7 @@ export const addPresentComplaintPatient = async (req,res) =>{
 export const getPresentComplaintPatient = async (req, res) => {
     try {
         const { id } = req.params;
-        const presentComplaintData = await PresentComplaintsPatient.find({patient:id});
+        const presentComplaintData = await PresentComplaintsPatient.find({ patient: id });
         res.json({
             success: true,
             presentComplaintData
@@ -1049,7 +1062,7 @@ export const getPresentComplaintPatient = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -1060,19 +1073,19 @@ export const deletePresentComplaintPatient = async (req, res) => {
         await PresentComplaintsPatient.findByIdAndDelete(id);
         res.json({
             success: true,
-            message:"Deleted Successfully"
+            message: "Deleted Successfully"
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
 
-export const addPastHistoryPatient = async (req,res) =>{
-    const {id} = req.params;
-    const {complaintName,lastDiagnosed,lastSuffix,duration,durationSuffix,remark} = req.body;    
+export const addPastHistoryPatient = async (req, res) => {
+    const { id } = req.params;
+    const { complaintName, lastDiagnosed, lastSuffix, duration, durationSuffix, remark } = req.body;
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1087,24 +1100,57 @@ export const addPastHistoryPatient = async (req,res) =>{
             lastSuffix,
             duration: duration.trim(),
             durationSuffix: durationSuffix.trim(),
-            remark: remark? remark.trim(): "",
-            created_at:date
+            remark: remark ? remark.trim() : "",
+            created_at: date
         })
-        
+
         return res.json({
-            message: "Past History Added Successfully",            
+            message: "Past History Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addPastHistoryPatient controller Doc",error.message);
+        console.log("Error in addPastHistoryPatient controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
 }
 
-export const addFamilyMedicalPatient = async (req,res) =>{
-    const {id} = req.params;
-    const {relation,diseases,anyOther,lifeStatus,age} = req.body;    
+export const getPastHistoryPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const pastData = await PastHistoryPatient.find({ patient: id });
+
+        return res.json({
+            pastData,
+            success: true
+        })
+    } catch (error) {
+        return res.json({
+            message: error.message,
+            success: false
+        })
+    }
+}
+
+export const deletePastHistoryPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await PastHistoryPatient.findByIdAndDelete(id);
+        res.json({
+            success: true,
+            message: "Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const addFamilyMedicalPatient = async (req, res) => {
+    const { id } = req.params;
+    const { relation, diseases, anyOther, lifeStatus, age } = req.body;
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1114,29 +1160,62 @@ export const addFamilyMedicalPatient = async (req,res) =>{
     try {
         const addData = await FamilyHistoryPatient.create({
             patient: id,
-            relation:relation.trim(),
+            relation: relation.trim(),
             diseases,
-            anyOther: anyOther ? anyOther.trim(): "",
+            anyOther: anyOther ? anyOther.trim() : "",
             lifeStatus,
-            age: age ? age.trim(): "",
-            created_at:date
+            age: age ? age.trim() : "",
+            created_at: date
         })
-        
+
         return res.json({
-            message: "Family Medical History Added Successfully",            
+            message: "Family Medical History Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addFamilyMedicalPatient controller Doc",error.message);
+        console.log("Error in addFamilyMedicalPatient controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
 }
 
-export const addMentalCausativePatient = async (req,res) =>{
-    const {id} = req.params;
-    const {selectedInvestigationOptions} = req.body; 
-       
+export const getFamilyMedicalPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const familyData = await FamilyHistoryPatient.find({ patient: id });
+
+        return res.json({
+            familyData,
+            success: true
+        })
+    } catch (error) {
+        return res.json({
+            message: error.message,
+            success: false
+        })
+    }
+}
+
+export const deleteFamilyMedical = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await FamilyHistoryPatient.findByIdAndDelete(id);
+        res.json({
+            success: true,
+            message: "Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const addMentalCausativePatient = async (req, res) => {
+    const { id } = req.params;
+    const { selectedInvestigationOptions } = req.body;
+
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1146,24 +1225,24 @@ export const addMentalCausativePatient = async (req,res) =>{
     try {
         const addData = await MentalCausativePatient.create({
             patient: id,
-            diseases:selectedInvestigationOptions,
-            created_at:date
+            diseases: selectedInvestigationOptions,
+            created_at: date
         })
-        
+
         return res.json({
-            message: "Mental Causative Added Successfully",            
+            message: "Mental Causative Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addMentalCausativePatient controller Doc",error.message);
+        console.log("Error in addMentalCausativePatient controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
 }
 
-export const addMentalPersonalityPatient = async (req,res) =>{
-    const {id} = req.params;
-    const {selectedInvestigationOptions} = req.body;       
+export const addMentalPersonalityPatient = async (req, res) => {
+    const { id } = req.params;
+    const { selectedInvestigationOptions } = req.body;
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1173,24 +1252,24 @@ export const addMentalPersonalityPatient = async (req,res) =>{
     try {
         const addData = await MentalPersonalityPatient.create({
             patient: id,
-            diseases:selectedInvestigationOptions,
-            created_at:date
+            diseases: selectedInvestigationOptions,
+            created_at: date
         })
-        
+
         return res.json({
-            message: "Mental Causative Added Successfully",            
+            message: "Mental Causative Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addMentalCausativePatient controller Doc",error.message);
+        console.log("Error in addMentalCausativePatient controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
 }
 
-export const addThermalReactionPatient = async (req,res) =>{
-    const {id} = req.params;
-    const {selectedInvestigationOptions} = req.body;       
+export const addThermalReactionPatient = async (req, res) => {
+    const { id } = req.params;
+    const { selectedInvestigationOptions } = req.body;
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1200,24 +1279,24 @@ export const addThermalReactionPatient = async (req,res) =>{
     try {
         const addData = await ThermalReactionPatient.create({
             patient: id,
-            diseases:selectedInvestigationOptions,
-            created_at:date
+            diseases: selectedInvestigationOptions,
+            created_at: date
         })
-        
+
         return res.json({
-            message: "Thermal Reaction Added Successfully",            
+            message: "Thermal Reaction Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addThermalReactionPatient controller Doc",error.message);
+        console.log("Error in addThermalReactionPatient controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
 }
 
-export const addMiasmPatient = async (req,res) =>{
-    const {id} = req.params;
-    const {selectedInvestigationOptions} = req.body;       
+export const addMiasmPatient = async (req, res) => {
+    const { id } = req.params;
+    const { selectedInvestigationOptions } = req.body;
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1227,17 +1306,17 @@ export const addMiasmPatient = async (req,res) =>{
     try {
         const addData = await MiasmPatient.create({
             patient: id,
-            diseases:selectedInvestigationOptions,
-            created_at:date
+            diseases: selectedInvestigationOptions,
+            created_at: date
         })
-        
+
         return res.json({
-            message: "Thermal Reaction Added Successfully",            
+            message: "Thermal Reaction Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addThermalReactionPatient controller Doc",error.message);
+        console.log("Error in addThermalReactionPatient controller Doc", error.message);
         return res.json({
-            message:error.message
+            message: error.message
         });
     }
 }

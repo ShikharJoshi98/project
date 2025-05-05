@@ -9,7 +9,7 @@ import SearchMedicine from './SearchMedicine';
 import { recStore } from '../../store/RecStore';
 
 const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
-const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day', '7th Day', '10th Day', '15th Day', '20th Day','25th Day','30th Day','45th Day','60th Day','75th Day','3rd Month','4th Month','5th Month'];
+const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day', '7th Day', '10th Day', '15th Day', '20th Day', '25th Day', '30th Day', '45th Day', '60th Day', '75th Day', '3rd Month', '4th Month', '5th Month'];
 const doseArray = ['Single Dose', '3 Dose Half-Hour Interval', '2 Dose Half-Hour Interval'];
 
 const PrescribeMedicine = () => {
@@ -18,7 +18,7 @@ const PrescribeMedicine = () => {
     const location = useParams();
     const { Diagnosis, getDiagnosis, togglePrescriptionSubmit } = docStore();
     const [submit, setsubmit] = useState(false);
-    const [searchMedicine, setSearchMedicine] = useState("");    
+    const [searchMedicine, setSearchMedicine] = useState("");
     const [currentDate, setCurrentDate] = useState("");
     const { getPastPrescription, allPrescriptions } = docStore();
     const { patients } = recStore();
@@ -28,7 +28,7 @@ const PrescribeMedicine = () => {
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if ((diagnosisRef.current && !diagnosisRef.current.contains(event.target))||(searchMedicineRef.current && !searchMedicineRef.current.contains(event.target))) {
+            if ((diagnosisRef.current && !diagnosisRef.current.contains(event.target)) || (searchMedicineRef.current && !searchMedicineRef.current.contains(event.target))) {
                 setDiagnosisOpen(false);
                 setSearchMedicine("")
             }
@@ -37,12 +37,12 @@ const PrescribeMedicine = () => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);    
+    }, []);
 
     useEffect(() => {
         getPastPrescription(location.id);
     }, []);
-    
+
     const [formData, setFormData] = useState({
         medicine: '',
         potency: '',
@@ -78,7 +78,6 @@ const PrescribeMedicine = () => {
                     currentDate
                 }
             );
-            alert(response.data.message);
             setFormData({
                 medicine: '',
                 potency: '',
@@ -93,9 +92,8 @@ const PrescribeMedicine = () => {
             console.log(error);
         }
     }
-    
+
     const filteredPrescription = allPrescriptions.filter((pres) => pres.medicine.toLowerCase().includes(searchMedicine.toLowerCase()));
-    
     const handleDiagnosisSubmit = async () => {
         try {
             await axios.post(`${DOC_API_URL}/add-diagnosis/${location.id}`, { diagnosis: formData.diagnosis });
@@ -105,7 +103,6 @@ const PrescribeMedicine = () => {
             console.error("Error adding diagnosis:", error.response?.data || error.message);
         }
     }
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value, selectedDiagnosisOptions }));
@@ -122,7 +119,7 @@ const PrescribeMedicine = () => {
                         <div className='flex sm:flex-row flex-col  items-center justify-between mb-2 pr-5'>
                             <h1 className='text-black font-semibold '>Diagnosis:</h1>
                             <div className='relative'>
-                                <button onClick={() => setDiagnosisOpen(!isDiagnosisOpen)}  type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
+                                <button onClick={() => setDiagnosisOpen(!isDiagnosisOpen)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
                                 {isDiagnosisOpen && <div ref={diagnosisRef} className='bg-white w-56 z-60 -left-10 border border-black rounded-md absolute p-2'>
                                     <div className='flex items-center flex-col gap-3'>
                                         <Input onChange={(e) => handleChange(e)} value={formData.diagnosis} name='diagnosis' icon={Plus} placeholder='Add diagnosis' />
@@ -135,7 +132,7 @@ const PrescribeMedicine = () => {
                     </div>
                     <div className='relative'>
                         <h1 className='text-black font-semibold mb-4'>Medicine:</h1>
-                        <Input icon={Pill} placeholder='Enter Medicine Name' name='medicine' value={formData.medicine} onChange={(e) => { setSearchMedicine(e.target.value); handleChange(e)}} />
+                        <Input icon={Pill} placeholder='Enter Medicine Name' name='medicine' value={formData.medicine} onChange={(e) => { setSearchMedicine(e.target.value); handleChange(e) }} />
                         {searchMedicine && <div ref={searchMedicineRef} className='bg-gray-300 shadow-2xl p-2 flex flex-col gap-2 w-full absolute top-20.5 z-10 border-l border-b border-r border-blue-400 rounded-md'>
                             {
                                 filteredPrescription.map((pres, index) => (

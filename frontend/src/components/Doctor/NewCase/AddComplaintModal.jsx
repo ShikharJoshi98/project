@@ -19,10 +19,9 @@ const AddComplaintModal = ({ onClose, complaint }) => {
             console.log(error.message);
         }
     }
-
     const deleteData = async (id) => {
         try {
-            await axios.delete(`${DOC_API_URL}/deleteCaseMaster/${complaint}/${id}`);
+            await axios.delete(`${DOC_API_URL}/deleteCaseMaster/${complaint.replace(" ","")}/${id}`);
             setSubmit(prev => !prev);
         } catch (error) {
             console.log(error.message);

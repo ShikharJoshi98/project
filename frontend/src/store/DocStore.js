@@ -20,7 +20,9 @@ export const docStore = create((set) => ({
     writeUp:[],
     allPrescriptions: [],
     list: [],
-    PresentComplaintData:[],
+    PresentComplaintData: [],
+    PastHistoryData: [],
+    FamilyMedicalData:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -229,6 +231,14 @@ export const docStore = create((set) => ({
     getPresentComplaintData : async (id) => {
         const response = await axios.get(`${DOC_API_URL}/presentComplaints/${id}`);
         set({ PresentComplaintData: response.data.presentComplaintData });
+    },
+    getPastHistoryData: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/pastHistory/${id}`);
+        set({ PastHistoryData: response.data.pastData });
+    },
+    getFamilyMedicalData: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/familyMedical/${id}`);
+        set({ FamilyMedicalData: response.data.familyData });
     }
     
 }))
