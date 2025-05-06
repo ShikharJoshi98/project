@@ -22,7 +22,8 @@ export const docStore = create((set) => ({
     list: [],
     PresentComplaintData: [],
     PastHistoryData: [],
-    FamilyMedicalData:[],
+    FamilyMedicalData: [],
+    MentalCausativeData:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -225,7 +226,7 @@ export const docStore = create((set) => ({
         set({ writeUp: response.data.writeUpData });
     },
     getCaseData : async (complaint) => {
-        const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(" ", "")}`);
+        const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(/\s+/g, "")}`);
         set({ list: response.data.caseData });
     },
     getPresentComplaintData : async (id) => {
@@ -239,6 +240,10 @@ export const docStore = create((set) => ({
     getFamilyMedicalData: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/familyMedical/${id}`);
         set({ FamilyMedicalData: response.data.familyData });
+    },
+    getMentalCausative: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/mentalCausative/${id}`);
+        set({ MentalCausativeData: response.data.mentalCausativeData });
     }
     
 }))

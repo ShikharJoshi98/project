@@ -5,7 +5,7 @@ import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { FollowUpPatient, Investigation, Prescription, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
-import { BriefMindSymptomsMaster, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalPersonalityMaster, MentalPersonalityPatient, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
+import { BriefMindSymptomsMaster, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -982,6 +982,9 @@ export const getCaseMaster = async (req, res) => {
             case 'FamilyMedical':
                 caseData = await FamilyMedicalMaster.find();
                 break;
+            case 'MentalCausativeFactor':
+                caseData = await MentalCausativeMaster.find();
+                break;
             default:
                 console.log('Error in getting the Case Master');
         }
@@ -1010,6 +1013,9 @@ export const deleteCaseMaster = async (req, res) => {
                 break;
             case 'FamilyMedical':
                 await FamilyMedicalMaster.findByIdAndDelete(id);
+                break;
+            case 'MentalCausativeFactor':
+                await MentalCausativeMaster.findByIdAndDelete(id);
                 break;
             default:
                 console.log('Could not find the type')
@@ -1214,8 +1220,7 @@ export const deleteFamilyMedical = async (req, res) => {
 
 export const addMentalCausativePatient = async (req, res) => {
     const { id } = req.params;
-    const { selectedInvestigationOptions } = req.body;
-
+   
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1223,11 +1228,24 @@ export const addMentalCausativePatient = async (req, res) => {
         timeZone: "Asia/Kolkata",
     });
     try {
-        const addData = await MentalCausativePatient.create({
-            patient: id,
-            diseases: selectedInvestigationOptions,
-            created_at: date
-        })
+        const { selectedInvestigationOptions } = req.body;
+        const existingDiseases = await MentalCausativePatient.find({ patient: id });
+        if (existingDiseases.length!==0) {
+            await MentalCausativePatient.updateOne(
+              { patient: id },
+              {
+                $push: {
+                  diseases: { $each: selectedInvestigationOptions },
+                },
+              }
+            );
+        } else {
+            await MentalCausativePatient.create({
+              patient: id,
+              diseases: selectedInvestigationOptions,
+              created_at: date,
+            });
+          }
 
         return res.json({
             message: "Mental Causative Added Successfully",
@@ -1237,6 +1255,39 @@ export const addMentalCausativePatient = async (req, res) => {
         return res.json({
             message: error.message
         });
+    }
+}
+
+export const getMentalCausativePatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const mentalCausativeData =await MentalCausativePatient.find({ patient: id });
+        res.json({
+            success: true,
+            mentalCausativeData
+        })
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export const deleteMentalCausative = async (req, res) => {
+    try {
+        const { id, idx } = req.params;
+        const mentalCausativeData = await MentalCausativePatient.findOne({ patient: id });
+        if (idx !== -1) {
+            mentalCausativeData.diseases.splice(idx, 1);
+            await mentalCausativeData.save();
+        }
+        res.json({
+            success: true,
+            message:"Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
     }
 }
 
@@ -1266,6 +1317,7 @@ export const addMentalPersonalityPatient = async (req, res) => {
         });
     }
 }
+
 
 export const addThermalReactionPatient = async (req, res) => {
     const { id } = req.params;
@@ -1315,6 +1367,28 @@ export const addMiasmPatient = async (req, res) => {
         });
     } catch (error) {
         console.log("Error in addThermalReactionPatient controller Doc", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const addMentalCausativeScribble = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const image = req.body.savedImage;
+
+        await MentalCausativeScribble.create({
+            patient: id,
+            image: image,
+        })
+
+        return res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log("Error in mental causative scribble controller", error.message);
         return res.json({
             message: error.message
         });

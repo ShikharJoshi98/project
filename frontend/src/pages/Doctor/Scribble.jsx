@@ -53,13 +53,12 @@ const Scribble = () => {
     };
 
     const handleSaveClick = async () => {
-        try {
+        try {            
             const imageData = await canvasRef.current.exportImage("png");
             const response = await axios.post(
                 `${DOC_API_URL}/add-follow-up-patient/${id}`,
                 { savedImage: imageData }
             );
-            console.log("Saved:", response.data);
             alert("Saved Successfully. Continue writing...");
             canvasRef.current?.clearCanvas();
         } catch (error) {
