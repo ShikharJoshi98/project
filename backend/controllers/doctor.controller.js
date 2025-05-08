@@ -985,6 +985,15 @@ export const getCaseMaster = async (req, res) => {
             case 'MentalCausativeFactor':
                 caseData = await MentalCausativeMaster.find();
                 break;
+            case 'MentalPersonalityCharacter':
+                caseData = await MentalPersonalityMaster.find();
+                break;
+            case 'ThermalReaction':
+                caseData = await ThermalReactionMaster.find();
+                break;
+            case 'Miasm':
+                caseData = await MiasmMaster.find();
+                break;
             default:
                 console.log('Error in getting the Case Master');
         }
@@ -1016,6 +1025,15 @@ export const deleteCaseMaster = async (req, res) => {
                 break;
             case 'MentalCausativeFactor':
                 await MentalCausativeMaster.findByIdAndDelete(id);
+                break;
+            case 'MentalPersonalityCharacter':
+                await MentalPersonalityMaster.findByIdAndDelete(id)
+                break;
+            case 'ThermalReaction':
+                await ThermalReactionMaster.findByIdAndDelete(id)
+                break;
+            case 'Miasm':
+                await MiasmMaster.findByIdAndDelete(id)
                 break;
             default:
                 console.log('Could not find the type')
@@ -1220,7 +1238,7 @@ export const deleteFamilyMedical = async (req, res) => {
 
 export const addMentalCausativePatient = async (req, res) => {
     const { id } = req.params;
-   
+
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1230,22 +1248,22 @@ export const addMentalCausativePatient = async (req, res) => {
     try {
         const { selectedInvestigationOptions } = req.body;
         const existingDiseases = await MentalCausativePatient.find({ patient: id });
-        if (existingDiseases.length!==0) {
+        if (existingDiseases.length !== 0) {
             await MentalCausativePatient.updateOne(
-              { patient: id },
-              {
-                $push: {
-                  diseases: { $each: selectedInvestigationOptions },
-                },
-              }
+                { patient: id },
+                {
+                    $push: {
+                        diseases: { $each: selectedInvestigationOptions },
+                    },
+                }
             );
         } else {
             await MentalCausativePatient.create({
-              patient: id,
-              diseases: selectedInvestigationOptions,
-              created_at: date,
+                patient: id,
+                diseases: selectedInvestigationOptions,
+                created_at: date,
             });
-          }
+        }
 
         return res.json({
             message: "Mental Causative Added Successfully",
@@ -1261,7 +1279,7 @@ export const addMentalCausativePatient = async (req, res) => {
 export const getMentalCausativePatient = async (req, res) => {
     try {
         const { id } = req.params;
-        const mentalCausativeData =await MentalCausativePatient.find({ patient: id });
+        const mentalCausativeData = await MentalCausativePatient.find({ patient: id });
         res.json({
             success: true,
             mentalCausativeData
@@ -1281,19 +1299,19 @@ export const deleteMentalCausative = async (req, res) => {
         }
         res.json({
             success: true,
-            message:"Deleted Successfully"
+            message: "Deleted Successfully"
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
 
 export const addMentalPersonalityPatient = async (req, res) => {
     const { id } = req.params;
-    const { selectedInvestigationOptions } = req.body;
+
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1301,27 +1319,72 @@ export const addMentalPersonalityPatient = async (req, res) => {
         timeZone: "Asia/Kolkata",
     });
     try {
-        const addData = await MentalPersonalityPatient.create({
-            patient: id,
-            diseases: selectedInvestigationOptions,
-            created_at: date
-        })
+        const { selectedInvestigationOptions } = req.body;
+        const existingDiseases = await MentalPersonalityPatient.find({ patient: id });
+        if (existingDiseases.length !== 0) {
+            await MentalPersonalityPatient.updateOne(
+                { patient: id },
+                {
+                    $push: {
+                        diseases: { $each: selectedInvestigationOptions },
+                    },
+                }
+            );
+        } else {
+            await MentalPersonalityPatient.create({
+                patient: id,
+                diseases: selectedInvestigationOptions,
+                created_at: date,
+            });
+        }
 
         return res.json({
-            message: "Mental Causative Added Successfully",
+            message: "Mental Personality Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addMentalCausativePatient controller Doc", error.message);
+        console.log("Error in addMentalPersonalityPatient controller Doc", error.message);
         return res.json({
             message: error.message
         });
     }
 }
 
+export const getMentalPersonalityPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const mentalPersonalityData = await MentalPersonalityPatient.find({ patient: id });
+        res.json({
+            success: true,
+            mentalPersonalityData
+        })
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export const deleteMentalPersonality = async (req, res) => {
+    try {
+        const { id, idx } = req.params;
+        const mentalPersonalityData = await MentalPersonalityPatient.findOne({ patient: id });
+        if (idx !== -1) {
+            mentalPersonalityData.diseases.splice(idx, 1);
+            await mentalPersonalityData.save();
+        }
+        res.json({
+            success: true,
+            message: "Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
 export const addThermalReactionPatient = async (req, res) => {
     const { id } = req.params;
-    const { selectedInvestigationOptions } = req.body;
+
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1329,26 +1392,73 @@ export const addThermalReactionPatient = async (req, res) => {
         timeZone: "Asia/Kolkata",
     });
     try {
-        const addData = await ThermalReactionPatient.create({
-            patient: id,
-            diseases: selectedInvestigationOptions,
-            created_at: date
-        })
+        const { selectedInvestigationOptions } = req.body;
+        const existingDiseases = await ThermalReactionPatient.find({ patient: id });
+        if (existingDiseases.length !== 0) {
+            await ThermalReactionPatient.updateOne(
+                { patient: id },
+                {
+                    $push: {
+                        diseases: { $each: selectedInvestigationOptions },
+                    },
+                }
+            );
+        } else {
+            await ThermalReactionPatient.create({
+                patient: id,
+                diseases: selectedInvestigationOptions,
+                created_at: date,
+            });
+        }
 
         return res.json({
-            message: "Thermal Reaction Added Successfully",
+            message: "THermal Reaction Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addThermalReactionPatient controller Doc", error.message);
+        console.log("Error in addthermalreaction controller Doc", error.message);
         return res.json({
             message: error.message
         });
+    }
+}
+
+export const getThermalReactionPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const thermalReactionData = await ThermalReactionPatient.find({ patient: id });
+        res.json({
+            success: true,
+            thermalReactionData
+        })
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export const deleteThermalReaction = async (req, res) => {
+    try {
+        const { id, idx } = req.params;
+        const thermalReactionData = await ThermalReactionPatient.findOne({ patient: id });
+        console.log(thermalReactionData);
+        if (idx !== -1) {
+            thermalReactionData.diseases.splice(idx, 1);
+            await thermalReactionData.save();
+        }
+        res.json({
+            success: true,
+            message: "Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
 export const addMiasmPatient = async (req, res) => {
     const { id } = req.params;
-    const { selectedInvestigationOptions } = req.body;
+    console.log(id);
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1356,20 +1466,66 @@ export const addMiasmPatient = async (req, res) => {
         timeZone: "Asia/Kolkata",
     });
     try {
-        const addData = await MiasmPatient.create({
-            patient: id,
-            diseases: selectedInvestigationOptions,
-            created_at: date
-        })
+        const { selectedInvestigationOptions } = req.body;
+        const existingDiseases = await MiasmPatient.find({ patient: id });
+        if (existingDiseases.length !== 0) {
+            await MiasmPatient.updateOne(
+                { patient: id },
+                {
+                    $push: {
+                        diseases: { $each: selectedInvestigationOptions },
+                    },
+                }
+            );
+        } else {
+            await MiasmPatient.create({
+                patient: id,
+                diseases: selectedInvestigationOptions,
+                created_at: date,
+            });
+        }
 
         return res.json({
-            message: "Thermal Reaction Added Successfully",
+            message: "Miasm Added Successfully",
         });
     } catch (error) {
-        console.log("Error in addThermalReactionPatient controller Doc", error.message);
+        console.log("Error in addMiasmPatient controller Doc", error.message);
         return res.json({
             message: error.message
         });
+    }
+}
+
+export const deleteMiasm = async (req, res) => {
+    try {
+        const { id, idx } = req.params;
+        const miasmData = await MiasmPatient.findOne({ patient: id });
+        if (idx !== -1) {
+            miasmData.diseases.splice(idx, 1);
+            await miasmData.save();
+        }
+        res.json({
+            success: true,
+            message: "Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getMiasmPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const MiasmData = await MiasmPatient.find({ patient: id });
+        res.json({
+            success: true,
+            MiasmData
+        })
+    } catch (error) {
+        res.json({ success: false, message: error.message });
     }
 }
 

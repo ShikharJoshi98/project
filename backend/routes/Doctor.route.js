@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMiasmPatient, addNewCaseMaster, addNewPrescription, addPastHistoryPatient, addPresentComplaintPatient, addThermalReactionPatient, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteCaseMaster, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteMentalCausative, deletePastHistoryPatient, deletePresentComplaintPatient, DeleteTask, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getCaseMaster, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getMentalCausativePatient, getPastHistoryPatient, getPatientAppDetails, getPatientImages, getPrescriptionToday, getPresentComplaintPatient, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMiasmPatient, addNewCaseMaster, addNewPrescription, addPastHistoryPatient, addPresentComplaintPatient, addThermalReactionPatient, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteCaseMaster, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deletePastHistoryPatient, deletePresentComplaintPatient, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getCaseMaster, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getMentalCausativePatient, getMentalPersonalityPatient, getMiasmPatient, getPastHistoryPatient, getPatientAppDetails, getPatientImages, getPrescriptionToday, getPresentComplaintPatient, getThermalReactionPatient, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -75,6 +75,7 @@ Docrouter.post('/add-mental-personality-patient/:id',addMentalPersonalityPatient
 Docrouter.post('/add-thermal-reaction-patient/:id',addThermalReactionPatient);
 Docrouter.post('/add-miasm-patient/:id',addMiasmPatient);
 Docrouter.post('/add-mentalCausative-scribble/:id',addMentalCausativeScribble);
+Docrouter.post('/add-mentalCausative-scribble/:id',addMentalCausativeScribble);
 
 //get newCase APIs
 
@@ -83,6 +84,9 @@ Docrouter.get('/presentComplaints/:id', getPresentComplaintPatient);
 Docrouter.get('/pastHistory/:id', getPastHistoryPatient);
 Docrouter.get('/familyMedical/:id',getFamilyMedicalPatient);
 Docrouter.get('/mentalCausative/:id',getMentalCausativePatient);
+Docrouter.get('/mentalPersonality/:id',getMentalPersonalityPatient);
+Docrouter.get('/thermalReaction/:id',getThermalReactionPatient);
+Docrouter.get('/miasmPatient/:id',getMiasmPatient);
 
 
 //delete newCase APIs
@@ -91,6 +95,8 @@ Docrouter.delete('/deletepresentComplaints/:id', deletePresentComplaintPatient);
 Docrouter.delete('/deletepastHistory/:id', deletePastHistoryPatient);
 Docrouter.delete('/deleteFamilyMedical/:id', deleteFamilyMedical);
 Docrouter.delete('/deleteMentalCausative/:id/:idx', deleteMentalCausative);
-
+Docrouter.delete('/deleteMentalPersonality/:id/:idx', deleteMentalPersonality);
+Docrouter.delete('/deleteThermalReaction/:id/:idx', deleteThermalReaction);
+Docrouter.delete('/deleteMiasm/:id/:idx', deleteMiasm);
 
 export default Docrouter

@@ -23,7 +23,10 @@ export const docStore = create((set) => ({
     PresentComplaintData: [],
     PastHistoryData: [],
     FamilyMedicalData: [],
-    MentalCausativeData:[],
+    MentalCausativeData: [],
+    MentalPersonalityData: [],
+    ThermalReactionData: [],
+    MiasmData:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -244,6 +247,17 @@ export const docStore = create((set) => ({
     getMentalCausative: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/mentalCausative/${id}`);
         set({ MentalCausativeData: response.data.mentalCausativeData });
-    }
-    
+    },
+    getMentalPersonality: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/mentalPersonality/${id}`);
+        set({ MentalPersonalityData: response.data.mentalPersonalityData });
+    },   
+    getThermalReaction: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/thermalReaction/${id}`);
+        set({ ThermalReactionData: response.data.thermalReactionData });
+    },
+    getMiasm: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/miasmPatient/${id}`);
+        set({ MiasmData: response.data.MiasmData });
+    } 
 }))

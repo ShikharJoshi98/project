@@ -1,19 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MultiSelectDropdown from '../MultiSelectInput';
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
 import ScribbleModal from './ScribbleModal';
+import { DOC_API_URL, docStore } from '../../../store/DocStore';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { Trash } from 'lucide-react';
 
 const MentalPersonality = ({ complaint }) => {
   const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
   const [isScribbleModal, setScribbleModal] = useState(false);
   const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
-  const listType = ["AIDS", "Boils"];
-
-  const handleSubmit = () => {
-
+  const { getCaseData, list, MentalPersonalityData, getMentalPersonality } = docStore();
+  const [submit, setSubmit] = useState(false);
+  const { id } = useParams();
+  const listType = list.map((data) => data?.name);
+  useEffect(() => { getCaseData(complaint); getMentalPersonality(id) },
+    [getCaseData, submit]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+     await axios.post(`${DOC_API_URL}/add-mental-personality-patient/${id}`, {
+      selectedInvestigationOptions
+    })
+    setSubmit(prev => !prev);
   }
-  
+  const deleteData = async (id, index) => {
+    try {
+      await axios.delete(`${DOC_API_URL}/deleteMentalPersonality/${id}/${index}`);
+      setSubmit(prev => !prev);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   return (
     <div>
       <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
@@ -31,9 +51,9 @@ const MentalPersonality = ({ complaint }) => {
             <MdAssignmentAdd onClick={() => setComplaintModalIsOpen(true)} size={30} className='text-blue-500 cursor-pointer' />
           </div>
           <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
-            {listType.map((investigation, index) => (
+            {list.map((investigation, index) => (
               <>
-                <h1 className='text-xl p-1' key={index}>{investigation}</h1>
+                <h1 className='text-xl p-1' key={index}>{investigation?.name}</h1>
                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
               </>
             ))}
@@ -42,8 +62,15 @@ const MentalPersonality = ({ complaint }) => {
       </div>
       <div>
         <button onClick={() => setScribbleModal(true)} className='bg-green-500 p-2 text-lg text-white rounded-lg cursor-pointer font-semibold'>Writing Pad</button>
-        <h1 className='sm:text-xl bg-blue-400 text-white text-lg font-semibold mt-10 text-center py-2'>Mental Presen Factors</h1>
-        {/* list of factors */}
+        <h1 className='sm:text-xl bg-blue-400 text-white text-lg font-semibold mt-10 text-center py-2'>{complaint} Factors</h1>
+        <div className='flex flex-col items-center mt-3 gap-2'>
+          {MentalPersonalityData[0]?.diseases.map((data, index) => (
+            <div className='text-xl flex items-center gap-8' key={index}>
+              <p>{index + 1}. {data}</p>
+              <Trash onClick={() => deleteData(MentalPersonalityData[0]?.patient, index)} className='cursor-pointer' />
+            </div>
+          ))}
+        </div>
       </div>
       {isComplaintModalOpen && <AddComplaintModal onClose={() => setComplaintModalIsOpen(false)} complaint={complaint} />}
       {isScribbleModal && <ScribbleModal onClose={() => setScribbleModal(false)} scribbleType={'Present Mental Personality Characters'}
