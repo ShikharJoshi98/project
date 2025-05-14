@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMiasmPatient, addNewCaseMaster, addNewPrescription, addPastHistoryPatient, addPresentComplaintPatient, addThermalReactionPatient, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteCaseMaster, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deletePastHistoryPatient, deletePresentComplaintPatient, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getCaseMaster, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getMentalCausativePatient, getMentalPersonalityPatient, getMiasmPatient, getPastHistoryPatient, getPatientAppDetails, getPatientImages, getPrescriptionToday, getPresentComplaintPatient, getThermalReactionPatient, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addBriefMindSymptomScribble, addChiefComplaintScribble, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addPastHistoryPatient, addPersonalHistoryScribble, addPresentComplaintPatient, addThermalReactionPatient, addWriteUpPatient, AppointmentDoc, assignTask, deleteCaseImages, deleteCaseMaster, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deletePastHistoryPatient, deletePresentComplaintPatient, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getCaseMaster, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getMentalCausativePatient, getMentalPersonalityPatient, getMiasmPatient, getPastHistoryPatient, getPatientAppDetails, getPatientImages, getPrescriptionToday, getPresentComplaintPatient, getThermalReactionPatient, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 
@@ -75,7 +75,10 @@ Docrouter.post('/add-mental-personality-patient/:id',addMentalPersonalityPatient
 Docrouter.post('/add-thermal-reaction-patient/:id',addThermalReactionPatient);
 Docrouter.post('/add-miasm-patient/:id',addMiasmPatient);
 Docrouter.post('/add-mentalCausative-scribble/:id',addMentalCausativeScribble);
-Docrouter.post('/add-mentalCausative-scribble/:id',addMentalCausativeScribble);
+Docrouter.post('/add-mentalPersonality-scribble/:id',addMentalPersonalityScribble);
+Docrouter.post('/add-chiefComplaint-scribble/:id',addChiefComplaintScribble);
+Docrouter.post('/add-personalHistory-scribble/:id',addPersonalHistoryScribble);
+Docrouter.post('/add-briefMindSymptom-scribble/:id',addBriefMindSymptomScribble);
 
 //get newCase APIs
 

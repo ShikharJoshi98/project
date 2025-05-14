@@ -32,6 +32,7 @@ const MiasmMasterSchema = new mongoose.Schema({
     name: { type: String}
 });
 
+
 const PresentComplaintsPatientSchema = new mongoose.Schema({
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},
     complaintName: {type:String, required:true},
@@ -90,6 +91,26 @@ const MentalCausativeScribbleSchema = new mongoose.Schema({
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},    
 })
 
+const ChiefComplaintScribbleSchema = new mongoose.Schema({
+    image: { type: String },
+    patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},    
+})
+
+const PersonalHistoryScribbleSchema = new mongoose.Schema({
+    image: { type: String },
+    patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},    
+})
+
+const MentalPersonalityScribbleSchema = new mongoose.Schema({
+    image: { type: String },
+    patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},    
+})
+
+const BriefMindSymptomScribbleSchema = new mongoose.Schema({
+    image: { type: String },
+    patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},    
+})
+
 
 export const PresentComplaintsMaster = mongoose.model('PresentComplaintsMaster', PresentComplaintsMasterSchema );
 export const PastHistoryMaster = mongoose.model('PastHistoryMaster', PastHistoryMasterSchema );
@@ -106,4 +127,8 @@ export const MentalCausativePatient = mongoose.model('MentalCausativePatient',Me
 export const MentalPersonalityPatient = mongoose.model('MentalPersonalityPatient',MentalPersonalityPatientSchema);
 export const ThermalReactionPatient = mongoose.model('ThermalReactionPatient',ThermalReactionPatientSchema);
 export const MiasmPatient = mongoose.model('MiasmPatient', MiasmPatientSchema);
-export const MentalCausativeScribble = mongoose.model('MentalCausativeScribble',MentalCausativeScribbleSchema);
+export const MentalCausativeScribble = mongoose.model('MentalCausativeScribble', MentalCausativeScribbleSchema);
+export const ChiefComplaintScribble = mongoose.model('ChiefComplaintScribble', ChiefComplaintScribbleSchema);
+export const PersonalHistoryScribble = mongoose.model('PersonalHistoryScribble', PersonalHistoryScribbleSchema);
+export const MentalPersonalityScribble = mongoose.model('MentalPersonalityScribble', MentalPersonalityScribbleSchema);
+export const BriefMindSymptomScribble = mongoose.model('BriefMindSymptomScribble',BriefMindSymptomScribbleSchema);

@@ -29,6 +29,7 @@ const FamilyMedical = ({ complaint }) => {
         e.preventDefault();
         try {
             await axios.post(`${DOC_API_URL}/add-family-history-patient/${id}`, { ...formValues, diseases: selectedInvestigationOptions });
+            setSubmit(prev => !prev);
             setFormValues({
                 patient: "",
                 relation: "",

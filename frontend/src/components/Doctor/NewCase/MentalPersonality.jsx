@@ -24,6 +24,7 @@ const MentalPersonality = ({ complaint }) => {
       selectedInvestigationOptions
     })
     setSubmit(prev => !prev);
+    setSelectedInvestigationOptions([]);
   }
   const deleteData = async (id, index) => {
     try {
@@ -73,7 +74,7 @@ const MentalPersonality = ({ complaint }) => {
         </div>
       </div>
       {isComplaintModalOpen && <AddComplaintModal onClose={() => setComplaintModalIsOpen(false)} complaint={complaint} />}
-      {isScribbleModal && <ScribbleModal onClose={() => setScribbleModal(false)} scribbleType={'Present Mental Personality Characters'}
+      {isScribbleModal && <ScribbleModal onClose={() => setScribbleModal(false)} complaint={complaint} scribbleType={'Present Mental Personality Characters'}
       />}
     </div>
   )

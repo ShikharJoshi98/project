@@ -60,9 +60,9 @@ const NewCaseDetails = () => {
                     }
                 </ul>
                 {complaint === 'Present Complaints' && <PresentComplaints complaint={complaint} />}
-                {complaint === 'Chief Complaints' && <ChiefComplaints/>}
+                {complaint === 'Chief Complaints' && <ChiefComplaints complaint={complaint}/>}
                 {complaint === 'Past History' && <PastHistory complaint={complaint} />}
-                {complaint === 'Personal History' && <PersonalHistory/>}
+                {complaint === 'Personal History' && <PersonalHistory complaint={complaint}/>}
                 {complaint === 'Family Medical' && <FamilyMedical complaint={complaint}/>}
                 {complaint === 'Mental Causative Factor' && <MentalCausative complaint={complaint}/>}
                 {complaint === 'Mental Personality Character' && <MentalPersonality complaint={complaint}/>}

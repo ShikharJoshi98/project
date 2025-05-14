@@ -24,6 +24,7 @@ const MentalCausative = ({ complaint }) => {
             selectedInvestigationOptions
         })
         setSubmit(prev => !prev);
+        setSelectedInvestigationOptions([]);
     }
     const deleteData = async (id, index) => {
         try {

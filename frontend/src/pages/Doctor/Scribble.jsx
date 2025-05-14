@@ -59,7 +59,6 @@ const Scribble = () => {
                 `${DOC_API_URL}/add-follow-up-patient/${id}`,
                 { savedImage: imageData }
             );
-            alert("Saved Successfully. Continue writing...");
             canvasRef.current?.clearCanvas();
         } catch (error) {
             console.error("Error saving image:", error);
@@ -68,11 +67,9 @@ const Scribble = () => {
     };
 
     return ReactDOM.createPortal(
-        <div className="bg-opacity-50 p-5 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-            <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl text-white cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
-            <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold  mb-10 text-white'>SCRIBBLE</h1>
-            <div className="bg-[rgb(248,249,250)] rounded-xl mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[85vw] ">
-
+        <div className="bg-opacity-50 px-5 py-10 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
+            <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl text-white cursor-pointer mb-5 ml-10'><FaAngleDoubleLeft /></h1>
+            <div className="bg-[rgb(248,249,250)] rounded-xl mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[95vw] ">
                 <div id="canvas-wrapper" style={{ touchAction: "none", pointerEvents: "auto" }} className="flex-1">
                     <ReactSketchCanvas
                         ref={canvasRef}
@@ -149,16 +146,10 @@ const Scribble = () => {
                     >
                         <Trash size={16} />
                     </button>
-
-                    <button
-                        title="Save"
-                        onClick={() => handleCanvasAction("save")}
-                        className="p-3 rounded-lg border-2 border-blue-400 bg-gray-200 shadow-md"
-                    >
-                        <Plus size={16} />
-                    </button>
                 </div>
+                
             </div>
+              <button onClick={() => handleCanvasAction("save")} className="bg-green-400 block mx-auto mt-2 text-white text-2xl py-2 px-5 rounded-lg">Save</button>
         </div>,
         document.getElementById("modal-root")
     );

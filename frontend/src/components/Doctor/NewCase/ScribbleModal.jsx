@@ -5,11 +5,14 @@ import { docStore } from '../../../store/DocStore'
 import { useParams } from 'react-router-dom'
 
 const ScribbleModal = ({ onClose, complaint }) => {
-  const { getMentalCausative, MentalCausativeData } = docStore();
+  const { getMentalCausative, MentalCausativeData,MentalPersonalityData, getMentalPersonality } = docStore();
   const { id } = useParams();
   switch (complaint) {
     case 'Mental Causative Factor':
       useEffect(() => { getMentalCausative(id) }, [getMentalCausative]);
+      break;
+    case 'Mental Personality Character':
+      useEffect(() => { getMentalPersonality(id) }, [getMentalPersonality]);
       break;
   }
   return (
@@ -20,7 +23,10 @@ const ScribbleModal = ({ onClose, complaint }) => {
         </button>
         <h1 className='sm:text-xl bg-blue-400 text-white text-lg font-semibold mt-10 text-center py-2'>{complaint}</h1>
         <div className='flex flex-col my-2 items-center gap-3'>
-          {MentalCausativeData[0].diseases.map((data, index) => (
+          {complaint==='Mental Causative Factor'&& MentalCausativeData[0].diseases.map((data, index) => (
+            <h1 key={index}>{index+1}. {data}</h1>))
+          }
+          {complaint==='Mental Personality Character'&& MentalPersonalityData[0].diseases.map((data, index) => (
             <h1 key={index}>{index+1}. {data}</h1>))
           }
         </div>

@@ -5,7 +5,7 @@ import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { FollowUpPatient, Investigation, Prescription, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
-import { BriefMindSymptomsMaster, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
+import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -716,7 +716,6 @@ export const addWriteUpPatient = async (req, res) => {
     try {
         const { id } = req.params;
         const { value } = req.body;
-
         const date = new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
@@ -927,6 +926,7 @@ export const deleteEmployee = async (req, res) => {
 export const addNewCaseMaster = async (req, res) => {
     try {
         const { name, type } = req.body;
+        console.log("hit")
         switch (type) {
             case "Present Complaints":
                 await PresentComplaintsMaster.create({ name: name.trim() })
@@ -994,6 +994,9 @@ export const getCaseMaster = async (req, res) => {
             case 'Miasm':
                 caseData = await MiasmMaster.find();
                 break;
+            case 'BriefMindSymptoms':
+                caseData = await BriefMindSymptomsMaster.find();
+                break;
             default:
                 console.log('Error in getting the Case Master');
         }
@@ -1034,6 +1037,9 @@ export const deleteCaseMaster = async (req, res) => {
                 break;
             case 'Miasm':
                 await MiasmMaster.findByIdAndDelete(id)
+                break;
+            case 'BriefMindSymptoms':
+                await BriefMindSymptomsMaster.findByIdAndDelete(id)
                 break;
             default:
                 console.log('Could not find the type')
@@ -1545,6 +1551,93 @@ export const addMentalCausativeScribble = async (req, res) => {
 
     } catch (error) {
         console.log("Error in mental causative scribble controller", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const addMentalPersonalityScribble = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const image = req.body.savedImage;
+        await MentalPersonalityScribble.create({
+            patient: id,
+            image: image,
+        })
+
+        return res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log("Error in mental personality scribble controller", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const addChiefComplaintScribble = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const image = req.body.savedImage;
+
+        await ChiefComplaintScribble.create({
+            patient: id,
+            image: image,
+        })
+
+        return res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log("Error in chief complaint scribble controller", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const addPersonalHistoryScribble = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const image = req.body.savedImage;
+
+        await PersonalHistoryScribble.create({
+            patient: id,
+            image: image,
+        })
+
+        return res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log("Error in personal history scribble controller", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const addBriefMindSymptomScribble = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const image = req.body.savedImage;
+
+        await BriefMindSymptomScribble.create({
+            patient: id,
+            image: image,
+        })
+
+        return res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log("Error in brief mind symptom scribble controller", error.message);
         return res.json({
             message: error.message
         });
