@@ -189,12 +189,9 @@ export const docStore = create((set) => ({
         }
     },
     getAppdetails: async (appointmentType) => {
-        try {
-            const response = await axios.get(`${DOC_API_URL}/get-patient-details/${appointmentType}`);
-            set({appointments:response.data})
-        } catch (error) {
-            console.log(error);
-        }
+        let response = await axios.get(`${DOC_API_URL}/allAppointments`);
+        
+        set({ appointments: response.data.Appointments });
     },
     deleteCaseImage: async (patientId, imageId)=>{
         let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);

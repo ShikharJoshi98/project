@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { AppointmentDoctor } from "../models/AppointmentModel.js";
+import { Appointment } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient, { FollowUpPatient, Investigation, Prescription, WriteUpPatient } from "../models/PatientModel.js";
+import Patient, { FollowUpPatient, Investigation, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 
@@ -105,14 +105,74 @@ export const updateleave = async (req, res) => {
         })
     }
 }
-export const AppointmentDoc = async (req, res) => {
-    try {
-        let { AppointmentDate, Time, PatientCase, Doctor, AppointmentType } = req.body;
+// export const AppointmentDoc = async (req, res) => {
+//     try {
+//         let { AppointmentDate, Time, PatientCase, Doctor, AppointmentType } = req.body;
+//         console.log("appointment hit");
+//         const newAppointment = new AppointmentDoctor({
+//             AppointmentDate, Time, PatientCase, Doctor, AppointmentType
+//         })
+//         await newAppointment.save();
+//         res.json({
+//             success: true,
+//             newAppointment
+//         })
+//     } catch (error) {
+//         res.json({
+//             success: false,
+//             message: error.message
+//         })
+//     }
+// }
 
-        const newAppointment = new AppointmentDoctor({
-            AppointmentDate, Time, PatientCase, Doctor, AppointmentType
+//appointments
+export const createAppointment = async (req, res) => {
+
+    try {
+        const { date, time, PatientCase, Doctor, appointmentType } = req.body;
+        console.log("Hit");
+        const dateConverter = (date) => {
+            const [y,m,d] = date.split('-');
+            const newDate = String(d + '-' + m + '-' + y);
+            return newDate;
+        }
+        const convertedDate = dateConverter(date);
+        console.log(convertedDate);
+        const appointmentExist = await Appointment.findOne({
+            PatientCase,
+            date:convertedDate,
         })
+        if (appointmentExist) {
+            return res.json({
+                message: "Appointment exist"
+            })
+        }
+        const previousAppointmentExist = await Appointment.findOne({
+            PatientCase,
+            new_appointment_flag: false
+        })
+        let newAppointment;
+        if (previousAppointmentExist) {
+            newAppointment = new Appointment({
+                date:convertedDate,
+                time,
+                PatientCase,
+                Doctor,
+                appointmentType
+            })
+        }
+        else {
+            newAppointment = new Appointment({
+                date:convertedDate,
+                time,
+                PatientCase,
+                Doctor,
+                appointmentType,
+                new_appointment_flag: true
+            })
+        }
         await newAppointment.save();
+
         res.json({
             success: true,
             newAppointment
@@ -120,32 +180,46 @@ export const AppointmentDoc = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message: error.message
+            message: "Error in creating new Appointment"
         })
     }
 }
 
 export const getAllAppointments = async (req, res) => {
     try {
-        const date = new Date().toLocaleDateString("en-CA", {
-            timeZone: "Asia/Kolkata",
-        });
-        const appointments = await AppointmentDoctor.find({
-            AppointmentType: "general",
-            AppointmentDate: date
-        }).populate('PatientCase');
-        res.json({
-            success: true,
-            appointments
+        const Appointments = await Appointment.find({}).populate('PatientCase').populate('Doctor');
+        return res.json({
+            Appointments,
+            success: true
         })
     } catch (error) {
-        console.log(error.message);
-        res.json({
+        return res.json({
             success: false,
-            error: error.message
+            message: error.message
         })
     }
 }
+// export const getAllAppointments = async (req, res) => {
+//     try {
+//         const date = new Date().toLocaleDateString("en-CA", {
+//             timeZone: "Asia/Kolkata",
+//         });
+//         const appointments = await AppointmentDoctor.find({
+//             AppointmentType: "general",
+//             AppointmentDate: date
+//         }).populate('PatientCase');
+//         res.json({
+//             success: true,
+//             appointments
+//         })
+//     } catch (error) {
+//         console.log(error.message);
+//         res.json({
+//             success: false,
+//             error: error.message
+//         })
+//     }
+// }
 
 export const HomeoBhagwat = async (req, res) => {
 
@@ -303,24 +377,24 @@ export const deleteHomeoBhagwatcol = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
-export const getPatientAppDetails = async (req, res) => {
-    try {
-        const { appointmentType } = req.params;
-        const date = new Date().toLocaleDateString("en-CA", {
-            timeZone: "Asia/Kolkata",
-        });
+// export const getPatientAppDetails = async (req, res) => {
+//     try {
+//         const { appointmentType } = req.params;
+//         const date = new Date().toLocaleDateString("en-CA", {
+//             timeZone: "Asia/Kolkata",
+//         });
 
-        let appointment = await AppointmentDoctor.find({ AppointmentType: appointmentType, AppointmentDate: date }).populate('PatientCase').populate('Doctor');
+//         let appointment = await AppointmentDoctor.find({ AppointmentType: appointmentType, AppointmentDate: date }).populate('PatientCase').populate('Doctor');
 
-        appointment = appointment.reverse();
-        return res.json(appointment);
-    } catch (error) {
-        console.log("Error in test API", error.message);
-        return res.json({
-            message: error.message
-        });
-    }
-}
+//         appointment = appointment.reverse();
+//         return res.json(appointment);
+//     } catch (error) {
+//         console.log("Error in test API", error.message);
+//         return res.json({
+//             message: error.message
+//         });
+//     }
+// }
 
 export const deleteCaseImages = async (req, res) => {
     const { patientId, imageId } = req.params;
@@ -807,6 +881,64 @@ export const deleteWriteUp = async (req, res) => {
     }
 };
 
+export const addPresentComplaintScribble = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const image = req.body.savedImage;
+        console.log("hit");
+        const date = new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+        });
+
+        const addPresentComplaint = await PresentComplaintScribble.create({
+            patient: id,
+            follow_string: image,
+            date
+        })
+
+        return res.json({
+            success: true
+        })
+
+    } catch (error) {
+        console.log("Error in addPresentComplaintScribble controller", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const addWriteUpPresentComplaint = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { value } = req.body;
+        const date = new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+        });
+
+        const addWriteUp = await PresentComplaintWriteUp.create({
+            patient: id,
+            writeUp_value: value,
+            date
+        });
+
+        return res.json({
+            message: "Added Successfully"
+        })
+
+    } catch (error) {
+        console.log("Error in addWriteUpPresentComplaint controller", error.message);
+        return res.json({
+            message: error.message
+        })
+    }
+}
 
 export const addInvestigationAdvised = async (req, res) => {
     try {
@@ -1054,7 +1186,7 @@ export const deleteCaseMaster = async (req, res) => {
 
 export const addPresentComplaintPatient = async (req, res) => {
     const { id } = req.params;
-    const { complaintName, duration, durationSuffix } = req.body;
+    const { complaintName, duration, durationSuffix, remark } = req.body;
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -1067,7 +1199,8 @@ export const addPresentComplaintPatient = async (req, res) => {
             complaintName: complaintName.trim(),
             duration: duration.trim(),
             durationSuffix: durationSuffix.trim(),
-            created_at: date
+            created_at: date,
+            remark
         })
 
         return res.json({

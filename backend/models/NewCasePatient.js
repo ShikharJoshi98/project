@@ -38,7 +38,9 @@ const PresentComplaintsPatientSchema = new mongoose.Schema({
     complaintName: {type:String, required:true},
     duration: {type:String,required:true},
     durationSuffix: {type:String, required:true},
-    created_at: {type:String, required:true}
+    created_at: { type: String, required: true },
+    remark: {type:String}
+
 });
 
 const PastHistoryPatientSchema = new mongoose.Schema({

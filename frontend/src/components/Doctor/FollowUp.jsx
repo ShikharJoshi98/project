@@ -14,10 +14,10 @@ const FollowUp = () => {
                 FOLLOW UP
             </h1>
             <div className='flex sm:flex-row flex-col my-20 items-center justify-center gap-10'>
-                <button onClick={() => navigate(`/scribble-pad/${location.id}`)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
+                <button onClick={() => navigate(`/scribble-pad/follow-up/${location.id}`)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
                 <button onClick={()=>setWritingModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Writing Pad <KeyboardIcon size={20} /> </button>
             </div>
-            {isWritingModalOpen && <WritingModal onClose={() => setWritingModalIsOpen(false)} />}
+            {isWritingModalOpen && <WritingModal writeUpType={'follow up'} onClose={() => setWritingModalIsOpen(false)} />}
         </div>
     )
 }

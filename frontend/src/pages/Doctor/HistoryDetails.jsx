@@ -4,7 +4,6 @@ import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
 import { docStore } from '../../store/DocStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaAngleDoubleLeft } from "react-icons/fa";
-import axios from 'axios';
 import History from './History';
 
 const HistoryDetails = () => {
@@ -19,25 +18,30 @@ const HistoryDetails = () => {
     getFollowUpImages(location.id);
     getWriteUp(location.id);
   }, [getFollowUpImages, getWriteUp, isSubmit])
-
-  useEffect(() => {
-    const combinedMap = new Map();
-
-    followUpImages.forEach(w => {
-      if (!combinedMap.has(w.date)) {
-        combinedMap.set(w.date, []);
+  let combineArray = []
+  writeUp?.forEach(item => {
+    if (!combineArray[item?.date]) {
+      combineArray[item.date] = {
+        date:item?.date,
+        followUps: [],
+        writeUps: []
       }
-      combinedMap.get(w.date).push(w); 
-    });
-
-    writeUp.forEach(w => {
-      if (!combinedMap.has(w.date)) {
-        combinedMap.set(w.date, []);
+    }
+    combineArray[item?.date].writeUps.push(item?.writeUp_value)
+  })
+  followUpImages?.forEach(item => {
+    if (!combineArray[item?.date]) {
+      combineArray[item.date] = {
+        date:item?.date,
+        followUps: [],
+        writeUps: []
       }
-      combinedMap.get(w.date).push(w); 
-    });
-    console.log(combinedMap);
-  }, [writeUp,followUpImages]);
+    }
+    combineArray[item?.date].followUps.push(item?.follow_string)
+  })
+  const historyData = Object.values(combineArray).reverse();
+  console.log(historyData);
+  
   return (
     <div>
       <Docnavbar />
@@ -51,18 +55,16 @@ const HistoryDetails = () => {
             </h1>
             <div className='flex flex-wrap gap-10 px-20 items-center mt-20'>
               {
-                followUpImages.map((image, index) => (
-                  <button onClick={() => { setSelectedDate(image.date); setHistoryModalIsOpen(true) }} key={index} className='p-2 bg-blue-500 cursor-pointer rounded-lg text-white'>{image.date}</button>
-                ))
+                historyData?.map((data, index) =>
+                  <button key={index} onClick={() => { setHistoryModalIsOpen(true); setSelectedDate(data?.date)}} className='p-2 bg-blue-500 cursor-pointer rounded-lg text-white'>{data?.date}</button>
+                )
               }
             </div>
           </div>
         </div>
       </div>
       {isHistoryModalOpen && <History date={selectedDate} onClose={() => setHistoryModalIsOpen(false)} />}
-
     </div>
-
   )
 }
 

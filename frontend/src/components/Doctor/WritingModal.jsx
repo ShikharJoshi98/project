@@ -5,15 +5,22 @@ import ReactDOM from "react-dom";
 import { DOC_API_URL } from "../../store/DocStore";
 import { useParams } from "react-router-dom";
 
-const WritingModal = ({ onClose }) => {
+const WritingModal = ({ writeUpType,onClose }) => {
     const location = useParams();
     const [value, setValue] = useState("");
+    console.log(writeUpType);
     const handleSave = async () => {
-        console.log("Hello");
-        const response  = await axios.post(`${DOC_API_URL}/add-write-up-patient/${location.id}`,{
+        if (writeUpType === 'present complaints') {
+            const response  = await axios.post(`${DOC_API_URL}/add-presentComplaintWriteUp/${location.id}`,{
             value
         });
         setValue("");
+        }
+        else if(writeUpType==='follow up'){
+        const response  = await axios.post(`${DOC_API_URL}/add-write-up-patient/${location.id}`,{
+            value
+        });
+        setValue("");}
     }
 
     return ReactDOM.createPortal(

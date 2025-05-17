@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from "react"; // 👈 ADDED useEffect
+import { useRef, useState, useEffect } from "react"; // 👈 ADDED useEffect
 import ReactDOM from "react-dom";
-import { Eraser, Pen, Plus, Redo, SaveIcon, Trash, Undo, X, } from "lucide-react";
+import { Eraser, Pen, Redo, Trash, Undo } from "lucide-react";
 import { ReactSketchCanvas } from "react-sketch-canvas";
 import axios from "axios";
 import { DOC_API_URL } from "../../store/DocStore";
@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FaAngleDoubleLeft } from "react-icons/fa";
 
 const Scribble = () => {
-    const { id } = useParams();
+    const { id, scribbleType } = useParams();
     const canvasRef = useRef(null);
     const [eraseMode, setEraseMode] = useState(false);
     const [strokeWidth, setStrokeWidth] = useState(4);
@@ -51,14 +51,24 @@ const Scribble = () => {
                 break;
         }
     };
+    console.log(scribbleType);
 
     const handleSaveClick = async () => {
-        try {            
-            const imageData = await canvasRef.current.exportImage("png");
-            const response = await axios.post(
-                `${DOC_API_URL}/add-follow-up-patient/${id}`,
-                { savedImage: imageData }
-            );
+        try {
+            if (scribbleType === 'follow-up') {
+                const imageData = await canvasRef.current.exportImage("png");
+                const response = await axios.post(
+                    `${DOC_API_URL}/add-follow-up-patient/${id}`,
+                    { savedImage: imageData }
+                );
+            }
+            else if (scribbleType === 'present-complaints') {
+                const imageData = await canvasRef.current.exportImage("png");
+                const response = await axios.post(
+                    `${DOC_API_URL}/add-presentComplaintScribble/${id}`,
+                    { savedImage: imageData }
+                );
+            }
             canvasRef.current?.clearCanvas();
         } catch (error) {
             console.error("Error saving image:", error);
@@ -147,9 +157,9 @@ const Scribble = () => {
                         <Trash size={16} />
                     </button>
                 </div>
-                
+
             </div>
-              <button onClick={() => handleCanvasAction("save")} className="bg-green-400 block mx-auto mt-2 text-white text-2xl py-2 px-5 rounded-lg">Save</button>
+            <button onClick={() => handleCanvasAction("save")} className="bg-green-400 block mx-auto mt-2 text-white text-2xl py-2 px-5 rounded-lg">Save</button>
         </div>,
         document.getElementById("modal-root")
     );

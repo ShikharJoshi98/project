@@ -9,30 +9,30 @@ import axios from 'axios';
 const AppointmentModal = ({ onClose }) => {
     const { submitAppointment,toggleAppointmentSubmit } = docStore();
     const { patients, getPatientDetails } = recStore();
-  
   const [formValues, setFormValues] = useState({
-      AppointmentDate: "",
-      Time: "",
+      date: "",
+      time: "",
       PatientCase: "",
       Doctor: "",
-      AppointmentType: "",
+      appointmentType: "",
     });
   useEffect(() => {
     getPatientDetails();
-  },[getPatientDetails])
+  }, [getPatientDetails])
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(`${DOC_API_URL}/appointment-doctor`, formValues);
-    
+    const response = await axios.post(`${DOC_API_URL}/appointment`, formValues);  
+    if (response.data.message === 'Appointment exist') {
+         alert("Appointment already exists for this date") ;
+      }
     toggleAppointmentSubmit(!submitAppointment);
     
-    alert("appointment created");
     setFormValues({
-      AppointmentDate: "",
-      Time: "",
+      date: "",
+      time: "",
       PatientCase: "",
       Doctor: "",
-      AppointmentType: "",
+      appointmentType: "",
     })
   };
   const handleInputChange = (e) => {
@@ -54,17 +54,16 @@ const AppointmentModal = ({ onClose }) => {
 
           <div className="bg-[#e9ecef] w-full sm:w-auto  sm:mx-10   rounded-lg">
             <h1 className=" text-center font-semibold  text-[#337ab7] text-xl sm:text-3xl md:text-5xl">Create Appointment</h1>
-
             <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-12 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
               <div className="flex flex-col gap-4 m-auto">
                 <div className="flex flex-col gap-2">
                   <h1>Date</h1>
-                  <Input icon={Calendar} type="date" name="AppointmentDate" value={formValues.AppointmentDate} onChange={handleInputChange} required />
+                  <Input icon={Calendar} type="date" name="date" value={formValues.date} onChange={handleInputChange} required />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <h1>Time</h1>
-                  <Input icon={Clock} type="time" name="Time" value={formValues.Time} onChange={handleInputChange}  />
+                  <Input icon={Clock} type="time" name="time" value={formValues.time} onChange={handleInputChange}  />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -120,8 +119,8 @@ const AppointmentModal = ({ onClose }) => {
                 <div className="flex flex-col gap-2">
                   <h1>Appointment Type</h1>
                   <select
-                    name="AppointmentType"
-                    value={formValues.AppointmentType}
+                    name="appointmentType"
+                    value={formValues.appointmentType}
                     onChange={handleInputChange}
                     required
                     className="py-2 pl-3 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"

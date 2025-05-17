@@ -1,5 +1,5 @@
 import { KeyboardIcon, Pen } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import AppointmentSidebar from "../../components/Doctor/AppointmentSidebar"
 import Docnavbar from "../../components/Doctor/DocNavbar"
 import WritingModal from '../../components/Doctor/WritingModal'
@@ -11,7 +11,6 @@ const PresentComplaints = () => {
     const [isWritingModalOpen, setWritingModalIsOpen] = useState(false);
     const navigate = useNavigate();
     const location = useParams();
-
     return (
         <div>
             <Docnavbar />
@@ -24,10 +23,10 @@ const PresentComplaints = () => {
                             PRESENT COMPLAINTS
                         </h1>
                         <div className='flex my-20 items-center justify-center gap-10'>
-                            <button onClick={() => navigate(navigate(`/scribble-pad/${location.id}`))} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
+                            <button onClick={() => (navigate(`/scribble-pad/present-complaints/${location.id}`))} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Scribble <Pen size={20} /> </button>
                             <button onClick={() => setWritingModalIsOpen(true)} className='bg-blue-500 flex items-center gap-3 cursor-pointer text-lg font-semibold text-white hover:bg-blue-600 hover:scale-102 p-2 rounded-lg '>Writing Pad <KeyboardIcon size={20} /> </button>
                         </div>
-                        {isWritingModalOpen && <WritingModal onClose={() => setWritingModalIsOpen(false)} />}
+                        {isWritingModalOpen && <WritingModal writeUpType={'present complaints'} onClose={() => setWritingModalIsOpen(false)} />}
                     </div>
                 </div>
             </div>

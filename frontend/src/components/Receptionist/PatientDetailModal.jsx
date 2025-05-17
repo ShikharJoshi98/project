@@ -4,7 +4,6 @@ import Input from '../Input';
 import { FaCopy } from 'react-icons/fa6';
 
 const PatientDetailModal = ({ username, password, onClose }) => {
-    console.log("password",password);
     const copyToClipboard = async (text) => {
         try {
             await navigator.clipboard.writeText(text);

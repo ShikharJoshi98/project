@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import RecNavbar from '../../components/Receptionist/RecNavbar'
 import RecSidebar from '../../components/Receptionist/RecSidebar'
 import { recStore } from '../../store/RecStore';
@@ -16,21 +16,26 @@ const AppointmentList = () => {
     const { setAppointmentSection, appointmentSection } = recStore();
     const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
     const domAppointmentList = appointments.filter((appointment) => { return appointment?.AppointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch })
-
     useEffect(() => {
         getAppdetails(appointmentSection);
     }, [getAppdetails, appointmentSection, appointmentSubmit]);
+    
     useEffect(() => {
         const updateDate = () => {
-            const date = new Date().toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                timeZone: "Asia/Kolkata",
-            });
-            setCurrentDate(date);
+            const today = new Date();
+
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const year = today.getFullYear();
+
+            const formattedDate = `${day}-${month}-${year}`;
+            setCurrentDate(formattedDate);
         };
-        updateDate();}, []);
+
+        updateDate();
+    }, []);
+
+    const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === appointment?.Doctor?.branch));
 
     return (
         <div>
@@ -68,15 +73,16 @@ const AppointmentList = () => {
                                 </thead>
                                 <tbody className="bg-gray-200 text-black">
                                     {
-                                        domAppointmentList.map((appointment, index) => (
-                                            <tr key={index} className={`${appointment?.PatientCase?.First_Appointment_Flag === true ? 'bg-yellow-200' : 'bg-green-300'}`}>
+                                        appointmentList.map((appointment, index) => (
+                                            <tr key={index} className={`${appointment?.new_appointment_flag
+                                                === true ? 'bg-yellow-200' : 'bg-green-300'}`}>
                                                 <td className="px-1 py-2 text-center">{index + 1}</td>
                                                 <td className="px-1 py-2 text-center">{appointment?.PatientCase?.casePaperNo || '-'}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.Time || '-'}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.time || '-'}</td>
                                                 <td className="px-1 py-2 text-center">{appointment?.Doctor?.fullname || '-'}</td>
                                                 <td className="px-1 py-2 text-center">{appointment?.PatientCase?.fullname || '-'}</td>
                                                 <td className="px-1 py-2 text-center">{appointment?.PatientCase?.phone || '-'}</td>
-                                                <td className="px-1 py-2 text-center">{appointment?.AppointmentType?.toUpperCase() || '-'}</td>
+                                                <td className="px-1 py-2 text-center">{appointment?.appointmentType?.toUpperCase() || '-'}</td>
                                             </tr>
                                         ))
                                     }

@@ -107,6 +107,32 @@ const followUpPatientSchema = new mongoose.Schema({
     }
 });
 
+const presentComplaintPatientSchema = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    follow_string: {
+        type: String
+    },
+    date: {
+        type:String
+    }
+});
+
+const presentComplaintWriteUpScehma = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    writeUp_value: {
+        type: String
+    },
+    date: {
+        type:String
+    }
+})
+
 const writeUpPatientSchema = new mongoose.Schema({
     patient: {
         type: mongoose.Schema.Types.ObjectId,
@@ -146,7 +172,9 @@ const investigationSchema = new mongoose.Schema({
 
 const Patient = mongoose.model('Patient', PatientSchema);
 export const Prescription = mongoose.model('Prescription', prescriptionSchema);
-export const FollowUpPatient = mongoose.model('FollowUpPatient',followUpPatientSchema);
-export const WriteUpPatient = mongoose.model('WriteUpPatient',writeUpPatientSchema);
+export const FollowUpPatient = mongoose.model('FollowUpPatient', followUpPatientSchema);
+export const PresentComplaintScribble = mongoose.model('PresentComplaintScribble',presentComplaintPatientSchema);
+export const PresentComplaintWriteUp = mongoose.model('PresentComplaintWriteUp',presentComplaintWriteUpScehma);
+export const WriteUpPatient = mongoose.model('WriteUpPatient', writeUpPatientSchema);
 export const Investigation = mongoose.model('Investigation',investigationSchema);
 export default Patient
