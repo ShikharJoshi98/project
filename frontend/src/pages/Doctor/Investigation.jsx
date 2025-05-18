@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,15 +8,6 @@ import { MdAssignmentAdd } from 'react-icons/md';
 import InvestigationModal from '../../components/Doctor/InvestigationModal';
 import axios from 'axios';
 import { DOC_API_URL } from '../../store/DocStore';
-
-const investigationList = ['CBC', 'ESR', 'PS for MP'];
-const ultrasonographyList = ['Abdomen', 'Pelvis', 'KUB'];
-const dopplerStudiesList = ['Cartoid & Vertebral Study', 'Upper Limbs Arterial Flow : Right', 'Upper Limbs Arterial Flow : Left'];
-const ObstetricsList = ['For gestational age / Dating Scan', 'For growth assesment, liquor, Position', 'For Foetal Weight & liquor'];
-const SonographyList = ['3D SONOGRAPHY', '4D SONOGRAPHY'];
-const sliceList = ['Brain - Plain', 'Brain - Plain & Contrast', 'Brain - Cerebral Angiography'];
-const mriList = ['Brain - Plain SOS Contrast', 'Brain - Plain & Contrast', 'Brain - Dynamic Pituitary Study'];
-// const testArray = [{title:'Investigation Advised',color:'blue',list:investigationList}, {title:'Ultra-Sonography',color:'red',list:ultrasonographyList}, {title:'Doppler Studies',color:'green',list:dopplerStudiesList}, {title:'Obstetrics(Pregnancy)',color:'orange',list:ObstetricsList}, {title:'Sonography',color:'black',list:SonographyList}, {title:'16 Slice C.T Scan',color:'brown',list:sliceList}, {title:'1.5 MRI Scan',color:'purple',list:mriList}];
 
 const Investigation = () => {
   const location = useParams();
@@ -108,7 +99,6 @@ const Investigation = () => {
               </div>
             </div>
             <button className="bg-blue-500 block mx-auto transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-15 py-4 rounded-lg mt-8 text-white">Generate</button>
-
           </div>
         </div>
       </div>

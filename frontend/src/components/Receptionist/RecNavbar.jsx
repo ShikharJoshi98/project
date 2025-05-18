@@ -8,18 +8,32 @@ import { docStore } from '../../store/DocStore';
 const RecNavbar = () => {
     const { logout, user } = useAuthStore();
     const [isOpen, setOpen] = useState(false);
+    const [currentDate, setCurrentDate] = useState("");
     const menuRef = useRef(null);
     const [isMedicineHovered, setIsMedicineHovered] = useState(false);
     const navigate = useNavigate();
-    const { getAllAppointments, allAppointments, appointmentSubmit } = docStore();
-    const { setAppointmentSection} = recStore();
+    const { appointmentSubmit, getAppdetails, appointments } = docStore();
+    const { setAppointmentSection } = recStore();
 
     useEffect(() => {
-        getAllAppointments();
-    }, [getAllAppointments, appointmentSubmit]);
+        getAppdetails();
+    }, [getAppdetails, appointmentSubmit]);
+    useEffect(() => {
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); 
+            const year = today.getFullYear();
 
-    const generalAppointments = allAppointments.filter((appointment) => ((appointment.PatientCase.branch === user?.branch) && (appointment.AppointmentType === 'general')));
-    const repeatAppointments = allAppointments.filter((appointment) => ((appointment.AppointmentType === 'repeat') && (appointment.PatientCase.branch === user?.branch)))
+            const formattedDate = `${day}-${month}-${year}`;
+            setCurrentDate(formattedDate);
+        };
+
+        updateDate();
+    }, []);
+
+    const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch));
+    const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch))
 
     function handleLogout() {
         logout();
@@ -36,7 +50,7 @@ const RecNavbar = () => {
                     <li onClick={() => navigate('/dashboard-RECEPTIONIST')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Dashboard</li>
                     <li onClick={() => navigate('/register-patient')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Register Patient</li>
                     <div className="relative" onMouseEnter={() => setIsMedicineHovered(true)} onMouseLeave={() => setIsMedicineHovered(false)}>
-                        <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Medicine</li>
+                        <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Medicine {((generalAppointments.length>0) || (repeatAppointments.length>0))&&<span className='w-4 h-4 -right-3 -top-1 rounded-full absolute bg-blue-400'></span>}</li>
                         {isMedicineHovered && (
                             <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-52 flex flex-col h-auto">
                                 <div onClick={() => { navigate('/appointment-details-rec'); setAppointmentSection('general') }} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
@@ -64,7 +78,6 @@ const RecNavbar = () => {
                     <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Medicine</p>
                     <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Courier Mail</p>
                     <p className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Login</p>
-
                 </div>}
             </div>
         </div>

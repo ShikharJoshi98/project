@@ -1,9 +1,6 @@
 import express from 'express';
 import { addBriefMindSymptomScribble, addChiefComplaintScribble, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addPastHistoryPatient, addPersonalHistoryScribble, addPresentComplaintPatient, addPresentComplaintScribble, addThermalReactionPatient, addWriteUpPatient, addWriteUpPresentComplaint, assignTask, createAppointment, deleteCaseImages, deleteCaseMaster, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deletePastHistoryPatient, deletePresentComplaintPatient, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getCaseMaster, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getMentalCausativePatient, getMentalPersonalityPatient, getMiasmPatient, getPastHistoryPatient, getPatientImages, getPrescriptionToday, getPresentComplaintPatient, getThermalReactionPatient, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
-import mongoose from "mongoose";
-import { Appointment } from '../models/AppointmentModel.js';
-
 
 const storage = multer.memoryStorage();
 const fileFilter = (req, file, cb) => {
@@ -24,6 +21,7 @@ Docrouter.put('/update-task-status', updateTaskStatus);
 Docrouter.delete('/delete-task/:id', DeleteTask);
 Docrouter.get('/leave-details', leaveDetails);
 Docrouter.put('/leave-status/:id', updateleave);
+
 //appointment
 Docrouter.post('/appointment', createAppointment);
 Docrouter.get('/allAppointments',getAllAppointments)
@@ -37,7 +35,7 @@ Docrouter.post('/upload-diagnosis-image/:id', upload.single("diagnosisImage"), u
 Docrouter.get("/case-images/:id", getPatientImages);
 Docrouter.get("/diagnosis-images/:id", getDiagnosisImages);
 Docrouter.delete('/homeo-delete/:id', deleteHomeoBhagwatcol);
-// Docrouter.get('/get-patient-details/:appointmentType',getPatientAppDetails)
+
 Docrouter.delete('/patient/:patientId/case-images/:imageId', deleteCaseImages);
 Docrouter.delete('/patient/:patientId/diagnosis-images/:imageId', deleteDiagnosisImages);
 Docrouter.post('/add-health-records/:id', addHealthRecord);
@@ -51,25 +49,31 @@ Docrouter.post('/add-diagnosis/:id', addDiagnosis);
 Docrouter.get("/get-diagnosis/:id", getDiagnosis);
 Docrouter.post("/add-new-prescription/:id", addNewPrescription);
 Docrouter.get("/get-today-prescription/:id", getPrescriptionToday);
-// Docrouter.get('/get-appointments', getAllAppointments);
+
 //get all Presciption new api to be integrated for all prescription without date filter
 Docrouter.get("/get-all-prescription/:id", getAllPrescription);
 Docrouter.delete("/delete-today-prescription/:id", deleteTodayPrescription);
 Docrouter.patch("/update-prescription/:id", updateTodayPrescription);
 Docrouter.post("/add-follow-up-patient/:id", addFollowUpPatient);
 Docrouter.get("/get-follow-up-patient/:id", getFollowUpPatient);
+
 //At add data from writing pad
 Docrouter.post("/add-write-up-patient/:id", addWriteUpPatient);
+
 //get all write up patient endpoint to be integrate Frontend
 Docrouter.get("/get-write-up-patient/:id", getWriteUpPatient);
+
 //get data to edit write up patient
 Docrouter.get('/get-write-up-update/:id', getWriteUpUpdate);
 Docrouter.delete('/patient/:patientId/write-up-delete/:imageId', deleteWriteUp);
+
 //investigation-advised routes
 Docrouter.post('/addInvestigationAdvised', addInvestigationAdvised);
 Docrouter.get('/getInvestigationAdvised', getInvestigationAdvised);
+
 //delete-employee
 Docrouter.delete('/delete-employee/:id', deleteEmployee);
+
 //present-complaint
 Docrouter.post('/add-presentComplaintScribble/:id', addPresentComplaintScribble);
 Docrouter.post('/add-presentComplaintWriteUp/:id', addWriteUpPresentComplaint);
@@ -91,7 +95,6 @@ Docrouter.post('/add-personalHistory-scribble/:id', addPersonalHistoryScribble);
 Docrouter.post('/add-briefMindSymptom-scribble/:id', addBriefMindSymptomScribble);
 
 //get newCase APIs
-
 Docrouter.get('/CaseMaster/:id', getCaseMaster);
 Docrouter.get('/presentComplaints/:id', getPresentComplaintPatient);
 Docrouter.get('/pastHistory/:id', getPastHistoryPatient);

@@ -7,9 +7,9 @@ import { recStore } from '../../store/RecStore';
 import axios from 'axios';
 
 const AppointmentModal = ({ onClose }) => {
-    const { submitAppointment,toggleAppointmentSubmit } = docStore();
+    const { appointmentSubmit,toggleAppointmentSubmit } = docStore();
     const { patients, getPatientDetails } = recStore();
-  const [formValues, setFormValues] = useState({
+    const [formValues, setFormValues] = useState({
       date: "",
       time: "",
       PatientCase: "",
@@ -25,7 +25,7 @@ const AppointmentModal = ({ onClose }) => {
     if (response.data.message === 'Appointment exist') {
          alert("Appointment already exists for this date") ;
       }
-    toggleAppointmentSubmit(!submitAppointment);
+    toggleAppointmentSubmit(!appointmentSubmit);
     
     setFormValues({
       date: "",
@@ -115,7 +115,6 @@ const AppointmentModal = ({ onClose }) => {
                   </div>
                 </div>
 
-                {/* Appointment Type */}
                 <div className="flex flex-col gap-2">
                   <h1>Appointment Type</h1>
                   <select
@@ -133,8 +132,6 @@ const AppointmentModal = ({ onClose }) => {
                     <option value="courier">Courier Medicine</option>
                   </select>
                 </div>
-
-                {/* Submit Button */}
                 <div className="w-full flex items-center justify-center">
                   <button className=" cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">
                     Create

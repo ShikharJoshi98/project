@@ -130,14 +130,12 @@ export const createAppointment = async (req, res) => {
 
     try {
         const { date, time, PatientCase, Doctor, appointmentType } = req.body;
-        console.log("Hit");
         const dateConverter = (date) => {
             const [y,m,d] = date.split('-');
             const newDate = String(d + '-' + m + '-' + y);
             return newDate;
         }
         const convertedDate = dateConverter(date);
-        console.log(convertedDate);
         const appointmentExist = await Appointment.findOne({
             PatientCase,
             date:convertedDate,
@@ -942,7 +940,7 @@ export const addWriteUpPresentComplaint = async (req, res) => {
 
 export const addInvestigationAdvised = async (req, res) => {
     try {
-        const { success, inputData, type } = req.body;
+        const { inputData, type } = req.body;
 
         const existing = await Investigation.findOne();
         if (!existing) {

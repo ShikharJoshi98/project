@@ -7,14 +7,13 @@ import cookieParser from "cookie-parser";
 import HRrouter from "./routes/HR.route.js";
 import Docrouter from "./routes/Doctor.route.js";
 import Recrouter from "./routes/Receptionist.route.js";
-// import { AppointmentDoctor } from "./models/AppointmentModel.js";
 dotenv.config();
 const app = express();
 connectDB();
 
 //middlewares
 app.use(express.json());
-app.use(cors({origin: "http://localhost:5173", 
+app.use(cors({origin: "https://project-frontend-vert.vercel.app", 
     credentials: true,}));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));

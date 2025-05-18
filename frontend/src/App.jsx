@@ -16,9 +16,6 @@ import TaskDetails from "./pages/HR/TaskDetails";
 import HomeoMedicine from "./pages/Doctor/HomeoMedicine";
 import HomeoDisease from "./pages/Doctor/HomeoDisease";
 import HomeoRedline from "./pages/Doctor/HomeoRedline";
-import GeneralAppointment from "./pages/Doctor/GeneralAppointment";
-import RepeatAppointment from "./pages/Doctor/RepeatAppointment";
-import CourierAppointment from "./pages/Doctor/CourierAppointment";
 import AppointmentDetails from "./pages/Doctor/AppointmentDetails";
 import UploadPatientCase from "./pages/Doctor/UploadPatientCase";
 import UploadDiagnosis from "./pages/Doctor/UploadDiagnosis";
@@ -64,55 +61,55 @@ import AccessDenied from "./pages/AccessDenied";
 import UpdateEmployee from "./pages/Doctor/UpdateEmployee";
 import Scribble from "./pages/Doctor/Scribble";
 import NewCaseDetails from "./pages/Doctor/NewCaseDetails";
+import AppointmentList_Doc from "./pages/Doctor/AppointmentList_Doc";
 
-
-
-const ProtectedRoute = ({children,allowedRoles}) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) {
     return <Navigate to='/login' replace />
   }
-  if (!allowedRoles.includes(user?.role)) {   
+  if (!allowedRoles.includes(user?.role)) {
     return <Navigate to="/access-denied" replace />;
   }
   return children;
 }
 
-const RedirectAuthenticatedUser = ({children}) => {
-  const { isAuthenticated , user} = useAuthStore();
+const RedirectAuthenticatedUser = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
   let redirectRole = user?.role;
-  
+
   if (isAuthenticated) {
-     if(redirectRole==='patient'){
-      return <Navigate to='/dashboard-PATIENT' replace/>}
-     else if (redirectRole === 'doctor') {
-       return <Navigate to='/dashboard-DOCTOR' replace />
-     }
-     else if (redirectRole === 'hr') {
-       return <Navigate to='/dashboard-HR' replace />
-     }
-     else if (redirectRole === 'receptionist') {
-      return <Navigate to='/dashboard-RECEPTIONIST' replace/>}
-     }
-  
+    if (redirectRole === 'patient') {
+      return <Navigate to='/dashboard-PATIENT' replace />
+    }
+    else if (redirectRole === 'doctor') {
+      return <Navigate to='/dashboard-DOCTOR' replace />
+    }
+    else if (redirectRole === 'hr') {
+      return <Navigate to='/dashboard-HR' replace />
+    }
+    else if (redirectRole === 'receptionist') {
+      return <Navigate to='/dashboard-RECEPTIONIST' replace />
+    }
+  }
   return children;
- }
+}
 
 function App() {
   const { isCheckingAuth, checkAuth, user, isAuthenticated } = useAuthStore();
   useEffect(() => { checkAuth() }, [checkAuth]);
   if (isCheckingAuth) return <LoadingSpinner />;
-  
+
   return (
-    <div >      
+    <div >
       <Router>
-      <Routes>
+        <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} /> 
+          <Route path="/login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />
           <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />
-          <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>}/>
-          <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>}/>
-          <Route path="/access-denied" element={<AccessDenied />}/>
+          <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />
+          <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />
+          <Route path="/access-denied" element={<AccessDenied />} />
 
           <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/update-profile" element={<ProtectedRoute allowedRoles={['patient']}><UpdateProfile /></ProtectedRoute>} />
@@ -120,9 +117,7 @@ function App() {
           <Route path="/upload-patient-image" element={<ProtectedRoute allowedRoles={['patient']}><UploadPatientImage /></ProtectedRoute>} />
 
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
-          <Route path="/general-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><GeneralAppointment /></ProtectedRoute>} />
-          <Route path="/repeat-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><RepeatAppointment /></ProtectedRoute>} />
-          <Route path="/courier-appointment" element={<ProtectedRoute allowedRoles={['doctor']}><CourierAppointment /></ProtectedRoute>} />
+          <Route path="/appointment-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentList_Doc /></ProtectedRoute>} />
           <Route path="/appointment-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDetails /></ProtectedRoute>} />
           <Route path="/homeo-book-medicine" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoMedicine /></ProtectedRoute>} />
           <Route path="/homeo-book-disease" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoDisease /></ProtectedRoute>} />
@@ -131,38 +126,38 @@ function App() {
           <Route path="/upload-diagnosis-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadDiagnosis /></ProtectedRoute>} />
           <Route path="/history-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><HistoryDetails /></ProtectedRoute>} />
           <Route path="/present-complaints/:id" element={<ProtectedRoute allowedRoles={['doctor']}><PresentComplaints /></ProtectedRoute>} />
-          <Route path="/record-media/:id" element={<ProtectedRoute allowedRoles={['doctor']}><VideoAudioRecorder/></ProtectedRoute>} />
-          <Route path="/consultation-charges/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ConsultationCharges/></ProtectedRoute>} />
-          <Route path="/investigation/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Investigation/></ProtectedRoute>} />
-          <Route path="/report/:id" element={<ProtectedRoute allowedRoles={['doctor']}><CaseReport/></ProtectedRoute>} />
-          <Route path="/staff-update" element={<ProtectedRoute allowedRoles={['doctor']}><StaffManagment/></ProtectedRoute>} />
-          <Route path="/bill-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><BillInvoice/></ProtectedRoute>} />
-          <Route path="/bill-info" element={<ProtectedRoute allowedRoles={['doctor']}><BillInfo/></ProtectedRoute>} />
-          <Route path="/previous-issued-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedInvoice/></ProtectedRoute>} />
-          <Route path="/add-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><AddCertificate/></ProtectedRoute>} />
-          <Route path="/previous-issued-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedCertificates/></ProtectedRoute>} />
-          <Route path="/pricing" element={<ProtectedRoute allowedRoles={['doctor']}><Pricing/></ProtectedRoute>} />
-          <Route path="/collection/:location" element={<ProtectedRoute allowedRoles={['doctor']}><TodayCollection/></ProtectedRoute>} />
-          <Route path="/balance-list/:location" element={<ProtectedRoute allowedRoles={['doctor']}><BalanceList/></ProtectedRoute>} />
-          <Route path="/doctor-diagnose-history" element={<ProtectedRoute allowedRoles={['doctor']}><DiagnoseHistory/></ProtectedRoute>} />
-          <Route path="/view-courier-details/:location" element={<ProtectedRoute allowedRoles={['doctor']}><CourierDetails/></ProtectedRoute>} />
-          <Route path="/doc-courier-mail" element={<ProtectedRoute allowedRoles={['doctor']}><CourierMail/></ProtectedRoute>} />
-          <Route path="/approve-items/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveItems/></ProtectedRoute>} />
-          <Route path="/approve-medicines/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveMedicines/></ProtectedRoute>} />
+          <Route path="/record-media/:id" element={<ProtectedRoute allowedRoles={['doctor']}><VideoAudioRecorder /></ProtectedRoute>} />
+          <Route path="/consultation-charges/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ConsultationCharges /></ProtectedRoute>} />
+          <Route path="/investigation/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Investigation /></ProtectedRoute>} />
+          <Route path="/report/:id" element={<ProtectedRoute allowedRoles={['doctor']}><CaseReport /></ProtectedRoute>} />
+          <Route path="/staff-update" element={<ProtectedRoute allowedRoles={['doctor']}><StaffManagment /></ProtectedRoute>} />
+          <Route path="/bill-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><BillInvoice /></ProtectedRoute>} />
+          <Route path="/bill-info" element={<ProtectedRoute allowedRoles={['doctor']}><BillInfo /></ProtectedRoute>} />
+          <Route path="/previous-issued-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedInvoice /></ProtectedRoute>} />
+          <Route path="/add-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><AddCertificate /></ProtectedRoute>} />
+          <Route path="/previous-issued-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedCertificates /></ProtectedRoute>} />
+          <Route path="/pricing" element={<ProtectedRoute allowedRoles={['doctor']}><Pricing /></ProtectedRoute>} />
+          <Route path="/collection/:location" element={<ProtectedRoute allowedRoles={['doctor']}><TodayCollection /></ProtectedRoute>} />
+          <Route path="/balance-list/:location" element={<ProtectedRoute allowedRoles={['doctor']}><BalanceList /></ProtectedRoute>} />
+          <Route path="/doctor-diagnose-history" element={<ProtectedRoute allowedRoles={['doctor']}><DiagnoseHistory /></ProtectedRoute>} />
+          <Route path="/view-courier-details/:location" element={<ProtectedRoute allowedRoles={['doctor']}><CourierDetails /></ProtectedRoute>} />
+          <Route path="/doc-courier-mail" element={<ProtectedRoute allowedRoles={['doctor']}><CourierMail /></ProtectedRoute>} />
+          <Route path="/approve-items/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveItems /></ProtectedRoute>} />
+          <Route path="/approve-medicines/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveMedicines /></ProtectedRoute>} />
           <Route path="/update-employee/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UpdateEmployee /></ProtectedRoute>} />
           <Route path="/scribble-pad/:scribbleType/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Scribble /></ProtectedRoute>} />
-          <Route path="/new-case-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><NewCaseDetails/></ProtectedRoute>} />
+          <Route path="/new-case-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><NewCaseDetails /></ProtectedRoute>} />
 
-          <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />          
-          <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock/></ProtectedRoute>} />
-          <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock/></ProtectedRoute>} />
-          <Route path="/task-details-HR" element={<ProtectedRoute allowedRoles={['hr']}><TaskDetails/></ProtectedRoute>} />
-          <Route path="/apply-leave-HR" element={<ProtectedRoute allowedRoles={['hr']}><ApplyLeave/></ProtectedRoute>} />
-          <Route path="/all-courier/:location" element={<ProtectedRoute allowedRoles={['hr']}><CourierList/></ProtectedRoute>} />
-          <Route path="/collections-HR" element={<ProtectedRoute allowedRoles={['hr']}><Collections/></ProtectedRoute>} />
-          <Route path="/HR-balance" element={<ProtectedRoute allowedRoles={['hr']}><BalanceHistory/></ProtectedRoute>} />
-          <Route path="/email-courier-details" element={<ProtectedRoute allowedRoles={['hr']}><EmailCourierDetails/></ProtectedRoute>} />
-          <Route path="/HR-medicine" element={<ProtectedRoute allowedRoles={['hr']}><HRMedicine/></ProtectedRoute>} />
+          <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
+          <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock /></ProtectedRoute>} />
+          <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock /></ProtectedRoute>} />
+          <Route path="/task-details-HR" element={<ProtectedRoute allowedRoles={['hr']}><TaskDetails /></ProtectedRoute>} />
+          <Route path="/apply-leave-HR" element={<ProtectedRoute allowedRoles={['hr']}><ApplyLeave /></ProtectedRoute>} />
+          <Route path="/all-courier/:location" element={<ProtectedRoute allowedRoles={['hr']}><CourierList /></ProtectedRoute>} />
+          <Route path="/collections-HR" element={<ProtectedRoute allowedRoles={['hr']}><Collections /></ProtectedRoute>} />
+          <Route path="/HR-balance" element={<ProtectedRoute allowedRoles={['hr']}><BalanceHistory /></ProtectedRoute>} />
+          <Route path="/email-courier-details" element={<ProtectedRoute allowedRoles={['hr']}><EmailCourierDetails /></ProtectedRoute>} />
+          <Route path="/HR-medicine" element={<ProtectedRoute allowedRoles={['hr']}><HRMedicine /></ProtectedRoute>} />
 
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />
           <Route path="/register-patient" element={<ProtectedRoute allowedRoles={['receptionist']}><RegisterPatient /></ProtectedRoute>} />
@@ -174,8 +169,8 @@ function App() {
           <Route path="/courier-list-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><CourierListRec /></ProtectedRoute>} />
           <Route path="/appointment-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><AppointmentList /></ProtectedRoute>} />
 
-      </Routes>
-        </Router>
+        </Routes>
+      </Router>
     </div>
   )
 }

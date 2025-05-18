@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react';
 import { TbPencilPlus } from "react-icons/tb";
 import { useAuthStore } from '../../store/authStore';
@@ -7,10 +7,34 @@ import RecSidebar from '../../components/Receptionist/RecSidebar';
 import { FaUserDoctor } from 'react-icons/fa6';
 import { FaRegCheckCircle, FaUsers } from 'react-icons/fa';
 import AppointmentModal from '../../components/Doctor/AppointmentModal';
+import { docStore } from '../../store/DocStore';
 
 const ReceptionistDashboard = () => {
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const { user } = useAuthStore();
+  const { appointmentSubmit, getAppdetails, appointments } = docStore();
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+        const updateDate = () => {
+            const today = new Date();
+
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); 
+            const year = today.getFullYear();
+
+            const formattedDate = `${day}-${month}-${year}`;
+            setCurrentDate(formattedDate);
+        };
+
+        updateDate();
+    }, []);
+
+  useEffect(() => {
+    getAppdetails();
+  },[getAppdetails,appointmentSubmit])
+  
+  const appointmentList = appointments.filter((appointment) => appointment?.date === currentDate);
 
   return (
     <div >
@@ -33,7 +57,7 @@ const ReceptionistDashboard = () => {
                 <span className='text-zinc-800  mb-3 flex text-lg'>Total Appointments</span>
                 <hr className='h-0.5 border-none mb-4 bg-white' />
                 <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span>    <FaUserDoctor />
-                </span>0</h1>
+                </span>{appointmentList.length}</h1>
               </div>
               <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300  py-5 px-8  rounded-lg bg-[#ffc36d] '>
                 <span className='text-zinc-800  mb-3 flex text-lg'>Pending Appointments</span>

@@ -30,6 +30,8 @@ export const docStore = create((set) => ({
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
+    appointmentSection: "general",
+    setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
     togglePrescriptionSubmit: () => set((state) => ({ prescriptionSubmit: !state.prescriptionSubmit })),
     toggleAppointmentSubmit: (appointment) => set({ appointmentSubmit: appointment }), 

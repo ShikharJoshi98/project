@@ -1,34 +1,31 @@
 import { Hospital } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { docStore } from '../../store/DocStore';
 
 const Docnavbar = () => {
   const [isOpen, setOpen] = useState(false);
-  const { setbranch, getAllAppointments, allAppointments, appointmentSubmit } = docStore();
-  const domGeneralAppointments = allAppointments.filter((appointment) => ((appointment.PatientCase.branch === 'Dombivali') && (appointment.AppointmentType === 'general')));
-  const mulGeneralAppointments = allAppointments.filter((appointment) => ((appointment?.PatientCase?.branch === 'Mulund') && (appointment.AppointmentType === 'general')));
-  const domRepeatAppointments = allAppointments.filter((appointment) => ((appointment.PatientCase.branch === 'Dombivali') && (appointment.AppointmentType === 'repeat')));
-  const mulRepeatAppointments = allAppointments.filter((appointment) => ((appointment?.PatientCase?.branch === 'Mulund') && (appointment.AppointmentType === 'repeat')));
-  const domCourierAppointments = allAppointments.filter((appointment) => ((appointment.PatientCase.branch === 'Dombivali') && (appointment.AppointmentType === 'courier')));
-  const mulCourierAppointments = allAppointments.filter((appointment) => ((appointment?.PatientCase?.branch === 'Mulund') && (appointment.AppointmentType === 'courier')));
+  const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppdetails, appointments } = docStore();
+  const [currentDate, setCurrentDate] = useState('');
+
+  const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general'));
+  const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat'))
+  const domGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Dombivali'));
+  const mulGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Mulund'));
+  const domRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Dombivali'));
+  const mulRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Mulund'));
+  const domCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Dombivali'));
+  const mulCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Mulund'));
   const menuRef = useRef(null);
   const { logout } = useAuthStore();
   const navigate = useNavigate();
   const [isAppointmentHovered, setIsAppointmentHovered] = useState(false);
   const [isRepeatMedicineHovered, setIsRepeatMedicineHovered] = useState(false);
   const [isCourierMedicineHovered, setIsCourierMedicineHovered] = useState(false);
-
-  useEffect(() => { getAllAppointments(); }, [getAllAppointments]); 
   useEffect(() => {
-    const savedBranch = localStorage.getItem("selectedBranch");
-    if (savedBranch) {
-      setbranch(savedBranch);
-    }}, []);
-  useEffect(() => {
-    getAllAppointments();
-  }, [getAllAppointments, appointmentSubmit]);  
+    getAppdetails(appointmentSection);
+  }, [getAppdetails, appointmentSection, appointmentSubmit]);
   useEffect(() => {
     const handleClikcOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -41,12 +38,23 @@ const Docnavbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const updateDate = () => {
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const year = today.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+      setCurrentDate(formattedDate);
+    };
+    updateDate();
+  }, []);
+
   const handleSectionChange = (newBranch) => {
-    setbranch(newBranch);
-    localStorage.setItem("selectedBranch", newBranch);
-    navigate('/general-appointment');
+    setAppointmentSection(newBranch);
+    navigate('/appointment-DOCTOR');
   };
-  const handleLogout = ()=> {
+  const handleLogout = () => {
     logout();
     navigate('/login');
   }
@@ -60,20 +68,17 @@ const Docnavbar = () => {
       <div>
         <ul className=' hidden lg:flex items-center gap-6 text-white text-sm xl:text-base'>
           <div className="relative" onMouseEnter={() => setIsAppointmentHovered(true)} onMouseLeave={() => setIsAppointmentHovered(false)}>
-            {(domGeneralAppointments.length+mulGeneralAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-20 xl:left-24 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{(domGeneralAppointments.length+mulGeneralAppointments.length)}</div>)}
+            {(generalAppointments.length + repeatAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-20 xl:left-24 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{(domGeneralAppointments.length + mulGeneralAppointments.length)}</div>)}
             <li className="hover:text-gray-300 group  cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
             {isAppointmentHovered && (
               <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-40 flex flex-col h-auto">
-                <div
-                  onClick={() => handleSectionChange("Dombivali")}
-                  className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between"
-                >
+                <div onClick={() => handleSectionChange("general")} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                   <h1>Dombivali</h1>
                   <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">
                     {domGeneralAppointments.length}
                   </span>
                 </div>
-                <div onClick={() => handleSectionChange("Mulund")} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
+                <div onClick={() => handleSectionChange("general")} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                   <h1>Mulund</h1>
                   <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">
                     {mulGeneralAppointments.length}
@@ -83,12 +88,12 @@ const Docnavbar = () => {
             )}
           </div>
           <div className="relative" onMouseEnter={() => setIsRepeatMedicineHovered(true)} onMouseLeave={() => setIsRepeatMedicineHovered(false)}>
-          {(domRepeatAppointments.length+mulRepeatAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-28 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{domRepeatAppointments.length+mulRepeatAppointments.length}</div>)}
+            {(domRepeatAppointments.length + mulRepeatAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-28 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{domRepeatAppointments.length + mulRepeatAppointments.length}</div>)}
             <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Repeat Medicine</li>
             {isRepeatMedicineHovered && (
               <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-40 flex flex-col h-auto">
                 <div
-                  onClick={() => handleSectionChange("Dombivali")}
+                  onClick={() => handleSectionChange("repeat")}
                   className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between"
                 >
                   <h1>Dombivali</h1>
@@ -96,7 +101,7 @@ const Docnavbar = () => {
                     {domRepeatAppointments.length}
                   </span>
                 </div>
-                <div onClick={() => handleSectionChange("Mulund")} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
+                <div onClick={() => handleSectionChange("repeat")} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                   <h1>Mulund</h1>
                   <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">
                     {mulRepeatAppointments.length}
@@ -106,12 +111,12 @@ const Docnavbar = () => {
             )}
           </div>
           <div className="relative" onMouseEnter={() => setIsCourierMedicineHovered(true)} onMouseLeave={() => setIsCourierMedicineHovered(false)}>
-          {((domCourierAppointments.length+mulCourierAppointments.length) > 0) && (<div className='absolute w-5 h-5 left-28 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{domCourierAppointments.length+mulCourierAppointments.length}</div>)}
+            {((domCourierAppointments.length + mulCourierAppointments.length) > 0) && (<div className='absolute w-5 h-5 left-28 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{domCourierAppointments.length + mulCourierAppointments.length}</div>)}
             <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Courier Medicine</li>
             {isCourierMedicineHovered && (
               <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-40 flex flex-col h-auto">
                 <div
-                  onClick={() => handleSectionChange("Dombivali")}
+                  onClick={() => handleSectionChange("courier")}
                   className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between"
                 >
                   <h1>Dombivali</h1>
@@ -119,7 +124,7 @@ const Docnavbar = () => {
                     {domCourierAppointments.length}
                   </span>
                 </div>
-                <div onClick={() => handleSectionChange("Mulund")} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
+                <div onClick={() => handleSectionChange("courier")} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                   <h1>Mulund</h1>
                   <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">
                     {mulCourierAppointments.length}
@@ -127,7 +132,7 @@ const Docnavbar = () => {
                 </div>
               </div>
             )}
-            </div>
+          </div>
           <li onClick={() => navigate('/homeo-book-medicine')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Homeo Bhagwat Gita</li>
           <li onClick={() => navigate('/doc-courier-mail')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Courier Mail</li>
           <li onClick={handleLogout} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Logout</li>
