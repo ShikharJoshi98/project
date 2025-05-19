@@ -68,7 +68,7 @@ const PresentComplaints = ({ complaint }) => {
                             <select onChange={(e) => setDurationType(e.target.value)} value={durationType} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
                                 <option value="" disabled selected className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
                                 <option value="Days">Days</option>
-                                <option value="Weeks">Week</option>
+                                <option value="Week">Week</option>
                                 <option value="Weeks">Months</option>
                                 <option value="Weeks">Year</option>
                             </select>
