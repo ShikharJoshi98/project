@@ -3,7 +3,7 @@ import { Appointment } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient, { FollowUpPatient, Investigation, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
+import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 
@@ -729,6 +729,60 @@ export const updateTodayPrescription = async (req, res) => {
         return res.json({
             message: error.message
         });
+    }
+}
+
+export const addOtherPrescription = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { medicineName, price } = req.body;
+        console.log(medicineName, price, id);
+        const response = await OtherPrescription.create({
+            patient:id,
+            medicineName,
+            price
+        })
+        return res.json({
+            success: true,
+            message:"Other Prescription Added"
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message:"Error in Other Prescription"
+        })
+    }
+}
+
+export const getOtherPrescription = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const otherPrescription = await OtherPrescription.find({ patient:id });
+        return res.json({
+            success: true,
+            otherPrescription
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const deleteOtherPrescription = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await OtherPrescription.findByIdAndDelete(id);
+        res.json({
+            success: true,
+            message:"Deleted Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:"Error in delete other prescription"
+        })
     }
 }
 

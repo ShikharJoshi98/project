@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import SearchMedicine from './SearchMedicine';
 import { recStore } from '../../store/RecStore';
 import DiagnosisModal from './DiagnosisModal';
+import OtherPrescriptionModal from './OtherPrescriptionModal';
 
 const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
 const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day', '7th Day', '10th Day', '15th Day', '20th Day', '25th Day', '30th Day', '45th Day', '60th Day', '75th Day', '3rd Month', '4th Month', '5th Month'];
@@ -17,20 +18,21 @@ const PrescribeMedicine = () => {
     const [isDiagnosisOpen, setDiagnosisOpen] = useState(false);
     const [selectedDiagnosisOptions, setSelectedDiagnosisOptions] = useState([]);
     const location = useParams();
-    const { Diagnosis, getDiagnosis, togglePrescriptionSubmit } = docStore();
+    const { togglePrescriptionSubmit } = docStore();
     const [submit, setsubmit] = useState(false);
     const [searchMedicine, setSearchMedicine] = useState("");
     const [currentDate, setCurrentDate] = useState("");
-    const { getPastPrescription, allPrescriptions,getPresentComplaintData, PresentComplaintData } = docStore();
+    const { getPastPrescription, allPrescriptions, getPresentComplaintData, PresentComplaintData } = docStore();
     const { patients } = recStore();
     const patient = patients.filter((cand => (cand._id) === location.id));
     const searchMedicineRef = useRef(null);
-
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOtherPrescriptionModal, setOtherPrescriptionModal] = useState(false);
     useEffect(() => {
         getPastPrescription(location.id);
         getPresentComplaintData(location.id);
-    }, [getPresentComplaintData, getPastPrescription]);
-    const PresentComplaintDataArray = PresentComplaintData.map(complaint=>complaint?.complaintName);
+    }, [getPresentComplaintData, getPastPrescription, submit]);
+    const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
 
     const [formData, setFormData] = useState({
         medicine: '',
@@ -52,11 +54,18 @@ const PrescribeMedicine = () => {
             setCurrentDate(date);
         };
         updateDate();
-    }, []);
 
-    useEffect(() => {
-        getDiagnosis(location.id);
-    }, [getDiagnosis, submit]);
+        const handleClickOutside = (event) => {
+            if (searchMedicineRef.current && !searchMedicineRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -90,25 +99,26 @@ const PrescribeMedicine = () => {
     }
 
     return (
-        <div>
+        <div className='relative'>
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>
                 PRESCRIBE MEDICINE
             </h1>
+            <button onClick={()=>setOtherPrescriptionModal(true)} className='bg-blue-500 p-1 cursor-pointer h-10 w-10 text-white rounded-md text-2xl right-5 top-2 absolute'>+</button>
             <form onSubmit={handleSubmit}>
                 <div className='sm:grid flex flex-col pl-10 gap-y-5 gap-x-2 grid-cols-2'>
                     <div>
                         <div className='flex sm:flex-row flex-col  items-center justify-between mb-2 pr-5'>
                             <h1 className='text-black font-semibold '>Diagnosis:</h1>
                             <div className='relative'>
-                                <button onClick={()=>setDiagnosisOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
+                                <button onClick={() => setDiagnosisOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
                             </div>
                         </div>
                         <MultiSelectDropdown Options={PresentComplaintDataArray} selectedOptions={selectedDiagnosisOptions} setSelectedOptions={setSelectedDiagnosisOptions} />
                     </div>
-                    <div className='relative'>
+                    <div ref={searchMedicineRef} className='relative'>
                         <h1 className='text-black font-semibold mb-4'>Medicine:</h1>
-                        <Input icon={Pill} placeholder='Enter Medicine Name' name='medicine' value={formData.medicine} onChange={(e) => { setSearchMedicine(e.target.value); handleChange(e) }} />
-                        {searchMedicine && <div ref={searchMedicineRef} className='bg-gray-300 shadow-2xl p-2 flex flex-col gap-2 w-full absolute top-20.5 z-10 border-l border-b border-r border-blue-400 rounded-md'>
+                        <Input icon={Pill} placeholder='Enter Medicine Name' name='medicine' value={formData.medicine} onChange={(e) => { setSearchMedicine(e.target.value); handleChange(e); setIsOpen(true); }} />
+                        {searchMedicine  && isOpen && <div  className='bg-gray-300 shadow-2xl p-2 flex flex-col gap-2 w-full absolute top-20.5 z-10 border-l border-b border-r border-blue-400 rounded-md'>
                             {
                                 filteredPrescription.map((pres, index) => (
                                     <SearchMedicine pres={pres} index={index} patientName={patient[0].fullname} />
@@ -182,8 +192,8 @@ const PrescribeMedicine = () => {
                     <button className='bg-blue-500 text-lg hover:bg-blue-600 rounded-md text-white p-2'>Submit</button>
                 </div>
             </form>
-            {isDiagnosisOpen && <DiagnosisModal onClose={() => setDiagnosisOpen(false)} />}
-
+            {isDiagnosisOpen && <DiagnosisModal setsubmit={setsubmit} onClose={() => setDiagnosisOpen(false)} />}
+            {isOtherPrescriptionModal && <OtherPrescriptionModal onClose={()=>setOtherPrescriptionModal(false)}/>}
         </div>
     );
 };

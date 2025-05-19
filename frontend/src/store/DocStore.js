@@ -10,7 +10,6 @@ export const docStore = create((set) => ({
     leaves: [],
     appointments: [],
     allAppointments: [],
-    Diagnosis: [],
     Homeo: [],
     appointment: null,
     caseImages: [],
@@ -26,7 +25,8 @@ export const docStore = create((set) => ({
     MentalCausativeData: [],
     MentalPersonalityData: [],
     ThermalReactionData: [],
-    MiasmData:[],
+    MiasmData: [],
+    otherPrescriptions:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -207,14 +207,6 @@ export const docStore = create((set) => ({
             console.log(error.message);   
         }
     },
-    getDiagnosis: async (id) => {
-        try {
-            const response = await axios.get(`${DOC_API_URL}/get-diagnosis/${id}`)
-            set({ Diagnosis : response.data.diagnosis });
-        } catch (error) {
-            console.log(error.message);
-        }
-    },
     fetchPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);        
         set({prescription:response.data.presToday})
@@ -258,5 +250,9 @@ export const docStore = create((set) => ({
     getMiasm: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/miasmPatient/${id}`);
         set({ MiasmData: response.data.MiasmData });
-    } 
+    }, 
+    getOtherPrescription: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/get-other-prescription/${id}`);
+        set({ otherPrescriptions: response.data.otherPrescription });
+    }
 }))

@@ -3,10 +3,7 @@ import { useState, useEffect, useRef } from "react";
 const MultiSelectDropdown = ({ Options,selectedOptions,setSelectedOptions }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const dropdownRef = useRef(null);
-
-  
-
+  const dropdownRef = useRef(null);  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -88,7 +85,7 @@ const MultiSelectDropdown = ({ Options,selectedOptions,setSelectedOptions }) => 
           />
 
           {/* Options List */}
-          <ul className="max-h-40 overflow-y-auto">
+          <ul className="max-h-60 overflow-y-auto">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li

@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { DOC_API_URL } from '../../store/DocStore';
 
-const DiagnosisModal = ({ onClose }) => {
+const DiagnosisModal = ({ onClose,setsubmit }) => {
     const [formValues, setFormValues] = useState({
         complaintName: "",
         duration:"",
@@ -19,6 +19,7 @@ const DiagnosisModal = ({ onClose }) => {
         e.preventDefault();
         try {
             await axios.post(`${DOC_API_URL}/add-present-complaints-patient/${id}`, formValues);
+            setsubmit(prev => !prev);
             setFormValues({
         complaintName: "",
         duration:"",
@@ -62,9 +63,9 @@ const DiagnosisModal = ({ onClose }) => {
                             <select  onChange={handleInputChange} name="durationSuffix"  value={formValues.durationSuffix} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
                                 <option value="" disabled selected className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
                                 <option value="Days">Days</option>
-                                <option value="Weeks">Week</option>
-                                <option value="Weeks">Months</option>
-                                <option value="Weeks">Year</option>
+                                <option value="Weeks">Weeks</option>
+                                <option value="Months">Months</option>
+                                <option value="Year">Year</option>
                             </select>
                         </div>
                     </div>

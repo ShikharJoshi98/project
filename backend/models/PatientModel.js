@@ -91,6 +91,9 @@ const prescriptionSchema = new mongoose.Schema({
     },
     prescription_date: {
         type: String
+    },
+    medicine_issued_flag: {
+        type: Boolean,default:false
     }
 });
 
@@ -170,11 +173,21 @@ const investigationSchema = new mongoose.Schema({
     }
 });
 
+const otherPrescriptionSchema = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    medicineName: { type: String, required: true },
+    price: { type: Number, required: true },    
+})
+
 const Patient = mongoose.model('Patient', PatientSchema);
 export const Prescription = mongoose.model('Prescription', prescriptionSchema);
 export const FollowUpPatient = mongoose.model('FollowUpPatient', followUpPatientSchema);
 export const PresentComplaintScribble = mongoose.model('PresentComplaintScribble',presentComplaintPatientSchema);
 export const PresentComplaintWriteUp = mongoose.model('PresentComplaintWriteUp',presentComplaintWriteUpScehma);
 export const WriteUpPatient = mongoose.model('WriteUpPatient', writeUpPatientSchema);
-export const Investigation = mongoose.model('Investigation',investigationSchema);
+export const Investigation = mongoose.model('Investigation', investigationSchema);
+export const OtherPrescription = mongoose.model('OtherPrescription', otherPrescriptionSchema);
 export default Patient
