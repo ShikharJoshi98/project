@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { Trash2, X } from 'lucide-react';
 import { useParams } from 'react-router-dom';

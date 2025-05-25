@@ -20,13 +20,16 @@ export const docStore = create((set) => ({
     allPrescriptions: [],
     list: [],
     PresentComplaintData: [],
+    PresentComplaintScribble: [],
+    PresentComplaintWriteUp:[],
     PastHistoryData: [],
     FamilyMedicalData: [],
     MentalCausativeData: [],
     MentalPersonalityData: [],
     ThermalReactionData: [],
     MiasmData: [],
-    otherPrescriptions:[],
+    otherPrescriptions: [],
+    consultationCharges:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -254,5 +257,17 @@ export const docStore = create((set) => ({
     getOtherPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-other-prescription/${id}`);
         set({ otherPrescriptions: response.data.otherPrescription });
+    },
+    getConsultationCharges: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/get-consultation-charges/${id}`);
+        set({ consultationCharges: response.data.response });
+    },
+    getPresentComplaintScribble: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/get-present-compaint-scribble/${id}`);
+        set({ PresentComplaintScribble: response.data.presentComplaintScribble });
+    },
+    getPresentComplaintWriteUp: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}//get-present-compaint-writeup/${id}`);
+        set({ PresentComplaintWriteUp: response.data.writeUpData });
     }
 }))

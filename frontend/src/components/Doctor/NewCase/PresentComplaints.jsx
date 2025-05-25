@@ -69,8 +69,8 @@ const PresentComplaints = ({ complaint }) => {
                                 <option value="" disabled selected className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
                                 <option value="Days">Days</option>
                                 <option value="Week">Week</option>
-                                <option value="Weeks">Months</option>
-                                <option value="Weeks">Year</option>
+                                <option value="Months">Months</option>
+                                <option value="Year">Year</option>
                             </select>
                         </div>
                     </div>

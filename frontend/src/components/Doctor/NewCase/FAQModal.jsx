@@ -14,7 +14,6 @@ const FAQModal = ({ onClose, complaint }) => {
         e.preventDefault();
         try {
             const response = await axios.post(`${DOC_API_URL}/addNewCaseMaster`, { name: disease, type: complaint });
-            alert("Added");
             setSubmit(prev => !prev);
             setDisease("");
         } catch (error) {

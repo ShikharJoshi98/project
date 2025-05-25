@@ -4,7 +4,7 @@ import Input from '../Input'
 import axios from 'axios';
 import { DOC_API_URL } from '../../store/DocStore';
 
-const InvestigationModal = ({type ,list , onClose }) => {
+const InvestigationModal = ({type,setSubmit ,list , onClose }) => {
 
     const [inputData, setInputData] = useState("");
     const handleSubmit = async(e) => {
@@ -15,7 +15,7 @@ const InvestigationModal = ({type ,list , onClose }) => {
             inputData,
             type
         });
-
+        setSubmit(prev => !prev);
         setInputData("");
 
     }

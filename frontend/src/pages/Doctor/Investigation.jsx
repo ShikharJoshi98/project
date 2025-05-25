@@ -25,6 +25,8 @@ const Investigation = () => {
   const [isAddInvestigationModalOpen, setAddInvestigationModalIsOpen] = useState(false);
   const [investigationType, setInvestigationType] = useState('Investigation Advised')
   const [listType, setListType] = useState([]);
+  const [submit, setSubmit] = useState(false);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,11 +46,11 @@ const Investigation = () => {
       "mriList":mriScan
     });
 
-    setListType(investigationAdvised);
+    // setListType(investigationAdvised);
   }
   useEffect(()=>{
     fetchInvesigation();
-  },[]);
+  },[submit]);
 
   const testArray = [{title:'Investigation Advised',color:'blue',list:data?.investigationList}, {title:'Ultra-Sonography',color:'red',list:data?.ultrasonographyList}, {title:'Doppler Studies',color:'green',list:data?.dopplerStudiesList}, {title:'Obstetrics(Pregnancy)',color:'orange',list:data?.ObstetricsList}, {title:'Sonography',color:'black',list:data?.SonographyList}, {title:'16 Slice C.T Scan',color:'brown',list:data?.sliceList}, {title:'1.5 MRI Scan',color:'purple',list:data?.mriList}];
 
@@ -102,7 +104,7 @@ const Investigation = () => {
           </div>
         </div>
       </div>
-      {isAddInvestigationModalOpen && <InvestigationModal type={investigationType} list={listType} onClose={() => setAddInvestigationModalIsOpen(false)} />}
+      {isAddInvestigationModalOpen && <InvestigationModal type={investigationType} setSubmit={setSubmit} list={listType} onClose={() => setAddInvestigationModalIsOpen(false)} />}
     </div>
   )
 }

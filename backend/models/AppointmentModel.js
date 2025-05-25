@@ -10,4 +10,14 @@ const createAppointmentSchema = new mongoose.Schema({
     medicine_issued_flag:{type:Boolean,default:false}
 })
 
+const consultationChargesSchema = new mongoose.Schema({
+    type: { type: String, required: true },
+    price: { type: String, required: true },
+    patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
+    
+}, { timestamps: true })
+
+consultationChargesSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
+
 export const Appointment = mongoose.model('Appointment', createAppointmentSchema);
+export const ConsultationCharges = mongoose.model('ConsultationCharges', consultationChargesSchema);

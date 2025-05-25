@@ -9,6 +9,7 @@ import SearchMedicine from './SearchMedicine';
 import { recStore } from '../../store/RecStore';
 import DiagnosisModal from './DiagnosisModal';
 import OtherPrescriptionModal from './OtherPrescriptionModal';
+import MultiSelectInput from './MultiSelectInput';
 
 const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
 const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day', '7th Day', '10th Day', '15th Day', '20th Day', '25th Day', '30th Day', '45th Day', '60th Day', '75th Day', '3rd Month', '4th Month', '5th Month'];
@@ -66,7 +67,7 @@ const PrescribeMedicine = () => {
         };
 
     }, []);
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -113,7 +114,7 @@ const PrescribeMedicine = () => {
                                 <button onClick={() => setDiagnosisOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <Plus /></button>
                             </div>
                         </div>
-                        <MultiSelectDropdown Options={PresentComplaintDataArray} selectedOptions={selectedDiagnosisOptions} setSelectedOptions={setSelectedDiagnosisOptions} />
+                        <MultiSelectInput Options={PresentComplaintDataArray} setSelectedOptions={setSelectedDiagnosisOptions} selectedOptions={selectedDiagnosisOptions} />
                     </div>
                     <div ref={searchMedicineRef} className='relative'>
                         <h1 className='text-black font-semibold mb-4'>Medicine:</h1>

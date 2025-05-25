@@ -1,117 +1,75 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from 'react'
+import { ChevronDown, X } from 'lucide-react';
 
-const MultiSelectDropdown = ({ Options,selectedOptions,setSelectedOptions }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const dropdownRef = useRef(null);  
+const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [active, setActive] = useState(false);
+  const selectedRef = useRef(null);
+  const filteredOptionArray = Options.filter((options) => options.toLowerCase().includes(searchTerm.toLowerCase()));
+  const setOptions = (value) => {
+    if (selectedOptions?.includes(value)) {
+      const selectedOptionsArray = selectedOptions?.filter((options) => options != value);
+      setSelectedOptions([...selectedOptionsArray]);
+    }
+    else {
+      setSelectedOptions([...selectedOptions, value]);
+    }
+  }
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
+    const closeHandler = (event) => {
+      if (selectedRef.current && !event.composedPath().includes(selectedRef.current)) {
+        setActive(false);
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
+    }
+    document.addEventListener('click', closeHandler);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Toggle selection
-  const toggleSelection = (option) => {
-    setSelectedOptions((prev) => {
-      const updated = prev.includes(option)
-        ? prev.filter((item) => item !== option)
-        : [...prev, option];
-      
-      return updated;
-    });
-  };
-
-  // Remove from selected items
-  const removeOption = (option) => {
-    setSelectedOptions((prev) => {
-      const updated = prev.filter((item) => item !== option);
-      return updated;
-    });
-  };
-
-  // Filter options based on search term
-  const filteredOptions = Options
-    ? Options.filter((option) =>
-        option.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+      document.removeEventListener('click', closeHandler);
+    }
+  }, [selectedRef.current])
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Selected Items */}
-      <div
-        className="w-full bg-white border border-gray-400 p-2 rounded-md flex flex-wrap gap-2 cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
+    <div className='relative w-full' ref={selectedRef}>
+      <div onClick={() => setActive(true)} className="bg-white w-full relative cursor-pointer flex items-center flex-wrap gap-1 py-2 px-3 min-h-10 rounded-lg border border-gray-400"
       >
-        {selectedOptions.length > 0 ? (
-          selectedOptions.map((option) => (
+        <div className="flex flex-wrap gap-2 flex-1">
+          {selectedOptions?.map((options, index) => (
             <div
-              key={option}
-              className="flex items-center bg-red-100 text-red-600 px-2 py-1 rounded-md"
+              key={index}
+              className="bg-red-200 px-4 py-0.5 flex border-2 border-red-300 items-center justify-center rounded-2xl"
             >
-              {option}
-              <button
-                className="ml-2 text-sm font-bold"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeOption(option);
-                }}
-              >
-                ✖
-              </button>
+              <p className="flex items-center justify-center gap-3">
+                {options}
+                <X
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOptions(options);
+                  }}
+                  className="w-4 cursor-pointer"
+                />
+              </p>
             </div>
-          ))
-        ) : (
-          <span className="text-gray-400">Select options</span>
-        )}
+          ))}
+        </div>
+
+        <ChevronDown onClick={(e) => {
+          e.stopPropagation();
+          setActive(prev => !prev);
+        }} className="ml-auto shrink-0 cursor-pointer" />
       </div>
 
-      {/* Dropdown List */}
-      {isOpen && (
-        <div className="absolute z-10 w-full bg-white border mt-1 rounded-md shadow-md">
-          {/* Search Input */}
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full p-2 border-b focus:outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          {/* Options List */}
-          <ul className="max-h-60 overflow-y-auto">
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <li
-                  key={option}
-                  className={`flex items-center px-4 py-2 cursor-pointer ${
-                    selectedOptions.includes(option) ? "bg-red-100" : "hover:bg-gray-100"
-                  }`}
-                  onClick={() => toggleSelection(option)}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedOptions.includes(option)}
-                    readOnly
-                    className="mr-2 cursor-pointer"
-                  />
-                  {option}
-                </li>
-              ))
-            ) : (
-              <li className="px-4 py-2 text-gray-500">No options found</li>
-            )}
-          </ul>
-        </div>
-      )}
+      {active && <div className='absolute left-0 right-0 z-10 px-5 py-2 max-h-36 overflow-y-auto flex flex-col gap-2 bg-white rounded-md border border-gray-400'>
+        <input type="text" onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search' className='my-1 p-2 border-1 border-gray-300 rounded-lg focus:outline-none' />
+        {filteredOptionArray?.map((option, index) => (
+          <div className='flex items-center gap-4' key={index}>
+            <input checked={selectedOptions?.includes(option)}
+              onChange={() => setOptions(option)} type="checkbox" id={option} /><label htmlFor={option}>{option}</label>
+          </div>
+        ))
+        }
+      </div>}
     </div>
-  );
-};
+  )
+}
 
-export default MultiSelectDropdown;
+export default MultiSelectInput

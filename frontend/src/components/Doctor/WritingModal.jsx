@@ -8,7 +8,6 @@ import { useParams } from "react-router-dom";
 const WritingModal = ({ writeUpType,onClose }) => {
     const location = useParams();
     const [value, setValue] = useState("");
-    console.log(writeUpType);
     const handleSave = async () => {
         if (writeUpType === 'present complaints') {
             const response  = await axios.post(`${DOC_API_URL}/add-presentComplaintWriteUp/${location.id}`,{
@@ -36,7 +35,7 @@ const WritingModal = ({ writeUpType,onClose }) => {
                     Writing Pad
                 </h1>
                 <div className="flex flex-col gap-3 items-center">
-                    <textarea name="Writing Pad" placeholder="Write ..." onChange={(e)=>setValue(e.target.value)} className="bg-white border sm:w-[60vw] md:w-[80vw] h-[60vh] rounded-lg p-3 mx-auto mt-5"></textarea>
+                    <textarea value={value} name="Writing Pad" placeholder="Write ..." onChange={(e)=>setValue(e.target.value)} className="bg-white border sm:w-[60vw] md:w-[80vw] h-[60vh] rounded-lg p-3 mx-auto mt-5"></textarea>
                     <button onClick={() => handleSave()} className="bg-green-500 text-white rounded-md font-semibold text-lg cursor-pointer p-2 w-fit">Save</button>
                 </div>
             </div>

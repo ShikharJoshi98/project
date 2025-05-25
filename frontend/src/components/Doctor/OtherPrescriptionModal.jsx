@@ -16,7 +16,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
     const { otherPrescriptions, getOtherPrescription } = docStore();
     useEffect(() => {
         getOtherPrescription(id);
-    }, [getOtherPrescription,submit]);
+    }, [getOtherPrescription, submit]);
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues(prev => ({ ...prev, [name]: value }));
@@ -25,15 +25,14 @@ const OtherPrescriptionModal = ({ onClose }) => {
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
-            console.log(submit);
-            const response =await axios.post(`${DOC_API_URL}/add-other-medicine/${id}`,
+            const response = await axios.post(`${DOC_API_URL}/add-other-medicine/${id}`,
                 formValues
             )
             setSubmit(prev => !prev);
             console.log(submit);
             setFormValues({
                 medicineName: '',
-                price:''
+                price: ''
             })
         } catch (error) {
             console.log(error.message);
@@ -63,11 +62,12 @@ const OtherPrescriptionModal = ({ onClose }) => {
                 <form className="flex items-end justify-center mt-10 gap-15" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-2">
                         <p>Any Other Medicine</p>
-                        <Input value={formValues.medicineName} onChange={handleChange} name="medicineName" icon={Pill} placeholder='Medicine Name' />
+                        <Input value={formValues.medicineName} onChange={handleChange} required name="medicineName" icon={Pill} placeholder='Medicine Name' />
                     </div>
                     <div className="flex flex-col gap-2">
                         <p>Price</p>
-                        <select value={formValues.price} onChange={handleChange} name="price" className="bg-white p-2 px-5 h-10 w-30 border rounded-md" id="">
+                        <select value={formValues.price} onChange={handleChange} name="price" required className="bg-white p-2 px-5 h-10 w-40 border rounded-md" id="">
+                            <option value="" disabled selected className='font-normal ' >Select Price</option>
                             <option value="100">100</option>
                             <option value="200">200</option>
                             <option value="300">300</option>
@@ -92,11 +92,11 @@ const OtherPrescriptionModal = ({ onClose }) => {
                         <tbody>
                             {
                                 otherPrescriptions.map((prescription, index) => (
-                                    <tr className="bg-blue-100">
+                                    <tr className={`${prescription?.medicine_issued_flag===false?'bg-green-200':'bg-yellow-200'}`}>
                                         <td className="px-2 py-2 text-center">{index + 1}</td>
                                         <td className="px-2 py-2 text-center">{prescription?.medicineName}</td>
                                         <td className="px-2 py-2 text-center">{prescription?.price}</td>
-                                        <td  onClick={()=>deleteRow(prescription?._id)} className="px-2 py-2 flex justify-center cursor-pointer"><Trash/></td>
+                                        <td onClick={() => deleteRow(prescription?._id)} className="px-2 py-2 flex justify-center cursor-pointer"><Trash /></td>
                                     </tr>
                                 ))
                             }
@@ -104,8 +104,8 @@ const OtherPrescriptionModal = ({ onClose }) => {
                     </table>
                 </div>
                 <div className="flex mt-10 flex-col gap-5">
-                    <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-green-300"></div><span>Medicine not issued yet</span></div>
-                    <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-pink-300"></div><span>Medicine Issued</span></div>
+                    <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-green-200"></div><span>Medicine not issued yet</span></div>
+                    <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>Medicine Issued</span></div>
                 </div>
             </div>
         </div>,

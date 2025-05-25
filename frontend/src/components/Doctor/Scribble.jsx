@@ -29,7 +29,7 @@ const Scribble = ({ complaint }) => {
         setEraseMode(mode === "erase");
         canvasRef.current?.eraseMode(mode === "erase");
     };
-    console.log(complaint);
+
     const handleCanvasAction = (action) => {
         switch (action) {
             case "undo":
@@ -52,24 +52,34 @@ const Scribble = ({ complaint }) => {
         switch (complaint) {
             case 'Mental Causative Factor':
                 const mentalCausativeData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-mentalCausative-scribble/${id}`,{ savedImage: mentalCausativeData });
+                await axios.post(`${DOC_API_URL}/add-mentalCausative-scribble/${id}`, { savedImage: mentalCausativeData });
+                canvasRef.current?.clearCanvas();
+
                 break;
             case 'Chief Complaints':
                 const chiefComplaintData = await canvasRef.current.exportImage("png");
                 await axios.post(
-                    `${DOC_API_URL}/add-chiefComplaint-scribble/${id}`,{ savedImage: chiefComplaintData });
+                    `${DOC_API_URL}/add-chiefComplaint-scribble/${id}`, { savedImage: chiefComplaintData });
+                canvasRef.current?.clearCanvas();
+
                 break;
             case 'Personal History':
                 const personalHistoryData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-personalHistory-scribble/${id}`,{ savedImage: personalHistoryData });
+                await axios.post(`${DOC_API_URL}/add-personalHistory-scribble/${id}`, { savedImage: personalHistoryData });
+                canvasRef.current?.clearCanvas();
+
                 break;
             case 'Mental Personality Character':
                 const mentalPersonalityData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-mentalPersonality-scribble/${id}`,{ savedImage: mentalPersonalityData });
+                await axios.post(`${DOC_API_URL}/add-mentalPersonality-scribble/${id}`, { savedImage: mentalPersonalityData });
+                canvasRef.current?.clearCanvas();
+
                 break;
             case 'Brief Mind Symptoms':
                 const briefMindSymptomData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-briefMindSymptom-scribble/${id}`,{ savedImage: briefMindSymptomData });
+                await axios.post(`${DOC_API_URL}/add-briefMindSymptom-scribble/${id}`, { savedImage: briefMindSymptomData });
+                canvasRef.current?.clearCanvas();
+
                 break;
         }
     }
@@ -156,7 +166,7 @@ const Scribble = ({ complaint }) => {
 
                 </div>
             </div>
-              <button onClick={()=>handleSave()} className='bg-green-500 block mx-auto my-4 p-2 text-xl rounded-md text-white'>Save</button>
+            <button onClick={() => handleSave()} className='bg-green-500 block mx-auto my-4 p-2 text-xl rounded-md text-white'>Save</button>
         </div>
     )
 }

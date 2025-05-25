@@ -1,5 +1,5 @@
 import express from 'express';
-import { addBriefMindSymptomScribble, addChiefComplaintScribble, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addOtherPrescription, addPastHistoryPatient, addPersonalHistoryScribble, addPresentComplaintPatient, addPresentComplaintScribble, addThermalReactionPatient, addWriteUpPatient, addWriteUpPresentComplaint, assignTask, createAppointment, deleteCaseImages, deleteCaseMaster, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deleteOtherPrescription, deletePastHistoryPatient, deletePresentComplaintPatient, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getCaseMaster, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getMentalCausativePatient, getMentalPersonalityPatient, getMiasmPatient, getOtherPrescription, getPastHistoryPatient, getPatientImages, getPrescriptionToday, getPresentComplaintPatient, getThermalReactionPatient, getWriteUpPatient, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addBriefMindSymptomScribble, addChiefComplaintScribble, addConsultationCharges, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addOtherPrescription, addPastHistoryPatient, addPersonalHistoryScribble, addPresentComplaintPatient, addPresentComplaintScribble, addThermalReactionPatient, addWriteUpPatient, addWriteUpPresentComplaint, assignTask, createAppointment, deleteCaseImages, deleteCaseMaster, deleteConsultationCharges, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deleteOtherPrescription, deletePastHistoryPatient, deletePresentComplaintPatient, deletePresentComplaintScribble, deletePresentComplaintWriteUp, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, getAllAppointments, getAllPrescription, getCaseMaster, getConsultationCharges, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getFollowUpPatient, getHomeoBhagwat, getInvestigationAdvised, getMentalCausativePatient, getMentalPersonalityPatient, getMiasmPatient, getOtherPrescription, getPastHistoryPatient, getPatientImages, getPrescriptionToday, getPresentComplaintPatient, getPresentComplaintScribble, getThermalReactionPatient, getWriteUpPatient, getWriteUpPresentComplaint, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateHomeoBhagwat, updateleave, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 const storage = multer.memoryStorage();
@@ -51,7 +51,12 @@ Docrouter.post("/add-new-prescription/:id", addNewPrescription);
 Docrouter.get("/get-today-prescription/:id", getPrescriptionToday);
 Docrouter.post("/add-other-medicine/:id", addOtherPrescription);
 Docrouter.get("/get-other-prescription/:id", getOtherPrescription);
-Docrouter.delete("/delete-other-prescription/:id",deleteOtherPrescription)
+Docrouter.delete("/delete-other-prescription/:id", deleteOtherPrescription)
+
+//price-routes
+Docrouter.post('/add-consultation-charges/:id', addConsultationCharges);
+Docrouter.get('/get-consultation-charges/:id', getConsultationCharges)
+Docrouter.delete('/delete-consultation-charges/:id', deleteConsultationCharges);
 
 //get all Presciption new api to be integrated for all prescription without date filter
 Docrouter.get("/get-all-prescription/:id", getAllPrescription);
@@ -80,7 +85,10 @@ Docrouter.delete('/delete-employee/:id', deleteEmployee);
 //present-complaint
 Docrouter.post('/add-presentComplaintScribble/:id', addPresentComplaintScribble);
 Docrouter.post('/add-presentComplaintWriteUp/:id', addWriteUpPresentComplaint);
-
+Docrouter.get('/get-present-compaint-scribble/:id', getPresentComplaintScribble);
+Docrouter.get('/get-present-compaint-writeup/:id', getWriteUpPresentComplaint);
+Docrouter.delete('/patient/:patientId/presentComplaint-images/:imageId', deletePresentComplaintScribble);
+Docrouter.delete('/patient/:patientId/presentComplaint-write-up-delete/:imageId', deletePresentComplaintWriteUp);
 
 //Add Data to new case master api
 Docrouter.post('/addNewCaseMaster', addNewCaseMaster);//done

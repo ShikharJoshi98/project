@@ -7,6 +7,7 @@ import AddComplaintModal from './AddComplaintModal';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import MultiSelectInput from '../MultiSelectInput';
 
 const FamilyMedical = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
@@ -85,7 +86,7 @@ const FamilyMedical = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1 >List of disease*</h1>
-                        <MultiSelectDropdown Options={listArray} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
+                        <MultiSelectInput Options={listArray} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Any Other</h1>

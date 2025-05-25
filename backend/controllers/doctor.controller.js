@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Appointment } from "../models/AppointmentModel.js";
+import { Appointment, ConsultationCharges } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
@@ -632,7 +632,8 @@ export const addNewPrescription = async (req, res) => {
             dose: formData.dose,
             duration: formData.duration,
             note: formData.note,
-            prescription_date: currentDate
+            prescription_date: currentDate,
+            send_to_HR:true
         });
 
 
@@ -736,7 +737,6 @@ export const addOtherPrescription = async (req, res) => {
     try {
         const { id } = req.params;
         const { medicineName, price } = req.body;
-        console.log(medicineName, price, id);
         const response = await OtherPrescription.create({
             patient:id,
             medicineName,
@@ -933,6 +933,8 @@ export const deleteWriteUp = async (req, res) => {
     }
 };
 
+//present complaints
+
 export const addPresentComplaintScribble = async (req, res) => {
     try {
         const id = req.params.id;
@@ -991,6 +993,97 @@ export const addWriteUpPresentComplaint = async (req, res) => {
         })
     }
 }
+
+export const getPresentComplaintScribble = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const presentComplaintScribble = await PresentComplaintScribble.find({
+            patient: id
+        })
+
+        return res.json({
+            presentComplaintScribble
+        })
+
+    } catch (error) {
+        console.log("Error in presentComplaintScribble controller", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const getWriteUpPresentComplaint= async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const writeUpData = await PresentComplaintWriteUp.find({
+            patient: id
+        })
+
+        return res.json({
+            writeUpData
+        });
+
+    } catch (error) {
+        console.log("Error in getWriteUpPresentComplaint controller", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const deletePresentComplaintScribble = async (req, res) => {
+    try {
+        const { patientId, imageId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(imageId)) {
+            return res.status(400).json({ message: "Invalid Image ID" });
+        }
+
+        await PresentComplaintScribble.findOneAndDelete({
+            patient: patientId,
+            _id: imageId,
+        });
+
+        return res.json({
+            success: true,
+            message: "Present Complaint record deleted successfully",
+        });
+
+    } catch (error) {
+        console.error("Error in Present Complaint delete controller:", error.message);
+        return res.status(500).json({ error: "Failed to delete  Present Complaint record" });
+    }
+};
+
+export const deletePresentComplaintWriteUp = async (req, res) => {
+    try {
+        const { patientId, imageId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(imageId)) {
+            return res.status(400).json({ message: "Invalid Image ID" });
+        }
+
+        await PresentComplaintWriteUp.findOneAndDelete({
+            patient: patientId,
+            _id: imageId,
+        });
+
+        return res.json({
+            success: true,
+            message: "Write-up record deleted successfully",
+        });
+
+    } catch (error) {
+        console.error("Error in deletePresentComplaintWriteUp controller:", error.message);
+        return res.status(500).json({ error: "Failed to delete Write-up record" });
+    }
+};
+
+
+//investigation
 
 export const addInvestigationAdvised = async (req, res) => {
     try {
@@ -1826,5 +1919,60 @@ export const addBriefMindSymptomScribble = async (req, res) => {
         return res.json({
             message: error.message
         });
+    }
+}
+
+//Price controllers
+
+export const addConsultationCharges = async (req, res) => {
+    try {
+        const { type, price,date } = req.body;
+        const { id } = req.params;
+        await ConsultationCharges.create({
+            type,
+            price,
+            patient:id
+        })
+        res.json({
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+         })
+    }
+}
+
+export const getConsultationCharges = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const response = await ConsultationCharges.find({patient:id});
+        res.json({
+            success: true,
+            response,
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const deleteConsultationCharges = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await ConsultationCharges.findByIdAndDelete(id);
+        res.json({
+            success: true,
+            message:'deleted successfully'
+        })
+
+    } catch (error) {
+        res.json({
+            success: false,
+            error:error.message
+        })
     }
 }

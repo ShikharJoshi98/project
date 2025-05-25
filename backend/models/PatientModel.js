@@ -94,6 +94,9 @@ const prescriptionSchema = new mongoose.Schema({
     },
     medicine_issued_flag: {
         type: Boolean,default:false
+    },
+    send_to_HR: {
+        type:Boolean,default:false
     }
 });
 
@@ -179,7 +182,8 @@ const otherPrescriptionSchema = new mongoose.Schema({
         ref: 'Patient'
     },
     medicineName: { type: String, required: true },
-    price: { type: Number, required: true },    
+    price: { type: Number, required: true },  
+    medicine_issued_flag: {type:Boolean,default:false}
 })
 
 const Patient = mongoose.model('Patient', PatientSchema);

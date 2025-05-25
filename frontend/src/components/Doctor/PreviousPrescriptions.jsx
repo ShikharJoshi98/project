@@ -31,7 +31,7 @@ const PreviousPrescriptions = () => {
         Medicine (Search Here)
       </h1>
       <Input onChange={(e) => setSearchTerm(e.target.value)} icon={Search} type="text" name="name" placeholder="Enter Medicine Name" />
-      <div className="overflow-x-auto p-4 mt-3">
+      <div className="overflow-x-auto  mt-3">
         <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
           <thead>
             <tr className="text-lg bg-blue-500 text-white">
@@ -46,7 +46,7 @@ const PreviousPrescriptions = () => {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(groupedPrescriptions).map(([date, prescriptions]) =>
+            {Object.entries(groupedPrescriptions).reverse().map(([date, prescriptions]) =>
               prescriptions.map((prescription, index) => (
                 <tr key={prescription._id} className="bg-gray-200 whitespace-nowrap">
                   {index === 0 && (
