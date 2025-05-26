@@ -6,6 +6,7 @@ import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
+import { ctScan, dopplerStudies, investigationAdvised, obsetrics, sonography, ultraSonography } from "../models/InvestigationModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -1089,81 +1090,31 @@ export const addInvestigationAdvised = async (req, res) => {
     try {
         const { inputData, type } = req.body;
 
-        const existing = await Investigation.findOne();
-        if (!existing) {
-            const newInvestigation = new Investigation({
-                investigationAdvised: [],
-                ultraSonography: [],
-                dopplerStudies: [],
-                obstetrics: [],
-                sonography: [],
-                ctScan: [],
-                mriScan: []
-            });
-            await newInvestigation.save();
-        } else {
-            switch (type) {
-                case "Investigation Advised":
-                    await Investigation.findOneAndUpdate(
-                        {},
-                        { $push: { investigationAdvised: inputData.trim() } },
-                        { new: true, upsert: true }
-                    )
-                    break;
-
-                case "Ultra-Sonography":
-                    await Investigation.findOneAndUpdate(
-                        {},
-                        { $push: { ultraSonography: inputData.trim() } },
-                        { new: true, upsert: true }
-                    )
-                    break;
-
-                case "Doppler Studies":
-                    await Investigation.findOneAndUpdate(
-                        {},
-                        { $push: { dopplerStudies: inputData.trim() } },
-                        { new: true, upsert: true }
-                    )
-                    break;
-
-                case "Obstetrics(Pregnancy)":
-                    await Investigation.findOneAndUpdate(
-                        {},
-                        { $push: { obstetrics: inputData.trim() } },
-                        { new: true, upsert: true }
-                    )
-                    break;
-
-                case "Sonography":
-                    await Investigation.findOneAndUpdate(
-                        {},
-                        { $push: { sonography: inputData.trim() } },
-                        { new: true, upsert: true }
-                    )
-                    break;
-
-                case "16 Slice C.T Scan":
-                    await Investigation.findOneAndUpdate(
-                        {},
-                        { $push: { ctScan: inputData.trim() } },
-                        { new: true, upsert: true }
-                    )
-                    break;
-
-                case "1.5 MRI Scan":
-                    await Investigation.findOneAndUpdate(
-                        {},
-                        { $push: { mriScan: inputData.trim() } },
-                        { new: true, upsert: true }
-                    )
-                    break;
-            }
-        }
-
-        return res.json({
-            message: `Added ${type} Successfully`
-        })
+        switch (type) {
+            case 'Investigation Advised':
+                await investigationAdvised.create({ inputData: inputData.trim() })
+                break;
+            case 'Ultra-Sonography':
+                await ultraSonography.create({ inputData: inputData.trim() })
+                break;
+            case 'Doppler Studies':
+                await dopplerStudies.create({ inputData: inputData.trim() })
+                break;
+            case 'Obstetrics(Pregnancy)':
+                await obsetrics.create({ inputData: inputData.trim() })
+                break;
+            case 'Sonography':
+                await sonography.create({ inputData: inputData.trim() })
+                break;
+            case '16 Slice C.T Scan':
+                await ctScan.create({ inputData: inputData.trim() })
+                break;
+             }
+                res.json({
+                    success: true,
+                    message: "data added successfully"
+            })
+       
     } catch (error) {
         console.log("Error in addInvestigationAdvised controller", error.message);
         return res.json({
@@ -1174,12 +1125,72 @@ export const addInvestigationAdvised = async (req, res) => {
 
 export const getInvestigationAdvised = async (req, res) => {
     try {
-        const inv = await Investigation.findOne();
-        return res.json({
-            inv
-        });
+        const { type } = req.params;
+        let response;
+        switch (type) {
+            case 'Investigation Advised':
+                response = await investigationAdvised.find();
+                break;
+            case 'Ultra-Sonography':
+                response = await ultraSonography.find();
+                break;
+            case 'Doppler Studies':
+                console.log('doppler');
+                response = await dopplerStudies.find();
+                break;
+            case 'Obstetrics(Pregnancy)':
+                response = await obsetrics.find();
+                break;
+            case 'Sonography':
+                response = await sonography.find();
+                break;
+            case '16 Slice C.T Scan':
+                response = await ctScan.find();
+                break;
+        }
+        res.json({
+            success: true,
+            response
+        })
     } catch (error) {
         console.log("Error in getInvestigationAdvised", error.message);
+        return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const deleteInvestigationAdvised = async (req, res) => {
+    try {
+        const { id, type } = req.params;
+        
+        switch (type) {
+            case 'Investigation Advised':
+                 await investigationAdvised.findByIdAndDelete(id);
+                break;
+            case 'Ultra-Sonography':
+                 await ultraSonography.findByIdAndDelete(id);
+                break;
+            case 'Doppler Studies':
+                 await dopplerStudies.find();
+                break;
+            case 'Obstetrics(Pregnancy)':
+                response = await obsetrics.findByIdAndDelete(id);
+                break;
+            case 'Sonography':
+                 await sonography.findByIdAndDelete(id);
+                break;
+            case '16 Slice C.T Scan':
+                await ctScan.findByIdAndDelete(id);
+                break;
+        }
+
+        res.json({
+            success: true,
+            message:"Deleted successfully"
+        })
+    } catch (error) {
+        console.log("Error in deleteInvestigationAdvised", error.message);
         return res.json({
             message: error.message
         });
@@ -1203,7 +1214,7 @@ export const deleteEmployee = async (req, res) => {
 export const addNewCaseMaster = async (req, res) => {
     try {
         const { name, type } = req.body;
-        console.log("hit")
+
         switch (type) {
             case "Present Complaints":
                 await PresentComplaintsMaster.create({ name: name.trim() })

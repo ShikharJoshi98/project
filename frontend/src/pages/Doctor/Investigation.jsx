@@ -7,53 +7,29 @@ import MultiSelectDropdown from '../../components/Doctor/MultiSelectInput';
 import { MdAssignmentAdd } from 'react-icons/md';
 import InvestigationModal from '../../components/Doctor/InvestigationModal';
 import axios from 'axios';
-import { DOC_API_URL } from '../../store/DocStore';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
+import MultiSelectInput from '../../components/Doctor/MultiSelectInput';
+
+const testArray = [{ title: 'Investigation Advised', color: 'blue' }, { title: 'Ultra-Sonography', color: 'red' }, { title: 'Doppler Studies', color: 'green' }, { title: 'Obstetrics(Pregnancy)', color: 'orange' }, { title: 'Sonography', color: 'black' }, { title: '16 Slice C.T Scan', color: 'brown' }, { title: '1.5 MRI Scan', color: 'purple' }];
 
 const Investigation = () => {
   const location = useParams();
   const navigate = useNavigate();
-  const [data,setData] = useState({
-    "investigationList": [],
-    "ultrasonographyList":[],
-    "dopplerStudiesList": [],
-    "ObstetricsList":[],
-    "SonographyList":[],
-    "sliceList":[],
-    "mriList":[],
-  });
+    const { getInvestigationAdvised, investigationAdvised } = docStore();
   const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
   const [isAddInvestigationModalOpen, setAddInvestigationModalIsOpen] = useState(false);
   const [investigationType, setInvestigationType] = useState('Investigation Advised')
-  const [listType, setListType] = useState([]);
   const [submit, setSubmit] = useState(false);
 
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    console.log(investigationType);
+        getInvestigationAdvised(investigationType);
+    }, [getInvestigationAdvised,submit,investigationType]); 
+  const handleSubmit = () => {
+    
   }
-
-  const fetchInvesigation = async () => {
-    const response = await axios.get(`${DOC_API_URL}/getInvestigationAdvised`)
-    const {investigationAdvised,ultraSonography,dopplerStudies,obstetrics,sonography,ctScan,mriScan} = response.data.inv;
-
-    setData({
-      "investigationList": investigationAdvised,
-      "ultrasonographyList":ultraSonography,
-      "dopplerStudiesList": dopplerStudies,
-      "ObstetricsList":obstetrics,
-      "SonographyList":sonography,
-      "sliceList":ctScan,
-      "mriList":mriScan
-    });
-
-    // setListType(investigationAdvised);
-  }
-  useEffect(()=>{
-    fetchInvesigation();
-  },[submit]);
-
-  const testArray = [{title:'Investigation Advised',color:'blue',list:data?.investigationList}, {title:'Ultra-Sonography',color:'red',list:data?.ultrasonographyList}, {title:'Doppler Studies',color:'green',list:data?.dopplerStudiesList}, {title:'Obstetrics(Pregnancy)',color:'orange',list:data?.ObstetricsList}, {title:'Sonography',color:'black',list:data?.SonographyList}, {title:'16 Slice C.T Scan',color:'brown',list:data?.sliceList}, {title:'1.5 MRI Scan',color:'purple',list:data?.mriList}];
-
+  const investigationArray = investigationAdvised.map((investigation) => investigation?.inputData);
+  
 
   return (
     <div>
@@ -70,7 +46,7 @@ const Investigation = () => {
               {
                 testArray.map((test, index) => (
                   <>
-                    <li key={index} onClick={() => {setInvestigationType(test.title); setListType(test.list)}} style={{color:`${test.color}`}} className='cursor-pointer'>{test.title}</li>
+                    <li key={index} onClick={() => setInvestigationType(test.title)} style={{color:`${test.color}`}} className='cursor-pointer'>{test.title}</li>
                     <li>|</li>
                   </>
                 ))
@@ -80,7 +56,7 @@ const Investigation = () => {
               <form onSubmit={handleSubmit} className='sm:w-1/2 w-full'>
                 <h1 className='text-black text-2xl font-semibold mb-9'>{investigationType=='Investigation Advised'?'Advice Investigation:':(investigationType)} </h1>
                 <h1 className='mb-5'>Select from the Dropdown</h1>
-                <MultiSelectDropdown Options={listType} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
+                <MultiSelectInput Options={investigationArray} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
                 <div className='flex flex-col items-center'>
                   <button className="bg-blue-500 transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>
                 </div>
@@ -91,9 +67,9 @@ const Investigation = () => {
                   <MdAssignmentAdd onClick={() => setAddInvestigationModalIsOpen(true)} size={30} className='text-blue-500 cursor-pointer' />
                 </div>
                 <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
-                  {listType.map((investigation, index) => (
+                  {investigationAdvised.map((investigation, index) => (
                     <>
-                      <h1 className='text-xl p-1' key={index}>{investigation}</h1>
+                      <h1 className='text-xl p-1' key={index}>{investigation?.inputData}</h1>
                       <hr className='border-none h-[0.5px] w-full bg-gray-300' />
                     </>
                   ))}
@@ -104,7 +80,7 @@ const Investigation = () => {
           </div>
         </div>
       </div>
-      {isAddInvestigationModalOpen && <InvestigationModal type={investigationType} setSubmit={setSubmit} list={listType} onClose={() => setAddInvestigationModalIsOpen(false)} />}
+      {isAddInvestigationModalOpen && <InvestigationModal type={investigationType} submit setSubmit={setSubmit} onClose={() => setAddInvestigationModalIsOpen(false)} />}
     </div>
   )
 }

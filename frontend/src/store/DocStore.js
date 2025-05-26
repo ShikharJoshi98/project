@@ -29,7 +29,8 @@ export const docStore = create((set) => ({
     ThermalReactionData: [],
     MiasmData: [],
     otherPrescriptions: [],
-    consultationCharges:[],
+    consultationCharges: [],
+    investigationAdvised:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -267,7 +268,12 @@ export const docStore = create((set) => ({
         set({ PresentComplaintScribble: response.data.presentComplaintScribble });
     },
     getPresentComplaintWriteUp: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}//get-present-compaint-writeup/${id}`);
+        const response = await axios.get(`${DOC_API_URL}/get-present-compaint-writeup/${id}`);
         set({ PresentComplaintWriteUp: response.data.writeUpData });
+    },
+    getInvestigationAdvised: async (type) => {
+        console.log(type);
+        const response = await axios.get(`${DOC_API_URL}/getInvestigationAdvised/${type}`);
+        set({ investigationAdvised: response.data.response });
     }
 }))

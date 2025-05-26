@@ -1,23 +1,29 @@
 import { Plus, Trash, X } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from '../Input'
 import axios from 'axios';
-import { DOC_API_URL } from '../../store/DocStore';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
 
-const InvestigationModal = ({type,setSubmit ,list , onClose }) => {
+const InvestigationModal = ({type,submit ,setSubmit, onClose }) => {
 
     const [inputData, setInputData] = useState("");
+    const { getInvestigationAdvised, investigationAdvised } = docStore();
+    useEffect(() => {
+        getInvestigationAdvised(type);
+    }, [getInvestigationAdvised,submit]);    
+   
     const handleSubmit = async(e) => {
         e.preventDefault();
-
         const response = await axios.post(`${DOC_API_URL}/addInvestigationAdvised`,{
-            success: "Go ahead",
             inputData,
             type
         });
         setSubmit(prev => !prev);
         setInputData("");
-
+    }
+    const deleteInvestigation = async (id) =>{
+        await axios.delete(`${DOC_API_URL}/deleteInvestigationAdvised/${id}/${type}`);
+        setSubmit(prev => !prev);
     }
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
@@ -35,11 +41,11 @@ const InvestigationModal = ({type,setSubmit ,list , onClose }) => {
                         </div>
                     </form>
                     <div className='flex flex-col w-1/2 h-[300px] overflow-y-auto gap-1 bg-gray-100 rounded-2xl pt-3 '>
-                        {list.map((listItem, index) => (
+                        {investigationAdvised.map((investigation, index) => (
                             <>
                                 <div className='flex items-center justify-between px-10'>
-                                    <h1 className='text-xl p-1' key={index}>{listItem}</h1>
-                                    <Trash className='text-red-500 cursor-pointer'/>
+                                    <h1 className='text-xl p-1' key={index}>{investigation?.inputData}</h1>
+                                    <Trash onClick={()=>deleteInvestigation(investigation?._id)} className='text-red-500 cursor-pointer'/>
                                 </div>
                                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
                             </>))}
