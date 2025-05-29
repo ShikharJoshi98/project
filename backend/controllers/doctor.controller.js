@@ -6,7 +6,7 @@ import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
-import { ctScan, dopplerStudies, investigationAdvised, obsetrics, sonography, ultraSonography } from "../models/InvestigationModel.js";
+import { ctScan, dopplerStudies, investigationAdvised, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -1194,6 +1194,42 @@ export const deleteInvestigationAdvised = async (req, res) => {
         return res.json({
             message: error.message
         });
+    }
+}
+
+export const addInvestigationInfo = async (req, res) => {
+    try {
+        const { selectedInvestigationOptions, type } = req.body;
+        const { id } = req.params;
+        const existingTests = await testTable.find({ patient: id });
+        if (existingTests.length !== 0) {
+            await testTable.updateOne(
+                { patient: id },
+                {type:type},
+                {
+                    $push: {
+                        tests: { $each: selectedInvestigationOptions },
+                    },
+                }
+            );
+        } else {
+            await testTable.create({
+                patient: id,
+                tests: selectedInvestigationOptions,
+                                type,
+
+            });
+        }
+
+        res.json({
+            success: true,
+            message:"Added Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
     }
 }
 

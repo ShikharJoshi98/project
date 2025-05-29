@@ -13,9 +13,9 @@ import MultiSelectInput from '../../components/Doctor/MultiSelectInput';
 const testArray = [{ title: 'Investigation Advised', color: 'blue' }, { title: 'Ultra-Sonography', color: 'red' }, { title: 'Doppler Studies', color: 'green' }, { title: 'Obstetrics(Pregnancy)', color: 'orange' }, { title: 'Sonography', color: 'black' }, { title: '16 Slice C.T Scan', color: 'brown' }, { title: '1.5 MRI Scan', color: 'purple' }];
 
 const Investigation = () => {
-  const location = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-    const { getInvestigationAdvised, investigationAdvised } = docStore();
+  const { getInvestigationAdvised, investigationAdvised } = docStore();
   const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
   const [isAddInvestigationModalOpen, setAddInvestigationModalIsOpen] = useState(false);
   const [investigationType, setInvestigationType] = useState('Investigation Advised')
@@ -23,13 +23,19 @@ const Investigation = () => {
 
   useEffect(() => {
     console.log(investigationType);
-        getInvestigationAdvised(investigationType);
-    }, [getInvestigationAdvised,submit,investigationType]); 
-  const handleSubmit = () => {
-    
+    getInvestigationAdvised(investigationType);
+  }, [getInvestigationAdvised, submit, investigationType]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await axios.post(`${DOC_API_URL}/add-test/${id}`, {
+      selectedInvestigationOptions,
+      investigationType
+    })
+    setSelectedInvestigationOptions([]);
+
   }
   const investigationArray = investigationAdvised.map((investigation) => investigation?.inputData);
-  
+
 
   return (
     <div>
@@ -38,7 +44,7 @@ const Investigation = () => {
         <AppointmentSidebar />
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
           <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
-            <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
+            <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
             <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>
               {investigationType}
             </h1>
@@ -46,7 +52,7 @@ const Investigation = () => {
               {
                 testArray.map((test, index) => (
                   <>
-                    <li key={index} onClick={() => setInvestigationType(test.title)} style={{color:`${test.color}`}} className='cursor-pointer'>{test.title}</li>
+                    <li key={index} onClick={() => setInvestigationType(test.title)} style={{ color: `${test.color}` }} className='cursor-pointer'>{test.title}</li>
                     <li>|</li>
                   </>
                 ))
@@ -54,7 +60,7 @@ const Investigation = () => {
             </ul>
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
               <form onSubmit={handleSubmit} className='sm:w-1/2 w-full'>
-                <h1 className='text-black text-2xl font-semibold mb-9'>{investigationType=='Investigation Advised'?'Advice Investigation:':(investigationType)} </h1>
+                <h1 className='text-black text-2xl font-semibold mb-9'>{investigationType == 'Investigation Advised' ? 'Advice Investigation:' : (investigationType)} </h1>
                 <h1 className='mb-5'>Select from the Dropdown</h1>
                 <MultiSelectInput Options={investigationArray} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
                 <div className='flex flex-col items-center'>

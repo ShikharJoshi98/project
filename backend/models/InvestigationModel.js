@@ -28,6 +28,12 @@ const mriScanSchema = new mongoose.Schema({
     inputData: { type: String }
 });
 
+const testSchema = new mongoose.Schema({
+    type: { type: String },
+    tests: [{type:String}],
+    patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},        
+});
+
 export const investigationAdvised = mongoose.model('investigationAdvised', investigationAdvisedSchema); 
 export const ultraSonography = mongoose.model('ultraSonography', ultraSonogrophySchema); 
 export const dopplerStudies = mongoose.model('dopplerStudies', dopplerStudiesSchema); 
@@ -35,3 +41,4 @@ export const obsetrics = mongoose.model('obsetrics', obsetricsSchema);
 export const sonography = mongoose.model('sonography', sonographySchema); 
 export const ctScan = mongoose.model('ctScan', ctScanSchema); 
 export const mriScan = mongoose.model('mriScan', mriScanSchema); 
+export const testTable = mongoose.model('testTable', testSchema);
