@@ -21,7 +21,7 @@ const MentalCausative = ({ complaint }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await axios.post(`${DOC_API_URL}/add-mental-causative-patient/${id}`, {
-            selectedInvestigationOptions
+            selectedInvestigationOptions,
         })
         setSubmit(prev => !prev);
         setSelectedInvestigationOptions([]);

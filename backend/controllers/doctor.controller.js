@@ -6,7 +6,7 @@ import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
-import { ctScan, dopplerStudies, investigationAdvised, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
+import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -1135,7 +1135,6 @@ export const getInvestigationAdvised = async (req, res) => {
                 response = await ultraSonography.find();
                 break;
             case 'Doppler Studies':
-                console.log('doppler');
                 response = await dopplerStudies.find();
                 break;
             case 'Obstetrics(Pregnancy)':
@@ -1146,6 +1145,9 @@ export const getInvestigationAdvised = async (req, res) => {
                 break;
             case '16 Slice C.T Scan':
                 response = await ctScan.find();
+                break;
+            case '1.5 MRI Scan':
+                response = await mriScan.find();
                 break;
         }
         res.json({
@@ -1199,32 +1201,122 @@ export const deleteInvestigationAdvised = async (req, res) => {
 
 export const addInvestigationInfo = async (req, res) => {
     try {
-        const { selectedInvestigationOptions, type } = req.body;
-        const { id } = req.params;
-        const existingTests = await testTable.find({ patient: id });
-        if (existingTests.length !== 0) {
-            await testTable.updateOne(
-                { patient: id },
-                {type:type},
-                {
-                    $push: {
-                        tests: { $each: selectedInvestigationOptions },
-                    },
-                }
-            );
-        } else {
-            await testTable.create({
-                patient: id,
-                tests: selectedInvestigationOptions,
-                                type,
+        const { selectedInvestigationOptions, investigationType } = req.body;
+        let { id } = req.params;
+        let test = await testTable.findOne({ patient: id });
 
-            });
+        if (!test) {
+            test = new testTable({ patient: id });
         }
-
+        if (investigationType === 'Investigation Advised') {
+            test['investigationAdvised'].push(...selectedInvestigationOptions);
+        }
+        else if (investigationType === 'Ultra-Sonography') {
+            test['ultra_sonography'].push(...selectedInvestigationOptions);
+        }
+        else if (investigationType === 'Doppler Studies') {
+            test['dopplerStudies'].push(...selectedInvestigationOptions);
+        }
+        else if (investigationType === 'Obstetrics(Pregnancy)') {
+            test['obsetrics'].push(...selectedInvestigationOptions);
+        }
+        else if (investigationType === 'Sonography') {
+            test['sonography'].push(...selectedInvestigationOptions);
+        }
+        else if (investigationType === '16 Slice C.T Scan') {
+            test['ctScan'].push(...selectedInvestigationOptions);
+        }
+        else if (investigationType === '1.5 MRI Scan') {
+            test['mriScan'].push(...selectedInvestigationOptions);
+        }
+        await test.save();
         res.json({
             success: true,
-            message:"Added Successfully"
+            message:'Added Test'
         })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const getInvestigationInfo = async (req, res) => {
+    try {
+        let { id,investigationType} = req.params;
+        const patientInvestigationInfo = await testTable.findOne({patient:id});
+        let investigationInfo;
+        if (investigationType === 'Investigation Advised') {
+            investigationInfo = patientInvestigationInfo.investigationAdvised;
+        }
+        else if (investigationType === 'Ultra-Sonography') {
+            investigationInfo = patientInvestigationInfo.ultra_sonography;
+        }
+        else if (investigationType === 'Doppler Studies') {
+            investigationInfo = patientInvestigationInfo.dopplerStudies;
+        }
+        else if (investigationType === 'Obstetrics(Pregnancy)') {
+            investigationInfo = patientInvestigationInfo.obsetrics;
+        }
+        else if (investigationType === 'Sonography') {
+            investigationInfo = patientInvestigationInfo.sonography;
+        }
+        else if (investigationType === '16 Slice C.T Scan') {
+            investigationInfo = patientInvestigationInfo.ctScan;
+        }
+        else if (investigationType === '1.5 MRI Scan') {
+            investigationInfo = patientInvestigationInfo.mriScan;
+        }
+        res.json({
+            investigationInfo
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const deleteInvestigationInfo = async (req, res) => {
+    try {
+        let { investigationType, id,test } = req.params;
+        const testInfo = await testTable.findOne({ patient: id });
+        let val;
+        if (investigationType === 'Investigation Advised') {
+            val = testInfo.investigationAdvised.filter((investigation) => investigation !== test);   
+            testInfo.investigationAdvised = val;
+        }
+        else if (investigationType === 'Ultra-Sonography') {
+            val = testInfo.ultra_sonography.filter((investigation) => investigation !== test);   
+            testInfo.ultra_sonography = val;
+        }
+        else if (investigationType === 'Doppler Studies') {
+            val = testInfo.dopplerStudies.filter((investigation) => investigation !== test);
+            testInfo.dopplerStudies = val;
+        }
+        else if (investigationType === 'Obstetrics(Pregnancy)') {
+            val = testInfo.obsetrics.filter((investigation) => investigation !== test);    
+            testInfo.obsetrics = val;
+        }
+        else if (investigationType === 'Sonography') {
+            val = testInfo.sonography.filter((investigation) => investigation !== test);     
+            testInfo.sonography = val;
+        }
+        else if (investigationType === '16 Slice C.T Scan') {
+            val = testInfo.ctScan.filter((investigation) => investigation !== test);   
+            testInfo.ctScan = val;
+        }
+        else if (investigationType === '1.5 MRI Scan') {
+            val = testInfo.mriScan.filter((investigation) => investigation !== test);    
+            testInfo.mriScan = val;
+        }
+        await testInfo.save();
+        res.json({
+            val
+        })
+
     } catch (error) {
         res.json({
             success: false,

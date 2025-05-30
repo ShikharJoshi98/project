@@ -29,9 +29,19 @@ const mriScanSchema = new mongoose.Schema({
 });
 
 const testSchema = new mongoose.Schema({
-    type: { type: String },
-    tests: [{type:String}],
-    patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},        
+    investigationAdvised: [{ type: String }],
+    ultra_sonography: [{ type: String }],
+    dopplerStudies: [{ type: String }],
+    obsetrics: [{ type: String }],
+    sonography: [{ type: String }],
+    ctScan: [{ type: String }],
+    mriScan: [{type:String}],
+    patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },        
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        expires: 86400 // 24 hours in seconds
+    }
 });
 
 export const investigationAdvised = mongoose.model('investigationAdvised', investigationAdvisedSchema); 

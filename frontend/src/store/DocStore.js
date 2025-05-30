@@ -1,4 +1,4 @@
-import axios  from "axios";
+import axios from "axios";
 import { create } from "zustand";
 
 export const DOC_API_URL = `${import.meta.env.VITE_API_URL}/api/doctor`;
@@ -13,15 +13,15 @@ export const docStore = create((set) => ({
     Homeo: [],
     appointment: null,
     caseImages: [],
-    prescription:[],
+    prescription: [],
     diagnosisImages: [],
     followUpImages: [],
-    writeUp:[],
+    writeUp: [],
     allPrescriptions: [],
     list: [],
     PresentComplaintData: [],
     PresentComplaintScribble: [],
-    PresentComplaintWriteUp:[],
+    PresentComplaintWriteUp: [],
     PastHistoryData: [],
     FamilyMedicalData: [],
     MentalCausativeData: [],
@@ -30,7 +30,8 @@ export const docStore = create((set) => ({
     MiasmData: [],
     otherPrescriptions: [],
     consultationCharges: [],
-    investigationAdvised:[],
+    investigationAdvised: [],
+    testInfo: [],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -38,9 +39,9 @@ export const docStore = create((set) => ({
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
     togglePrescriptionSubmit: () => set((state) => ({ prescriptionSubmit: !state.prescriptionSubmit })),
-    toggleAppointmentSubmit: (appointment) => set({ appointmentSubmit: appointment }), 
+    toggleAppointmentSubmit: (appointment) => set({ appointmentSubmit: appointment }),
     branch: "",
-    setbranch: (newbranch)=> set({branch:newbranch}),
+    setbranch: (newbranch) => set({ branch: newbranch }),
     getTasks: async () => {
         try {
             const response = await axios.get(`${DOC_API_URL}/task-details`);
@@ -54,7 +55,7 @@ export const docStore = create((set) => ({
     DeleteTask: async (id) => {
         try {
             await axios.delete(`${DOC_API_URL}/delete-task/${id}`);
-             
+
         } catch (error) {
             console.log(error.message);
         }
@@ -79,24 +80,24 @@ export const docStore = create((set) => ({
             } else {
                 console.error("Failed to update task:", response.data.error);
             }
-    
+
             return response.data.task;
 
         } catch (error) {
             console.log(error.message);
         }
     },
-    LeaveDetails: async ()=>{
+    LeaveDetails: async () => {
         try {
             const response = await axios.get(`${DOC_API_URL}/leave-details`);
-            set({leaves:response.data.leaves})
+            set({ leaves: response.data.leaves })
         } catch (error) {
             console.log(error.message);
         }
     },
-    updateLeave: async (id,status)=>{
+    updateLeave: async (id, status) => {
         try {
-            const response = await axios.put(`${DOC_API_URL}/leave-status/${id}`,{status});
+            const response = await axios.put(`${DOC_API_URL}/leave-status/${id}`, { status });
             set((state) => ({
                 leaves: state.leaves.map((leave) =>
                     leave._id === id ? response.data.updatedleave : leave
@@ -108,20 +109,20 @@ export const docStore = create((set) => ({
     },
     submitAppointment: async (data) => {
         try {
-          const response = await axios.post(`${DOC_API_URL}/appointment-doctor`, data);
-    
-          if (response.status !== 200) throw new Error("Failed to submit appointment");
-          set({ appointment: response.data.newAppointment });
+            const response = await axios.post(`${DOC_API_URL}/appointment-doctor`, data);
+
+            if (response.status !== 200) throw new Error("Failed to submit appointment");
+            set({ appointment: response.data.newAppointment });
 
         } catch (error) {
-          console.error("Error:", error.response?.data || error.message);
+            console.error("Error:", error.response?.data || error.message);
         }
     },
     homeobhagwat: async (data) => {
         try {
-            await axios.post(`${DOC_API_URL}/homeo-book`, data);        
-    
-            
+            await axios.post(`${DOC_API_URL}/homeo-book`, data);
+
+
         } catch (error) {
             console.log(error.message);
 
@@ -130,15 +131,15 @@ export const docStore = create((set) => ({
     gethomeobhagwat: async () => {
         try {
             let response = await axios.get(`${DOC_API_URL}/get-homeo-book`);
-            set({Homeo:response.data.Info})
+            set({ Homeo: response.data.Info })
         } catch (error) {
             console.log(error.message);
 
         }
     },
-    updatehomeobhagwat: async (id,data) => {
+    updatehomeobhagwat: async (id, data) => {
         try {
-            let response = await axios.put(`${DOC_API_URL}/update-homeo-book/${id}`,data);
+            let response = await axios.put(`${DOC_API_URL}/update-homeo-book/${id}`, data);
             set((state) => ({
                 Homeo: state.Homeo.map((item) =>
                     item._id === id ? response.data.UpdatedInfo : item
@@ -152,13 +153,13 @@ export const docStore = create((set) => ({
     uploadCase: async (formData, id) => {
         try {
             const response = await axios.post(`${DOC_API_URL}/upload-case-image/${id}`, formData, {
-                headers:{"Content-Type":"multipart/form-data"}
+                headers: { "Content-Type": "multipart/form-data" }
             })
             set((state) => ({
                 caseImages: [...state.caseImages, response.data.patient.caseImages.imageUrl]
             }));
         } catch (error) {
-            console.log(error.message);   
+            console.log(error.message);
         }
     },
     getCaseImages: async (id) => {
@@ -166,7 +167,7 @@ export const docStore = create((set) => ({
             const response = await axios.get(`${DOC_API_URL}/case-images/${id}`)
             set({ caseImages: response.data.caseImages });
         } catch (error) {
-            console.log(error.message);   
+            console.log(error.message);
         }
     },
     getDiagnosisImages: async (id) => {
@@ -174,21 +175,21 @@ export const docStore = create((set) => ({
             const response = await axios.get(`${DOC_API_URL}/diagnosis-images/${id}`)
             set({ diagnosisImages: response.data.diagnosisImages });
         } catch (error) {
-            console.log(error.message);   
+            console.log(error.message);
         }
     },
-    deleteHomeo: async ( id) => {
+    deleteHomeo: async (id) => {
         try {
             const response = await axios.delete(`${DOC_API_URL}/homeo-delete/${id}`)
-            
+
         } catch (error) {
-            console.log(error.message);   
+            console.log(error.message);
         }
     },
     getAllAppointments: async () => {
         try {
             const response = await axios.get(`${DOC_API_URL}/get-appointments`);
-            set({allAppointments:response.data.appointments})
+            set({ allAppointments: response.data.appointments })
 
         } catch (error) {
             console.log(error.message);
@@ -196,38 +197,38 @@ export const docStore = create((set) => ({
     },
     getAppdetails: async (appointmentType) => {
         let response = await axios.get(`${DOC_API_URL}/allAppointments`);
-        
+
         set({ appointments: response.data.Appointments });
     },
-    deleteCaseImage: async (patientId, imageId)=>{
+    deleteCaseImage: async (patientId, imageId) => {
         let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);
 
     },
     getFollowUpImages: async (id) => {
         try {
             const response = await axios.get(`${DOC_API_URL}/get-follow-up-patient/${id}`)
-            set({ followUpImages : response.data.followUpImages});
+            set({ followUpImages: response.data.followUpImages });
         } catch (error) {
-            console.log(error.message);   
+            console.log(error.message);
         }
     },
     fetchPrescription: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);        
-        set({prescription:response.data.presToday})
+        const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);
+        set({ prescription: response.data.presToday })
     },
     getPastPrescription: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);        
+        const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);
         set({ allPrescriptions: response.data.presToday });
     },
     getWriteUp: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}/get-write-up-patient/${id}`);        
+        const response = await axios.get(`${DOC_API_URL}/get-write-up-patient/${id}`);
         set({ writeUp: response.data.writeUpData });
     },
-    getCaseData : async (complaint) => {
+    getCaseData: async (complaint) => {
         const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(/\s+/g, "")}`);
         set({ list: response.data.caseData });
     },
-    getPresentComplaintData : async (id) => {
+    getPresentComplaintData: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/presentComplaints/${id}`);
         set({ PresentComplaintData: response.data.presentComplaintData });
     },
@@ -246,7 +247,7 @@ export const docStore = create((set) => ({
     getMentalPersonality: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/mentalPersonality/${id}`);
         set({ MentalPersonalityData: response.data.mentalPersonalityData });
-    },   
+    },
     getThermalReaction: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/thermalReaction/${id}`);
         set({ ThermalReactionData: response.data.thermalReactionData });
@@ -254,7 +255,7 @@ export const docStore = create((set) => ({
     getMiasm: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/miasmPatient/${id}`);
         set({ MiasmData: response.data.MiasmData });
-    }, 
+    },
     getOtherPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-other-prescription/${id}`);
         set({ otherPrescriptions: response.data.otherPrescription });
@@ -272,8 +273,11 @@ export const docStore = create((set) => ({
         set({ PresentComplaintWriteUp: response.data.writeUpData });
     },
     getInvestigationAdvised: async (type) => {
-        console.log(type);
         const response = await axios.get(`${DOC_API_URL}/getInvestigationAdvised/${type}`);
         set({ investigationAdvised: response.data.response });
+    },
+    getTestInfo: async (id, investigationType) => {
+        const response = await axios.get(`${DOC_API_URL}/get-test/${id}/${investigationType}`);
+        set({ testInfo: response.data.investigationInfo })
     }
 }))

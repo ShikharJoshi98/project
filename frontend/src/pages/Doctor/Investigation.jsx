@@ -9,21 +9,22 @@ import InvestigationModal from '../../components/Doctor/InvestigationModal';
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import MultiSelectInput from '../../components/Doctor/MultiSelectInput';
+import { Trash } from 'lucide-react';
 
 const testArray = [{ title: 'Investigation Advised', color: 'blue' }, { title: 'Ultra-Sonography', color: 'red' }, { title: 'Doppler Studies', color: 'green' }, { title: 'Obstetrics(Pregnancy)', color: 'orange' }, { title: 'Sonography', color: 'black' }, { title: '16 Slice C.T Scan', color: 'brown' }, { title: '1.5 MRI Scan', color: 'purple' }];
 
-const Investigation = () => {
+const Investigation = () => { 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getInvestigationAdvised, investigationAdvised } = docStore();
+  const { getInvestigationAdvised, investigationAdvised,getTestInfo,testInfo } = docStore();
   const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
   const [isAddInvestigationModalOpen, setAddInvestigationModalIsOpen] = useState(false);
   const [investigationType, setInvestigationType] = useState('Investigation Advised')
   const [submit, setSubmit] = useState(false);
-
-  useEffect(() => {
-    console.log(investigationType);
+  // console.log(investigationType)
+  useEffect(() => {    
     getInvestigationAdvised(investigationType);
+    getTestInfo(id, investigationType);
   }, [getInvestigationAdvised, submit, investigationType]);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,8 +32,17 @@ const Investigation = () => {
       selectedInvestigationOptions,
       investigationType
     })
+    setSubmit(prev => !prev);
     setSelectedInvestigationOptions([]);
 
+  }
+  const deleteTest = async (test, id) => {
+     try {
+       await axios.delete(`${DOC_API_URL}/delete-test/${investigationType}/${id}/${test}`);
+       setSubmit(prev => !prev);
+     } catch (error) {
+       console.log(error.message);
+     }
   }
   const investigationArray = investigationAdvised.map((investigation) => investigation?.inputData);
 
@@ -65,6 +75,17 @@ const Investigation = () => {
                 <MultiSelectInput Options={investigationArray} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
                 <div className='flex flex-col items-center'>
                   <button className="bg-blue-500 transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>
+                </div>
+                <div className='bg-white w-full h-64 overflow-y-auto mt-5 pt-2 rounded-md border border-gray-300'>
+                  <h3 className='text-blue-500 text-xl mb-2 text-center font-bold'>{investigationType} Added</h3>
+                  {
+                    testInfo?.map((test, index) => (
+                      <div className='py-2 px-3 flex justify-between'>
+                        <p>{index+1}. {test}</p>
+                          <Trash onClick={()=>deleteTest(test,id)} className='text-red-500 cursor-pointer'/>
+                      </div>
+                    ))
+                  }
                 </div>
               </form>
               <div className='sm:w-1/2 w-full'>
