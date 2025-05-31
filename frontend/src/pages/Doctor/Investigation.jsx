@@ -46,7 +46,7 @@ const Investigation = () => {
   }
   const investigationArray = investigationAdvised.map((investigation) => investigation?.inputData);
 
-
+  console.log(testInfo);
   return (
     <div>
       <Docnavbar />

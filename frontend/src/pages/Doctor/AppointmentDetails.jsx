@@ -19,7 +19,6 @@ const AppointmentDetails = () => {
     }, [getPatientDetails])
 
     const patient = patients.filter((cand => (cand._id) === location.id));
-    
     return (
         <div>
             <Docnavbar />
@@ -33,11 +32,13 @@ const AppointmentDetails = () => {
                         {patient[0]?.First_Appointment_Flag && <button onClick={()=>navigate(`/new-case-details/${patient[0]._id}`)} className='bg-blue-500 text-white text-lg py-2 px-10 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 font-semibold my-10 mx-auto flex items-center gap-5'>New Case <Pen /></button>}
                         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                             <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
-                                <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
+                                {
+                                   patient[0]?.gender==='Female'?<img src="/user_female.webp" alt="user_image" className='size-20 md:size-28'/>:<img src="/user.png" alt="user_image" className='size-20 md:size-28'/>
+                                }
                                 <h1 className='text-lg md:text-xl  font-semibold'>{patient[0]?.fullname}</h1>
                                 <h1 className='text-sm md:text-base '>{patient[0]?.casePaperNo}</h1>
                             </div>
-                            <div className='w-full md:w-4/5  gap-2 flex min-h-72 flex-col justify-between text-xs lg:text-base '>
+                            <div className='w-full md:w-4/5  gap-2 flex min-h-72 flex-col justify-between text-xs lg:text-base'>
                                 <div className='p-5 rounded-lg bg-gray-300 grid gap-y-5 sm:grid-cols-3 grid-cols-2'>
                                     <div><span className='font-semibold'>Age :</span> <span>{patient[0]?.age}</span></div>
                                     <div><span className='font-semibold'>Gender :</span> <span>{patient[0]?.gender}</span></div>
@@ -53,7 +54,7 @@ const AppointmentDetails = () => {
                                     <div><span className='font-semibold'>Occupation :</span> <span>{patient[0]?.occupation}</span></div>
                                     <div><span className='font-semibold'>Marital Status :</span> <span>{patient[0]?.maritalStatus}</span></div>
                                 </div>
-                                <div className='p-5 rounded-lg bg-gray-300 grid gap-y-5  sm:grid-cols-2 grid-cols-2'>
+                                <div className='p-5 rounded-lg bg-gray-300 grid gap-y-5  sm:grid-cols-3 grid-cols-2'>
                                     <div><span className='font-semibold'>Referred By :</span> <span>{patient[0]?.referredBy}</span></div>
                                     <div><span className='font-semibold'>Dietary Preference :</span> <span>{patient[0]?.dietaryPreference}</span></div>
                                 </div>

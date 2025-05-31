@@ -4,7 +4,7 @@ import { Eraser, Pen, Redo, Trash, Undo } from "lucide-react";
 import { ReactSketchCanvas } from "react-sketch-canvas";
 import axios from "axios";
 import { DOC_API_URL } from "../../store/DocStore";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaAngleDoubleLeft } from "react-icons/fa";
 
 const Scribble = () => {
@@ -12,6 +12,11 @@ const Scribble = () => {
     const canvasRef = useRef(null);
     const [eraseMode, setEraseMode] = useState(false);
     const [strokeWidth, setStrokeWidth] = useState(4);
+     const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
     const navigate = useNavigate();
     useEffect(() => {
         const wrapper = document.getElementById("canvas-wrapper");

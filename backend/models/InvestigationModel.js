@@ -39,10 +39,11 @@ const testSchema = new mongoose.Schema({
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },        
     createdAt: {
         type: Date,
-        default: Date.now,
-        expires: 86400 // 24 hours in seconds
+        default: Date.now
     }
 });
+testSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 }); // 24 hours
+
 
 export const investigationAdvised = mongoose.model('investigationAdvised', investigationAdvisedSchema); 
 export const ultraSonography = mongoose.model('ultraSonography', ultraSonogrophySchema); 

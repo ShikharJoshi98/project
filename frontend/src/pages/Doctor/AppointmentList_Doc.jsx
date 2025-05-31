@@ -7,11 +7,12 @@ import AppointmentModal from '../../components/Doctor/AppointmentModal';
 import UploadCase from '../../components/Doctor/UploadCase';
 import Input from '../../components/Input';
 import { useAuthStore } from '../../store/authStore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AppointmentList_Doc = () => {
-  const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppdetails, appointments } = docStore();
+  const { setAppointmentSection, appointmentSection, fetchPrescription, prescription, appointmentSubmit, getAppdetails, appointments } = docStore();
   const [currentDate, setCurrentDate] = useState('');
+  const { id } = useParams();
   const { user } = useAuthStore();
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -32,10 +33,15 @@ const AppointmentList_Doc = () => {
 
   useEffect(() => {
     getAppdetails(appointmentSection);
-  }, [getAppdetails, appointmentSection, appointmentSubmit]);
+    fetchPrescription(id);
+  }, [getAppdetails, fetchPrescription,appointmentSection, appointmentSubmit]);
 
   const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-
+  const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false).length;
+  const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true).length;
+  const medicineIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false && appointment?.medicine_issued_flag === true).length;
+  const medicineNotIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false).length;
+  
   return (
     <div>
       <Docnavbar />
@@ -58,7 +64,7 @@ const AppointmentList_Doc = () => {
               <button onClick={() => setAppointmentSection("courier")} className={`cursor-pointer border-1 border-black hover:scale-102 transition-all duration-300 ${appointmentSection === 'courier' ? 'bg-blue-500 text-white' : 'bg-blue-300 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>COURIER MEDICINE</button>
             </div>
             <div className='flex items-center gap-2 mt-10'>
-              <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={SearchIcon} placeholder='Search for Items here' />
+              <Input onChange={(e) => setSearchTerm(e.target.value)} icon={SearchIcon} placeholder='Search for Items here' />
             </div>
             <div className="overflow-x-auto  mt-10">
               <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
@@ -78,7 +84,7 @@ const AppointmentList_Doc = () => {
                 <tbody className=" bg-gray-200  text-black  ">
                   {
                     appointmentList.map((appointment, index) => (
-                        <tr key={index}>
+                      <tr key={index} className={`${appointment?.new_appointment_flag === true ? 'bg-yellow-200' : appointment?.medicine_issued_flag === true ? 'bg-pink-200' : appointment?.medicine_issued_flag === false ? 'bg-blue-200' : 'bg-yellow-200'}`}>
                         <td className="py-2 px-4 border">{index + 1}</td>
                         <td className="py-2 px-4 border">PATIENT'S IMAGE</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.casePaperNo}</td>
@@ -86,17 +92,24 @@ const AppointmentList_Doc = () => {
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.fullname}</td>
                         <td className="py-2 px-4 border">{appointment?.AppointmentType}</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.branch}</td>
-                        <td onClick={() => navigate(`/appointment-details/${appointment?.PatientCase._id}`)}  className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
+                        <td onClick={() => navigate(`/appointment-details/${appointment?.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.email}</td>
                       </tr>
-                    ))
-                   }
+                    ))}
                 </tbody>
               </table>
             </div>
+            <div className="flex mt-10 flex-col gap-5">
+              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>New Patient Appointment Due  ({newAppointmentLength})</span></div>
+              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-green-200"></div><span>Follow up Appointment Due  ({followUpAppointmentLength})</span></div>
+              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-blue-200"></div><span>Medicine Not Issued  ({medicineNotIssuedLength})</span></div>
+              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-pink-200"></div><span>Medicine Issued  ({medicineIssuedLength})</span></div>
+            </div>
           </div>
+
         </div>
       </div>
+
       {isAppointmentModalOpen && <AppointmentModal onClose={() => setAppointmentModalIsOpen(false)} />}
       {isUploadModalOpen && <UploadCase onClose={() => setUploadModalIsOpen(false)} />}
     </div>

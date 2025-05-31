@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { recStore } from '../../store/RecStore';
 import { docStore } from '../../store/DocStore';
+import { FaBell } from "react-icons/fa";
 
 const RecNavbar = () => {
     const { logout, user } = useAuthStore();
@@ -50,7 +51,7 @@ const RecNavbar = () => {
                     <li onClick={() => navigate('/dashboard-RECEPTIONIST')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Dashboard</li>
                     <li onClick={() => navigate('/register-patient')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Register Patient</li>
                     <div className="relative" onMouseEnter={() => setIsMedicineHovered(true)} onMouseLeave={() => setIsMedicineHovered(false)}>
-                        <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Medicine {((generalAppointments.length>0) || (repeatAppointments.length>0))&&<span className='w-4 h-4 -right-3 -top-1 rounded-full absolute bg-blue-400'></span>}</li>
+                        <li className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Medicine {((generalAppointments.length>0) || (repeatAppointments.length>0))&&<span className='w-6 h-6 -right-4 flex items-center justify-center -top-2 rounded-full absolute bg-blue-400/70'><FaBell /></span>}</li>
                         {isMedicineHovered && (
                             <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-52 flex flex-col h-auto">
                                 <div onClick={() => { navigate('/appointment-details-rec'); setAppointmentSection('general') }} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">

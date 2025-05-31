@@ -22,7 +22,7 @@ const TodayPrescriptions = () => {
         getPresentComplaintData(location.id);
     }, [prescriptionSubmit, deleteFlag, updateFlag, getPresentComplaintData]);
     const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
-
+    console.log(prescription);
     const addDays = (dateStr, days) => {
         days = parseInt(days, 10);
         let [day, month, year] = dateStr.split("/").map(Number);

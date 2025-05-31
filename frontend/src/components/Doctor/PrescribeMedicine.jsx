@@ -23,7 +23,7 @@ const PrescribeMedicine = () => {
     const [submit, setsubmit] = useState(false);
     const [searchMedicine, setSearchMedicine] = useState("");
     const [currentDate, setCurrentDate] = useState("");
-    const { getPastPrescription, allPrescriptions, getPresentComplaintData, PresentComplaintData } = docStore();
+    const { getCaseData, list, getPastPrescription, allPrescriptions, getPresentComplaintData, PresentComplaintData } = docStore();
     const { patients } = recStore();
     const patient = patients.filter((cand => (cand._id) === location.id));
     const searchMedicineRef = useRef(null);
@@ -32,9 +32,10 @@ const PrescribeMedicine = () => {
     useEffect(() => {
         getPastPrescription(location.id);
         getPresentComplaintData(location.id);
-    }, [getPresentComplaintData, getPastPrescription, submit]);
-    const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
-
+        getCaseData('Present Complaints');
+    }, [getPresentComplaintData, getPastPrescription,getCaseData, submit]);
+    const PresentComplaintDataArray = list.map(item => item?.name);
+    console.log(PresentComplaintDataArray);
     const [formData, setFormData] = useState({
         medicine: '',
         potency: '',

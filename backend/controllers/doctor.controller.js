@@ -1316,7 +1316,6 @@ export const deleteInvestigationInfo = async (req, res) => {
         res.json({
             val
         })
-
     } catch (error) {
         res.json({
             success: false,

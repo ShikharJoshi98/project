@@ -5,6 +5,8 @@ import { FaAngleDoubleLeft } from 'react-icons/fa'
 import { recStore } from '../../store/RecStore'
 import { useNavigate, useParams } from 'react-router-dom'
 import HealthAssessment from '../../components/Doctor/HealthAssessment'
+import { Trash2Icon } from 'lucide-react'
+import axios from 'axios'
 
 const CaseReport = () => {
     const { patients, getPatientDetails } = recStore();
@@ -28,7 +30,10 @@ const CaseReport = () => {
 
         updateDate();
     }, []);
-
+async function deleteRow(rowid) {
+    await axios.delete(`${DOC_API_URL}/patient/${location.id}/health-record/${rowid}`);
+    setSubmit((prev) => !prev);
+  }
     const patient = patients.filter((cand => (cand._id) === location.id));
     return (
         <div>
@@ -85,10 +90,22 @@ const CaseReport = () => {
                                             <th className="border border-gray-500 p-2">Assesment Date</th>
                                             <th className="border border-gray-500 p-2">Blood Pressure</th>
                                             <th className="border border-gray-500 p-2">Weight</th>
-                                            <th className="border border-gray-500 p-2">Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        {patient.map((el, idx) => (
+                                            el.healthRecords.map((healthRecord, recordIdx) => (
+                                                <tr key={`${idx}-${recordIdx}`} className="bg-blue-200 text-lg">
+                                                    <td className="border border-gray-300 px-4 py-2 text-center">{recordIdx + 1}</td>
+                                                    <td className="border border-gray-300 px-4 py-2 text-center">{healthRecord?.date}</td>
+                                                    <td className="border border-gray-300 px-4 py-2 text-center">
+                                                        {healthRecord?.bloodPressure} mmHg                  </td>
+                                                    <td className="border border-gray-300 px-4 py-2 text-center">
+                                                        {healthRecord?.weight} Kg
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>

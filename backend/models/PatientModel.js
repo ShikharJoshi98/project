@@ -95,6 +95,9 @@ const prescriptionSchema = new mongoose.Schema({
     medicine_issued_flag: {
         type: Boolean,default:false
     },
+    medicine_not_issued_flag: {
+        type: Boolean,default:false
+    },
     send_to_HR: {
         type:Boolean,default:false
     }
@@ -124,6 +127,10 @@ const presentComplaintPatientSchema = new mongoose.Schema({
     date: {
         type:String
     }
+});
+
+const diagnosisMasterSchema = new mongoose.Schema({
+    diagnosis: [{ type: String }]
 });
 
 const presentComplaintWriteUpScehma = new mongoose.Schema({
@@ -194,4 +201,5 @@ export const PresentComplaintWriteUp = mongoose.model('PresentComplaintWriteUp',
 export const WriteUpPatient = mongoose.model('WriteUpPatient', writeUpPatientSchema);
 export const Investigation = mongoose.model('Investigation', investigationSchema);
 export const OtherPrescription = mongoose.model('OtherPrescription', otherPrescriptionSchema);
+export const diagnosis = mongoose.model('diagnosis', diagnosisMasterSchema);
 export default Patient

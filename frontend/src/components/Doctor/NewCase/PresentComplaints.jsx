@@ -87,7 +87,7 @@ const PresentComplaints = ({ complaint }) => {
                                 <h1 onClick={() => setpresentComplaintInput(investigation?.name)} className='text-xl cursor-pointer p-1' key={index}>{investigation?.name}</h1>
                                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
                             </>
-                        ))}
+                        ))}     
                     </div>
                 </div>
             </div>
