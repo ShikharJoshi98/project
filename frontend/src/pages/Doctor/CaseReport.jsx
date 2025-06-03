@@ -7,16 +7,19 @@ import { useNavigate, useParams } from 'react-router-dom'
 import HealthAssessment from '../../components/Doctor/HealthAssessment'
 import { Trash2Icon } from 'lucide-react'
 import axios from 'axios'
-
+import { docStore } from '../../store/DocStore'
+import { generateTablePDF } from '../../store/generatePDF'
 const CaseReport = () => {
     const { patients, getPatientDetails } = recStore();
+    const { getPresentComplaintData, PresentComplaintData, getChiefComplaints, chiefComplaints, getPastHistoryData, PastHistoryData, getPersonalHistory, personalHistory, getFamilyMedicalData, FamilyMedicalData, getMentalCausative, MentalCausativeData, mentalCausativeScribble, getMentalCausativeScribble, MentalPersonalityData, getMentalPersonality, getMentalPersonalityScribble, mentalPersonalityScribble, getBriefMindSymptomScribble, briefMindSymptomScribble, ThermalReactionData, getThermalReaction, getMiasm, MiasmData } = docStore();
     const location = useParams();
     const navigate = useNavigate();
     const [currentDate, setCurrentDate] = useState("");
 
     useEffect(() => {
-        getPatientDetails();
-    }, [getPatientDetails])
+        getPatientDetails(); getPresentComplaintData(location.id); getChiefComplaints(location.id); getPastHistoryData(location.id); getPersonalHistory(location.id); getFamilyMedicalData(location.id); getMentalCausative(location.id);
+        getMentalCausativeScribble(location.id); getMentalPersonality(location.id); getMentalPersonalityScribble(location.id); getBriefMindSymptomScribble(location.id); getThermalReaction(location.id); getMiasm(location.id);
+    }, [getPatientDetails, getPresentComplaintData, getChiefComplaints, getPersonalHistory, getFamilyMedicalData, getMentalCausative, getMentalCausativeScribble, getMentalPersonality, getMentalPersonalityScribble, getBriefMindSymptomScribble, getThermalReaction, getMiasm])
     useEffect(() => {
         const updateDate = () => {
             const date = new Date().toLocaleDateString("en-GB", {
@@ -30,10 +33,7 @@ const CaseReport = () => {
 
         updateDate();
     }, []);
-async function deleteRow(rowid) {
-    await axios.delete(`${DOC_API_URL}/patient/${location.id}/health-record/${rowid}`);
-    setSubmit((prev) => !prev);
-  }
+    console.log(chiefComplaints);
     const patient = patients.filter((cand => (cand._id) === location.id));
     return (
         <div>
@@ -77,7 +77,7 @@ async function deleteRow(rowid) {
                         <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>New Case - Final Report</h1>
                         <div className='flex items-center justify-between my-5'>
                             <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl '>{currentDate}</h1>
-                            <button className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
+                            <button onClick={()=>generateTablePDF(patient[0])} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
                         </div>
                         <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                         <div className='mt-12'>
@@ -108,6 +108,208 @@ async function deleteRow(rowid) {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                        <div className='mt-12'>
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Present Complaints</h1>
+                            <div className="overflow-x-auto mt-10 rounded-lg">
+                                <table className="min-w-full border border-gray-300 bg-white shadow-md ">
+                                    <thead className="bg-[#337ab7]  text-white">
+                                        <tr >
+                                            <th className="px-1 py-4 ">Date</th>
+                                            <th className="px-2 py-4 ">Complain</th>
+                                            <th className="px-2 py-4 ">Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            PresentComplaintData.map((complaint, index) => (
+                                                <tr key={index} className="bg-blue-200 text-lg">
+                                                    <td className='py-2 px-1 text-center'>{complaint?.created_at}</td>
+                                                    <td className='py-2 px-2 text-center'>{complaint?.complaintName}</td>
+                                                    <td className='py-2 px-2 text-center'>{complaint?.duration} {complaint?.durationSuffix}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Cheif Complaints</h1>
+                            {
+                                chiefComplaints.map((complaint, index) => (
+                                    <img src={complaint?.image} key={index} className='mt-5' />
+                                ))
+                            }
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Past History</h1>
+                            <div className="overflow-x-auto mt-10 rounded-lg">
+                                <table className="min-w-full border border-gray-300 bg-white shadow-md ">
+                                    <thead className="bg-[#337ab7]  text-white">
+                                        <tr >
+                                            <th className="px-1 py-4 ">Date</th>
+                                            <th className="px-2 py-4 ">Complain</th>
+                                            <th className="px-2 py-4 ">Last Diagnosed</th>
+                                            <th className="px-4 py-4 ">Duration</th>
+                                            <th className="px-2 py-4 ">Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            PastHistoryData.map((data, index) => (
+                                                <tr key={index} className="bg-blue-200 text-lg">
+                                                    <td className='py-2 px-1 text-center'>{data?.created_at}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.complaintName}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.lastDiagnosed} {data?.lastSuffix}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.duration} {data?.durationSuffix}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.remark}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Personal History</h1>
+                            {
+                                personalHistory.map((complaint, index) => (
+                                    <img src={complaint?.image} key={index} className='mt-5' />
+                                ))
+                            }
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Personal History</h1>
+                            <div className="overflow-x-auto mt-10 rounded-lg">
+                                <table className="min-w-full border border-gray-300 bg-white shadow-md ">
+                                    <thead className="bg-[#337ab7]  text-white">
+                                        <tr >
+                                            <th className="px-1 py-4 ">Relation</th>
+                                            <th className="px-2 py-4 ">Age</th>
+                                            <th className="px-2 py-4 ">Diseases</th>
+                                            <th className="px-4 py-4 ">Any Other</th>
+                                            <th className="px-2 py-4 ">Dead/Alive</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            FamilyMedicalData.map((data, index) => (
+                                                <tr key={index} className="bg-blue-200 text-lg">
+                                                    <td className='py-2 px-1 text-center'>{data?.relation}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.age}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.diseases.join(',')}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.anyOther}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.lifeStatus}</td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Personal History</h1>
+                            <div className="overflow-x-auto mt-10 rounded-lg">
+                                <table className="min-w-full border border-gray-300 bg-white shadow-md ">
+                                    <thead className="bg-[#337ab7]  text-white">
+                                        <tr >
+                                            <th className="px-1 py-4 ">Relation</th>
+                                            <th className="px-2 py-4 ">Age</th>
+                                            <th className="px-2 py-4 ">Diseases</th>
+                                            <th className="px-4 py-4 ">Any Other</th>
+                                            <th className="px-2 py-4 ">Dead/Alive</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            FamilyMedicalData.map((data, index) => (
+                                                <tr key={index} className="bg-blue-200 text-lg">
+                                                    <td className='py-2 px-1 text-center'>{data?.relation}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.age}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.diseases.join(',')}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.anyOther}</td>
+                                                    <td className='py-2 px-2 text-center'>{data?.lifeStatus}</td>
+
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Mental Causative Factors</h1>
+
+                            <div className='flex flex-col gap-3 items-center mt-5'>
+                                {
+                                    MentalCausativeData[0]?.diseases.map((disease, index) => (
+                                        <div className='text-xl flex items-center gap-8' key={index}>
+                                            <p>{index + 1}. {disease}</p>
+
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                            <div>
+                                {
+                                    mentalCausativeScribble.map((complaint, index) => (
+                                        <img src={complaint?.image} key={index} className='mt-5' />
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Mental Personality Character</h1>
+                            <div className='flex flex-col gap-3 items-center mt-5'>
+                                {
+                                    MentalPersonalityData[0]?.diseases.map((disease, index) => (
+                                        <div className='text-xl flex items-center gap-8' key={index}>
+                                            <p>{index + 1}. {disease}</p>
+
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                            <div>
+                                {
+                                    mentalPersonalityScribble.map((complaint, index) => (
+                                        <img src={complaint?.image} key={index} className='mt-5' />
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Brief Mind Symptom</h1>
+                            <div>
+                                {
+                                    briefMindSymptomScribble.map((complaint, index) => (
+                                        <img src={complaint?.image} key={index} className='mt-5' />
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Thermal Reaction</h1>
+                            <div className='flex flex-col items-center mt-3 gap-2'>
+                                {ThermalReactionData[0]?.diseases.map((data, index) => (
+                                    <div className='text-xl flex items-center gap-8' key={index}>
+                                        <p>{index + 1}. {data}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Miasm</h1>
+                            <div className='flex flex-col items-center mt-3 gap-2'>
+                                <div className='flex flex-col items-center mt-3 gap-2'>
+                                    {MiasmData[0]?.diseases.map((data, index) => (
+                                        <div className='text-xl flex items-center gap-8' key={index}>
+                                            <p>{index + 1}. {data}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>

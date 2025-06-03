@@ -1973,6 +1973,28 @@ export const addMentalCausativeScribble = async (req, res) => {
     }
 }
 
+export const getMentalCausativeScribble = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const mentalCausativeData = await MentalCausativeScribble.find({patient:id});
+        if (!mentalCausativeData) {
+            res.json({
+                success: true,
+                message:'No Mental Causative'
+            })
+        }
+        res.json({
+            success: true,
+            mentalCausativeData
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
 export const addMentalPersonalityScribble = async (req, res) => {
     try {
         const id = req.params.id;
@@ -1991,6 +2013,28 @@ export const addMentalPersonalityScribble = async (req, res) => {
         return res.json({
             message: error.message
         });
+    }
+}
+
+export const getMentalPersonalityScribble = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const mentalPersonalityData = await MentalPersonalityScribble.find({patient:id});
+        if (!mentalPersonalityData) {
+            res.json({
+                success: true,
+                message:'No Mental Personality'
+            })
+        }
+        res.json({
+            success: true,
+            mentalPersonalityData
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
     }
 }
 
@@ -2016,6 +2060,28 @@ export const addChiefComplaintScribble = async (req, res) => {
     }
 }
 
+export const getChiefComplaintScribble = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const chiefComplaint = await ChiefComplaintScribble.find({patient:id});
+        if (!chiefComplaint) {
+            res.json({
+                success: true,
+                message:'No Chief Complaints'
+            })
+        }
+        res.json({
+            success: true,
+            chiefComplaint
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
 export const addPersonalHistoryScribble = async (req, res) => {
     try {
         const id = req.params.id;
@@ -2038,6 +2104,28 @@ export const addPersonalHistoryScribble = async (req, res) => {
     }
 }
 
+export const getPersonalHistoryScribble = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const personalHistory = await PersonalHistoryScribble.find({patient:id});
+        if (!personalHistory) {
+            res.json({
+                success: true,
+                message:'No Personal History'
+            })
+        }
+        res.json({
+            success: true,
+            personalHistory
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
 export const addBriefMindSymptomScribble = async (req, res) => {
     try {
         const id = req.params.id;
@@ -2057,6 +2145,28 @@ export const addBriefMindSymptomScribble = async (req, res) => {
         return res.json({
             message: error.message
         });
+    }
+}
+
+export const getBriefMindSymptomScribble = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const briefMindSymptomData = await BriefMindSymptomScribble.find({patient:id});
+        if (!briefMindSymptomData) {
+            res.json({
+                success: true,
+                message:'No Brief Mind Symptom'
+            })
+        }
+        res.json({
+            success: true,
+            briefMindSymptomData
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
     }
 }
 

@@ -10,7 +10,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const AppointmentList_Doc = () => {
-  const { setAppointmentSection, appointmentSection, fetchPrescription, prescription, appointmentSubmit, getAppdetails, appointments } = docStore();
+  const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppdetails, appointments } = docStore();
   const [currentDate, setCurrentDate] = useState('');
   const { id } = useParams();
   const { user } = useAuthStore();
@@ -33,8 +33,7 @@ const AppointmentList_Doc = () => {
 
   useEffect(() => {
     getAppdetails(appointmentSection);
-    fetchPrescription(id);
-  }, [getAppdetails, fetchPrescription,appointmentSection, appointmentSubmit]);
+  }, [getAppdetails,appointmentSection, appointmentSubmit]);
 
   const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
   const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false).length;

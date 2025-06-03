@@ -22,16 +22,21 @@ export const docStore = create((set) => ({
     PresentComplaintData: [],
     PresentComplaintScribble: [],
     PresentComplaintWriteUp: [],
+    briefMindSymptomScribble:[],
     PastHistoryData: [],
     FamilyMedicalData: [],
     MentalCausativeData: [],
     MentalPersonalityData: [],
+    mentalCausativeScribble: [],
+    mentalPersonalityScribble:[],
     ThermalReactionData: [],
     MiasmData: [],
     otherPrescriptions: [],
     consultationCharges: [],
     investigationAdvised: [],
     testInfo: [],
+    chiefComplaints: [],
+    personalHistory:[],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
@@ -279,5 +284,25 @@ export const docStore = create((set) => ({
     getTestInfo: async (id, investigationType) => {
         const response = await axios.get(`${DOC_API_URL}/get-test/${id}/${investigationType}`);
         set({ testInfo: response.data.investigationInfo })
+    },
+    getChiefComplaints: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/chiefComplaints/${id}`);
+        set({chiefComplaints:response.data.chiefComplaint})
+    },
+    getPersonalHistory: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/personalHistroy/${id}`);
+        set({personalHistory:response.data.personalHistory})
+    },
+     getMentalCausativeScribble: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/mentalCausativeScribble/${id}`);
+        set({mentalCausativeScribble:response.data.mentalCausativeData})
+    },
+     getMentalPersonalityScribble: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/mentalPersonalityScribble/${id}`);
+        set({mentalPersonalityScribble:response.data.mentalPersonalityData})
+    },
+     getBriefMindSymptomScribble: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/briefMindSymptomScribble/${id}`);
+        set({briefMindSymptomScribble:response.data.briefMindSymptomData})
     }
 }))
