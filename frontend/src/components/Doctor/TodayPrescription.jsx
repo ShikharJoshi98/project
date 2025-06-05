@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Pen, Trash, Check, X } from 'lucide-react';
 import MultiSelectInput from './MultiSelectInput';
+import { updateDate } from '../../store/todayDate';
 
 const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
 const doseArray = ['Single Dose', '3 Dose Half-Hour Interval', '2 Dose Half-Hour Interval'];
@@ -11,27 +12,45 @@ const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day
 
 const TodayPrescriptions = () => {
     const location = useParams();
-    const { prescriptionSubmit, fetchPrescription, prescription, togglePrescriptionSubmit, getPresentComplaintData, PresentComplaintData } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, togglePrescriptionSubmit, getPresentComplaintData, PresentComplaintData, appointmentSection, getAppdetails, appointments } = docStore();
     const [deleteFlag, setDeleteFlag] = useState(false);
     const [updateFlag, setUpdateFlag] = useState(false);
     const [editingRow, setEditingRow] = useState(null);
     const [editedData, setEditedData] = useState({});
     const [editNote, setEditNote] = useState(false);
+    const todayDate = updateDate();
     useEffect(() => {
         fetchPrescription(location.id);
         getPresentComplaintData(location.id);
-    }, [prescriptionSubmit, deleteFlag, updateFlag, getPresentComplaintData]);
+        getAppdetails(appointmentSection);
+    }, [prescriptionSubmit, deleteFlag, updateFlag, getPresentComplaintData, fetchPrescription]);
+
     const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
-    console.log(prescription);
+    const appointmentToday = appointments.filter((appointment) => appointment?.date === todayDate);
+
+    const completeAppointment = async () => {
+        if (prescription.length > 0) {
+            await axios.patch(`${DOC_API_URL}/update-apppointment/${appointmentToday[0]._id}`, {
+                complete_appointment_flag: true,
+            })
+        }
+        else {
+            await axios.patch(`${DOC_API_URL}/update-apppointment/${appointmentToday._id}`, {
+                complete_appointment_flag: false
+            })
+        }
+    }
+    completeAppointment();
+
     const addDays = (dateStr, days) => {
         days = parseInt(days, 10);
-        let [day, month, year] = dateStr.split("/").map(Number);
+        let [day, month, year] = dateStr.split("-").map(Number);
         let date = new Date(year, month - 1, day);
         date.setDate(date.getDate() + days);
         let newDay = String(date.getDate()).padStart(2, '0');
         let newMonth = String(date.getMonth() + 1).padStart(2, '0');
         let newYear = date.getFullYear();
-        return `${newDay}/${newMonth}/${newYear}`;
+        return `${newDay}-${newMonth}-${newYear}`;
     };
 
     const handleEdit = (index, value) => {
@@ -52,19 +71,17 @@ const TodayPrescriptions = () => {
             await axios.delete(`${DOC_API_URL}/delete-today-prescription/${id}`);
             setDeleteFlag(prev => !prev);
             togglePrescriptionSubmit();
-
         }
     };
 
     const handleUpdate = async (id) => {
-        
-            const response = await axios.patch(`${DOC_API_URL}/update-prescription/${id}`, {
-                editedData
-            });
-            setUpdateFlag(prev => !prev);
-            togglePrescriptionSubmit();
-        }
-    
+        const response = await axios.patch(`${DOC_API_URL}/update-prescription/${id}`, {
+            editedData
+        });
+        setUpdateFlag(prev => !prev);
+        togglePrescriptionSubmit();
+    }
+
 
     return (
         <div>
@@ -152,9 +169,9 @@ const TodayPrescriptions = () => {
                                     {editingRow === index ? (
                                         <div className=''>
                                             <button onClick={() => setEditNote(true)} className='p-2 rounded-md text-white bg-blue-500 cursor-pointer'>Edit Note</button>
-                                           {editNote && <div onClick={() => setEditNote(false)} className='absolute right-0 top-9'><X/></div>}
+                                            {editNote && <div onClick={() => setEditNote(false)} className='absolute right-0 top-9'><X /></div>}
                                             {editNote && <div className='w-72 h-20 right-0  rounded-lg  bottom-10 bg-white '>
-                                                <textarea 
+                                                <textarea
                                                     type="text"
                                                     value={editedData.note}
                                                     onChange={(e) => handleChange(e, "note")}
@@ -218,9 +235,9 @@ const TodayPrescriptions = () => {
                 </table>
             </div>
             <div className="flex mt-10 flex-col gap-5">
-                    <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-green-200"></div><span>Medicine not issued yet</span></div>
-                    <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>Medicine Issued</span></div>
-                </div>
+                <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-green-200"></div><span>Medicine not issued yet</span></div>
+                <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>Medicine Issued</span></div>
+            </div>
         </div>
     );
 };

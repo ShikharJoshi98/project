@@ -132,14 +132,14 @@ export const createAppointment = async (req, res) => {
     try {
         const { date, time, PatientCase, Doctor, appointmentType } = req.body;
         const dateConverter = (date) => {
-            const [y,m,d] = date.split('-');
+            const [y, m, d] = date.split('-');
             const newDate = String(d + '-' + m + '-' + y);
             return newDate;
         }
         const convertedDate = dateConverter(date);
         const appointmentExist = await Appointment.findOne({
             PatientCase,
-            date:convertedDate,
+            date: convertedDate,
         })
         if (appointmentExist) {
             return res.json({
@@ -153,7 +153,7 @@ export const createAppointment = async (req, res) => {
         let newAppointment;
         if (previousAppointmentExist) {
             newAppointment = new Appointment({
-                date:convertedDate,
+                date: convertedDate,
                 time,
                 PatientCase,
                 Doctor,
@@ -162,7 +162,7 @@ export const createAppointment = async (req, res) => {
         }
         else {
             newAppointment = new Appointment({
-                date:convertedDate,
+                date: convertedDate,
                 time,
                 PatientCase,
                 Doctor,
@@ -197,6 +197,26 @@ export const getAllAppointments = async (req, res) => {
             message: error.message
         })
     }
+}
+
+export const updateAppointment = async (req, res) => {
+    try {
+        const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag } = req.body;
+        const { id } = req.params;
+        const appointment = await Appointment.findByIdAndUpdate(id, {
+            new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag
+        });
+        res.json({
+            success: true,
+            appointment
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+
 }
 // export const getAllAppointments = async (req, res) => {
 //     try {
@@ -634,7 +654,7 @@ export const addNewPrescription = async (req, res) => {
             duration: formData.duration,
             note: formData.note,
             prescription_date: currentDate,
-            send_to_HR:true
+            send_to_HR: true
         });
 
 
@@ -653,16 +673,19 @@ export const addNewPrescription = async (req, res) => {
 export const getPrescriptionToday = async (req, res) => {
     try {
         const { id } = req.params;
-        const date = new Date().toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            timeZone: "Asia/Kolkata",
-        });
+        let formattedDate = '';
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            formattedDate = `${day}-${month}-${year}`;
+        };
+        updateDate();
 
         const presToday = await Prescription.find({
             patient: id,
-            prescription_date: date
+            prescription_date: formattedDate
         });
 
         return res.json({
@@ -739,18 +762,18 @@ export const addOtherPrescription = async (req, res) => {
         const { id } = req.params;
         const { medicineName, price } = req.body;
         const response = await OtherPrescription.create({
-            patient:id,
+            patient: id,
             medicineName,
             price
         })
         return res.json({
             success: true,
-            message:"Other Prescription Added"
+            message: "Other Prescription Added"
         })
     } catch (error) {
         return res.json({
             success: false,
-            message:"Error in Other Prescription"
+            message: "Error in Other Prescription"
         })
     }
 }
@@ -758,7 +781,7 @@ export const addOtherPrescription = async (req, res) => {
 export const getOtherPrescription = async (req, res) => {
     try {
         const { id } = req.params;
-        const otherPrescription = await OtherPrescription.find({ patient:id });
+        const otherPrescription = await OtherPrescription.find({ patient: id });
         return res.json({
             success: true,
             otherPrescription
@@ -766,7 +789,7 @@ export const getOtherPrescription = async (req, res) => {
     } catch (error) {
         return res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -777,12 +800,12 @@ export const deleteOtherPrescription = async (req, res) => {
         await OtherPrescription.findByIdAndDelete(id);
         res.json({
             success: true,
-            message:"Deleted Successfully"
+            message: "Deleted Successfully"
         })
     } catch (error) {
         res.json({
             success: false,
-            message:"Error in delete other prescription"
+            message: "Error in delete other prescription"
         })
     }
 }
@@ -997,7 +1020,7 @@ export const addWriteUpPresentComplaint = async (req, res) => {
 
 export const getPresentComplaintScribble = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         const presentComplaintScribble = await PresentComplaintScribble.find({
             patient: id
@@ -1015,7 +1038,7 @@ export const getPresentComplaintScribble = async (req, res) => {
     }
 }
 
-export const getWriteUpPresentComplaint= async (req, res) => {
+export const getWriteUpPresentComplaint = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -1109,12 +1132,12 @@ export const addInvestigationAdvised = async (req, res) => {
             case '16 Slice C.T Scan':
                 await ctScan.create({ inputData: inputData.trim() })
                 break;
-             }
-                res.json({
-                    success: true,
-                    message: "data added successfully"
-            })
-       
+        }
+        res.json({
+            success: true,
+            message: "data added successfully"
+        })
+
     } catch (error) {
         console.log("Error in addInvestigationAdvised controller", error.message);
         return res.json({
@@ -1165,22 +1188,22 @@ export const getInvestigationAdvised = async (req, res) => {
 export const deleteInvestigationAdvised = async (req, res) => {
     try {
         const { id, type } = req.params;
-        
+
         switch (type) {
             case 'Investigation Advised':
-                 await investigationAdvised.findByIdAndDelete(id);
+                await investigationAdvised.findByIdAndDelete(id);
                 break;
             case 'Ultra-Sonography':
-                 await ultraSonography.findByIdAndDelete(id);
+                await ultraSonography.findByIdAndDelete(id);
                 break;
             case 'Doppler Studies':
-                 await dopplerStudies.find();
+                await dopplerStudies.find();
                 break;
             case 'Obstetrics(Pregnancy)':
                 response = await obsetrics.findByIdAndDelete(id);
                 break;
             case 'Sonography':
-                 await sonography.findByIdAndDelete(id);
+                await sonography.findByIdAndDelete(id);
                 break;
             case '16 Slice C.T Scan':
                 await ctScan.findByIdAndDelete(id);
@@ -1189,7 +1212,7 @@ export const deleteInvestigationAdvised = async (req, res) => {
 
         res.json({
             success: true,
-            message:"Deleted successfully"
+            message: "Deleted successfully"
         })
     } catch (error) {
         console.log("Error in deleteInvestigationAdvised", error.message);
@@ -1232,20 +1255,20 @@ export const addInvestigationInfo = async (req, res) => {
         await test.save();
         res.json({
             success: true,
-            message:'Added Test'
+            message: 'Added Test'
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
 
 export const getInvestigationInfo = async (req, res) => {
     try {
-        let { id,investigationType} = req.params;
-        const patientInvestigationInfo = await testTable.findOne({patient:id});
+        let { id, investigationType } = req.params;
+        const patientInvestigationInfo = await testTable.findOne({ patient: id });
         let investigationInfo;
         if (investigationType === 'Investigation Advised') {
             investigationInfo = patientInvestigationInfo.investigationAdvised;
@@ -1274,22 +1297,22 @@ export const getInvestigationInfo = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
 
 export const deleteInvestigationInfo = async (req, res) => {
     try {
-        let { investigationType, id,test } = req.params;
+        let { investigationType, id, test } = req.params;
         const testInfo = await testTable.findOne({ patient: id });
         let val;
         if (investigationType === 'Investigation Advised') {
-            val = testInfo.investigationAdvised.filter((investigation) => investigation !== test);   
+            val = testInfo.investigationAdvised.filter((investigation) => investigation !== test);
             testInfo.investigationAdvised = val;
         }
         else if (investigationType === 'Ultra-Sonography') {
-            val = testInfo.ultra_sonography.filter((investigation) => investigation !== test);   
+            val = testInfo.ultra_sonography.filter((investigation) => investigation !== test);
             testInfo.ultra_sonography = val;
         }
         else if (investigationType === 'Doppler Studies') {
@@ -1297,19 +1320,19 @@ export const deleteInvestigationInfo = async (req, res) => {
             testInfo.dopplerStudies = val;
         }
         else if (investigationType === 'Obstetrics(Pregnancy)') {
-            val = testInfo.obsetrics.filter((investigation) => investigation !== test);    
+            val = testInfo.obsetrics.filter((investigation) => investigation !== test);
             testInfo.obsetrics = val;
         }
         else if (investigationType === 'Sonography') {
-            val = testInfo.sonography.filter((investigation) => investigation !== test);     
+            val = testInfo.sonography.filter((investigation) => investigation !== test);
             testInfo.sonography = val;
         }
         else if (investigationType === '16 Slice C.T Scan') {
-            val = testInfo.ctScan.filter((investigation) => investigation !== test);   
+            val = testInfo.ctScan.filter((investigation) => investigation !== test);
             testInfo.ctScan = val;
         }
         else if (investigationType === '1.5 MRI Scan') {
-            val = testInfo.mriScan.filter((investigation) => investigation !== test);    
+            val = testInfo.mriScan.filter((investigation) => investigation !== test);
             testInfo.mriScan = val;
         }
         await testInfo.save();
@@ -1319,7 +1342,7 @@ export const deleteInvestigationInfo = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -1976,11 +1999,11 @@ export const addMentalCausativeScribble = async (req, res) => {
 export const getMentalCausativeScribble = async (req, res) => {
     try {
         const { id } = req.params;
-        const mentalCausativeData = await MentalCausativeScribble.find({patient:id});
+        const mentalCausativeData = await MentalCausativeScribble.find({ patient: id });
         if (!mentalCausativeData) {
             res.json({
                 success: true,
-                message:'No Mental Causative'
+                message: 'No Mental Causative'
             })
         }
         res.json({
@@ -1990,7 +2013,7 @@ export const getMentalCausativeScribble = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2019,11 +2042,11 @@ export const addMentalPersonalityScribble = async (req, res) => {
 export const getMentalPersonalityScribble = async (req, res) => {
     try {
         const { id } = req.params;
-        const mentalPersonalityData = await MentalPersonalityScribble.find({patient:id});
+        const mentalPersonalityData = await MentalPersonalityScribble.find({ patient: id });
         if (!mentalPersonalityData) {
             res.json({
                 success: true,
-                message:'No Mental Personality'
+                message: 'No Mental Personality'
             })
         }
         res.json({
@@ -2033,7 +2056,7 @@ export const getMentalPersonalityScribble = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2063,11 +2086,11 @@ export const addChiefComplaintScribble = async (req, res) => {
 export const getChiefComplaintScribble = async (req, res) => {
     try {
         const { id } = req.params;
-        const chiefComplaint = await ChiefComplaintScribble.find({patient:id});
+        const chiefComplaint = await ChiefComplaintScribble.find({ patient: id });
         if (!chiefComplaint) {
             res.json({
                 success: true,
-                message:'No Chief Complaints'
+                message: 'No Chief Complaints'
             })
         }
         res.json({
@@ -2077,7 +2100,7 @@ export const getChiefComplaintScribble = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2107,11 +2130,11 @@ export const addPersonalHistoryScribble = async (req, res) => {
 export const getPersonalHistoryScribble = async (req, res) => {
     try {
         const { id } = req.params;
-        const personalHistory = await PersonalHistoryScribble.find({patient:id});
+        const personalHistory = await PersonalHistoryScribble.find({ patient: id });
         if (!personalHistory) {
             res.json({
                 success: true,
-                message:'No Personal History'
+                message: 'No Personal History'
             })
         }
         res.json({
@@ -2121,7 +2144,7 @@ export const getPersonalHistoryScribble = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2151,11 +2174,11 @@ export const addBriefMindSymptomScribble = async (req, res) => {
 export const getBriefMindSymptomScribble = async (req, res) => {
     try {
         const { id } = req.params;
-        const briefMindSymptomData = await BriefMindSymptomScribble.find({patient:id});
+        const briefMindSymptomData = await BriefMindSymptomScribble.find({ patient: id });
         if (!briefMindSymptomData) {
             res.json({
                 success: true,
-                message:'No Brief Mind Symptom'
+                message: 'No Brief Mind Symptom'
             })
         }
         res.json({
@@ -2165,7 +2188,7 @@ export const getBriefMindSymptomScribble = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2174,28 +2197,28 @@ export const getBriefMindSymptomScribble = async (req, res) => {
 
 export const addConsultationCharges = async (req, res) => {
     try {
-        const { type, price,date } = req.body;
+        const { type, price, date } = req.body;
         const { id } = req.params;
         await ConsultationCharges.create({
             type,
             price,
-            patient:id
+            patient: id
         })
         res.json({
-            success:true
+            success: true
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
-         })
+            message: error.message
+        })
     }
 }
 
 export const getConsultationCharges = async (req, res) => {
     try {
         const { id } = req.params;
-        const response = await ConsultationCharges.find({patient:id});
+        const response = await ConsultationCharges.find({ patient: id });
         res.json({
             success: true,
             response,
@@ -2203,7 +2226,7 @@ export const getConsultationCharges = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2214,13 +2237,13 @@ export const deleteConsultationCharges = async (req, res) => {
         await ConsultationCharges.findByIdAndDelete(id);
         res.json({
             success: true,
-            message:'deleted successfully'
+            message: 'deleted successfully'
         })
 
     } catch (error) {
         res.json({
             success: false,
-            error:error.message
+            error: error.message
         })
     }
 }

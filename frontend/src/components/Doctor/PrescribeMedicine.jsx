@@ -1,6 +1,5 @@
 import { Calendar, Clock, Pill, Plus, Tablets, TestTube } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
-import MultiSelectDropdown from './MultiSelectInput';
+import { useEffect, useRef, useState } from 'react';
 import Input from '../Input';
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
@@ -19,11 +18,10 @@ const PrescribeMedicine = () => {
     const [isDiagnosisOpen, setDiagnosisOpen] = useState(false);
     const [selectedDiagnosisOptions, setSelectedDiagnosisOptions] = useState([]);
     const location = useParams();
-    const { togglePrescriptionSubmit } = docStore();
     const [submit, setsubmit] = useState(false);
     const [searchMedicine, setSearchMedicine] = useState("");
     const [currentDate, setCurrentDate] = useState("");
-    const { getCaseData, list, getPastPrescription, allPrescriptions, getPresentComplaintData, PresentComplaintData } = docStore();
+    const { getCaseData, list, getPastPrescription, allPrescriptions, getPresentComplaintData,togglePrescriptionSubmit, PresentComplaintData } = docStore();
     const { patients } = recStore();
     const patient = patients.filter((cand => (cand._id) === location.id));
     const searchMedicineRef = useRef(null);
@@ -33,9 +31,9 @@ const PrescribeMedicine = () => {
         getPastPrescription(location.id);
         getPresentComplaintData(location.id);
         getCaseData('Present Complaints');
-    }, [getPresentComplaintData, getPastPrescription,getCaseData, submit]);
+    }, [getPresentComplaintData, getPastPrescription, getCaseData, submit]);
+    
     const PresentComplaintDataArray = list.map(item => item?.name);
-    console.log(PresentComplaintDataArray);
     const [formData, setFormData] = useState({
         medicine: '',
         potency: '',
@@ -47,15 +45,14 @@ const PrescribeMedicine = () => {
 
     useEffect(() => {
         const updateDate = () => {
-            const date = new Date().toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                timeZone: "Asia/Kolkata",
-            });
-            setCurrentDate(date);
-        };
-        updateDate();
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const year = today.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+      setCurrentDate(formattedDate);
+    };
+    updateDate();
 
         const handleClickOutside = (event) => {
             if (searchMedicineRef.current && !searchMedicineRef.current.contains(event.target)) {
@@ -68,7 +65,6 @@ const PrescribeMedicine = () => {
         };
 
     }, []);
-    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {

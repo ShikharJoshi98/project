@@ -1,4 +1,3 @@
-import React from 'react'
 import PatientNavbar from '../../components/Patient/PatientNavbar'
 import { useAuthStore } from '../../store/authStore';
 

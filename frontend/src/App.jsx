@@ -21,7 +21,6 @@ import UploadPatientCase from "./pages/Doctor/UploadPatientCase";
 import UploadDiagnosis from "./pages/Doctor/UploadDiagnosis";
 import HistoryDetails from "./pages/Doctor/HistoryDetails";
 import PresentComplaints from "./pages/Doctor/PresentComplaints";
-import VideoAudioRecorder from "./pages/Doctor/VideoAudioRecorder";
 import ConsultationCharges from "./pages/Doctor/ConsultationCharges";
 import Investigation from "./pages/Doctor/Investigation";
 import CaseReport from "./pages/Doctor/CaseReport";
@@ -62,6 +61,8 @@ import UpdateEmployee from "./pages/Doctor/UpdateEmployee";
 import Scribble from "./pages/Doctor/Scribble";
 import NewCaseDetails from "./pages/Doctor/NewCaseDetails";
 import AppointmentList_Doc from "./pages/Doctor/AppointmentList_Doc";
+import Prescription from "./pages/HR/Prescription";
+import Bill from "./pages/HR/Bill";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -126,7 +127,6 @@ function App() {
           <Route path="/upload-diagnosis-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadDiagnosis /></ProtectedRoute>} />
           <Route path="/history-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><HistoryDetails /></ProtectedRoute>} />
           <Route path="/present-complaints/:id" element={<ProtectedRoute allowedRoles={['doctor']}><PresentComplaints /></ProtectedRoute>} />
-          <Route path="/record-media/:id" element={<ProtectedRoute allowedRoles={['doctor']}><VideoAudioRecorder /></ProtectedRoute>} />
           <Route path="/consultation-charges/:id" element={<ProtectedRoute allowedRoles={['doctor']}><ConsultationCharges /></ProtectedRoute>} />
           <Route path="/investigation/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Investigation /></ProtectedRoute>} />
           <Route path="/report/:id" element={<ProtectedRoute allowedRoles={['doctor']}><CaseReport /></ProtectedRoute>} />
@@ -158,6 +158,8 @@ function App() {
           <Route path="/HR-balance" element={<ProtectedRoute allowedRoles={['hr']}><BalanceHistory /></ProtectedRoute>} />
           <Route path="/email-courier-details" element={<ProtectedRoute allowedRoles={['hr']}><EmailCourierDetails /></ProtectedRoute>} />
           <Route path="/HR-medicine" element={<ProtectedRoute allowedRoles={['hr']}><HRMedicine /></ProtectedRoute>} />
+          <Route path="/prescription-HR/:id" element={<ProtectedRoute allowedRoles={['hr']}><Prescription /></ProtectedRoute>} />
+          <Route path="/medicine-payment/:id" element={<ProtectedRoute allowedRoles={['hr']}><Bill /></ProtectedRoute>} />
 
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />
           <Route path="/register-patient" element={<ProtectedRoute allowedRoles={['receptionist']}><RegisterPatient /></ProtectedRoute>} />

@@ -42,7 +42,6 @@ const AppointmentSidebar = () => {
         <SidebarItem active={path.pathname === `/investigation/${location.id}`} onClick={() => navigate(`/investigation/${location.id}`)}  icon={<FaMagnifyingGlass size={20} />} text={"Investigation"} />
         <SidebarItem active={path.pathname === `/upload-diagnosis-image/${location.id}`} onClick={() => navigate(`/upload-diagnosis-image/${location.id}`)} icon={<Stethoscope />} text={"Diagnosis Images"} />
         <SidebarItem active={path.pathname === `/report/${location.id}`} onClick={() => navigate(`/report/${location.id}`)} icon={<ScrollTextIcon />} text={"Case Paper Report"} />
-        <SidebarItem active={path.pathname === `/record-media/${location.id}`} onClick={() => navigate(`/record-media/${location.id}`)} icon={<Video />} text={"Record Media"} />
       </Sidebar>
       {isTaskModalOpen && <AssignTaskModal onClose={() => setTaskModalIsOpen(false)} />}
       {isLeaveModalOpen && <ApproveLeaveModal onClose={() => setLeaveModalIsOpen(false)} />}

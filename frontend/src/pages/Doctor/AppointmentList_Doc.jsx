@@ -34,13 +34,13 @@ const AppointmentList_Doc = () => {
   useEffect(() => {
     getAppdetails(appointmentSection);
   }, [getAppdetails,appointmentSection, appointmentSubmit]);
-
+   
   const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
   const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false).length;
   const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true).length;
   const medicineIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false && appointment?.medicine_issued_flag === true).length;
   const medicineNotIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false).length;
-  
+  console.log("list",appointmentList);
   return (
     <div>
       <Docnavbar />
@@ -83,7 +83,7 @@ const AppointmentList_Doc = () => {
                 <tbody className=" bg-gray-200  text-black  ">
                   {
                     appointmentList.map((appointment, index) => (
-                      <tr key={index} className={`${appointment?.new_appointment_flag === true ? 'bg-yellow-200' : appointment?.medicine_issued_flag === true ? 'bg-pink-200' : appointment?.medicine_issued_flag === false ? 'bg-blue-200' : 'bg-yellow-200'}`}>
+                      <tr key={index} className={`${(appointment?.complete_appointment_flag === false && appointment?.medicine_issued_flag === true)?'bg-pink-200':(appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false)?'bg-blue-200':(appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true)?'bg-green-200':'bg-yellow-200'}`}>
                         <td className="py-2 px-4 border">{index + 1}</td>
                         <td className="py-2 px-4 border">PATIENT'S IMAGE</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.casePaperNo}</td>

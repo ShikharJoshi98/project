@@ -21,7 +21,7 @@ export const useStore = create((set) => ({
   medicalitems: [],
   potencys: [],
   Potency: null,
-  medSection: "General",
+  medSection: "general",
   setMedSection: (newsection) => set({ medSection: newsection }),
   getDetails: async () => {
      try {

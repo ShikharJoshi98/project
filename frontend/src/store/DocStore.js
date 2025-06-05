@@ -220,6 +220,7 @@ export const docStore = create((set) => ({
     fetchPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);
         set({ prescription: response.data.presToday })
+        
     },
     getPastPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);
