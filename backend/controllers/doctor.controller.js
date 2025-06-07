@@ -7,6 +7,7 @@ import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescriptio
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
+import { fees } from "../models/PaymentModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -2244,6 +2245,66 @@ export const deleteConsultationCharges = async (req, res) => {
         res.json({
             success: false,
             error: error.message
+        })
+    }
+}
+
+//payment
+
+export const addPaymentModel = async (req, res) => {
+    try {
+        const { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier } = req.body;
+        await fees.create({
+            newCase,
+            sevenDays,
+            fifteenDays,
+            twentyOneDays,
+            thirtyDays,
+            fortyFiveDays,
+            twoMonths,
+            threeMonths,
+            Courier
+        });
+        res.json({
+            success: true,
+            message:'Payment Model Added'
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const getPayments = async (req, res) => {
+    try {
+        const paymentData = await fees.find();
+        res.json({
+            paymentData,
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const updatePayment = async (req, res) => {
+    try {
+        const { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier } = req.body;
+        const { id } = req.params;
+        await fees.findByIdAndUpdate(id, { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier });
+        res.json({
+            success: true,
+            message:"Edited Payment Successfully"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
         })
     }
 }

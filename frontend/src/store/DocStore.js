@@ -19,6 +19,7 @@ export const docStore = create((set) => ({
     writeUp: [],
     allPrescriptions: [],
     list: [],
+    payment:[],
     PresentComplaintData: [],
     PresentComplaintScribble: [],
     PresentComplaintWriteUp: [],
@@ -305,5 +306,9 @@ export const docStore = create((set) => ({
      getBriefMindSymptomScribble: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/briefMindSymptomScribble/${id}`);
         set({briefMindSymptomScribble:response.data.briefMindSymptomData})
-    }
+    },
+    getPayment: async () => {
+        const response = await axios.get(`${DOC_API_URL}/getPayment`);
+        set({payment:response.data.paymentData})
+     }
 }))
