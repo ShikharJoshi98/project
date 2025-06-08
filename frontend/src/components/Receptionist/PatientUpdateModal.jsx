@@ -42,7 +42,7 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
         try {
             const response = await axios.put(`${REC_API_URL}/update-patient/${patientId}`, formValues);
             setUpdate((prev) => !prev)
-            alert("Patient Details Updated Successfully")
+            onClose();
         } catch (error) {
             alert("Unable to update patient details")
         }

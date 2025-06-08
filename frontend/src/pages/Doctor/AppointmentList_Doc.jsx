@@ -36,11 +36,11 @@ const AppointmentList_Doc = () => {
   }, [getAppdetails,appointmentSection, appointmentSubmit]);
    
   const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-  const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false).length;
-  const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true).length;
-  const medicineIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false && appointment?.medicine_issued_flag === true).length;
-  const medicineNotIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false).length;
-  console.log("list",appointmentList);
+  const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===false && appointment?.complete_appointment_flag === false).length;
+  const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === false && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true && appointment?.complete_appointment_flag === false).length;
+  const medicineIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false && appointment?.medicine_issued_flag === true && appointment?.new_appointment_flag === false).length;
+  const medicineNotIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false ).length;
+
   return (
     <div>
       <Docnavbar />
@@ -70,7 +70,6 @@ const AppointmentList_Doc = () => {
                 <thead>
                   <tr className=" bg-blue-500 text-white text-sm ">
                     <th className="py-2 px-4 border">TOKEN NO.</th>
-                    <th className="py-2 px-4 border">PATIENT'S IMAGE</th>
                     <th className="py-2 px-4 border">CASE PAPER NO.</th>
                     <th className="py-2 px-4 border">CONTACT NO.</th>
                     <th className="py-2 px-4 border">PATIENT'S NAME</th>
@@ -84,8 +83,7 @@ const AppointmentList_Doc = () => {
                   {
                     appointmentList.map((appointment, index) => (
                       <tr key={index} className={`${(appointment?.complete_appointment_flag === false && appointment?.medicine_issued_flag === true)?'bg-pink-200':(appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false)?'bg-blue-200':(appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true)?'bg-green-200':'bg-yellow-200'}`}>
-                        <td className="py-2 px-4 border">{index + 1}</td>
-                        <td className="py-2 px-4 border">PATIENT'S IMAGE</td>
+                        <td className="py-2 px-4 text-center border">{index + 1}</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.casePaperNo}</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.phone}</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.fullname}</td>

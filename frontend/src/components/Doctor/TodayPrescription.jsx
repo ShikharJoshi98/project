@@ -31,11 +31,11 @@ const TodayPrescriptions = () => {
     const completeAppointment = async () => {
         if (prescription.length > 0) {
             await axios.patch(`${DOC_API_URL}/update-apppointment/${appointmentToday[0]._id}`, {
-                complete_appointment_flag: true,
+                complete_appointment_flag: true,              
             })
         }
         else {
-            await axios.patch(`${DOC_API_URL}/update-apppointment/${appointmentToday._id}`, {
+            await axios.patch(`${DOC_API_URL}/update-apppointment/${appointmentToday[0]._id}`, {
                 complete_appointment_flag: false
             })
         }

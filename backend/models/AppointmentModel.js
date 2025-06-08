@@ -16,7 +16,8 @@ const consultationChargesSchema = new mongoose.Schema({
     type: { type: String, required: true },
     price: { type: String, required: true },
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },    
-}, { timestamps: true })
+    date:{type: String},
+})
 
 consultationChargesSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
 

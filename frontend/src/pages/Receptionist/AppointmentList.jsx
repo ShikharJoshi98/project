@@ -90,10 +90,10 @@ const AppointmentList = () => {
                             </table>
                         </div>
                         <div className='flex flex-col gap-4 mt-20'>
-                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-yellow-200'></div><div>New Patient Appointment</div></div>
-                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-green-200'></div><div>Follow Up Appointment</div></div>
-                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-blue-200'></div><div>Medicine Not Issued</div></div>
-                            <div className='flex items-center gap-4 text-xl'><div className='w-7 h-7 inline-block bg-red-200'></div><div>Medicine Issued</div></div>
+                            <div className='flex items-center gap-4'><div className='w-7 h-7 inline-block border-1 bg-yellow-200'></div><div>New Patient Appointment</div></div>
+                            <div className='flex items-center gap-4'><div className='w-7 h-7 inline-block border-1 bg-green-200'></div><div>Follow Up Appointment</div></div>
+                            <div className='flex items-center gap-4'><div className='w-7 h-7 inline-block border-1 bg-blue-200'></div><div>Medicine Not Issued</div></div>
+                            <div className='flex items-center gap-4'><div className='w-7 h-7 inline-block border-1 bg-red-200'></div><div>Medicine Issued</div></div>
                         </div>
                     </div>
                 </div>

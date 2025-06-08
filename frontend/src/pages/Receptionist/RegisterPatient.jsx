@@ -22,10 +22,8 @@ const RegisterPatient = () => {
         e.preventDefault();
         try {
             const response = await axios.post(`${REC_API_URL}/register`, {...formValues,username,password});
-            alert("Patient Registered");
         } catch (error) {
             console.log(error.message);
-            alert("Cannot register the patient");
         }
     }
     const handleInputChange = (e) => {

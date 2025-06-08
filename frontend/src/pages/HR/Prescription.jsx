@@ -10,7 +10,6 @@ const Prescription = () => {
     useEffect(() => {
         fetchPrescription(id);
     }, [fetchPrescription, prescriptionSubmit])
-    console.log(prescription);
     return (
         <div>
             <HRnavbar />
@@ -43,7 +42,7 @@ const Prescription = () => {
                                             <td className='py-2 px-1 text-center'>{pres?.dose}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.note}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.duration}</td>
-                                            <td onClick={()=>{navigate(`/medicine-payment/${id}`)}} className='py-2 px-1 text-center'><button className="bg-red-500 p-2 rounded-md text-white cursor-pointer">Pay Now</button></td>
+                                            <td  className='py-2 px-1 text-red-500 text-center'>Pending</td>
                                             <td className='py-2 px-1 text-center'>Balance</td>
                                         </tr>
                                     ))
@@ -51,6 +50,7 @@ const Prescription = () => {
                             </tbody>
                         </table>
                     </div>
+                    <button onClick={()=>{navigate(`/medicine-payment/${id}`)}} className='bg-red-500 text-white cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-5'>Pay Now</button>
                 </div>
             </div>
         </div>

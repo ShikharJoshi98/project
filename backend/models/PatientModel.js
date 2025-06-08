@@ -190,7 +190,8 @@ const otherPrescriptionSchema = new mongoose.Schema({
     },
     medicineName: { type: String, required: true },
     price: { type: Number, required: true },  
-    medicine_issued_flag: {type:Boolean,default:false}
+    medicine_issued_flag: { type: Boolean, default: false },
+    date:{type:String}
 })
 
 const Patient = mongoose.model('Patient', PatientSchema);

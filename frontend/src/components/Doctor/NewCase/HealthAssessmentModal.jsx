@@ -1,9 +1,9 @@
 import { X } from 'lucide-react'
-import React from 'react'
+import ReactDOM from "react-dom";
 import HealthAssessment from '../HealthAssessment'
 
 const HealthAssessmentModal = ({ onClose }) => {
-    return (
+  return  ReactDOM.createPortal(
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] overflow-y-auto flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
                 <button
@@ -13,8 +13,9 @@ const HealthAssessmentModal = ({ onClose }) => {
                 <HealthAssessment />
 
             </div>
-        </div>
-    )
+        </div>,
+        document.getElementById("modal-root")
+    );
 }
 
 export default HealthAssessmentModal

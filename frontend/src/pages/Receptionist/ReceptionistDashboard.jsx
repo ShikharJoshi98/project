@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react';
 import { TbPencilPlus } from "react-icons/tb";
 import { useAuthStore } from '../../store/authStore';
@@ -16,25 +16,27 @@ const ReceptionistDashboard = () => {
   const [currentDate, setCurrentDate] = useState('');
 
   useEffect(() => {
-        const updateDate = () => {
-            const today = new Date();
+    const updateDate = () => {
+      const today = new Date();
 
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0'); 
-            const year = today.getFullYear();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const year = today.getFullYear();
 
-            const formattedDate = `${day}-${month}-${year}`;
-            setCurrentDate(formattedDate);
-        };
+      const formattedDate = `${day}-${month}-${year}`;
+      setCurrentDate(formattedDate);
+    };
 
-        updateDate();
-    }, []);
+    updateDate();
+  }, []);
 
   useEffect(() => {
     getAppdetails();
-  },[getAppdetails,appointmentSubmit])
-  
+  }, [getAppdetails, appointmentSubmit])
+
   const appointmentList = appointments.filter((appointment) => appointment?.date === currentDate);
+  const pendingAppointment = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false);
+  const completeAppointment = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true);
 
   return (
     <div >
@@ -62,13 +64,13 @@ const ReceptionistDashboard = () => {
               <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300  py-5 px-8  rounded-lg bg-[#ffc36d] '>
                 <span className='text-zinc-800  mb-3 flex text-lg'>Pending Appointments</span>
                 <hr className='h-0.5 border-none mb-4 bg-white' />
-                <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-8 sm:gap-36 md:gap-10'><span>    <FaUsers /></span>0</h1>
+                <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-8 sm:gap-36 md:gap-10'><span>    <FaUsers /></span>{pendingAppointment.length}</h1>
               </div>
               <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300 py-5 px-8 rounded-lg bg-[#55abff] '>
                 <span className='text-zinc-800  mb-3 flex text-lg'>Appointments Completed</span>
                 <hr className='h-0.5 border-none mb-4 bg-white' />
                 <h1 className='text-base sm:text-2xl   flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span>    <FaRegCheckCircle />
-                </span>0</h1>
+                </span>{completeAppointment.length}</h1>
               </div>
             </div>
           </div>
