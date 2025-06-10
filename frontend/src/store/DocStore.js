@@ -47,6 +47,8 @@ export const docStore = create((set) => ({
     setsection: (newsection) => set({ section: newsection }),
     togglePrescriptionSubmit: () => set((state) => ({ prescriptionSubmit: !state.prescriptionSubmit })),
     toggleAppointmentSubmit: (appointment) => set({ appointmentSubmit: appointment }),
+    addTaskToggle: false,
+    toggleTaskSubmit: () => set((state) => ({ addTaskToggle: !state.addTaskToggle })),
     branch: "",
     setbranch: (newbranch) => set({ branch: newbranch }),
     getTasks: async () => {

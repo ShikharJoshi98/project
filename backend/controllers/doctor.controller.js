@@ -2351,8 +2351,8 @@ export const getBill = async (req, res) => {
         const paymentResponse = await fees.findOne();
         const otherMedicine = await OtherPrescription.find({ patient: id, date: formattedDate });
         const appointmentResponse = await Appointment.findOne({ PatientCase: id, date: formattedDate });
-        const consultationCharges = (await ConsultationCharges.find({ patient: id, date: formattedDate }))[0].price;
-
+        const consultationCharges = (await ConsultationCharges.find({ patient: id, date: formattedDate }))[0].price||'0';
+        console.log("consultationCharges");
         let otherMedicineBill = 0;
         otherMedicine.map((medicine, index) => {
             otherMedicineBill += medicine.price;

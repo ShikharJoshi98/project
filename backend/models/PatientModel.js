@@ -40,6 +40,7 @@ const PatientSchema = new mongoose.Schema({
     occupation: { type: String },
     dietaryPreference: { type: String },
     First_Appointment_Flag: { type: Boolean, default: true },
+    Case_Assignment_Flag: { type: Boolean, default: false },
     patientDiagnosis: [
         {
             type: String, 

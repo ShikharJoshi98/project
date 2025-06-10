@@ -16,7 +16,7 @@ const RegisterPatient = () => {
         phone: "",
         Altphone: "",
         email: "",
-        branch: ""
+        branch: "Dombivali"
     })
     const handleSubmit = async (e) => {
         e.preventDefault();

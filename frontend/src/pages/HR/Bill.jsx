@@ -20,7 +20,7 @@ const Bill = () => {
         getBillInfo(id);
     }, [getPatientDetails, fetchPrescription, prescriptionSubmit]);
     const patient = patients.filter((patient) => patient?._id === id);
-    console.log(billInfo);
+    console.log("bill",billInfo);
     const addDays = (dateStr, days) => {
         if (!dateStr || !days) return '';
         days = parseInt(days, 10);
@@ -32,7 +32,7 @@ const Bill = () => {
         let newYear = date.getFullYear();
         return `${newDay}-${newMonth}-${newYear}`;
     };
-    console.log(prescription);
+    // console.log(prescription);
     return (
         <div>
             <HRnavbar />

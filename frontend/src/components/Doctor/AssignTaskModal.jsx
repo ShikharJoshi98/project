@@ -5,7 +5,7 @@ import { docStore } from '../../store/DocStore';
 
 const AssignTaskModal = ({ onClose }) => {
   const { getDetails, employees } = useStore();
-  const { addTask, tasks, getTasks, DeleteTask } = docStore();
+  const { addTask, tasks, getTasks, DeleteTask,toggleTaskSubmit } = docStore();
   const filteredEmployees = employees.filter(employee => employee?.role != 'doctor');
   const [Task, settask] = useState();
   const [isSubmit, setIsSubmit] = useState(false);
@@ -19,6 +19,7 @@ const AssignTaskModal = ({ onClose }) => {
       e.preventDefault();
       await addTask(Task, username);
       setIsSubmit((prev) => !prev);
+      toggleTaskSubmit();
     } catch (error) {
       console.log(error.message);
     }

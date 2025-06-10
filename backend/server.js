@@ -13,7 +13,7 @@ connectDB();
 
 //middlewares
 app.use(express.json());
-app.use(cors({origin: "https://project-frontend-vert.vercel.app", 
+app.use(cors({origin: "http://localhost:5173", 
     credentials: true,}));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -27,22 +27,6 @@ app.use('/api/receptionist', Recrouter);
 app.get('/', (req, res) => {
     res.send("api working");
 })
-
-// app.get("/test-api", async (req, res) => {
-//     try {
-
-//         const appointment = await AppointmentDoctor.find({AppointmentType:"general"}).populate('PatientCase').populate('Doctor');
-
-//         // const patientCases = appointment.map(appointment => appointment.PatientCase).reverse();
-
-//         return res.json(appointment);       
-//     } catch (error) {
-//         console.log("Error in test API", error.message);
-//         return res.json({
-//             message: error.message
-//         });
-//     }
-// })
 
 
 app.listen(4000, () => {

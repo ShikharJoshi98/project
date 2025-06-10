@@ -8,6 +8,8 @@ import axios from 'axios'
 import { HR_API_URL } from '../../store/UpdateStore'
 import { docStore } from '../../store/DocStore'
 
+const months = { 1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December' };
+
 const ApplyLeaveRec = () => {
     const { user } = useAuthStore();
     const { leaves, LeaveDetails } = docStore();
@@ -21,7 +23,7 @@ const ApplyLeaveRec = () => {
 
     useEffect(() => {
         LeaveDetails();
-    }, [LeaveDetails,submit])
+    }, [LeaveDetails, submit])
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormValues((prevValues) => ({
@@ -30,11 +32,27 @@ const ApplyLeaveRec = () => {
         }));
     };
 
+    const approvedLeaves = leaves.filter(leave => leave.status === 'APPROVED');
+    console.log(leaves);
+    const leavesByMonth = approvedLeaves.reduce((acc, leave) => {
+        const date = leave.startDate.split('-');
+        const year = date[date.length-1];
+        const month = months[date[date.length - 2]]; // Month is 0-indexed
+        const duration = leave.duration + 1;
+        acc.push({
+            month,
+            year,
+            totalLeaves: duration
+        });
+        return acc
+        
+    }, []);
+    const groupedLeaves = Object.values(leavesByMonth);
+    console.log(groupedLeaves);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post(`${HR_API_URL}/apply-leave`, formValues);
-            alert("Leave Application Submitted");
             setSubmit(prev => !prev);
             setFormValues({
                 startDate: "",
@@ -43,7 +61,7 @@ const ApplyLeaveRec = () => {
                 username: user?.username || ""
             })
         } catch (error) {
-            alert("Cannot Apply Leave");
+
         }
     }
 
@@ -76,19 +94,29 @@ const ApplyLeaveRec = () => {
                                 <div className='p-2 mx-auto mt-5 overflow-x-auto '>
                                     <table className="border-collapse w-full border-2 border-gray-500 ">
                                         <thead>
-                                            <tr className="bg-blue-600 text-white">
+                                            <tr className="bg-blue-500 text-white">
                                                 <th className='px-1 py-2'>Year</th>
                                                 <th className='px-1 py-2'>Month</th>
                                                 <th className='px-1 py-2'>Total Leaves (Days)</th>
                                             </tr>
                                         </thead>
-                                        <tbody></tbody>
+                                        <tbody>
+                                            {
+                                                groupedLeaves.map((item, index) => (
+                                                    <tr key={index} className="bg-blue-100 hover:bg-blue-200 transition">
+                                                        <td className='text-center py-2'>{item.year}</td>
+                                                        <td className='text-center py-2'>{item.month}</td>
+                                                        <td className='text-center py-2'>{item.totalLeaves}</td>
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
                                     </table>
                                 </div>
                                 <div className='p-2 mx-auto mt-5 overflow-x-auto '>
-                                    <table className="border-collapse w-full border-2 border-gray-500 ">
+                                    <table className="border-collapse w-full border-2  border-gray-500 ">
                                         <thead>
-                                            <tr className="bg-blue-600 text-white">
+                                            <tr className="bg-blue-500 text-white">
                                                 <th className='py-2'>SNo.</th>
                                                 <th className='px-4 py-2'>Reason</th>
                                                 <th className='px-1 py-2'>Start Date</th>
@@ -105,8 +133,8 @@ const ApplyLeaveRec = () => {
                                                         <td className='px-1 py-2 text-center'>{leave?.reason}</td>
                                                         <td className='px-1 py-2 text-center'>{leave?.startDate}</td>
                                                         <td className='px-1 py-2 text-center'>{leave?.endDate}</td>
-                                                        <td className='px-1 py-2 text-center'>{leave?.duration+1}</td>
-                                                        <td className={`px-1 py-2 ${leave?.status==='PENDING'?'text-blue-600':leave?.status==='APPROVED'?'text-green-600':'text-red-600'} text-center`}>{leave?.status}</td>
+                                                        <td className='px-1 py-2 text-center'>{leave?.duration + 1}</td>
+                                                        <td className={`px-1 py-2 ${leave?.status === 'PENDING' ? 'text-blue-600' : leave?.status === 'APPROVED' ? 'text-green-600' : 'text-red-600'} text-center`}>{leave?.status}</td>
                                                     </tr>
                                                 ))
                                             }
