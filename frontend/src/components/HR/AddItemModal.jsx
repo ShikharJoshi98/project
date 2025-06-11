@@ -29,7 +29,7 @@ const AddItemModal = ({ onClose }) => {
     e.preventDefault();
     try {
       await AddItem(NewItem);
-      alert("Item added");
+      setitem("");
     } catch (error) {
       console.log(error.message);
     }
@@ -39,7 +39,7 @@ const AddItemModal = ({ onClose }) => {
     e.preventDefault();
     try {
       await AddUnit(NewUnit);
-      alert("Unit added");
+      setunit("");
     } catch (error) {
       console.log(error.message);
     }
@@ -71,6 +71,7 @@ const AddItemModal = ({ onClose }) => {
                 onChange={(e) => setitem(e.target.value)}
                 icon={Plus}
                 type="text"
+                value={NewItem}
                 placeholder="Mention Item Name"
               />
               <button
@@ -90,6 +91,7 @@ const AddItemModal = ({ onClose }) => {
                 onChange={(e) => setunit(e.target.value)}
                 icon={Plus}
                 type="text"
+                value={NewUnit}
                 placeholder="Mention Unit Name"
               />
               <button

@@ -2423,3 +2423,13 @@ export const getPaymnet = async (req, res) => {
         
     }
 }
+
+//stock
+
+export const approveStock = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}

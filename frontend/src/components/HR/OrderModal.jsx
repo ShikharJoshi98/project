@@ -1,27 +1,37 @@
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useStore } from "../../store/UpdateStore";
+import { HR_API_URL, useStore } from "../../store/UpdateStore";
+import axios from "axios";
 
 const OrderModal = ({ onClose }) => {
   const { getItems, items, units, getUnits, getVendors, vendors, placeOrder } = useStore();
+  const [itemStock, setItemStock] = useState([]);
+  const getItemStock = async () => {
+        const response = await axios.get(`${HR_API_URL}/get-item-stock`);
+        setItemStock(response.data.itemStock);
+    };
   
-  const [rows, setRows] = useState([
-    {  itemName: "", unit: "", vendor: "", quantity: "", deliveryDate: ""  },
-  ]);
 
   useEffect(() => {
     getItems();
     getVendors();
     getUnits();
   }, [getItems, getVendors, getUnits]);
-
+   useEffect(() => {
+          try {
+              getItemStock();
+          } catch (error) {
+              console.log("Error in fetch API hr getItemStock", error.message);
+          }
+      }, []);
+  console.log(itemStock);
+  const lowQuantityItems = itemStock.filter((item) => item.quantity <= item.reorder_level);
+  console.log(lowQuantityItems);
+  const [rows, setRows] = useState([
+    {  itemName: lowQuantityItems?.itemName, unit: "", vendor: "", quantity: "", deliveryDate: ""  },
+  ]);
   // Function to add a new row
-  const addRow = () => {
-    setRows([
-      ...rows,
-      { itemName: "", unit: "", vendor: "", quantity: "", deliveryDate: "" },
-    ]);
-  };
+ 
    
   // Function to handle input changes
   const handleInputChange = (index, field, value) => {
@@ -64,7 +74,6 @@ const OrderModal = ({ onClose }) => {
             <thead>
               <tr className="bg-blue-500 text-white font-semibold">
                 <th className="border p-2">Item Name</th>
-                <th className="border p-2">Unit Name</th>
                 <th className="border p-2">Vendors</th>
                 <th className="border p-2">Ordered Quantity</th>
                 <th className="border p-2">Expected Delivery Date</th>
@@ -72,12 +81,12 @@ const OrderModal = ({ onClose }) => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
-                <tr key={row.id} className="bg-blue-200">
+              {lowQuantityItems.map((row, index) => (
+                <tr key={index} className="bg-blue-200">
                   {/* Item Name Dropdown */}
                   <td className="p-2">
                     <select
-                      value={row.itemName}
+                      value=""
                       onChange={(e) => handleInputChange(index, "itemName", e.target.value)}
                       className="py-2 bg-white rounded-lg w-full border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
                     >
@@ -90,26 +99,10 @@ const OrderModal = ({ onClose }) => {
                     </select>
                   </td>
 
-                  {/* Unit Name Dropdown */}
-                  <td className="p-2">
-                    <select
-                      value={row.unit}
-                      onChange={(e) => handleInputChange(index, "unit", e.target.value)}
-                      className="py-2 bg-white rounded-lg w-full border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
-                    >
-                      <option value="">Select Unit</option>
-                      {units.map((el, i) => (
-                        <option key={i} value={el.unit}>
-                          {el.unit}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-
                   {/* Vendor Name Dropdown */}
                   <td className="p-2">
                     <select
-                      value={row.vendor}
+                      value=""
                       onChange={(e) => handleInputChange(index, "vendor", e.target.value)}
                       className="py-2 bg-white rounded-lg w-full border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
                     >
@@ -158,12 +151,7 @@ const OrderModal = ({ onClose }) => {
           </table>
 
           {/* Add Row Button */}
-          <button
-            onClick={addRow}
-            className="mt-4 cursor-pointer transition-all duration-300 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Add Row
-          </button>
+          
         </div>
         <button onClick={SubmitOrder} className="mt-4 cursor-pointer transition-all duration-300 mx-auto bg-blue-500 text-lg font-semibold w-fit rounded-lg text-white px-4 py-2  hover:bg-blue-600">Submit Order</button>
       </div>

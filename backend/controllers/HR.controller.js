@@ -267,6 +267,59 @@ export const get_item_stock = async (req,res) => {
     }
 }
 
+export const updateItemStock = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: "Missing item ID" });
+        }
+
+        const updateData = {};
+
+        if (req.body.docApproval_flag !== undefined) {
+            updateData.docApproval_flag = req.body.docApproval_flag;
+        }
+
+        if (req.body.issue_quantity !== undefined) {
+            const issueQty = Number(req.body.issue_quantity) || 0;
+            updateData.issue_quantity = issueQty;
+        }
+
+        if (req.body.receive_quantity !== undefined) {
+            updateData.receive_quantity = req.body.receive_quantity;
+        }
+
+        if (req.body.reorder_level !== undefined) {
+            updateData.reorder_level = req.body.reorder_level;
+        }
+        if (req.body.last_updated !== undefined) {
+            updateData.last_updated = req.body.last_updated;
+        }
+
+        if (req.body.quantity !== undefined && req.body.issue_quantity !== undefined) {
+            const qty = Number(req.body.quantity) || 0;
+            const issueQty = Number(req.body.issue_quantity) || 0;
+            updateData.quantity = qty - issueQty;
+        } else if (req.body.quantity !== undefined) {
+            updateData.quantity = Number(req.body.quantity);
+        }
+
+        const updatedItem = await ItemStock.findByIdAndUpdate(id, updateData, { new: true });
+
+        if (!updatedItem) {
+            return res.status(404).json({ success: false, message: "Item not found" });
+        }
+
+        res.json({ success: true, updatedItem });
+
+    } catch (error) {
+        console.error("Error updating item stock:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
 export const place_item_order = async (req, res) => {
     
     try {

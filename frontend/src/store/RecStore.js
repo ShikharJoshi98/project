@@ -8,6 +8,8 @@ export const recStore = create((set) => ({
     patients: [],
     appointmentSection: "general",
     update: false,
+    stockToggle: false,
+    toggleStockUpdate: () => set((state) => ({ stockToggle: !state.stockToggle })),
     setUpdate: (updateStatus) => set({ update: updateStatus }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     getPatientDetails: async () => {

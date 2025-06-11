@@ -7,27 +7,46 @@ import AddItemStockModal from '../../components/HR/AddItemStockModal';
 import OrderModal from '../../components/HR/OrderModal';
 import axios from 'axios';
 import { HR_API_URL } from '../../store/UpdateStore';
+import ReorderLevelModal from '../../components/ReorderLevelModal';
+import StockIssueModal from '../../components/StockIssueModal';
+import { recStore } from '../../store/RecStore';
 
 const ItemStockRec = () => {
     const [isItemModalOpen, setItemModalIsOpen] = useState(false);
+    const { stockToggle, toggleStockUpdate } = recStore();
     const [isVendorModalOpen, setVendorModalIsOpen] = useState(false);
     const [isAddStockModalOpen, setAddStockModalIsOpen] = useState(false);
     const [isOrderModalOpen, setOrderModalIsOpen] = useState(false);
     const [itemStock, setItemStock] = useState([]);
-
-    const getItemStock = async() =>{
+    const [openReorderModal, setOpenReorderModal] = useState(false);
+    const [issueModal, setissueModal] = useState(false);
+    const [itemSelect, setItemSelect] = useState();
+    const getItemStock = async () => {
         const response = await axios.get(`${HR_API_URL}/get-item-stock`);
-        console.log(response.data.itemStock);
         setItemStock(response.data.itemStock);
     };
+    console.log(itemStock);
+    const timeStamp = (isoDate) => {
+        const date = new Date(isoDate);
+        const options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true
+        };
 
-    useEffect(()=>{
-        try {            
+        const formattedDate = date.toLocaleString("en-US", options);
+        return formattedDate;
+    }
+    useEffect(() => {
+        try {
             getItemStock();
         } catch (error) {
-            console.log("Error in fetch API hr getItemStock",error.message);            
+            console.log("Error in fetch API hr getItemStock", error.message);
         }
-    },[isAddStockModalOpen]);
+    }, [isAddStockModalOpen,stockToggle]);
 
     return (
         <div>
@@ -42,10 +61,10 @@ const ItemStockRec = () => {
                             <button onClick={() => setVendorModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>VENDORS</button>
                             <button onClick={() => setAddStockModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>ADD STOCK</button>
                             <button onClick={() => setOrderModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>PLACE ORDER</button>
-                        </div>                        
+                        </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
-                                <thead className="bg-[#337ab7] whitespace-nowrap text-white">
+                                <thead className="bg-[#337ab7] text-sm text-white">
                                     <tr >
                                         <th className="px-1 py-2 ">Count</th>
                                         <th className="px-1 py-2 ">Item</th>
@@ -59,20 +78,20 @@ const ItemStockRec = () => {
                                     </tr>
                                 </thead>
                                 <tbody className='text-black'>
-                                    {                                    
-                                    itemStock?.map((item,index) => (
-                                        <tr>
-                                            <td className="px-1 py-2 text-center">{index+1}</td>
-                                            <td className="px-1 py-2 text-center ">{item.itemName}</td>
-                                            <td className="px-1 py-2 text-center ">{item.quantity}</td>
-                                            <td className="px-1 py-2 text-center ">{item.reorder_level}</td>
-                                            <td className="px-1 py-2 text-center "></td>
-                                            <td className="px-1 py-2 text-center ">{item.issue_quantity}</td>
-                                            <td className="px-1 py-2 text-center ">{item.receive_quantity}</td>
-                                            <td className="px-1 py-2 text-center "> {item.approval_flag_new ? <button className='border-2 px-1 py-0.5 text-red-500 font-semibold'>PENDING</button> : <button>APPROVED</button> }</td>
-                                            <td className="px-1 py-2 text-center ">{item.approval_flag_new ? "NEW ITEM ADDED": ""}</td>
-                                        </tr>
-                                    ))}
+                                    {
+                                        itemStock?.map((item, index) => (
+                                            <tr className='bg-blue-200'>
+                                                <td className="px-1 py-2 text-center">{index + 1}</td>
+                                                <td className="px-1 py-2 text-center ">{item.itemName}</td>
+                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.quantity} {item.unit}</span> : <span onClick={() => { setissueModal(true); setItemSelect(item)}} className='bg-white px-2 py-0.5 rounded-md'>{item.quantity} {item.unit}</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.reorder_level}</span> : <span onClick={() => { setOpenReorderModal(true);  setItemSelect(item)}} className='bg-white px-2 py-0.5 rounded-md'>{item.reorder_level}</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{timeStamp(item.last_updated)}</td>
+                                                <td className="px-1 py-2 text-center ">{item.issue_quantity}</td>
+                                                <td className="px-1 py-2 text-center ">{item.approval_flag_new === false ? item.receive_quantity : 0}</td>
+                                                <td className="px-1 py-2 text-center "> {item.docApproval_flag === false ? <span className='border-2 px-2 rounded-md py-0.5 text-red-500'>PENDING</span> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item.approval_flag_new ? "NEW ITEM" : "ITEM ISSUED"}</td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </table>
                         </div>
@@ -83,8 +102,11 @@ const ItemStockRec = () => {
             {isVendorModalOpen && <VendorModal onClose={() => setVendorModalIsOpen(false)} />}
             {isAddStockModalOpen && <AddItemStockModal onClose={() => setAddStockModalIsOpen(false)} />}
             {isOrderModalOpen && <OrderModal onClose={() => setOrderModalIsOpen(false)} />}
+            {openReorderModal && <ReorderLevelModal item={itemSelect} onClose={() => setOpenReorderModal(false)} />}
+            {issueModal && <StockIssueModal item={itemSelect} onClose={() => setissueModal(false)} />}
         </div>
     )
 }
 
 export default ItemStockRec
+

@@ -23,14 +23,14 @@ const VendorModal = ({ onClose }) => {
   const [contact, setcontact] = useState("");
   const [email, setemail] = useState("");
   const [address, setaddress] = useState("");
+  const [submit, setSubmit] = useState(false);
     const { getVendors, vendors, editVendor,addVendor } = useStore();
     const cols = ['vendorname', 'contact', 'email', 'address'];
   async function handleSave(editedData) {
     try {
       await editVendor(editedData._id, editedData.vendorname, editedData.contact, editedData.email, editedData.address);
       setEditingRow(null);
-      alert("Vendor details updated successfully!");
-
+      setSubmit(prev => !prev);
     } catch (error) {
       alert("Failed to update vendor details.");
     }
@@ -40,17 +40,17 @@ const VendorModal = ({ onClose }) => {
     e.preventDefault();
     try {
       await addVendor(vendorname, contact, email, address);
-      alert("Added a new Vendor");
+      setSubmit(prev => !prev);
     } catch (error) {
       console.log(error.message);
     }
   }
     useEffect(() => {
         getVendors();
-    },[getVendors])
+    },[getVendors,submit])
   return (
       <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
-            <div className="bg-[#e9ecef] max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
+            <div className="bg-[#e9ecef] max-h-[90vh] max-w-[95vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
             <button
             onClick={onClose}
           className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
@@ -60,7 +60,7 @@ const VendorModal = ({ onClose }) => {
               <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
           Vendors
               </h1>
-              <div className="flex flex-col  md:justify-around md:flex-row gap-6">
+              <div className="flex flex-col  md:justify-around md:flex-row ">
                   <div className="bg-white p-5 rounded-lg max-w-[834px]">
                       <h1 className='text-lg text-center font-semibold text-blue-600 mb-4'>Add Vendor</h1>
             <form onSubmit={handleSubmit} >
