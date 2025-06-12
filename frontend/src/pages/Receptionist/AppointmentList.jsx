@@ -55,8 +55,7 @@ const AppointmentList = () => {
                             <button onClick={() => setAppointmentSection("courier")} className={`cursor-pointer border-1 border-black hover:scale-102 transition-all duration-300 ${appointmentSection === 'courier' ? 'bg-blue-500 text-white' : 'bg-blue-300 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>COURIER MEDICINE</button>
                         </div>
                         <div className='flex items-center gap-2 mt-10'>
-                            <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={SearchIcon} placeholder='Search for Items here' />
-                            <button className='py-2 px-4 bg-blue-500 font-semibold rounded-lg text-white'>Search</button>
+                            <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={SearchIcon} placeholder='Search for Patient&apos;s Name/Case Paper No./Mobile No.' />
                         </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">

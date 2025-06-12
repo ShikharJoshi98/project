@@ -323,11 +323,11 @@ export const updateItemStock = async (req, res) => {
 export const place_item_order = async (req, res) => {
     
     try {
-        const { items } = req.body;
-        if (!items || items.length === 0) {
+        const { formRows } = req.body;
+        if (!formRows || formRows.length === 0) {
             return res.status(400).json({ message: "Order items are required" });
         }
-        const newOrder = new Order({ items });
+        const newOrder = new Order({ formRows });
         await newOrder.save();
         res.status(201).json({ message: "Order placed successfully",  newOrder });
 

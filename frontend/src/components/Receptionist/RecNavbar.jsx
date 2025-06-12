@@ -35,7 +35,7 @@ const RecNavbar = () => {
 
     const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch));
     const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch))
-
+    const courierAppointments = appointments.filter((appointment)=>(appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch))
     function handleLogout() {
         logout();
         navigate('/login');
@@ -64,7 +64,7 @@ const RecNavbar = () => {
                                 </div>
                                 <div onClick={() => { navigate('/appointment-details-rec'); setAppointmentSection('courier') }} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                                     <h1>Courier Medicine</h1>
-                                    <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">0</span>
+                                    <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">{courierAppointments.length}</span>
                                 </div>
                             </div>
                         )}

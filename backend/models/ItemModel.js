@@ -25,12 +25,14 @@ const StockSchema = new mongoose.Schema({
     timestamps: { createdAt: 'timestamp', updatedAt: 'last_updated' }
 });
 
+const orderPlacedSchema = new mongoose.Schema({
+    
+})
 
 const orderSchema = new mongoose.Schema({
-    items: [
+    formRows: [
         {
             itemName: { type: String, required: true },
-            unit: { type: String, required: true },
             vendor: { type: String, required: true },            
             quantity: { type: Number, required: true },
             deliveryDate: { type: Date, required: true },

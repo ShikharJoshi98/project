@@ -6,9 +6,12 @@ import { Hospital, Mail, Phone, User } from 'lucide-react'
 import PatientDetailModal from '../../components/Receptionist/PatientDetailModal'
 import axios from 'axios'
 import { REC_API_URL } from '../../store/RecStore'
+import { useAuthStore } from '../../store/authStore'
 
 const RegisterPatient = () => {
     const [isPatientRegisterModalOpen, setPatientRegisterModalIsOpen] = useState(false);
+    const { user } = useAuthStore();
+    console.log(user);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [formValues, setFormValues] = useState({
@@ -16,7 +19,7 @@ const RegisterPatient = () => {
         phone: "",
         Altphone: "",
         email: "",
-        branch: "Dombivali"
+        branch: user?.branch
     })
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -82,9 +85,7 @@ const RegisterPatient = () => {
                                         <Hospital className="size-4 text-blue-500" />
                                     </div>
                                     <select onChange={(e) => { handleInputChange(e); passwordCreator(formValues.fullname, formValues.phone, e.target.value) }} value={formValues.branch} name="branch" required id="branch" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                        <option value="" disabled selected className='font-normal' >Select Branch</option>
-                                        <option value="Dombivali">Dombivali</option>
-                                        <option value="Mulund">Mulund</option>
+                                        <option value={user?.branch}>{user?.branch}</option>
                                     </select>
                                 </div>
                             </div>

@@ -19,9 +19,8 @@ const PatientDetails = () => {
     useEffect(() => {
         getPatientDetails();
     }, [getPatientDetails, update]);
-    console.log(patients)
     const filteredPatient = patients.filter((patient) => (patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-
+    console.log(filteredPatient)
     return (
         <div>
             <RecNavbar />
@@ -54,9 +53,9 @@ const PatientDetails = () => {
                                 </thead>
                                 <tbody>
                                     {filteredPatient.map((patient, index) => (
-                                        <tr key={index} className={`${patient?.Case_Assignment_Flag===false?'bg-yellow-200 hover:bg-yellow-300':'hover:bg-blue-300 bg-blue-200'} transition-all`}>
+                                        <tr key={index} className={`${patient?.Case_Assignment_Flag === false ? 'bg-yellow-200 hover:bg-yellow-300' : 'hover:bg-blue-300 bg-blue-200'} transition-all`}>
                                             <td className="px-1 py-2 text-center">{index + 1}.</td>
-                                            <td className="px-1 py-2 text-center">{patient?.casePaperNo}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.casePaperNo===''?'DOM-NEW':patient?.casePaperNo}</td>
                                             <td className="px-1 py-2 text-center">{patient?.username}</td>
                                             <td className="px-1 py-2 text-center">{patient?.fullname}</td>
                                             <td className="px-1 py-2 text-center">{patient?.phone}</td>
@@ -70,8 +69,12 @@ const PatientDetails = () => {
                                 </tbody>
                             </table>
                         </div>
+                        <div className="flex mt-10 flex-col gap-5">
+                            <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span> New Patient (Case Paper Number Not Issued)</span></div>
+                        </div>
                     </div>
                 </div>
+
             </div>
             {isPatientUpdateModalOpen && <PatientUpdateModal patientId={patientId} onClose={() => setPatientUpdateModalIsOpen(false)} />}
             {isAppointmentModalOpen && <AppointmentModal onClose={() => setAppointmentModalIsOpen(false)} />}

@@ -130,6 +130,7 @@ export const useStore = create((set) => ({
   },
   placeOrder: async (items) => {
     try {
+      console.log(items);
       const response = await axios.post(`${HR_API_URL}/place-item-order`, {items});
       console.log(response.data.newOrder)
       set({order:response.data.newOrder})

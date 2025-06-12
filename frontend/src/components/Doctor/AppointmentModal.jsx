@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Input from '../Input';
 import { Calendar, Clock, User, X } from 'lucide-react';
 import { FaUserDoctor } from 'react-icons/fa6';
@@ -35,7 +35,6 @@ const AppointmentModal = ({ onClose }) => {
     toggleAppointmentSubmit(!appointmentSubmit);
 
     setFormValues({
-      date: "",
       time: "",
       PatientCase: "",
       Doctor: "",
