@@ -202,11 +202,12 @@ export const getAllAppointments = async (req, res) => {
 
 export const updateAppointment = async (req, res) => {
     try {
-        const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag } = req.body;
+        const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag,date } = req.body;
         const { id } = req.params;
-        const appointment = await Appointment.findByIdAndUpdate(id, {
+        const appointment = await Appointment.findOneAndUpdate({ PatientCase: id,date }, {
             new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag
-        });
+        },
+            { new: true });
         res.json({
             success: true,
             appointment
@@ -1211,7 +1212,7 @@ export const deleteInvestigationAdvised = async (req, res) => {
                 await ultraSonography.findByIdAndDelete(id);
                 break;
             case 'Doppler Studies':
-                await dopplerStudies.find();
+                await dopplerStudies.findByIdAndDelete(id);
                 break;
             case 'Obstetrics(Pregnancy)':
                 response = await obsetrics.findByIdAndDelete(id);
@@ -2351,7 +2352,7 @@ export const getBill = async (req, res) => {
         const paymentResponse = await fees.findOne();
         const otherMedicine = await OtherPrescription.find({ patient: id, date: formattedDate });
         const appointmentResponse = await Appointment.findOne({ PatientCase: id, date: formattedDate });
-        const consultationCharges = (await ConsultationCharges.find({ patient: id, date: formattedDate }))[0].price||'0';
+        const consultationCharges = (await ConsultationCharges.find({ patient: id, date: formattedDate }))[0].price || '0';
         console.log("consultationCharges");
         let otherMedicineBill = 0;
         otherMedicine.map((medicine, index) => {
@@ -2399,28 +2400,28 @@ export const getBill = async (req, res) => {
 
 export const addPayment = async (req, res) => {
     try {
-        const { billPaid, balanceDue, modeOfPayment,totalBill } = req.body;
+        const { billPaid, balanceDue, modeOfPayment, totalBill } = req.body;
         const { id } = req.params;
-        await billPayment.create({ billPaid,totalBill, balanceDue, modeOfPayment, patient: id });
+        await billPayment.create({ billPaid, totalBill, balanceDue, modeOfPayment, patient: id });
         res.json({
             success: true,
-            message:"Bill Payment Done"
+            message: "Bill Payment Done"
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
 
 export const getPaymnet = async (req, res) => {
     try {
-        const { id } = req.params;        
+        const { id } = req.params;
         const response = await billPayment.findOne({ patient: id });
-        
+
     } catch (error) {
-        
+
     }
 }
 
@@ -2428,8 +2429,8 @@ export const getPaymnet = async (req, res) => {
 
 export const approveStock = async (req, res) => {
     try {
-        
+
     } catch (error) {
-        
+
     }
 }

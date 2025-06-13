@@ -8,15 +8,14 @@ const Docnavbar = () => {
   const [isOpen, setOpen] = useState(false);
   const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppdetails, appointments } = docStore();
   const [currentDate, setCurrentDate] = useState('');
-
-  const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general'));
-  const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat'))
-  const domGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Dombivali'));
-  const mulGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Mulund'));
-  const domRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Dombivali'));
-  const mulRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Mulund'));
-  const domCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Dombivali'));
-  const mulCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Mulund'));
+  
+  const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.complete_appointment_flag===false));
+  const domGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false));
+  const mulGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false));
+  const domRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false));
+  const mulRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false));
+  const domCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false));
+  const mulCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false));
   const menuRef = useRef(null);
   const { logout } = useAuthStore();
   const navigate = useNavigate();
@@ -24,7 +23,9 @@ const Docnavbar = () => {
   const [isRepeatMedicineHovered, setIsRepeatMedicineHovered] = useState(false);
   const [isCourierMedicineHovered, setIsCourierMedicineHovered] = useState(false);
   useEffect(() => {
-    getAppdetails(appointmentSection);
+    setTimeout(() => {
+      getAppdetails(appointmentSection);
+    }, 500);
   }, [getAppdetails, appointmentSection, appointmentSubmit]);
   useEffect(() => {
     const handleClikcOutside = (e) => {
@@ -68,7 +69,7 @@ const Docnavbar = () => {
       <div>
         <ul className=' hidden lg:flex items-center gap-6 text-white text-sm xl:text-base'>
           <div className="relative" onMouseEnter={() => setIsAppointmentHovered(true)} onMouseLeave={() => setIsAppointmentHovered(false)}>
-            {(generalAppointments.length + repeatAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-20 xl:left-24 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{(domGeneralAppointments.length + mulGeneralAppointments.length)}</div>)}
+            {(generalAppointments.length) > 0 && (<div className='absolute w-5 h-5 left-20 xl:left-24 bottom-3 flex items-center justify-center text-sm rounded-full bg-blue-500'>{(domGeneralAppointments.length + mulGeneralAppointments.length)}</div>)}
             <li className="hover:text-gray-300 group  cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Appointments</li>
             {isAppointmentHovered && (
               <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-40 flex flex-col h-auto">

@@ -22,7 +22,7 @@ const PastHistory = ({ complaint }) => {
         durationSuffix: "",
         remark: "",
     })
-    useEffect(() => { getCaseData(complaint); getPastHistoryData(id) },
+    useEffect(() => { getCaseData('Present Complaints'); getPastHistoryData(id) },
         [getCaseData, getPastHistoryData, submit]);
 
     const handleInputChange = (e) => {

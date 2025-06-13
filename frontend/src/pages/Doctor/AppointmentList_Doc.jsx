@@ -40,7 +40,7 @@ const AppointmentList_Doc = () => {
   const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === false && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true && appointment?.complete_appointment_flag === false).length;
   const medicineIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false && appointment?.medicine_issued_flag === true && appointment?.new_appointment_flag === false).length;
   const medicineNotIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false ).length;
-
+  console.log(appointmentList);
   return (
     <div>
       <Docnavbar />
@@ -87,20 +87,20 @@ const AppointmentList_Doc = () => {
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.casePaperNo}</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.phone}</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.fullname}</td>
-                        <td className="py-2 px-4 border">{appointment?.AppointmentType}</td>
+                        <td className="py-2 px-4 border">{appointment?.appointmentType}</td>
                         <td className="py-2 px-4 border">{appointment?.PatientCase?.branch}</td>
                         <td onClick={() => navigate(`/appointment-details/${appointment?.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
-                        <td className="py-2 px-4 border">{appointment?.PatientCase?.email}</td>
+                        <td className="py-2 px-4 border">Not Active</td>
                       </tr>
                     ))}
                 </tbody>
               </table>
             </div>
             <div className="flex mt-10 flex-col gap-5">
-              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>New Patient Appointment Due  ({newAppointmentLength})</span></div>
-              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-green-200"></div><span>Follow up Appointment Due  ({followUpAppointmentLength})</span></div>
+              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>{appointmentSection==='general'?'New Patient Appointment Due':appointmentSection==='repeat'?'New Repeat Medicine Appointment Due':'New Courier Appointment Due'}  ({newAppointmentLength})</span></div>
+              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-green-200"></div><span>{appointmentSection==='general'?'Follow Up Appointment Due':appointmentSection==='repeat'?'Follow up Repeat Medicine Appointment Due':'Follow Up Courier Appointment Due'}  ({followUpAppointmentLength})</span></div>
               <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-blue-200"></div><span>Medicine Not Issued  ({medicineNotIssuedLength})</span></div>
-              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-pink-200"></div><span>Medicine Issued  ({medicineIssuedLength})</span></div>
+              <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-pink-200"></div><span>{appointmentSection==='general'?'Medicine Issued':appointmentSection==='repeat'?'Repeat Medicine Issued':'Courier Medicine Issued'}  ({medicineIssuedLength})</span></div>
             </div>
           </div>
 

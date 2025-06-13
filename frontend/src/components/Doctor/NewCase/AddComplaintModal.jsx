@@ -1,5 +1,6 @@
 import { PlusCircle, TrashIcon, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import ReactDOM from "react-dom";
 import Input from '../../Input'
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
@@ -28,8 +29,9 @@ const AddComplaintModal = ({ onClose, complaint }) => {
     }
     useEffect(() => { getCaseData(complaint); },
         [getCaseData, submit]);
+    console.log(list);
 
-    return (
+    return ReactDOM.createPortal(
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] overflow-y-auto flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
                 <button
@@ -62,8 +64,9 @@ const AddComplaintModal = ({ onClose, complaint }) => {
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        </div>,
+        document.getElementById("modal-root")
+    );
 }
 
 export default AddComplaintModal

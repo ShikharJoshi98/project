@@ -33,7 +33,7 @@ const CaseReport = () => {
 
         updateDate();
     }, []);
-    console.log(chiefComplaints);
+    console.log(FamilyMedicalData);
     const patient = patients.filter((cand => (cand._id) === location.id));
     return (
         <div>
@@ -42,6 +42,7 @@ const CaseReport = () => {
                 <AppointmentSidebar />
                 <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
                     <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
+                        <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
                         <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>Patient Details</h1>
                         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                             <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
@@ -73,11 +74,11 @@ const CaseReport = () => {
                         </div>
                     </div>
                     <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
-                        <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
+                        <h1 onClick={() => navigate(`/new-case-details/${location.id}`)} className='text-lg flex items-center gap-3 py-1 px-3 bg-blue-500 rounded-md text-white w-fit cursor-pointer ml-10'><FaAngleDoubleLeft /> New Case</h1>
                         <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>New Case - Final Report</h1>
                         <div className='flex items-center justify-between my-5'>
                             <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl '>{currentDate}</h1>
-                            <button onClick={()=>generateTablePDF(patient[0])} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
+                            <button onClick={() => generateTablePDF(patient[0])} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
                         </div>
                         <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                         <div className='mt-12'>
@@ -173,44 +174,7 @@ const CaseReport = () => {
                             </div>
                         </div>
                         <div className="mt-12">
-                            <h1 className='text-blue-500 font-semibold text-2xl'>Personal History</h1>
-                            {
-                                personalHistory.map((complaint, index) => (
-                                    <img src={complaint?.image} key={index} className='mt-5' />
-                                ))
-                            }
-                        </div>
-                        <div className="mt-12">
-                            <h1 className='text-blue-500 font-semibold text-2xl'>Personal History</h1>
-                            <div className="overflow-x-auto mt-10 rounded-lg">
-                                <table className="min-w-full border border-gray-300 bg-white shadow-md ">
-                                    <thead className="bg-[#337ab7]  text-white">
-                                        <tr >
-                                            <th className="px-1 py-4 ">Relation</th>
-                                            <th className="px-2 py-4 ">Age</th>
-                                            <th className="px-2 py-4 ">Diseases</th>
-                                            <th className="px-4 py-4 ">Any Other</th>
-                                            <th className="px-2 py-4 ">Dead/Alive</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            FamilyMedicalData.map((data, index) => (
-                                                <tr key={index} className="bg-blue-200 text-lg">
-                                                    <td className='py-2 px-1 text-center'>{data?.relation}</td>
-                                                    <td className='py-2 px-2 text-center'>{data?.age}</td>
-                                                    <td className='py-2 px-2 text-center'>{data?.diseases.join(',')}</td>
-                                                    <td className='py-2 px-2 text-center'>{data?.anyOther}</td>
-                                                    <td className='py-2 px-2 text-center'>{data?.lifeStatus}</td>
-                                                </tr>
-                                            ))
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div className="mt-12">
-                            <h1 className='text-blue-500 font-semibold text-2xl'>Personal History</h1>
+                            <h1 className='text-blue-500 font-semibold text-2xl'>Family Medical History</h1>
                             <div className="overflow-x-auto mt-10 rounded-lg">
                                 <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                                     <thead className="bg-[#337ab7]  text-white">

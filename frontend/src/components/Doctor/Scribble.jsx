@@ -54,6 +54,7 @@ const Scribble = ({ complaint }) => {
                 const mentalCausativeData = await canvasRef.current.exportImage("png");
                 await axios.post(`${DOC_API_URL}/add-mentalCausative-scribble/${id}`, { savedImage: mentalCausativeData });
                 canvasRef.current?.clearCanvas();
+                window.scrollTo(0, 0);
 
                 break;
             case 'Chief Complaints':
@@ -61,24 +62,28 @@ const Scribble = ({ complaint }) => {
                 await axios.post(
                     `${DOC_API_URL}/add-chiefComplaint-scribble/${id}`, { savedImage: chiefComplaintData });
                 canvasRef.current?.clearCanvas();
+                window.scrollTo(0, 0);
 
                 break;
             case 'Personal History':
                 const personalHistoryData = await canvasRef.current.exportImage("png");
                 await axios.post(`${DOC_API_URL}/add-personalHistory-scribble/${id}`, { savedImage: personalHistoryData });
                 canvasRef.current?.clearCanvas();
+                window.scrollTo(0, 0);
 
                 break;
             case 'Mental Personality Character':
                 const mentalPersonalityData = await canvasRef.current.exportImage("png");
                 await axios.post(`${DOC_API_URL}/add-mentalPersonality-scribble/${id}`, { savedImage: mentalPersonalityData });
                 canvasRef.current?.clearCanvas();
+                window.scrollTo(0, 0);
 
                 break;
             case 'Brief Mind Symptoms':
                 const briefMindSymptomData = await canvasRef.current.exportImage("png");
                 await axios.post(`${DOC_API_URL}/add-briefMindSymptom-scribble/${id}`, { savedImage: briefMindSymptomData });
                 canvasRef.current?.clearCanvas();
+                window.scrollTo(0, 0);
 
                 break;
         }

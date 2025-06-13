@@ -12,11 +12,11 @@ const Scribble = () => {
     const canvasRef = useRef(null);
     const [eraseMode, setEraseMode] = useState(false);
     const [strokeWidth, setStrokeWidth] = useState(4);
-     const { pathname } = useLocation();
+    const { pathname } = useLocation();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
     const navigate = useNavigate();
     useEffect(() => {
         const wrapper = document.getElementById("canvas-wrapper");
@@ -56,7 +56,6 @@ const Scribble = () => {
                 break;
         }
     };
-    console.log(scribbleType);
 
     const handleSaveClick = async () => {
         try {
@@ -66,6 +65,8 @@ const Scribble = () => {
                     `${DOC_API_URL}/add-follow-up-patient/${id}`,
                     { savedImage: imageData }
                 );
+                window.scrollTo(0, 0);
+
             }
             else if (scribbleType === 'present-complaints') {
                 const imageData = await canvasRef.current.exportImage("png");
@@ -73,6 +74,8 @@ const Scribble = () => {
                     `${DOC_API_URL}/add-presentComplaintScribble/${id}`,
                     { savedImage: imageData }
                 );
+                window.scrollTo(0, 0);
+
             }
             canvasRef.current?.clearCanvas();
         } catch (error) {

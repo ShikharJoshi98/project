@@ -1,6 +1,7 @@
 import { PlusCircle, TrashIcon, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Input from '../../Input'
+import ReactDOM from "react-dom";
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
 
@@ -20,15 +21,15 @@ const FAQModal = ({ onClose, complaint }) => {
             console.log(error.message);
         }
     }
-     const deleteData = async (id) => {
+    const deleteData = async (id) => {
         try {
-            await axios.delete(`${DOC_API_URL}/deleteCaseMaster/${complaint.replace(/\s+/g,"")}/${id}`);
+            await axios.delete(`${DOC_API_URL}/deleteCaseMaster/${complaint.replace(/\s+/g, "")}/${id}`);
             setSubmit(prev => !prev);
         } catch (error) {
             console.log(error.message);
         }
     }
-    return (
+    return ReactDOM.createPortal(
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-h-[100vh] max-w-[90vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-4 shadow-lg">
                 <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1">
@@ -60,8 +61,9 @@ const FAQModal = ({ onClose, complaint }) => {
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        </div>,
+        document.getElementById("modal-root")
+    );
 }
 
 export default FAQModal

@@ -19,28 +19,29 @@ const TodayPrescriptions = () => {
     const [editedData, setEditedData] = useState({});
     const [editNote, setEditNote] = useState(false);
     const todayDate = updateDate();
-    useEffect(() => {
-        fetchPrescription(location.id);
-        getPresentComplaintData(location.id);
-        getAppdetails(appointmentSection);
-    }, [prescriptionSubmit, deleteFlag, updateFlag, getPresentComplaintData, fetchPrescription]);
-
-    const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
-    const appointmentToday = appointments.filter((appointment) => appointment?.date === todayDate);
-
-    const completeAppointment = async () => {
+    useEffect(() => {const completeAppointment = async () => {
         if (prescription.length > 0) {
-            await axios.patch(`${DOC_API_URL}/update-apppointment/${appointmentToday[0]._id}`, {
-                complete_appointment_flag: true,              
+            await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
+                complete_appointment_flag: true,      
+                date:todayDate
             })
         }
         else {
-            await axios.patch(`${DOC_API_URL}/update-apppointment/${appointmentToday[0]._id}`, {
-                complete_appointment_flag: false
+            await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
+                complete_appointment_flag: false,
+                date:todayDate
             })
         }
     }
     completeAppointment();
+        fetchPrescription(location.id);
+        getPresentComplaintData(location.id);
+        getAppdetails(appointmentSection);
+    }, [prescriptionSubmit, deleteFlag, updateFlag,prescription, getPresentComplaintData, fetchPrescription]);
+
+    const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
+    
+    
 
     const addDays = (dateStr, days) => {
         days = parseInt(days, 10);
