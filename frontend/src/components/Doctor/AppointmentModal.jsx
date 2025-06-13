@@ -12,7 +12,7 @@ const AppointmentModal = ({ onClose }) => {
   const { patients, getPatientDetails } = recStore();
   const { getDetails, employees } = useStore();
   const doctors = employees.filter(emp => emp?.role === 'doctor');
-  
+  const [appointmentCreated, setAppointmentCreated] = useState('');
   const today = new Date().toLocaleDateString('en-CA');
 
   const [formValues, setFormValues] = useState({
@@ -40,6 +40,7 @@ const AppointmentModal = ({ onClose }) => {
       Doctor: "",
       appointmentType: "",
     })
+    setAppointmentCreated('Appointment Created');
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,7 +53,7 @@ const AppointmentModal = ({ onClose }) => {
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
       <div className="bg-[#e9ecef] overflow-x-hidden max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
         <button
-          onClick={onClose}
+          onClick={() => { onClose(); setAppointmentCreated('')}}
           className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
           <X size={24} />
@@ -60,7 +61,8 @@ const AppointmentModal = ({ onClose }) => {
 
         <div className="bg-[#e9ecef] w-full sm:w-auto  sm:mx-10   rounded-lg">
           <h1 className=" text-center font-semibold  text-[#337ab7] text-xl sm:text-3xl md:text-5xl">Create Appointment</h1>
-          <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-12 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
+          {appointmentCreated.length>0 && <p className='border-2 border-blue-400 bg-blue-500 text-white font-semibold p-2 rounded-md w-fit mx-auto my-6'>{appointmentCreated}</p>}
+          <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
             <div className="flex flex-col gap-4 m-auto">
               <div className="flex flex-col gap-2">
                 <h1>Date</h1>

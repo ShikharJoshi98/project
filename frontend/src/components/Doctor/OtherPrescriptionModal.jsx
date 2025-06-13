@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { DOC_API_URL, docStore } from "../../store/DocStore";
 import { useParams } from "react-router-dom";
+import { updateDate } from "../../store/todayDate";
 
 const OtherPrescriptionModal = ({ onClose }) => {
     const { id } = useParams();
@@ -14,6 +15,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
     })
     const [submit, setSubmit] = useState(false);
     const { otherPrescriptions, getOtherPrescription } = docStore();
+    const date = updateDate();
     useEffect(() => {
         getOtherPrescription(id);
     }, [getOtherPrescription, submit]);
@@ -47,6 +49,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
             console.log(error.message);
         }
     }
+    const prescription = otherPrescriptions.filter((pres) => pres?.date === date);
     return ReactDOM.createPortal(
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-w-[90vw]  max-h-[90vh] overflow-y-auto flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg">
@@ -91,7 +94,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
                         </thead>
                         <tbody>
                             {
-                                otherPrescriptions.map((prescription, index) => (
+                                prescription.map((prescription, index) => (
                                     <tr className={`${prescription?.medicine_issued_flag===false?'bg-green-200':'bg-yellow-200'}`}>
                                         <td className="px-2 py-2 text-center">{index + 1}</td>
                                         <td className="px-2 py-2 text-center">{prescription?.medicineName}</td>

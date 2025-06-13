@@ -8,6 +8,7 @@ import axios from 'axios'
 import { DOC_API_URL, docStore } from '../../store/DocStore'
 import { Trash } from 'lucide-react'
 import { FaAngleDoubleLeft } from 'react-icons/fa'
+import { updateDate } from '../../store/todayDate'
 
 const ConsultationCharges = () => {
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ const ConsultationCharges = () => {
         price: '',
     });
     const [submit, setSubmit] = useState(false);
+    let date = updateDate();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues(prev => ({ ...prev, [name]: value }));
@@ -91,6 +93,7 @@ const ConsultationCharges = () => {
                                 <thead>
                                     <tr className="text-lg bg-blue-500 text-white">
                                         <th className="py-2 px-4 border">Serial</th>
+                                        <th className="py-2 px-4 border">Date</th>
                                         <th className="py-2 px-4 border">Name</th>
                                         <th className="py-2 px-4 border">Price</th>
                                         <th className="py-2 px-4 border">Delete</th>
@@ -101,6 +104,7 @@ const ConsultationCharges = () => {
                                         consultationCharges.map((charge, index) => (
                                             <tr key={index} className='bg-blue-100'>
                                                 <td className='py-2 px-4 text-center'>{index + 1}</td>
+                                                <td className="py-2 px-4 text-center">{date}</td>
                                                 <td className='py-2 px-4 text-center'>{charge?.type}</td>
                                                 <td className='py-2 px-4 text-center'>{charge?.price}</td>
                                                 <td onClick={()=>deleteRow(charge?._id)} className='py-2 px-4 flex items-center justify-center'><Trash/></td>

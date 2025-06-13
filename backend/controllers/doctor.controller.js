@@ -202,9 +202,9 @@ export const getAllAppointments = async (req, res) => {
 
 export const updateAppointment = async (req, res) => {
     try {
-        const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag,date } = req.body;
+        const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag, date } = req.body;
         const { id } = req.params;
-        const appointment = await Appointment.findOneAndUpdate({ PatientCase: id,date }, {
+        const appointment = await Appointment.findOneAndUpdate({ PatientCase: id, date }, {
             new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag
         },
             { new: true });
@@ -2348,61 +2348,76 @@ export const getBill = async (req, res) => {
             formattedDate = `${day}-${month}-${year}`;
         };
         updateDate();
-        const response = await Prescription.find({ patient: id, prescription_date: formattedDate });
-        const paymentResponse = await fees.findOne();
+        let medicineCharges = 0;
+        let consultation = 0;
+        const prescription = await Prescription.find({ patient: id, prescription_date: formattedDate });
+        const Fees = await fees.findOne();
+        const appointment = await Appointment.findOne({ PatientCase: id, date: formattedDate });
+        const consultationCharges = (await ConsultationCharges.find({ patient: id, date: formattedDate }));
         const otherMedicine = await OtherPrescription.find({ patient: id, date: formattedDate });
-        const appointmentResponse = await Appointment.findOne({ PatientCase: id, date: formattedDate });
-        const consultationCharges = (await ConsultationCharges.find({ patient: id, date: formattedDate }))[0].price || '0';
-        console.log("consultationCharges");
-        let otherMedicineBill = 0;
-        otherMedicine.map((medicine, index) => {
-            otherMedicineBill += medicine.price;
-        })
-        let medicinePayment = 0;
-        if (appointmentResponse.new_appointment_flag === true) {
-            medicinePayment += paymentResponse.newCase;
+        let otherPrescriptionPrice = 0;
+        if (otherMedicine.length > 0) {
+            otherMedicine.map((medicine,index)=>otherPrescriptionPrice+=medicine.price)
         }
-        if (response[0].duration === '7 Days') {
-            medicinePayment += paymentResponse.sevenDays
-        }
-        else if (response[0].duration === '15 Days') {
-            medicinePayment += paymentResponse.fifteenDays
-        }
-        else if (response[0].duration === '21 Days') {
-            medicinePayment += paymentResponse.twentyOneDays
-        }
-        else if (response[0].duration === '30 Days') {
-            medicinePayment += paymentResponse.thirtyDays
-        }
-        else if (response[0].duration === '45 Days') {
-            medicinePayment += paymentResponse.fortyFiveDays
-        }
-        else if (response[0].duration === '2 Months') {
-            medicinePayment += paymentResponse.twoMonths
-        }
-        else if (response[0].duration === '3 Months') {
-            medicinePayment += paymentResponse.threeMonths
+        if (consultationCharges.length > 0) {
+            consultation += parseInt(consultationCharges[0].price);
         }
 
+        if (appointment.new_appointment_flag === true) {
+            medicineCharges += Fees.newCase;
+        }
+        if (prescription) {
+            if (prescription[0].duration === '7 Days') {
+                medicineCharges += Fees.sevenDays
+            }
+            else if (prescription[0].duration === '15 Days') {
+                medicineCharges += Fees.fifteenDays
+            }
+            else if (prescription[0].duration === '21 Days') {
+                medicineCharges += Fees.twentyOneDays
+            }
+            else if (prescription[0].duration === '30 Days') {
+                medicineCharges += Fees.thirtyDays
+            }
+            else if (prescription[0].duration === '45 Days') {
+                medicineCharges += Fees.fortyFiveDays
+            }
+            else if (prescription[0].duration === '2 Months') {
+                medicineCharges += Fees.twoMonths
+            }
+            else if (prescription[0].duration === '3 Months') {
+                medicineCharges += Fees.threeMonths
+            }
+        }
         res.json({
-            medicinePayment,
-            otherMedicineBill,
-            consultationCharges,
+            medicineCharges,
+            consultation,
+            otherPrescriptionPrice,
             success: true
         })
     } catch (error) {
         res.json({
-            success: false,
-            message: error.message
+            message: error.message,
+            success: false
         })
     }
 }
 
 export const addPayment = async (req, res) => {
     try {
-        const { billPaid, balanceDue, modeOfPayment, totalBill } = req.body;
+        const { billPaid, modeOfPayment, totalBill } = req.body;
         const { id } = req.params;
-        await billPayment.create({ billPaid, totalBill, balanceDue, modeOfPayment, patient: id });
+        let formattedDate;
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            formattedDate = `${day}-${month}-${year}`;
+        };
+        updateDate();
+        const balanceDue = totalBill - billPaid;
+        await billPayment.create({ billPaid, totalBill, balanceDue, modeOfPayment, patient: id, date:formattedDate });
         res.json({
             success: true,
             message: "Bill Payment Done"
@@ -2415,13 +2430,27 @@ export const addPayment = async (req, res) => {
     }
 }
 
-export const getPaymnet = async (req, res) => {
+export const getPaymentBill = async (req, res) => {
     try {
         const { id } = req.params;
-        const response = await billPayment.findOne({ patient: id });
-
+        let formattedDate;
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            formattedDate = `${day}-${month}-${year}`;
+        };
+        updateDate();
+        const response = await billPayment.findOne({ patient: id,date:formattedDate });
+        res.json({
+            response
+        })
     } catch (error) {
-
+        res.json({
+            error: error.message,
+            success:false
+        })
     }
 }
 

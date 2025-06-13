@@ -17,6 +17,7 @@ const billPaymentSchema = new mongoose.Schema({
     totalBill:{type:Number},
     balanceDue: { type: Number },
     modeOfPayment: { type: String },
+    date:{ type: String },
     patient: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Patient'

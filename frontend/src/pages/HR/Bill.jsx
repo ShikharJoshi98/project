@@ -6,21 +6,19 @@ import { docStore } from '../../store/DocStore';
 
 const Bill = () => {
     const { getPatientDetails, patients } = recStore();
-    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo,totalBill,getTotalBill } = docStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id } = useParams();
-    const { billPaid, setBillpaid } = useState(0);
-    const { balanceDue, setBalanceDue } = useState(0);
-    const { modeOfPayment, setModeOfPayment } = useState('cash');
-    const { totalBill, settotalBill } = useState(0);
-
+    const [balance, setBalance] = useState(0);
     useEffect(() => {
         getPatientDetails();
         fetchPrescription(id);
         getBillInfo(id);
-    }, [getPatientDetails, fetchPrescription, prescriptionSubmit]);
+        getTotalBill(id);
+        if(totalBill?.balanceDue){
+        setBalance(totalBill?.balanceDue);}
+    }, [getPatientDetails, fetchPrescription, prescriptionSubmit,getTotalBill]);
     const patient = patients.filter((patient) => patient?._id === id);
-    console.log("bill",billInfo);
     const addDays = (dateStr, days) => {
         if (!dateStr || !days) return '';
         days = parseInt(days, 10);
@@ -32,7 +30,7 @@ const Bill = () => {
         let newYear = date.getFullYear();
         return `${newDay}-${newMonth}-${newYear}`;
     };
-    // console.log(prescription);
+    console.log(totalBill)
     return (
         <div>
             <HRnavbar />
@@ -57,13 +55,13 @@ const Bill = () => {
                     </div>
                     <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Payment</h1>
                     <div className='bg-white max-w-[410px]  mt-6 py-5 flex flex-col text-sm sm:text-lg gap-2 border-1 border-blue-400 rounded-md shadow-md mx-auto'>
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Medicine Charges : </p><p>Rs {billInfo?.medicinePayment}</p></div>
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Consultation Charges : </p><p>Rs {billInfo?.consultationCharges}</p></div>
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Other Medicine : </p><p>Rs {billInfo?.otherMedicineBill}</p></div>
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Total Amount : </p><p>Rs {parseFloat(billInfo?.medicinePayment) + parseFloat(billInfo?.consultationCharges) + parseFloat(billInfo?.otherMedicineBill)}</p></div>
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Balance Dues : </p><p>Rs 0</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Medicine Charges : </p><p>Rs {billInfo?.medicineCharges}</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Consultation Charges : </p><p>Rs {billInfo?.consultation}</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Other Medicine : </p><p>Rs {billInfo?.otherPrescriptionPrice}</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Total Amount : </p><p>Rs {billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice}</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Balance Dues : </p><p>Rs {balance}</p></div>
                         <hr className='my-3 h-0.5 w-full border-none bg-blue-500' />
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Amount to be Paid : </p><p className='text-lg sm:text-2xl'>Rs {parseFloat(billInfo?.medicinePayment) + parseFloat(billInfo?.consultationCharges) + parseFloat(billInfo?.otherMedicineBill)}</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Amount to be Paid : </p><p className='text-lg sm:text-2xl'>Rs {billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + balance}</p></div>
                         <div className='flex items-center flex-col  gap-4 mt-4'><p>Mode of Payment : </p><div className='h-10 bg-[#c8c8ce] rounded-[18px]'><button onClick={() => setPaymentMode('cash')} className={`py-1 ${paymentMode === 'cash' ? 'bg-blue-500 rounded-[18px] text-white' : ''} py-1.5 px-5 cursor-pointer`}>Cash</button><button onClick={() => setPaymentMode('online')} className={`py-1.5 px-5 ${paymentMode === 'online' ? 'bg-blue-500 rounded-[18px] text-white' : ''} cursor-pointer`}>Online</button></div></div>
                         <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Amount Paid : </p><input type="number" className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>
                         <button className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Done</button>

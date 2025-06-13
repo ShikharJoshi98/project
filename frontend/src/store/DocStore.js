@@ -41,7 +41,8 @@ export const docStore = create((set) => ({
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
-    billInfo:[],
+    billInfo: [],
+    totalBill:[],
     appointmentSection: "general",
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
@@ -318,7 +319,10 @@ export const docStore = create((set) => ({
     },
     getBillInfo: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/getBillPayment/${id}`);
-        set({ billInfo: response.data })
-       
+        set({ billInfo: response.data })       
+    },
+    getTotalBill: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getTotalBillPayment/${id}`);
+        set({ totalBill: response.data.response });
     }
 }))
