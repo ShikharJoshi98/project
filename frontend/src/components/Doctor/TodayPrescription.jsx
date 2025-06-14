@@ -19,8 +19,12 @@ const TodayPrescriptions = () => {
     const [editedData, setEditedData] = useState({});
     const [editNote, setEditNote] = useState(false);
     const todayDate = updateDate();
-    useEffect(() => {const completeAppointment = async () => {
-        if (prescription.length > 0) {
+    useEffect(() => {
+        const completeAppointment = async () => {
+                        togglePrescriptionSubmit();
+
+            if (prescription.length > 0) {
+            console.log('In')
             await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
                 complete_appointment_flag: true,      
                 date:todayDate
@@ -33,14 +37,14 @@ const TodayPrescriptions = () => {
             })
         }
     }
-    completeAppointment();
         fetchPrescription(location.id);
+        completeAppointment();
         getPresentComplaintData(location.id);
         getAppdetails(appointmentSection);
-    }, [prescriptionSubmit, deleteFlag, updateFlag,prescription, getPresentComplaintData, fetchPrescription]);
+    }, [prescriptionSubmit, deleteFlag, updateFlag ]);
 
     const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
-    
+    console.log(prescription);
     
 
     const addDays = (dateStr, days) => {

@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
 import { recStore } from '../../store/RecStore'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import axios from 'axios';
+import { updateDate } from '../../store/todayDate';
 
 const Bill = () => {
     const { getPatientDetails, patients } = recStore();
-    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo,balanceDue,getBalanceDue } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo,balanceDue,getBalanceDue,appointmentSection, getAppdetails, appointments } = docStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id } = useParams();
+    const navigate = useNavigate();
     const [amountPaid, setAmountPaid] = useState(0);
+    const todayDate = updateDate();
+
     useEffect(() => {
         getPatientDetails();
         fetchPrescription(id);
         getBillInfo(id);
         getBalanceDue(id);
-        
-    }, [getPatientDetails, fetchPrescription, prescriptionSubmit]);
+        getAppdetails(appointmentSection);
+    }, [getPatientDetails, fetchPrescription, prescriptionSubmit,getAppdetails,appointmentSection]);
     
     const patient = patients.filter((patient) => patient?._id === id);
     const addDays = (dateStr, days) => {
@@ -31,14 +35,21 @@ const Bill = () => {
         let newYear = date.getFullYear();
         return `${newDay}-${newMonth}-${newYear}`;
     };
-    console.log(balanceDue);
     const addBill = async () => {
         try {
             await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, {
-                billPaid:amountPaid,
-                modeOfPayment:paymentMode,
-                totalBill:(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue==='No Balance Field'?0:balanceDue.dueBalance))
+                billPaid: parseInt(amountPaid),
+                modeOfPayment: paymentMode,
+                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance))
+            });
+            await axios.patch(`${DOC_API_URL}/update-apppointment/${id}`, {
+                new_appointment_flag: false, 
+                medicine_issued_flag: true,
+                followUp_appointment_flag: true,
+                date:todayDate
             })
+            navigate(`/prescription-HR/${id}`);
+            
         } catch (error) {
             console.log(error.message);
         }

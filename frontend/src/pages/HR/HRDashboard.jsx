@@ -6,16 +6,19 @@ import { MapPin } from 'lucide-react'
 import { useStore } from '../../store/UpdateStore';
 import { useAuthStore } from '../../store/authStore';
 import HRSidebar from '../../components/HR/HRSidebar';
+import { recStore } from '../../store/RecStore';
 
 const HRDashboard = () => {
 
   const { getDetails, employees } = useStore();
   const { user } = useAuthStore();
+  const { getPatientDetails, patients } = recStore();
   const [currentDate, setCurrentDate] = useState("");
   const doctors = employees.filter(emp => emp?.role === 'doctor');
 
   useEffect(() => {
     getDetails();
+    getPatientDetails();
   }, [getDetails]);
   useEffect(() => {
     const updateDate = () => {
@@ -58,7 +61,7 @@ const HRDashboard = () => {
 
                 <span className='text-zinc-800  mb-3 flex text-lg'>Total Patients</span>
                 <hr className='h-0.5 border-none mb-4 bg-white' />
-                <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-8 sm:gap-36 md:gap-10'><span>    <FaUsers /></span>2788</h1>
+                <h1 className='text-base sm:text-2xl flex font-semibold  items-center gap-8 sm:gap-36 md:gap-10'><span>    <FaUsers /></span>{patients.length}</h1>
 
               </div>
               <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300 py-5 px-8 rounded-lg bg-[#55abff] '>

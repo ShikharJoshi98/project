@@ -50,6 +50,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
         }
     }
     const prescription = otherPrescriptions.filter((pres) => pres?.date === date);
+    // console.log(prescription);
     return ReactDOM.createPortal(
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-w-[90vw]  max-h-[90vh] overflow-y-auto flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg">

@@ -5,13 +5,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const Prescription = () => {
     const { id } = useParams();
-    const { prescriptionSubmit, fetchPrescription, prescription, otherPrescriptions, getOtherPrescription } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, otherPrescriptions, getOtherPrescription,balanceDue,getBalanceDue,appointmentSection, getAppdetails, appointments } = docStore();
     const navigate = useNavigate();
     useEffect(() => {
         fetchPrescription(id);
         getOtherPrescription(id);
-    }, [fetchPrescription, prescriptionSubmit, getOtherPrescription])
-    console.log(otherPrescriptions);
+        getBalanceDue(id);
+        getAppdetails(appointmentSection);
+    }, [fetchPrescription, prescriptionSubmit, getOtherPrescription,getAppdetails])
+    console.log(appointments);
     return (
         <div>
             <HRnavbar />
@@ -45,7 +47,7 @@ const Prescription = () => {
                                             <td className='py-2 px-1 text-center'>{pres?.note}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.duration}</td>
                                             <td className='py-2 px-1 text-red-500 text-center'>Pending</td>
-                                            <td className='py-2 px-1 text-center'>Balance</td>
+                                            <td className='py-2 px-1 text-center'>Rs {balanceDue==='No Balance Field'?0:balanceDue.dueBalance}</td>
                                         </tr>
                                     ))
                                 }

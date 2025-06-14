@@ -2407,7 +2407,6 @@ export const addPayment = async (req, res) => {
     try {
         const { billPaid, modeOfPayment, totalBill } = req.body;
         const { id } = req.params;
-
         let formattedDate;
         const updateDate = () => {
             const today = new Date();
@@ -2418,10 +2417,10 @@ export const addPayment = async (req, res) => {
         };
         updateDate();
         const balance = await balanceDue.findOne({ patient: id });
-        
+        const newBalance = totalBill - billPaid;
             await balanceDue.updateOne(
                 { patient: id },
-                { $inc: { dueBalance: (totalBill - billPaid) } },
+                { $set: { dueBalance: newBalance } },
                 { upsert: true }
             );
        
