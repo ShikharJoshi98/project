@@ -19,17 +19,17 @@ export const docStore = create((set) => ({
     writeUp: [],
     allPrescriptions: [],
     list: [],
-    payment:[],
+    payment: [],
     PresentComplaintData: [],
     PresentComplaintScribble: [],
     PresentComplaintWriteUp: [],
-    briefMindSymptomScribble:[],
+    briefMindSymptomScribble: [],
     PastHistoryData: [],
     FamilyMedicalData: [],
     MentalCausativeData: [],
     MentalPersonalityData: [],
     mentalCausativeScribble: [],
-    mentalPersonalityScribble:[],
+    mentalPersonalityScribble: [],
     ThermalReactionData: [],
     MiasmData: [],
     otherPrescriptions: [],
@@ -37,12 +37,13 @@ export const docStore = create((set) => ({
     investigationAdvised: [],
     testInfo: [],
     chiefComplaints: [],
-    personalHistory:[],
+    personalHistory: [],
     section: "medicine",
     prescriptionSubmit: false,
     appointmentSubmit: false,
     billInfo: [],
-    totalBill:[],
+    totalBill: [],
+    balanceDue: [],
     appointmentSection: "general",
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
@@ -225,7 +226,7 @@ export const docStore = create((set) => ({
     fetchPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);
         set({ prescription: response.data.presToday })
-        
+
     },
     getPastPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);
@@ -237,9 +238,11 @@ export const docStore = create((set) => ({
     },
     getCaseData: async (complaint) => {
         const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(/\s+/g, "")}`);
-        set({ list: response.data.caseData.sort((a, b) =>
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-  ) });
+        set({
+            list: response.data.caseData.sort((a, b) =>
+                a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+            )
+        });
     },
     getPresentComplaintData: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/presentComplaints/${id}`);
@@ -295,34 +298,43 @@ export const docStore = create((set) => ({
     },
     getChiefComplaints: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/chiefComplaints/${id}`);
-        set({chiefComplaints:response.data.chiefComplaint})
+        set({ chiefComplaints: response.data.chiefComplaint })
     },
     getPersonalHistory: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/personalHistroy/${id}`);
-        set({personalHistory:response.data.personalHistory})
+        set({ personalHistory: response.data.personalHistory })
     },
-     getMentalCausativeScribble: async (id) => {
+    getMentalCausativeScribble: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/mentalCausativeScribble/${id}`);
-        set({mentalCausativeScribble:response.data.mentalCausativeData})
+        set({ mentalCausativeScribble: response.data.mentalCausativeData })
     },
-     getMentalPersonalityScribble: async (id) => {
+    getMentalPersonalityScribble: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/mentalPersonalityScribble/${id}`);
-        set({mentalPersonalityScribble:response.data.mentalPersonalityData})
+        set({ mentalPersonalityScribble: response.data.mentalPersonalityData })
     },
-     getBriefMindSymptomScribble: async (id) => {
+    getBriefMindSymptomScribble: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/briefMindSymptomScribble/${id}`);
-        set({briefMindSymptomScribble:response.data.briefMindSymptomData})
+        set({ briefMindSymptomScribble: response.data.briefMindSymptomData })
     },
     getPayment: async () => {
         const response = await axios.get(`${DOC_API_URL}/getPayment`);
-        set({payment:response.data.paymentData})
+        set({ payment: response.data.paymentData })
     },
     getBillInfo: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/getBillPayment/${id}`);
-        set({ billInfo: response.data })       
+        set({ billInfo: response.data })
     },
     getTotalBill: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/getTotalBillPayment/${id}`);
         set({ totalBill: response.data.response });
+    },
+    getBalanceDue: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getBalanceDue/${id}`);
+        if (response.data.balance) {
+            set({ balanceDue: response.data.balance });
+        }
+        else {
+            set({ balanceDue: response.data.message });
+        }
     }
 }))

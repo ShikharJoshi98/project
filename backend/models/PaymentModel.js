@@ -15,7 +15,6 @@ const feeSchema = new mongoose.Schema({
 const billPaymentSchema = new mongoose.Schema({
     billPaid: { type: Number },
     totalBill:{type:Number},
-    balanceDue: { type: Number },
     modeOfPayment: { type: String },
     date:{ type: String },
     patient: {
@@ -24,5 +23,14 @@ const billPaymentSchema = new mongoose.Schema({
     }
 })
 
+const balanceDueSchema = new mongoose.Schema({
+    dueBalance: { type: Number, default: 0 },
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    }
+})
+
 export const fees = mongoose.model('fees', feeSchema);
 export const billPayment = mongoose.model('billPayment', billPaymentSchema);
+export const balanceDue = mongoose.model('balanceDue', balanceDueSchema);

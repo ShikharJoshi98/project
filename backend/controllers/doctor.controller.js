@@ -7,7 +7,7 @@ import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescriptio
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
-import { billPayment, fees } from "../models/PaymentModel.js";
+import { balanceDue, billPayment, fees } from "../models/PaymentModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -2357,7 +2357,7 @@ export const getBill = async (req, res) => {
         const otherMedicine = await OtherPrescription.find({ patient: id, date: formattedDate });
         let otherPrescriptionPrice = 0;
         if (otherMedicine.length > 0) {
-            otherMedicine.map((medicine,index)=>otherPrescriptionPrice+=medicine.price)
+            otherMedicine.map((medicine, index) => otherPrescriptionPrice += medicine.price)
         }
         if (consultationCharges.length > 0) {
             consultation += parseInt(consultationCharges[0].price);
@@ -2407,6 +2407,7 @@ export const addPayment = async (req, res) => {
     try {
         const { billPaid, modeOfPayment, totalBill } = req.body;
         const { id } = req.params;
+
         let formattedDate;
         const updateDate = () => {
             const today = new Date();
@@ -2416,16 +2417,47 @@ export const addPayment = async (req, res) => {
             formattedDate = `${day}-${month}-${year}`;
         };
         updateDate();
-        const balanceDue = totalBill - billPaid;
-        await billPayment.create({ billPaid, totalBill, balanceDue, modeOfPayment, patient: id, date:formattedDate });
+        const balance = await balanceDue.findOne({ patient: id });
+        
+            await balanceDue.updateOne(
+                { patient: id },
+                { $inc: { dueBalance: (totalBill - billPaid) } },
+                { upsert: true }
+            );
+       
+        await billPayment.create({ billPaid, totalBill, modeOfPayment, patient: id, date:formattedDate });
         res.json({
             success: true,
-            message: "Bill Payment Done"
+            message: "Bill Payment Done",
         })
     } catch (error) {
         res.json({
             success: false,
             message: error.message
+        })
+    }
+}
+
+export const getBalanceDue = async (req, res) => {
+    
+    try {
+    const { id } = req.params;
+        const balance = await balanceDue.findOne({ patient: id });
+        
+    if (!balance) {
+        return res.json({
+            message:'No Balance Field',
+            success:true
+        })
+    }
+    res.json({
+        balance,
+        success: true
+    });
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
         })
     }
 }
@@ -2442,14 +2474,14 @@ export const getPaymentBill = async (req, res) => {
             formattedDate = `${day}-${month}-${year}`;
         };
         updateDate();
-        const response = await billPayment.findOne({ patient: id,date:formattedDate });
+        const response = await billPayment.findOne({ patient: id, date: formattedDate });
         res.json({
             response
         })
     } catch (error) {
         res.json({
             error: error.message,
-            success:false
+            success: false
         })
     }
 }
