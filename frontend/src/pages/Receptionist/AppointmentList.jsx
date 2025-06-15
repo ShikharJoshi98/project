@@ -73,8 +73,7 @@ const AppointmentList = () => {
                                 <tbody className="bg-gray-200 text-black">
                                     {
                                         appointmentList.map((appointment, index) => (
-                                            <tr key={index} className={`${appointment?.new_appointment_flag
-                                                === true ? 'bg-yellow-200' : 'bg-green-300'}`}>
+                                            <tr key={index} className={`${appointment?.medicine_issued_flag===true?'bg-pink-200':appointment?.complete_appointment_flag===true?'bg-blue-200':appointment?.new_appointment_flag===true?'bg-yellow-200':'bg-green-200'} `}>
                                                 <td className="px-1 py-2 text-center">{index + 1}</td>
                                                 <td className="px-1 py-2 text-center">{appointment?.PatientCase?.casePaperNo || '-'}</td>
                                                 <td className="px-1 py-2 text-center">{appointment?.time || '-'}</td>

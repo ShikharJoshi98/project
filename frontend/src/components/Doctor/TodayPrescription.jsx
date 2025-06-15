@@ -12,19 +12,21 @@ const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day
 
 const TodayPrescriptions = () => {
     const location = useParams();
-    const { prescriptionSubmit, fetchPrescription, prescription, togglePrescriptionSubmit, getPresentComplaintData, PresentComplaintData, appointmentSection, getAppdetails, appointments } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, togglePrescriptionSubmit, getPresentComplaintData, PresentComplaintData } = docStore();
     const [deleteFlag, setDeleteFlag] = useState(false);
     const [updateFlag, setUpdateFlag] = useState(false);
     const [editingRow, setEditingRow] = useState(null);
     const [editedData, setEditedData] = useState({});
     const [editNote, setEditNote] = useState(false);
     const todayDate = updateDate();
+    useEffect(() => {        
+        fetchPrescription(location.id);
+        getPresentComplaintData(location.id);
+    }, [prescriptionSubmit, deleteFlag, updateFlag, fetchPrescription,  getPresentComplaintData]);
+    
     useEffect(() => {
         const completeAppointment = async () => {
-                        togglePrescriptionSubmit();
-
             if (prescription.length > 0) {
-            console.log('In')
             await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
                 complete_appointment_flag: true,      
                 date:todayDate
@@ -36,16 +38,12 @@ const TodayPrescriptions = () => {
                 date:todayDate
             })
         }
-    }
-        fetchPrescription(location.id);
-        completeAppointment();
-        getPresentComplaintData(location.id);
-        getAppdetails(appointmentSection);
-    }, [prescriptionSubmit, deleteFlag, updateFlag ]);
+        }
+                completeAppointment();
 
-    const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
-    console.log(prescription);
-    
+    },[prescription,prescriptionSubmit])
+
+    const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);    
 
     const addDays = (dateStr, days) => {
         days = parseInt(days, 10);

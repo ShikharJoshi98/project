@@ -2,18 +2,20 @@ import React, { useEffect } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
 import { docStore } from '../../store/DocStore';
 import { useNavigate, useParams } from 'react-router-dom';
+import { updateDate } from '../../store/todayDate';
 
 const Prescription = () => {
     const { id } = useParams();
     const { prescriptionSubmit, fetchPrescription, prescription, otherPrescriptions, getOtherPrescription,balanceDue,getBalanceDue,appointmentSection, getAppdetails, appointments } = docStore();
     const navigate = useNavigate();
+    const todayDate = updateDate();
     useEffect(() => {
         fetchPrescription(id);
         getOtherPrescription(id);
         getBalanceDue(id);
         getAppdetails(appointmentSection);
     }, [fetchPrescription, prescriptionSubmit, getOtherPrescription,getAppdetails])
-    console.log(appointments);
+    const appointment = appointments.filter((app) => app?.PatientCase?._id === id && app?.date === todayDate);
     return (
         <div>
             <HRnavbar />
@@ -46,7 +48,7 @@ const Prescription = () => {
                                             <td className='py-2 px-1 text-center'>{pres?.dose}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.note}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.duration}</td>
-                                            <td className='py-2 px-1 text-red-500 text-center'>Pending</td>
+                                            <td className={`py-2 px-1 ${appointment[0]?.medicine_issued_flag === false?'text-red-500':'text-green-500'} text-center`}>{appointment[0]?.medicine_issued_flag === false?'Pending':'Medicine Issued'}</td>
                                             <td className='py-2 px-1 text-center'>Rs {balanceDue==='No Balance Field'?0:balanceDue.dueBalance}</td>
                                         </tr>
                                     ))
@@ -79,7 +81,10 @@ const Prescription = () => {
                         </div>
                         </div>
                     }
-                    <button onClick={() => { navigate(`/medicine-payment/${id}`) }} className='bg-red-500 text-white text-2xl hover:scale-99 transition hover:bg-red-600 cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-5'>Pay Now</button>
+                    {
+                        appointment[0]?.medicine_issued_flag === false && 
+                        <button onClick={() => { navigate(`/medicine-payment/${id}`) }} className='bg-red-500 text-white text-2xl hover:scale-99 transition hover:bg-red-600 cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-5'>Pay Now</button>
+                    }                    
                 </div>
             </div>
         </div>

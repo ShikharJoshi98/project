@@ -26,7 +26,6 @@ const HRMedicine = () => {
         getAppdetails(medSection);
     }, [getAppdetails, appointmentSubmit, medSection]);
     const medicineArray = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.complete_appointment_flag === true && appointment?.appointmentType === medSection) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-    console.log(medicineArray);
     const newAppointmentLength = medicineArray.filter((medicine) => medicine?.new_appointment_flag === true).length;
     const medicineNotIssuedLength = medicineArray.filter((medicine) => medicine?.new_appointment_flag === false && medicine?.medicine_issued_flag === false).length;
     const medicineIssuedLength = medicineArray.filter((medicine) => medicine?.new_appointment_flag === false && medicine?.medicine_issued_flag === true).length;

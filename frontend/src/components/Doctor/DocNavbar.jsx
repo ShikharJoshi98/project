@@ -6,27 +6,25 @@ import { docStore } from '../../store/DocStore';
 
 const Docnavbar = () => {
   const [isOpen, setOpen] = useState(false);
-  const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppdetails, appointments } = docStore();
+  const { setAppointmentSection, appointmentSection,prescription, appointmentSubmit, getAppdetails, appointments,prescriptionSubmit } = docStore();
   const [currentDate, setCurrentDate] = useState('');
-  
-  const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.complete_appointment_flag===false));
-  const domGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false));
-  const mulGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false));
-  const domRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false));
-  const mulRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false));
-  const domCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false));
-  const mulCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false));
+   useEffect(() => {
+      getAppdetails(appointmentSection);
+  }, [getAppdetails, appointmentSection, appointmentSubmit,prescriptionSubmit,prescription]);
+  const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.complete_appointment_flag===false && appointment?.medicine_issued_flag===false));
+  const domGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false && appointment?.medicine_issued_flag===false));
+  const mulGeneralAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false && appointment?.medicine_issued_flag===false));
+  const domRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false && appointment?.medicine_issued_flag===false));
+  const mulRepeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false && appointment?.medicine_issued_flag===false));
+  const domCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Dombivali' && appointment?.complete_appointment_flag===false && appointment?.medicine_issued_flag===false));
+  const mulCourierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === 'Mulund' && appointment?.complete_appointment_flag===false && appointment?.medicine_issued_flag===false));
   const menuRef = useRef(null);
   const { logout } = useAuthStore();
   const navigate = useNavigate();
   const [isAppointmentHovered, setIsAppointmentHovered] = useState(false);
   const [isRepeatMedicineHovered, setIsRepeatMedicineHovered] = useState(false);
   const [isCourierMedicineHovered, setIsCourierMedicineHovered] = useState(false);
-  useEffect(() => {
-    setTimeout(() => {
-      getAppdetails(appointmentSection);
-    }, 500);
-  }, [getAppdetails, appointmentSection, appointmentSubmit]);
+ 
   useEffect(() => {
     const handleClikcOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {

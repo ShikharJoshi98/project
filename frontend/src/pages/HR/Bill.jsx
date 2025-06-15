@@ -5,24 +5,26 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import axios from 'axios';
 import { updateDate } from '../../store/todayDate';
+import { useAuthStore } from '../../store/authStore';
 
 const Bill = () => {
     const { getPatientDetails, patients } = recStore();
-    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo,balanceDue,getBalanceDue,appointmentSection, getAppdetails, appointments } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue, appointmentSection, getAppdetails, appointments } = docStore();
+    const { user } = useAuthStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id } = useParams();
     const navigate = useNavigate();
     const [amountPaid, setAmountPaid] = useState(0);
     const todayDate = updateDate();
-
+    console.log(user);
     useEffect(() => {
         getPatientDetails();
         fetchPrescription(id);
         getBillInfo(id);
         getBalanceDue(id);
         getAppdetails(appointmentSection);
-    }, [getPatientDetails, fetchPrescription, prescriptionSubmit,getAppdetails,appointmentSection]);
-    
+    }, [getPatientDetails, fetchPrescription, prescriptionSubmit, getAppdetails, appointmentSection]);
+    const appointment = appointments.filter((appointment) => appointment?.PatientCase._id === id && appointment?.date===todayDate);
     const patient = patients.filter((patient) => patient?._id === id);
     const addDays = (dateStr, days) => {
         if (!dateStr || !days) return '';
@@ -40,10 +42,13 @@ const Bill = () => {
             await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, {
                 billPaid: parseInt(amountPaid),
                 modeOfPayment: paymentMode,
+                appointmentType: appointment[0]?.appointmentType,
+                paymentCollectedBy:user?._id,
                 totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance))
             });
             await axios.patch(`${DOC_API_URL}/update-apppointment/${id}`, {
-                new_appointment_flag: false, 
+                new_appointment_flag: false,                 
+                complete_appointment_flag:true,
                 medicine_issued_flag: true,
                 followUp_appointment_flag: true,
                 date:todayDate

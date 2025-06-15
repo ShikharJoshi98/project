@@ -204,9 +204,20 @@ export const updateAppointment = async (req, res) => {
     try {
         const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag, date } = req.body;
         const { id } = req.params;
-        const appointment = await Appointment.findOneAndUpdate({ PatientCase: id, date }, {
-            new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag
-        },
+        const updated = {};
+        if (new_appointment_flag !== undefined) {
+            updated.new_appointment_flag = new_appointment_flag;
+        }
+        if (complete_appointment_flag !== undefined) {
+            updated.complete_appointment_flag = complete_appointment_flag;
+        }
+        if (medicine_issued_flag !== undefined) {
+            updated.medicine_issued_flag = medicine_issued_flag;
+        }
+        if (followUp_appointment_flag !== undefined) {
+            updated.followUp_appointment_flag = followUp_appointment_flag;
+        }
+        const appointment = await Appointment.findOneAndUpdate({ PatientCase: id, date }, updated,
             { new: true });
         res.json({
             success: true,
@@ -2405,7 +2416,7 @@ export const getBill = async (req, res) => {
 
 export const addPayment = async (req, res) => {
     try {
-        const { billPaid, modeOfPayment, totalBill } = req.body;
+        const { billPaid, modeOfPayment,appointmentType,paymentCollectedBy, totalBill } = req.body;
         const { id } = req.params;
         let formattedDate;
         const updateDate = () => {
@@ -2424,7 +2435,7 @@ export const addPayment = async (req, res) => {
                 { upsert: true }
             );
        
-        await billPayment.create({ billPaid, totalBill, modeOfPayment, patient: id, date:formattedDate });
+        await billPayment.create({ billPaid, totalBill, modeOfPayment, appointmentType,paymentCollectedBy,patient: id, date:formattedDate });
         res.json({
             success: true,
             message: "Bill Payment Done",

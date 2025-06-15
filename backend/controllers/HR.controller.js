@@ -5,6 +5,8 @@ import { medicalItem, medicalOrder, MedicalStock, Medicine, Potency } from "../m
 import { Employee } from "../models/EmployeeModel.js";
 import { Task } from "../models/TaskModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
+import { balanceDue, billPayment } from "../models/PaymentModel.js";
+import { Appointment } from "../models/AppointmentModel.js";
 export const details= async (req, res) => {
     
     try {
@@ -516,4 +518,25 @@ export const place_medical_order = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 
+}
+
+//collections
+export const getCollection = async (req, res) => {
+    try {
+        const { branch } = req.params;
+        
+        const collection = await billPayment.find().populate('patient').populate('paymentCollectedBy');
+        const balancesDue = await balanceDue.find().populate('patient');
+        const patientsCollection = collection.filter((item) => item?.patient?.branch === branch);
+        const patientsDueBalances = balancesDue.filter((item) => item?.patient?.branch===branch);
+        res.json({
+            patientsCollection,
+            patientsDueBalances
+        })
+    } catch (error) {
+        res.json({
+            message: error.message,
+            success:false
+        })
+    }
 }
