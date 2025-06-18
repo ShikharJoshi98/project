@@ -63,6 +63,7 @@ import NewCaseDetails from "./pages/Doctor/NewCaseDetails";
 import AppointmentList_Doc from "./pages/Doctor/AppointmentList_Doc";
 import Prescription from "./pages/HR/Prescription";
 import Bill from "./pages/HR/Bill";
+import PayBalance from "./pages/HR/PayBalance";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -160,6 +161,7 @@ function App() {
           <Route path="/HR-medicine" element={<ProtectedRoute allowedRoles={['hr']}><HRMedicine /></ProtectedRoute>} />
           <Route path="/prescription-HR/:id" element={<ProtectedRoute allowedRoles={['hr']}><Prescription /></ProtectedRoute>} />
           <Route path="/medicine-payment/:id" element={<ProtectedRoute allowedRoles={['hr']}><Bill /></ProtectedRoute>} />
+          <Route path="/balance-payment/:id" element={<ProtectedRoute allowedRoles={['hr']}><PayBalance /></ProtectedRoute>} />
 
           <Route path="/dashboard-RECEPTIONIST" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />
           <Route path="/register-patient" element={<ProtectedRoute allowedRoles={['receptionist']}><RegisterPatient /></ProtectedRoute>} />

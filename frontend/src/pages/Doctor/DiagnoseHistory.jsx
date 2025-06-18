@@ -1,11 +1,23 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import DocSidebar from '../../components/Doctor/DocSidebar'
 import Input from '../../components/Input'
 import { MdMedicalInformation } from 'react-icons/md'
 import { FaFilePdf } from 'react-icons/fa'
+import { docStore } from '../../store/DocStore'
 
 const DiagnoseHistory = () => {
+    const { prescriptionsArray, getPrescriptions } = docStore();
+        const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        getPrescriptions();
+    }, [getPrescriptions]);
+        const filteredPrescriptions = prescriptionsArray.filter((prescription) => {
+        const diagnosisMatch = prescription?.diagnosis?.some(d => d.toLowerCase().includes(searchTerm.toLowerCase()));
+        const medicineMatch = prescription?.medicine?.toLowerCase().includes(searchTerm.toLowerCase());
+        return diagnosisMatch || medicineMatch;
+    });
     return (
         <div>
             <Docnavbar />
@@ -15,8 +27,7 @@ const DiagnoseHistory = () => {
                     <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
                         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Diagnose History</h1>
                         <div className='flex items-center gap-2'>
-                            <Input icon={MdMedicalInformation} placeholder='Search for Disease or Medicine here ..' />
-                            <button className='py-2 px-4 bg-blue-500 font-semibold rounded-lg text-white'>Search</button>
+                            <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={MdMedicalInformation} placeholder='Search for Disease or Medicine here ..' />
                         </div>
                         <button className='py-2 px-4 bg-green-500 flex items-center gap-5 text-lg my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
                         <div className="overflow-x-auto mt-10 rounded-lg">
@@ -34,7 +45,23 @@ const DiagnoseHistory = () => {
                                         <th className="px-2 py-4 ">Pdf</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+                                    {searchTerm.length>0 && 
+                                        filteredPrescriptions.map((pres, index) => (
+                                            <tr key={index} className='bg-blue-200'>
+                                                <td className="px-2 py-4 text-center">{index + 1}</td>
+                                                <td className="px-2 py-4 ">{pres?.diagnosis.join(',')}</td>
+                                                <td className="px-2 py-4 text-center">{pres?.medicine}</td>
+                                                <td className="px-2 py-4 text-center">{pres?.prescription_date}</td>
+                                                <td className="px-2 py-4 text-center">{pres?.start_date}</td>
+                                                <td className="px-2 py-4 text-center">{pres?.duration}</td>
+                                                <td className="px-2 py-4 text-center">{pres?.patient?.casePaperNo}</td>
+                                                <td className="px-2 py-4 text-center">{pres?.patient?.fullname}</td>
+                                                <td className="px-2 py-4 text-center"><button className='text-white bg-green-500 p-2 cursor-pointer rounded-md'><FaFilePdf className='size-6'/></button></td>
+                                            </tr>
+                                        ))
+                                    }
+                                </tbody>
                             </table>
                         </div>
                     </div>

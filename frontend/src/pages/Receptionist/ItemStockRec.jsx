@@ -21,11 +21,13 @@ const ItemStockRec = () => {
     const [openReorderModal, setOpenReorderModal] = useState(false);
     const [issueModal, setissueModal] = useState(false);
     const [itemSelect, setItemSelect] = useState();
+
     const getItemStock = async () => {
         const response = await axios.get(`${HR_API_URL}/get-item-stock`);
         setItemStock(response.data.itemStock);
+        
     };
-    console.log(itemStock);
+
     const timeStamp = (isoDate) => {
         const date = new Date(isoDate);
         const options = {
@@ -43,11 +45,12 @@ const ItemStockRec = () => {
     useEffect(() => {
         try {
             getItemStock();
+
         } catch (error) {
             console.log("Error in fetch API hr getItemStock", error.message);
         }
-    }, [isAddStockModalOpen,stockToggle]);
-
+    }, [isAddStockModalOpen, stockToggle]);
+    
     return (
         <div>
             <RecNavbar />
@@ -80,11 +83,12 @@ const ItemStockRec = () => {
                                 <tbody className='text-black'>
                                     {
                                         itemStock?.map((item, index) => (
+
                                             <tr className='bg-blue-200'>
                                                 <td className="px-1 py-2 text-center">{index + 1}</td>
                                                 <td className="px-1 py-2 text-center ">{item.itemName}</td>
-                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.quantity} {item.unit}</span> : <span onClick={() => { setissueModal(true); setItemSelect(item)}} className='bg-white px-2 py-0.5 rounded-md'>{item.quantity} {item.unit}</span>}</td>
-                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.reorder_level}</span> : <span onClick={() => { setOpenReorderModal(true);  setItemSelect(item)}} className='bg-white px-2 py-0.5 rounded-md'>{item.reorder_level}</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.quantity} {item.unit}</span> : <span onClick={() => { setissueModal(true); setItemSelect(item) }} className='bg-white px-2 py-0.5 rounded-md'>{item.quantity} {item.unit}</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.reorder_level}</span> : <span onClick={() => { setOpenReorderModal(true); setItemSelect(item) }} className='bg-white px-2 py-0.5 rounded-md'>{item.reorder_level}</span>}</td>
                                                 <td className="px-1 py-2 text-center ">{timeStamp(item.last_updated)}</td>
                                                 <td className="px-1 py-2 text-center ">{item.issue_quantity}</td>
                                                 <td className="px-1 py-2 text-center ">{item.approval_flag_new === false ? item.receive_quantity : 0}</td>

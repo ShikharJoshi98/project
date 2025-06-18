@@ -22,7 +22,8 @@ export const useStore = create((set) => ({
   potencys: [],
   Potency: null,
   dueBalanceSum: [],
-  collection:[],
+  collection: [],
+  ordersPlaced:[],
   medSection: "general",
   setMedSection: (newsection) => set({ medSection: newsection }),
   getDetails: async () => {
@@ -236,6 +237,14 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
+  getOrders: async (id) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/getItemOrders/${id}`);
+      set({ordersPlaced:response.data.branchOrders})
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   getTasks: async () => {
     try {
       const response = await axios.get(`${HR_API_URL}/place-medical-order`)
@@ -246,7 +255,6 @@ export const useStore = create((set) => ({
   getCollection: async (branch) => {
     const response = await axios.get(`${HR_API_URL}/collections/${branch}`);
     set({ collection: response.data.patientsCollection });
-    set({ dueBalanceSum: response.data.patientsDueBalances });
-  
+    set({ dueBalanceSum: response.data.patientsDueBalances });  
   }
 }));

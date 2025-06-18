@@ -24,7 +24,7 @@ const Collections = () => {
         else { onlinePayment += item.billPaid }
     });
     dueBalanceSum.map((item, index) => {
-        if (item?.dueBalance > 0) balanceSum += item?.dueBalance
+        if (item?.dueBalance >= 0) balanceSum += item?.dueBalance
 
         else { advanceSum += item?.dueBalance }
     });
@@ -50,7 +50,7 @@ const Collections = () => {
                                 <tbody>
                                     <tr className='bg-blue-200'>
                                         <td className="px-2 py-4 text-center">{collectionSum}</td>
-                                        <td className="px-2 py-4">{cashPayment}</td>
+                                        <td className="px-2 py-4 text-center">{cashPayment}</td>
                                         <td className="px-2 py-4 text-center">{onlinePayment}</td>
                                         <td className="px-2 py-4 text-center">{balanceSum}</td>
                                         <td className="px-2 py-4 text-center">{advanceSum}</td>

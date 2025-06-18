@@ -16,7 +16,6 @@ const Bill = () => {
     const navigate = useNavigate();
     const [amountPaid, setAmountPaid] = useState(0);
     const todayDate = updateDate();
-    console.log(user);
     useEffect(() => {
         getPatientDetails();
         fetchPrescription(id);

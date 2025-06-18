@@ -30,6 +30,7 @@ const billPaymentSchema = new mongoose.Schema({
 
 const balanceDueSchema = new mongoose.Schema({
     dueBalance: { type: Number, default: 0 },
+    date: { type: String },
     patient: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Patient'

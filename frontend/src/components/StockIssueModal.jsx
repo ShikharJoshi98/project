@@ -4,15 +4,29 @@ import { useEffect, useState } from "react"
 import axios from "axios";
 import { HR_API_URL } from "../store/UpdateStore";
 import { recStore } from "../store/RecStore";
+import { DOC_API_URL } from "../store/DocStore";
 
 const StockIssueModal = ({ item, onClose }) => {
     const [issue, setIssue] = useState(0);
     const { toggleStockUpdate } = recStore();
-
+    const ApproveStock = async (id) => {
+        console.log('HEllo');
+        try {
+            await axios.patch(`${DOC_API_URL}/approveStock/${id}`,
+                {
+                    approval_flag_new : true
+                }
+            )
+            setSubmit(prev => !prev);
+        } catch (error) {
+            console.log(error.message);
+        } 
+    }
     const handleSumbit = async (e) => {
         try {
             e.preventDefault();
-            await axios.patch(`${HR_API_URL}/update-stock/${item._id}`, { docApproval_flag:false,quantity:parseInt(item.quantity),issue_quantity: parseInt(issue), });
+            await axios.patch(`${HR_API_URL}/update-stock/${item?._id}`, { docApproval_flag: false, quantity: parseInt(item.quantity), issue_quantity: parseInt(issue), });
+            ApproveStock(item?._id);
             toggleStockUpdate();
             setIssue(0);
         } catch (error) {
@@ -30,7 +44,7 @@ const StockIssueModal = ({ item, onClose }) => {
                     <X size={24} />
                 </button>
                 <h1 className="text-blue-500 text-2xl md:text-3xl mb-10 text-center font-semibold">
-                    ISSUE {item.itemName}
+                    ISSUE {item?.itemName}
                 </h1>
                 <form onSubmit={handleSumbit} className="mx-auto">
                     <div className='flex flex-col gap-2 '>

@@ -83,7 +83,6 @@ const AddItemModal = ({ onClose }) => {
             </form>
           </div>
 
-          {/* Unit Form */}
           <div className="bg-white p-5 rounded-lg w-full">
             <form onSubmit={addunit}>
               <h1 className="text-black mb-3 text-lg font-semibold">Unit Name</h1>

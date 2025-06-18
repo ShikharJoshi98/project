@@ -25,24 +25,26 @@ const StockSchema = new mongoose.Schema({
     timestamps: { createdAt: 'timestamp', updatedAt: 'last_updated' }
 });
 
-const orderPlacedSchema = new mongoose.Schema({
-    
-})
 
 const orderSchema = new mongoose.Schema({
     formRows: [
         {
             itemName: { type: String, required: true },
-            vendor: { type: String, required: true },            
+            vendor: [{ type: String, required: true }],            
             quantity: { type: Number, required: true },
-            deliveryDate: { type: Date, required: true },
+            deliveryDate: { type: String, required: true },
+            itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'ItemStock' },
+            order_Delivered_Flag: { type: Boolean, default: false },
+            doctor_Approval_Flag:{type:Boolean, default:false},
+            receivedQuantity:{type:Number,default:0}
         }
     ],
-    orderDate: { type: Date, default: Date.now }
+    orderDate: { type: String }
 })
 
 export const Order = mongoose.model('Order', orderSchema);
 export const ItemStock = mongoose.model('ItemStock', StockSchema);
 export const Item = mongoose.model('Item', itemSchema);
 export const Unit = mongoose.model('Unit', unitSchema);
+
 

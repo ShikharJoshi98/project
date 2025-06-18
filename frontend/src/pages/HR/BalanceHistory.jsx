@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
 import HRSidebar from '../../components/HR/HRSidebar'
 import Input from '../../components/Input'
 import { SearchIcon } from 'lucide-react'
 import { useStore } from '../../store/UpdateStore'
 import { useAuthStore } from '../../store/authStore'
+import { useNavigate } from 'react-router-dom'
 
 const BalanceHistory = () => {
     const { getCollection, collection, dueBalanceSum } = useStore();
     const { user } = useAuthStore();
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
     useEffect(() => {
         getCollection(user?.branch);
     }, [getCollection]);
-        const collectionList = collection.filter((item) => (item?.patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-    console.log(collection);
+    const collectionList = collection.filter((item) => (item?.patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
 
     return (
         <div>
@@ -25,7 +26,7 @@ const BalanceHistory = () => {
                     <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
                         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Balance History Details</h1>
                         <div className='flex items-center gap-2 mt-2'>
-                            <Input icon={SearchIcon} onChange={(e)=>setSearchTerm(e.target.value)} placeholder='Search Case PaperNo./ Mobile Number / Patient&apos;s Name' />
+                            <Input icon={SearchIcon} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search Case PaperNo./ Mobile Number / Patient&apos;s Name' />
                         </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
@@ -41,7 +42,7 @@ const BalanceHistory = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {searchTerm.length>0 &&
+                                    {searchTerm.length > 0 &&
                                         collectionList.map((item, index) => {
                                             const dueItem = dueBalanceSum.find(
                                                 (due) => due?.patient?._id === item?.patient?._id
@@ -53,7 +54,7 @@ const BalanceHistory = () => {
                                                 <td className='px-1 text-center py-2'>{item?.date}</td>
                                                 <td className='px-1 text-center py-2'>{item?.appointmentType}</td>
                                                 <td className='px-1 text-center py-2'>{dueItem?.dueBalance >= 0 ? `Rs ${dueItem?.dueBalance} due` : `Rs ${dueItem?.dueBalance} advance`}</td>
-                                                <td className='px-1 text-center py-2'><button className='bg-green-500 text-white py-1 px-3 cursor-pointer w-fit block mx-auto rounded-md'>Pay</button></td>
+                                                <td className='px-1 text-center py-2'><button onClick={() => navigate(`/balance-payment/${item?.patient?._id}`)} className='bg-green-500 text-white py-1 px-3 cursor-pointer w-fit block mx-auto rounded-md'>Pay</button></td>
                                             </tr>
                                         })}
                                 </tbody>

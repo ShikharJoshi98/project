@@ -1,11 +1,18 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import DocSidebar from '../../components/Doctor/DocSidebar'
 import { useParams } from 'react-router-dom'
 import { CiMedicalClipboard } from 'react-icons/ci'
+import { useStore } from '../../store/UpdateStore'
+import Collections from '../HR/Collections'
 
 const BalanceList = () => {
     const location = useParams();
+    const { getCollection, collection, dueBalanceSum } = useStore();
+    const [selectAppointmentType, setSelectAppointmentType] = useState('All');
+    useEffect(() => {
+        getCollection(location.location);
+    }, [getCollection]);
     return (
         <div>
             <Docnavbar />
@@ -20,17 +27,17 @@ const BalanceList = () => {
                                 <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                     <CiMedicalClipboard className="size-4 text-blue-500" />
                                 </div>
-                                <select name="appointment" required id="appontmentType" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
+                                <select onChange={(e) => setSelectAppointmentType(e.target.value)} name="appointment" required id="appontmentType" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
                                     <option value="All">All</option>
-                                    <option value="General">General</option>
-                                    <option value="Repeat Medicine">Repeat Medicine</option>
-                                    <option value="Courier Medicine">Courier Medicine</option>
+                                    <option value="general">General</option>
+                                    <option value="repeat">Repeat Medicine</option>
+                                    <option value="courier">Courier Medicine</option>
                                 </select>
                             </div>
                         </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
-                            <thead className="bg-[#337ab7]  text-white">
+                                <thead className="bg-[#337ab7]  text-white">
                                     <tr >
                                         <th className="px-2 py-4 ">Count</th>
                                         <th className="px-2 py-4 ">Patient Name</th>
@@ -41,7 +48,28 @@ const BalanceList = () => {
                                         <th className="px-2 py-4 ">Balance Amount</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+                                    {
+                                        collection.filter(item => selectAppointmentType === 'All' || item?.appointmentType === selectAppointmentType)
+                                            .map((item, index) => {
+                                                const dueItem = dueBalanceSum.find(
+                                                    (due) => due?.patient?._id === item?.patient?._id
+                                                );
+                                                return <tr key={index} className='bg-blue-200'>
+                                                    <td className='px-1 text-center py-2'>{index + 1}</td>
+                                                    <td className='px-1 text-center py-2'>{item?.patient?.fullname}</td>
+                                                    <td className='px-1 text-center py-2'>{item?.patient?.casePaperNo}</td>
+                                                    <td className='px-1 text-center py-2'>{item?.patient?.phone}</td>
+                                                    <td className='px-1 text-center py-2'>{item?.appointmentType === 'general' ? 'General' : item?.appointmentType === 'repeat' ? 'Repeat Medicine' : 'Courier Medicine'}</td>
+                                                    <td className='px-1 text-center py-2'>{item?.date}</td>
+                                                    <td className='px-1 text-center py-2'>{dueItem?.dueBalance}</td>
+                                                </tr>
+
+
+
+
+                                            })}
+                                </tbody>
                             </table>
                         </div>
                     </div>

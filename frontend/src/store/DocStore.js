@@ -36,6 +36,7 @@ export const docStore = create((set) => ({
     consultationCharges: [],
     investigationAdvised: [],
     testInfo: [],
+    prescriptionsArray:[],
     chiefComplaints: [],
     personalHistory: [],
     section: "medicine",
@@ -336,5 +337,10 @@ export const docStore = create((set) => ({
         else {
             set({ balanceDue: response.data.message });
         }
+    },
+    getPrescriptions: async () => {
+        const response = await axios.get(`${DOC_API_URL}/getAllPrescripion`);
+        console.log(response);
+        set({ prescriptionsArray: response.data.allPrescriptions });
     }
 }))

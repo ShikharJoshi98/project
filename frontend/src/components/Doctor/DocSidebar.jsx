@@ -40,7 +40,7 @@ const DocSidebar = () => {
             <SidebarItem active={path.pathname === '/collection/Dombivili'||path.pathname === '/collection/Mulund'} icon={<Briefcase />} text={<div className='flex items-center gap-1'>Todays Collections <IoIosArrowDown size={16} className={`transition-transform duration-300 ${collectionDropdown ? "rotate-180" : "rotate-0"}`} /></div>} />
           </div>
           <ul className={`ml-8 overflow-hidden transition-all duration-300 ${collectionDropdown ? "max-h-40 opacity-100" : "max-h-0 opacity-0"} `}>
-            <li onClick={()=>navigate('/collection/Dombivili')} className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Dombivili</li>
+            <li onClick={()=>navigate('/collection/Dombivali')} className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Dombivili</li>
             <li onClick={()=>navigate('/collection/Mulund')} className="py-1 px-1 cursor-pointer hover:bg-gray-400/30 hover:text-white rounded-md transition">Mulund</li>
           </ul>
         </div>
