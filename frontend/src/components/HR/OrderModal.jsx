@@ -7,8 +7,9 @@ import { useAuthStore } from "../../store/authStore";
 import UploadBillModal from "./UploadBillModal";
 
 const OrderModal = ({ onClose }) => {
-  const { getItems, items, units, getUnits, getVendors, vendors, placeOrder, getOrders, ordersPlaced } = useStore();
+  const { getItems, items, units, getUnits, getVendors, vendors, placeOrder, getOrders, ordersPlaced,billImagesLength } = useStore();
   const { user } = useAuthStore();
+  const [orderId, setOrderId] = useState(null);
   const [itemStock, setItemStock] = useState([]);
   const [formRows, setFormRows] = useState([]);
   const [submit, setSubmit] = useState(false);
@@ -30,7 +31,7 @@ const OrderModal = ({ onClose }) => {
     getUnits();
     getOrders(user?.branch)
   }, [getItems, getVendors, getUnits, getOrders, submit]);
-  console.log(ordersPlaced);
+
   const vendorArray = vendors.map((vendor) => vendor?.vendorname);
   useEffect(() => {
     try {
@@ -101,7 +102,7 @@ const OrderModal = ({ onClose }) => {
   const receiveOrder = async (OrderId, ItemId) => {
     await axios.patch(`${HR_API_URL}/updateReceivedOrder/${OrderId}/${ItemId}`, {
       receivedQuantity,
-      order_Delivered_Flag:true
+      order_Delivered_Flag: true
     });
     setSubmit(prev => !prev);
   }
@@ -207,7 +208,7 @@ const OrderModal = ({ onClose }) => {
                         </td>
                       )}
                       <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={()=>setBillModal(true)} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <Plus /></button></td>
+                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border">{billImagesLength>0?<button onClick={() => { setBillModal(true);  setOrderId(order?._id)}} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">View</button>:<button onClick={() => { setBillModal(true);  setOrderId(order?._id)}} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <Plus /></button>}</td>
                       }
                       {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border ">
                         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg">
@@ -224,15 +225,15 @@ const OrderModal = ({ onClose }) => {
                               <tr key={idx} className="bg-blue-200">
                                 <td className="py-1 px-1 border text-center">{formRow?.itemName}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.quantity} {formRow?.itemId?.unit}</td>
-                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={()=>receiveOrder(order?._id,formRow?._id)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
-                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ?(formRow?.quantity - formRow?.receivedQuantity):'-'}</td>
+                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
+                                {formRow?.order_Delivered_Flag === true && <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? (formRow?.quantity - formRow?.receivedQuantity) : '-'}</td>}
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </td>}
                       <td className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
-                      <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag===true?'text-green-500 border-green-500':'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag===true?'Delivered':'Pending'}</span></td>
+                      <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag === true ? 'Delivered' : 'Pending'}</span></td>
                       <td className="py-2 px-1 border text-center"><span className="border-1 text-red-500 border-red-500 rounded-md py-1 px-2">Pending</span></td>
                     </tr>
                   ))
@@ -242,7 +243,7 @@ const OrderModal = ({ onClose }) => {
           </div>
         </div>
       </div>
-      {billModal && <UploadBillModal onClose={() => setBillModal(false)}/>}
+      {billModal && <UploadBillModal onClose={() => setBillModal(false)} orderId={orderId} />}
     </div>
   );
 };

@@ -326,7 +326,7 @@ export const place_item_order = async (req, res) => {
 
     try {
         const { formRows } = req.body;
-        
+
         let formattedDate = '';
         const updateDate = () => {
             const today = new Date();
@@ -339,9 +339,9 @@ export const place_item_order = async (req, res) => {
         if (!formRows || formRows.length === 0) {
             return res.status(400).json({ message: "Order items are required" });
         }
-        
 
-        const newOrder = new Order({ formRows,orderDate:formattedDate });
+
+        const newOrder = new Order({ formRows, orderDate: formattedDate });
         await newOrder.save();
         res.status(201).json({ message: "Order placed successfully", newOrder });
 
@@ -356,15 +356,15 @@ export const get_Item_Order = async (req, res) => {
     try {
         const { id } = req.params;
         const orders = await Order.find().populate('formRows.itemId');
-        const branchOrders = orders.filter((order) => order?.formRows.map((row)=>row?.itemId?.branch===id));
+        const branchOrders = orders.filter((order) => order?.formRows.map((row) => row?.itemId?.branch === id));
         res.json({
             branchOrders
         })
     } catch (error) {
         res.json({
             succes: false,
-            message:error.message
-        })        
+            message: error.message
+        })
     }
 }
 
@@ -372,10 +372,9 @@ export const updateReceivedOrder = async (req, res) => {
     try {
         const { itemId, orderId } = req.params;
         const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag } = req.body;
-        console.log(itemId, orderId);
-        console.log(receivedQuantity, doctor_Approval_Flag);
+
         const order = await Order.findById(orderId);
-        console.log(order);
+
         const item = order?.formRows.filter((order) => order?._id.toString() === itemId);
         if (receivedQuantity != undefined) {
             item[0].receivedQuantity = receivedQuantity;
@@ -384,17 +383,79 @@ export const updateReceivedOrder = async (req, res) => {
             item[0].order_Delivered_Flag = order_Delivered_Flag;
         }
         if (doctor_Approval_Flag != undefined) {
-            item[0].doctor_Approval_Flag=doctor_Approval_Flag
+            item[0].doctor_Approval_Flag = doctor_Approval_Flag
         }
         await order.save();
         res.json({
-            items:item[0]
+            items: item[0]
         });
     } catch (error) {
         res.json({
             message: error.message,
-            succes:false
+            succes: false
         })
+    }
+}
+
+export const addBillImage = async (req, res) => {
+    try {
+        let { orderId } = req.params;
+        const order = await Order.findById(orderId);
+
+        const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+        if (!req.file) {
+            return res.status(400).json({ message: "No file uploaded" });
+        }
+
+        order.Bill.push({ imageUrl: base64Image });
+        await order.save();
+
+        res.json({
+            success: true,
+            message: 'Bill Uploaded Successfully'
+        })
+    } catch (error) {
+        res.json({
+            message: error.message,
+            success: false
+        })
+    }
+}
+
+export const getBillImage = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await Order.findById(orderId);
+        const Images = order.Bill;
+        res.json({
+            Images,
+            length: Images.length,
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const deleteBillImages = async (req, res) => {
+    try {
+        const { id, orderId } = req.params;
+        const order = await Order.findById(orderId);
+        order.Bill = order.Bill.filter((bill) => bill._id.toString() !== id)
+        await order.save();
+        
+        res.json({
+            message: "Deleted Successfully",
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+       })
     }
 }
 

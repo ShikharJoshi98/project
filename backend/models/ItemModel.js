@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const itemSchema = new mongoose.Schema({
-    itemName: {type: String}
+    itemName: { type: String }
 })
 
 const unitSchema = new mongoose.Schema({
-    unit: {type: String}
+    unit: { type: String }
 })
 
 const StockSchema = new mongoose.Schema({
@@ -13,7 +13,7 @@ const StockSchema = new mongoose.Schema({
     unit: { type: String, required: true },
     quantity: { type: Number, required: true },
     branch: { type: String, required: true },
-    docApproval_flag:{type:Boolean,default:false},
+    docApproval_flag: { type: Boolean, default: false },
     receive_quantity: { type: Number, default: 0 },
     issue_quantity: { type: Number, default: 0 },
     reorder_level: { type: Number, default: 0 },
@@ -30,16 +30,21 @@ const orderSchema = new mongoose.Schema({
     formRows: [
         {
             itemName: { type: String, required: true },
-            vendor: [{ type: String, required: true }],            
+            vendor: [{ type: String, required: true }],
             quantity: { type: Number, required: true },
             deliveryDate: { type: String, required: true },
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'ItemStock' },
             order_Delivered_Flag: { type: Boolean, default: false },
-            doctor_Approval_Flag:{type:Boolean, default:false},
-            receivedQuantity:{type:Number,default:0}
+            doctor_Approval_Flag: { type: Boolean, default: false },
+            receivedQuantity: { type: Number, default: 0 }
         }
     ],
-    orderDate: { type: String }
+    orderDate: { type: String },
+    Bill: [
+        {
+            imageUrl: { type: String }
+        }
+    ],
 })
 
 export const Order = mongoose.model('Order', orderSchema);

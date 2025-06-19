@@ -9,6 +9,8 @@ export const useStore = create((set) => ({
   employees: [],
   items: [],
   vendors: [],
+  billImages: [],
+  billImagesLength:0,
   vendor: null,
   Item: null,
   stock: null,
@@ -241,6 +243,15 @@ export const useStore = create((set) => ({
     try {
       const response = await axios.get(`${HR_API_URL}/getItemOrders/${id}`);
       set({ordersPlaced:response.data.branchOrders})
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getBillImages: async (id) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/get-Bill-images/${id}`);
+      set({ billImages: response.data.Images });
+      set({ billImagesLength: response.data.length });
     } catch (error) {
       console.log(error.message);
     }
