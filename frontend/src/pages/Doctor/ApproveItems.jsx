@@ -40,7 +40,10 @@ const ApproveItems = () => {
     const ApproveStock = async (id) => {
         try {
             await axios.patch(`${DOC_API_URL}/approveStock/${id}`,
-                { docApproval_flag: true }
+                {
+                    docApproval_flag: true,
+                    approval_flag_new:false
+                 }
             )
             setSubmit(prev => !prev);
         } catch (error) {
@@ -54,7 +57,7 @@ const ApproveItems = () => {
             console.log("Error in fetch API hr getItemStock", error.message);
         }
     }, [submit]);
-    const itemStockList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase()));
+    const itemStockList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase())&&item?.branch===location.location);
     return (
         <div>
             <Docnavbar />
@@ -73,7 +76,7 @@ const ApproveItems = () => {
                         </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
-                                <thead className="bg-[#337ab7]  text-white">
+                                <thead className="bg-[#337ab7] text-sm text-white">
                                     <tr >
                                         <th className="px-2 py-4 ">Count</th>
                                         <th className="px-2 py-4 ">Item</th>
@@ -96,9 +99,9 @@ const ApproveItems = () => {
                                                 <td className="px-1 py-2 text-center ">{<span>{item?.reorder_level}</span>}</td>
                                                 <td className="px-1 py-2 text-center ">{timeStamp(item?.last_updated)}</td>
                                                 <td className="px-1 py-2 text-center ">{item?.issue_quantity}</td>
-                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_new === false ? item?.receive_quantity : 0}</td>
-                                                <td className="px-1 py-2 text-center "> {item?.docApproval_flag === false ? <button onClick={() => ApproveStock(item?._id)} className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
-                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_new ? "NEW ITEM" : "ITEM ISSUED"}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?item?.receive_quantity:item?.approval_flag_new === true ? item?.receive_quantity : 0}</td>
+                                                <td className="px-1 py-2 text-center "> {item?.docApproval_flag === false ? <button onClick={() => ApproveStock(item?._id,item?.approval_flag_new)} className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?"ITEM RECEIVED(ORDER)":item?.approval_flag_issue===true?"ITEM ISSUED":item?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
                                             </tr>
                                         ))}
                                 </tbody>

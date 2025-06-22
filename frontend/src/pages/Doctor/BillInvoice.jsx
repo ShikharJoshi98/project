@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import DocSidebar from '../../components/Doctor/DocSidebar'
 import { User } from 'lucide-react'
@@ -6,10 +6,22 @@ import { CiMedicalClipboard } from "react-icons/ci";
 import { AiFillMedicineBox } from 'react-icons/ai';
 import Input from '../../components/Input';
 import { useNavigate } from 'react-router-dom';
+import Select from "react-select";
+import { recStore } from '../../store/RecStore';
 
 const BillInvoice = () => {
     const navigate = useNavigate();
-
+      const { patients, getPatientDetails } = recStore();
+    
+    useEffect(() => {
+        getPatientDetails();
+      }, [getPatientDetails]);
+    
+      const patientArray = patients.map((patient) => ({
+        value: patient?._id,
+        label: `${patient?.fullname} / ${patient?.casePaperNo?patient?.casePaperNo:'-'} / ${patient?.phone} (M)`,
+      }));
+    const [selectedPatient, setSelectedPatient] = useState(null);
     const handleSubmit = () => {
 
     }
@@ -29,11 +41,14 @@ const BillInvoice = () => {
                                     <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                         <User className="size-4 text-blue-500" />
                                     </div>
-                                    <select name="patient" required id="patient" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                        <option value="" disabled selected className='font-normal' >Select Case Paper No.</option>
-                                        <option value="Patient 1">Patient 1</option>
-                                        <option value="Patient 3">Patient 2</option>
-                                    </select>
+                                    <Select
+                                        options={patientArray}
+                                        placeholder="Search"
+                                        value={selectedPatient}
+                                        onChange={setSelectedPatient}
+                                        className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200"
+                                        required
+                                    />
                                 </div>
                             </div>
                             <div className='flex flex-col gap-2'>
@@ -56,7 +71,7 @@ const BillInvoice = () => {
                             <button className='py-2 px-4 mt-5 rounded-lg text-lg bg-blue-500 text-white font-semibold block mx-auto cursor-pointer'>Submit</button>
                         </form>
                         <p className='text-green-500 font-semibold '>Click on Next, after Completing the Submission of above details</p>
-                        <button onClick={()=>navigate('/bill-info')} className='py-2 px-4 sm:mr-20 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto sm:place-self-end cursor-pointer'>Next</button>
+                        <button onClick={() => navigate('/bill-info')} className='py-2 px-4 sm:mr-20 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto sm:place-self-end cursor-pointer'>Next</button>
                     </div>
                 </div>
             </div>

@@ -24,7 +24,14 @@ const RegisterPatient = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${REC_API_URL}/register`, {...formValues,username,password});
+            const response = await axios.post(`${REC_API_URL}/register`, { ...formValues, username, password });
+            setFormValues({
+        fullname: "",
+        phone: "",
+        Altphone: "",
+        email: "",
+        branch: user?.branch
+    })
         } catch (error) {
             console.log(error.message);
         }

@@ -229,7 +229,7 @@ export const edit_vendor = async (req, res) => {
 
 export const add_item_stock = async (req, res) => {
     try {
-        const { itemName, unit, quantity } = req.body;
+        const { itemName, unit, quantity, branch } = req.body;
         const itemexists = await Item.findOne({ itemName });
         const unitexists = await Unit.findOne({ unit });
 
@@ -240,7 +240,7 @@ export const add_item_stock = async (req, res) => {
             itemName,
             unit,
             quantity,
-            branch: "Dombivali",
+            branch: branch,
             receive_quantity: quantity,
         })
         await newStock.save();
@@ -291,9 +291,15 @@ export const updateItemStock = async (req, res) => {
         if (req.body.receive_quantity !== undefined) {
             updateData.receive_quantity = req.body.receive_quantity;
         }
+        if (req.body.approval_flag_receive !== undefined) {
+            updateData.approval_flag_receive = req.body.approval_flag_receive;
+        }
 
         if (req.body.reorder_level !== undefined) {
             updateData.reorder_level = req.body.reorder_level;
+        }
+        if (req.body.last_updated !== undefined) {
+            updateData.last_updated = req.body.last_updated;
         }
         if (req.body.last_updated !== undefined) {
             updateData.last_updated = req.body.last_updated;
@@ -355,8 +361,10 @@ export const place_item_order = async (req, res) => {
 export const get_Item_Order = async (req, res) => {
     try {
         const { id } = req.params;
+        
         const orders = await Order.find().populate('formRows.itemId');
-        const branchOrders = orders.filter((order) => order?.formRows.map((row) => row?.itemId?.branch === id));
+        
+        const branchOrders = orders.filter((order) => order?.formRows?.some(row => row?.itemId?.branch?.toString() === id));
         res.json({
             branchOrders
         })
@@ -371,13 +379,21 @@ export const get_Item_Order = async (req, res) => {
 export const updateReceivedOrder = async (req, res) => {
     try {
         const { itemId, orderId } = req.params;
-        const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag } = req.body;
+        const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag,received_date } = req.body;
 
         const order = await Order.findById(orderId);
 
         const item = order?.formRows.filter((order) => order?._id.toString() === itemId);
+        
         if (receivedQuantity != undefined) {
             item[0].receivedQuantity = receivedQuantity;
+            const itemExist = await ItemStock.findByIdAndUpdate(
+            item[0]?.itemId,
+                {
+                    $inc: { quantity: parseInt(receivedQuantity) },
+                    $set: { approval_flag_receive: true ,docApproval_flag: false,receive_quantity:parseInt(receivedQuantity)}                },
+                { new: true }
+            )
         }
         if (order_Delivered_Flag != undefined) {
             item[0].order_Delivered_Flag = order_Delivered_Flag;
@@ -385,7 +401,12 @@ export const updateReceivedOrder = async (req, res) => {
         if (doctor_Approval_Flag != undefined) {
             item[0].doctor_Approval_Flag = doctor_Approval_Flag
         }
+        if (received_date != undefined) {
+            item[0].received_date = received_date
+        }
         await order.save();
+        // const fetchItem = await ItemStock.findById(item[0].itemId);
+        // console.log(fetchItem)
         res.json({
             items: item[0]
         });
@@ -446,7 +467,7 @@ export const deleteBillImages = async (req, res) => {
         const order = await Order.findById(orderId);
         order.Bill = order.Bill.filter((bill) => bill._id.toString() !== id)
         await order.save();
-        
+
         res.json({
             message: "Deleted Successfully",
             success: true
@@ -454,8 +475,8 @@ export const deleteBillImages = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
-       })
+            message: error.message
+        })
     }
 }
 

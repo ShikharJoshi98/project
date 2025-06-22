@@ -12,7 +12,7 @@ const months = { 1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 
 
 const ApplyLeaveRec = () => {
     const { user } = useAuthStore();
-    const { leaves, LeaveDetails } = docStore();
+    const { LeaveDetails,userLeaves } = docStore();
     const [formValues, setFormValues] = useState({
         startDate: "",
         endDate: "",
@@ -22,8 +22,9 @@ const ApplyLeaveRec = () => {
     const [submit, setSubmit] = useState(false);
 
     useEffect(() => {
-        LeaveDetails();
+        LeaveDetails(user?.username);
     }, [LeaveDetails, submit])
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormValues((prevValues) => ({
@@ -32,12 +33,12 @@ const ApplyLeaveRec = () => {
         }));
     };
 
-    const approvedLeaves = leaves.filter(leave => leave.status === 'APPROVED');
-    console.log(leaves);
+    const approvedLeaves = userLeaves.filter(leave => leave.status === 'APPROVED');
+    
     const leavesByMonth = approvedLeaves.reduce((acc, leave) => {
         const date = leave.startDate.split('-');
-        const year = date[date.length-1];
-        const month = months[date[date.length - 2]]; // Month is 0-indexed
+        const year = date[date.length - 1];
+        const month = months[date[date.length - 2]]; 
         const duration = leave.duration + 1;
         acc.push({
             month,
@@ -45,10 +46,11 @@ const ApplyLeaveRec = () => {
             totalLeaves: duration
         });
         return acc
-        
+
     }, []);
+    
     const groupedLeaves = Object.values(leavesByMonth);
-    console.log(groupedLeaves);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -127,7 +129,7 @@ const ApplyLeaveRec = () => {
                                         </thead>
                                         <tbody>
                                             {
-                                                leaves.map((leave, index) => (
+                                                userLeaves.map((leave, index) => (
                                                     <tr key={index} className="hover:bg-blue-300 text-lg font-medium bg-blue-200 transition-all ">
                                                         <td className='py-2 text-center'>{index + 1}</td>
                                                         <td className='px-1 py-2 text-center'>{leave?.reason}</td>

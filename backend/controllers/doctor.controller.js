@@ -73,10 +73,15 @@ export const updateTaskStatus = async (req, res) => {
 }
 export const leaveDetails = async (req, res) => {
     try {
+        const { id } = req.params;
+        console.log(id)
         const leaves = await LeaveApplication.find().sort({ createdAt: -1 });
+        const userLeaves = await LeaveApplication.find({username:id}).sort({ createdAt: -1 });
+        console.log(userLeaves);
         res.json({
             success: true,
-            leaves
+            leaves,
+            userLeaves
         })
     } catch (error) {
         res.json({
@@ -2540,13 +2545,19 @@ export const payBalance = async (req, res) => {
 export const approveStock = async (req, res) => {
     try {
         const { id } = req.params;
-        const { docApproval_flag,approval_flag_new } = req.body;
+        const { docApproval_flag,approval_flag_new,approval_flag_issue,approval_flag_receive } = req.body;
         const updated = {};
         if (docApproval_flag !== undefined) {
             updated.docApproval_flag = docApproval_flag;
         }
          if (approval_flag_new !== undefined) {
             updated.approval_flag_new = approval_flag_new;
+        }
+        if (approval_flag_issue !== undefined) {
+            updated.approval_flag_issue = approval_flag_issue;
+        }
+        if (approval_flag_receive !== undefined) {
+            updated.approval_flag_receive = approval_flag_receive;
         }
         const stock = await ItemStock.findByIdAndUpdate(id,
             updated

@@ -45,7 +45,8 @@ HRrouter.get('/getItemOrders/:id', get_Item_Order);
 HRrouter.patch('/updateReceivedOrder/:orderId/:itemId', updateReceivedOrder);
 HRrouter.post('/upload-Bill-image/:orderId', upload.single("Bill"), addBillImage);
 HRrouter.get('/get-Bill-images/:orderId', getBillImage);
-HRrouter.delete('/deleteBillImage/:orderId/:id',deleteBillImages)
+HRrouter.delete('/deleteBillImage/:orderId/:id', deleteBillImages);
+
 //collections
 HRrouter.get('/collections/:branch',getCollection);
 

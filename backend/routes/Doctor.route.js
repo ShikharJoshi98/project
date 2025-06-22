@@ -19,7 +19,7 @@ Docrouter.post('/new-task', assignTask);
 Docrouter.get('/task-details', taskDetails);
 Docrouter.put('/update-task-status', updateTaskStatus);
 Docrouter.delete('/delete-task/:id', DeleteTask);
-Docrouter.get('/leave-details', leaveDetails);
+Docrouter.get('/leave-details/:id', leaveDetails);
 Docrouter.put('/leave-status/:id', updateleave);
 
 //appointment

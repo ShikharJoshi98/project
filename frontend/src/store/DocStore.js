@@ -8,6 +8,7 @@ export const docStore = create((set) => ({
     tasks: [],
     task: null,
     leaves: [],
+    userLeaves:[],
     appointments: [],
     allAppointments: [],
     Homeo: [],
@@ -99,10 +100,11 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    LeaveDetails: async () => {
+    LeaveDetails: async (id) => {
         try {
-            const response = await axios.get(`${DOC_API_URL}/leave-details`);
-            set({ leaves: response.data.leaves })
+            const response = await axios.get(`${DOC_API_URL}/leave-details/${id}`);
+            set({ leaves: response.data.leaves });
+            set({ userLeaves: response.data.userLeaves });
         } catch (error) {
             console.log(error.message);
         }

@@ -149,6 +149,7 @@ function App() {
           <Route path="/scribble-pad/:scribbleType/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Scribble /></ProtectedRoute>} />
           <Route path="/new-case-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><NewCaseDetails /></ProtectedRoute>} />
 
+          
           <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock /></ProtectedRoute>} />
           <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock /></ProtectedRoute>} />

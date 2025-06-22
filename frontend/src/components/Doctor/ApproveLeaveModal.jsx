@@ -7,17 +7,24 @@ const ApproveLeaveModal = ({ onClose }) => {
     useEffect(() => {
         LeaveDetails();
     }, LeaveDetails)
+    console.log(leaves);
+    function parseDateString(dateStr) {
+  // Input format: dd-mm-yyyy
+  const [day, month, year] = dateStr.split('-');
+  return new Date(`${year}-${month}-${day}`);
+}
     function getDateDifference(startDate, endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-    
-       
-        const diffTime = end - start;
-    
-        
-        const diffDays = diffTime / (1000 * 60 * 60 * 24);
-    
-        return diffDays+1;
+        const start = parseDateString(startDate);
+  const end = parseDateString(endDate);
+
+  if (isNaN(start) || isNaN(end)) {
+    return 'Invalid Date';
+  }
+
+  const utcStart = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+  const utcEnd = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+
+  return (utcEnd - utcStart) / (1000 * 60 * 60 * 24) + 1;
     }
     async function handleClick(id, status) {
         try {
@@ -58,8 +65,8 @@ const ApproveLeaveModal = ({ onClose }) => {
                                       <td className="border border-gray-300 px-4 py-2 text-center">{idx+1 }</td>
                                       <td className="border border-gray-300 px-4 py-2 text-center">{leave?.username }</td>
                                       <td className="border border-gray-300 px-4 py-2 text-center">{leave?.reason }</td>
-                                      <td className="border border-gray-300 px-4 py-2 text-center">{new Date(leave?.startDate).toLocaleDateString("en-GB", {  day: "2-digit",  month: "short",  year: "numeric"})}</td>
-                                      <td className="border border-gray-300 px-4 py-2 text-center">{new Date(leave?.endDate).toLocaleDateString("en-GB", {  day: "2-digit",  month: "short",  year: "numeric"})}</td>
+                                      <td className="border border-gray-300 px-4 py-2 text-center">{leave?.startDate}</td>
+                                      <td className="border border-gray-300 px-4 py-2 text-center">{leave?.endDate}</td>
                                       <td className="border border-gray-300 px-4 py-2 text-center">{getDateDifference(leave?.startDate,leave?.endDate) }</td>
                                       {leave?.status==='PENDING'?
                                           <td className="border border-gray-300 px-4 py-2 text-center"><div className='flex items-center gap-2'><button onClick={()=>handleClick(leave?._id,'APPROVED')} className='bg-green-500 p-1 text-white rounded-lg cursor-pointer hover:bg-green-700'>Approve</button><button onClick={()=>handleClick(leave?._id,'NOT APPROVED')} className='bg-red-500 p-1 text-white rounded-lg cursor-pointer hover:bg-red-700'>Reject</button></div></td>

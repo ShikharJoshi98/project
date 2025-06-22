@@ -17,7 +17,7 @@ const StockSchema = new mongoose.Schema({
     receive_quantity: { type: Number, default: 0 },
     issue_quantity: { type: Number, default: 0 },
     reorder_level: { type: Number, default: 0 },
-    approval_flag_new: { type: Boolean, default: false },
+    approval_flag_new: { type: Boolean, default: true },
     approval_flag_issue: { type: Boolean, default: false },
     approval_flag_receive: { type: Boolean, default: false },
     is_order_able: { type: Boolean, default: false }
@@ -36,7 +36,8 @@ const orderSchema = new mongoose.Schema({
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'ItemStock' },
             order_Delivered_Flag: { type: Boolean, default: false },
             doctor_Approval_Flag: { type: Boolean, default: false },
-            receivedQuantity: { type: Number, default: 0 }
+            receivedQuantity: { type: Number, default: 0 },
+            received_date: { type: String }
         }
     ],
     orderDate: { type: String },

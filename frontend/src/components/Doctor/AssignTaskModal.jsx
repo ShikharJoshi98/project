@@ -20,6 +20,8 @@ const AssignTaskModal = ({ onClose }) => {
       await addTask(Task, username);
       setIsSubmit((prev) => !prev);
       toggleTaskSubmit();
+      settask('');
+      setusername('');
     } catch (error) {
       console.log(error.message);
     }

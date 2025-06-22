@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import AppointmentSidebar from '../../components/Doctor/AppointmentSidebar'
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaAngleDoubleLeft } from 'react-icons/fa';
-import MultiSelectDropdown from '../../components/Doctor/MultiSelectInput';
+import { FaAngleDoubleLeft, FaFilePdf } from 'react-icons/fa';
 import { MdAssignmentAdd } from 'react-icons/md';
 import InvestigationModal from '../../components/Doctor/InvestigationModal';
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import MultiSelectInput from '../../components/Doctor/MultiSelectInput';
 import { Trash } from 'lucide-react';
+import { investigationPdf } from '../../store/generateInvestigationPDF';
 
 const testArray = [{ title: 'Investigation Advised', color: 'blue' }, { title: 'Ultra-Sonography', color: 'red' }, { title: 'Doppler Studies', color: 'green' }, { title: 'Obstetrics(Pregnancy)', color: 'orange' }, { title: 'Sonography', color: 'black' }, { title: '16 Slice C.T Scan', color: 'brown' }, { title: '1.5 MRI Scan', color: 'purple' }];
 
@@ -21,7 +21,7 @@ const Investigation = () => {
   const [isAddInvestigationModalOpen, setAddInvestigationModalIsOpen] = useState(false);
   const [investigationType, setInvestigationType] = useState('Investigation Advised')
   const [submit, setSubmit] = useState(false);
-  // console.log(investigationType)
+  
   useEffect(() => {    
     getInvestigationAdvised(investigationType);
     getTestInfo(id, investigationType);
@@ -36,6 +36,25 @@ const Investigation = () => {
     setSelectedInvestigationOptions([]);
 
   }
+
+const handleGeneratePdf = async () => {
+  const allInvestigationData = [];
+
+  for (const testType of testArray) {
+    try {
+      const res = await axios.get(`${DOC_API_URL}/get-test/${id}/${testType.title}`);
+      allInvestigationData.push({
+        title: testType.title,
+        tests: res.data || [],
+      });
+    } catch (err) {
+      console.error(`Error fetching ${testType.title}:`, err.message);
+    }
+  }
+  
+  investigationPdf(allInvestigationData);  
+};
+
   const deleteTest = async (test, id) => {
      try {
        await axios.delete(`${DOC_API_URL}/delete-test/${investigationType}/${id}/${test}`);
@@ -46,7 +65,7 @@ const Investigation = () => {
   }
   const investigationArray = investigationAdvised.map((investigation) => investigation?.inputData);
 
-  console.log(testInfo);
+  
   return (
     <div>
       <Docnavbar />
@@ -103,7 +122,7 @@ const Investigation = () => {
                 </div>
               </div>
             </div>
-            <button className="bg-blue-500 block mx-auto transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-15 py-4 rounded-lg mt-8 text-white">Generate</button>
+            <button onClick={()=>handleGeneratePdf()} className="bg-blue-500 flex items-center justify-center gap-5 mx-auto  transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-7 py-4 rounded-lg mt-8 text-white">Generate Pdf <FaFilePdf/></button>
           </div>
         </div>
       </div>

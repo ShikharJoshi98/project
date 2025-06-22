@@ -9,15 +9,17 @@ import { DOC_API_URL } from "../store/DocStore";
 const StockIssueModal = ({ item, onClose }) => {
     const [issue, setIssue] = useState(0);
     const { toggleStockUpdate } = recStore();
-    const ApproveStock = async (id) => {
-        console.log('HEllo');
+    const ApproveStock = async (id) => {        
         try {
             await axios.patch(`${DOC_API_URL}/approveStock/${id}`,
                 {
-                    approval_flag_new : true
+                    approval_flag_new: false,
+                    approval_flag_issue: true,
+                    approval_flag_receive:false
                 }
             )
             setSubmit(prev => !prev);
+            
         } catch (error) {
             console.log(error.message);
         } 
@@ -25,10 +27,11 @@ const StockIssueModal = ({ item, onClose }) => {
     const handleSumbit = async (e) => {
         try {
             e.preventDefault();
-            await axios.patch(`${HR_API_URL}/update-stock/${item?._id}`, { docApproval_flag: false, quantity: parseInt(item.quantity), issue_quantity: parseInt(issue), });
+            await axios.patch(`${HR_API_URL}/update-stock/${item?._id}`, { docApproval_flag: false, quantity: parseInt(item.quantity), issue_quantity: parseInt(issue),approval_flag_receive:false });
             ApproveStock(item?._id);
             toggleStockUpdate();
             setIssue(0);
+            onClose();
         } catch (error) {
             console.log(error);
         }

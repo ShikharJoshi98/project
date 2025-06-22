@@ -10,6 +10,9 @@ import { HR_API_URL } from '../../store/UpdateStore';
 import ReorderLevelModal from '../../components/ReorderLevelModal';
 import StockIssueModal from '../../components/StockIssueModal';
 import { recStore } from '../../store/RecStore';
+import Input from '../../components/Input';
+import { SearchIcon } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 
 const ItemStockRec = () => {
     const [isItemModalOpen, setItemModalIsOpen] = useState(false);
@@ -21,11 +24,10 @@ const ItemStockRec = () => {
     const [openReorderModal, setOpenReorderModal] = useState(false);
     const [issueModal, setissueModal] = useState(false);
     const [itemSelect, setItemSelect] = useState();
-
+    const [searchTerm, setSearchTerm] = useState('');
     const getItemStock = async () => {
         const response = await axios.get(`${HR_API_URL}/get-item-stock`);
         setItemStock(response.data.itemStock);
-        
     };
 
     const timeStamp = (isoDate) => {
@@ -50,7 +52,9 @@ const ItemStockRec = () => {
             console.log("Error in fetch API hr getItemStock", error.message);
         }
     }, [isAddStockModalOpen, stockToggle]);
-    
+
+    const itemsList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase()));
+
     return (
         <div>
             <RecNavbar />
@@ -64,6 +68,9 @@ const ItemStockRec = () => {
                             <button onClick={() => setVendorModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>VENDORS</button>
                             <button onClick={() => setAddStockModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>ADD STOCK</button>
                             <button onClick={() => setOrderModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>PLACE ORDER</button>
+                        </div>
+                        <div className='flex items-center justify-center gap-2 mt-10'>
+                            <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={SearchIcon} placeholder='Search for Items Here' />
                         </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
@@ -82,18 +89,18 @@ const ItemStockRec = () => {
                                 </thead>
                                 <tbody className='text-black'>
                                     {
-                                        itemStock?.map((item, index) => (
+                                        itemsList?.map((item, index) => (
 
-                                            <tr className={`${item.docApproval_flag === false?'bg-red-200':'bg-blue-200'}`}>
+                                            <tr className={`${item.docApproval_flag === false ? 'bg-red-200' : 'bg-blue-200'}`}>
                                                 <td className="px-1 py-2 text-center">{index + 1}</td>
-                                                <td className="px-1 py-2 text-center ">{item.itemName}</td>
-                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.quantity} {item.unit}</span> : <span onClick={() => { setissueModal(true); setItemSelect(item) }} className='bg-white px-2 py-0.5 rounded-md'>{item.quantity} {item.unit}</span>}</td>
-                                                <td className="px-1 py-2 text-center ">{item.docApproval_flag === false ? <span>{item.reorder_level}</span> : <span onClick={() => { setOpenReorderModal(true); setItemSelect(item) }} className='bg-white px-2 py-0.5 rounded-md'>{item.reorder_level}</span>}</td>
-                                                <td className="px-1 py-2 text-center ">{timeStamp(item.last_updated)}</td>
-                                                <td className="px-1 py-2 text-center ">{item.issue_quantity}</td>
-                                                <td className="px-1 py-2 text-center ">{item.approval_flag_new === false ? item.receive_quantity : 0}</td>
-                                                <td className="px-1 py-2 text-center "> {item.docApproval_flag === false ? <span className='border-2 px-2 rounded-md py-0.5 text-red-500'>PENDING</span> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
-                                                <td className="px-1 py-2 text-center ">{item.approval_flag_new ? "NEW ITEM" : "ITEM ISSUED"}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.itemName}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.docApproval_flag === false ? <span>{item?.quantity} {item?.unit}</span> : <span onClick={() => { setissueModal(true); setItemSelect(item) }} className='bg-white px-2 py-0.5 rounded-md'>{item?.quantity} {item?.unit}</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.docApproval_flag === false ? <span>{item?.reorder_level}</span> : <span onClick={() => { setOpenReorderModal(true); setItemSelect(item) }} className='bg-white px-2 py-0.5 rounded-md'>{item?.reorder_level}</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{timeStamp(item?.last_updated)}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.issue_quantity}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?item?.receive_quantity:item?.approval_flag_new === true ? item?.receive_quantity : 0}</td>
+                                                <td className="px-1 py-2 text-center "> {item?.docApproval_flag === false ? <span className='border-2 px-2 rounded-md py-0.5 text-red-500'>PENDING</span> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?"ITEM RECEIVED(ORDER)":item?.approval_flag_issue===true?"ITEM ISSUED":item?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
                                             </tr>
                                         ))}
                                 </tbody>

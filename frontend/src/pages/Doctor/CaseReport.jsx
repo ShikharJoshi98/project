@@ -78,7 +78,7 @@ const CaseReport = () => {
                         <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>New Case - Final Report</h1>
                         <div className='flex items-center justify-between my-5'>
                             <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl '>{currentDate}</h1>
-                            <button onClick={() => generateTablePDF(patient[0])} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
+                            <button onClick={() => generateTablePDF(patient[0],PresentComplaintData,chiefComplaints,PastHistoryData,FamilyMedicalData,MentalCausativeData[0]?.diseases,mentalCausativeScribble,MentalPersonalityData[0]?.diseases,mentalPersonalityScribble,briefMindSymptomScribble,ThermalReactionData[0]?.diseases,MiasmData[0]?.diseases)} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
                         </div>
                         <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                         <div className='mt-12'>

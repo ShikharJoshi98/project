@@ -20,7 +20,7 @@ const UploadCase = ({ onClose }) => {
   }));
 
   const [image, setImage] = useState(null);
-  const [selectedPatient, setSelectedPatient] = useState(null); // Store selected patient object
+  const [selectedPatient, setSelectedPatient] = useState(null); 
 
   async function handleSubmit(e) {
     

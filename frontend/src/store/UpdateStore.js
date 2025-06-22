@@ -124,9 +124,9 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  addItemStock: async (itemName, unit, quantity) => {
+  addItemStock: async (itemName, unit, quantity,branch) => {
     try {
-      const response = await axios.post(`${HR_API_URL}/add-item-stock`, { itemName, unit, quantity });
+      const response = await axios.post(`${HR_API_URL}/add-item-stock`, { itemName, unit, quantity,branch });
       console.log(response.data.newStock);
       set({ stock: response.data.newStock });
     } catch (error) {

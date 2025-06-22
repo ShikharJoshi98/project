@@ -6,6 +6,8 @@ import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { recStore } from '../../store/RecStore';
 import axios from 'axios';
 import { useStore } from '../../store/UpdateStore';
+import { useParams } from 'react-router-dom';
+import { updateDate } from '../../store/todayDate';
 
 const AppointmentModal = ({ onClose }) => {
   const { appointmentSubmit, toggleAppointmentSubmit } = docStore();
@@ -14,7 +16,8 @@ const AppointmentModal = ({ onClose }) => {
   const doctors = employees.filter(emp => emp?.role === 'doctor');
   const [appointmentCreated, setAppointmentCreated] = useState('');
   const today = new Date().toLocaleDateString('en-CA');
-
+  const location = useParams();
+  const todayDate = updateDate();
   const [formValues, setFormValues] = useState({
     date: today,
     time: "",
@@ -22,13 +25,20 @@ const AppointmentModal = ({ onClose }) => {
     Doctor: "",
     appointmentType: 'general',
   });
+
   useEffect(() => {
     getPatientDetails();
     getDetails();
-  }, [getPatientDetails,getDetails])
+  }, [getPatientDetails, getDetails])
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await axios.post(`${DOC_API_URL}/appointment`, formValues);
+    await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
+      complete_appointment_flag: false,  
+      medicine_issued_flag:false,
+      date:todayDate
+    })
     if (response.data.message === 'Appointment exist') {
       alert("Appointment already exists for this date");
     }
@@ -61,7 +71,7 @@ const AppointmentModal = ({ onClose }) => {
 
         <div className="bg-[#e9ecef] w-full sm:w-auto  sm:mx-10   rounded-lg">
           <h1 className=" text-center font-semibold  text-[#337ab7] text-xl sm:text-3xl md:text-5xl">Create Appointment</h1>
-          {appointmentCreated.length>0 && <p className='border-2 border-blue-400 bg-blue-500 text-white font-semibold p-2 rounded-md w-fit mx-auto my-6'>{appointmentCreated}</p>}
+          {appointmentCreated.length>0 && <p className='border-2 border-blue-40 text-blue-500 font-semibold p-2 rounded-md w-fit mx-auto my-6'>{appointmentCreated}</p>}
           <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
             <div className="flex flex-col gap-4 m-auto">
               <div className="flex flex-col gap-2">

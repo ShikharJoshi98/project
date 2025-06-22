@@ -5,6 +5,8 @@ import axios from "axios";
 import MultiSelectInput from "../Doctor/MultiSelectInput";
 import { useAuthStore } from "../../store/authStore";
 import UploadBillModal from "./UploadBillModal";
+import { recStore } from "../../store/RecStore";
+import { updateDate } from "../../store/todayDate";
 
 const OrderModal = ({ onClose }) => {
   const { getItems, items, units, getUnits, getVendors, vendors, placeOrder, getOrders, ordersPlaced,billImagesLength } = useStore();
@@ -15,6 +17,8 @@ const OrderModal = ({ onClose }) => {
   const [submit, setSubmit] = useState(false);
   const [receivedQuantity, setReceivedQuantity] = useState(0);
   const [billModal, setBillModal] = useState(false);
+  const { toggleStockUpdate } = recStore();
+  const todayDate = updateDate();
   const getFutureDate = (daysToAdd = 7) => {
     const date = new Date();
     date.setDate(date.getDate() + daysToAdd);
@@ -99,11 +103,13 @@ const OrderModal = ({ onClose }) => {
       console.log(error.message);
     }
   }
-  const receiveOrder = async (OrderId, ItemId) => {
+  const receiveOrder = async (OrderId, ItemId,item) => {
     await axios.patch(`${HR_API_URL}/updateReceivedOrder/${OrderId}/${ItemId}`, {
       receivedQuantity,
-      order_Delivered_Flag: true
+      order_Delivered_Flag: true,
+      received_date:todayDate
     });
+    toggleStockUpdate();
     setSubmit(prev => !prev);
   }
 
@@ -225,7 +231,7 @@ const OrderModal = ({ onClose }) => {
                               <tr key={idx} className="bg-blue-200">
                                 <td className="py-1 px-1 border text-center">{formRow?.itemName}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.quantity} {formRow?.itemId?.unit}</td>
-                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
+                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id,formRow?.itemId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
                                 {formRow?.order_Delivered_Flag === true && <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? (formRow?.quantity - formRow?.receivedQuantity) : '-'}</td>}
                               </tr>
                             ))}

@@ -15,7 +15,7 @@ const RecSidebar = () => {
     const { tasks, getTasks,addTaskToggle } = docStore();
     const { user } = useAuthStore();
     const recTasks = tasks.filter((task) => task?.username === user?.username && task?.status === "INCOMPLETE");
-    console.log(addTaskToggle);
+    
     useEffect(() => {
         getTasks(user?.username);
     }, [getTasks,addTaskToggle])
