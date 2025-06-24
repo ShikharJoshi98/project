@@ -25,8 +25,11 @@ export const useStore = create((set) => ({
   Potency: null,
   dueBalanceSum: [],
   collection: [],
-  ordersPlaced:[],
+  ordersPlaced: [],
+  medicalStock:[],
   medSection: "general",
+  medicalStockToggle: false,
+  medicalStockToggleSubmit: () => set((state) => ({ medicalStockToggle: !state.medicalStockToggle })),
   setMedSection: (newsection) => set({ medSection: newsection }),
   getDetails: async () => {
     try {
@@ -133,6 +136,14 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
+  getMedicalStock: async (branch) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/get-medical-stock/${branch}`);
+      set({ medicalStock: response.data.medicalStock });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   placeOrder: async (items) => {
     try {
       console.log(items);
@@ -213,10 +224,9 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  addMedicineStock: async (medicineName, potency, quantity) => {
+  addMedicineStock: async (medicineName, potency, quantity,branch) => {
     try {
-      const response = await axios.post(`${HR_API_URL}/add-medicine-stock`, { medicineName, potency, quantity });
-      console.log(response.data.newStock);
+      const response = await axios.post(`${HR_API_URL}/add-medicine-stock`, { medicineName, potency, quantity,branch });
       set({ stock: response.data.newStock });
     } catch (error) {
       console.log(error.message);

@@ -3,17 +3,25 @@ import Input from "./Input"
 import { useState } from "react"
 import { recStore } from "../store/RecStore";
 import axios from "axios";
-import { HR_API_URL } from "../store/UpdateStore";
+import { HR_API_URL, useStore } from "../store/UpdateStore";
 
 const ReorderLevelModal = ({ item, onClose }) => {
     const [reOrderLevel, setReOrderLevel] = useState(0);
     const { toggleStockUpdate } = recStore();
-
+    const { medicalStockToggleSubmit } = useStore();
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        await axios.patch(`${HR_API_URL}/update-stock/${item._id}`, { reorder_level:parseInt(reOrderLevel) });
-        toggleStockUpdate();
-        setReOrderLevel(0);
+        if (item?.typeOfStock === 'Item') {
+            e.preventDefault();
+            await axios.patch(`${HR_API_URL}/update-stock/${item._id}`, { reorder_level: parseInt(reOrderLevel) });
+            toggleStockUpdate();
+            setReOrderLevel(0);
+        }
+        else {
+            e.preventDefault();
+            await axios.patch(`${HR_API_URL}/update-medical-stock/${item._id}`, { reorder_level: parseInt(reOrderLevel) });
+            medicalStockToggleSubmit();
+            setReOrderLevel(0);
+        }
     }
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
@@ -30,7 +38,7 @@ const ReorderLevelModal = ({ item, onClose }) => {
                 <form onSubmit={handleSubmit} className="mx-auto">
                     <div className='flex flex-col gap-2 '>
                         <h1>Reorder Level</h1>
-                        <Input icon={Package} onChange={(e)=>setReOrderLevel(e.target.value)} value={reOrderLevel} type='number' required />
+                        <Input icon={Package} onChange={(e) => setReOrderLevel(e.target.value)} value={reOrderLevel} type='number' required />
                     </div>
                     <button className='cursor-pointer block mx-auto bg-blue-400 text-lg  font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full'>Update</button>
                 </form>

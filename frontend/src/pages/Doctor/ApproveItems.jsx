@@ -100,7 +100,7 @@ const ApproveItems = () => {
                                                 <td className="px-1 py-2 text-center ">{timeStamp(item?.last_updated)}</td>
                                                 <td className="px-1 py-2 text-center ">{item?.issue_quantity}</td>
                                                 <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?item?.receive_quantity:item?.approval_flag_new === true ? item?.receive_quantity : 0}</td>
-                                                <td className="px-1 py-2 text-center "> {item?.docApproval_flag === false ? <button onClick={() => ApproveStock(item?._id,item?.approval_flag_new)} className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
+                                                <td className="px-1 py-2 text-center "> {item?.docApproval_flag === false ? <button onClick={() => ApproveStock(item?._id)} className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
                                                 <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?"ITEM RECEIVED(ORDER)":item?.approval_flag_issue===true?"ITEM ISSUED":item?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
                                             </tr>
                                         ))}

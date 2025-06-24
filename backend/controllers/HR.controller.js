@@ -252,8 +252,6 @@ export const add_item_stock = async (req, res) => {
         console.log(error.message);
         res.json({ success: false, message: error.message });
     }
-
-
 }
 
 // Get Item Stock
@@ -361,9 +359,9 @@ export const place_item_order = async (req, res) => {
 export const get_Item_Order = async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         const orders = await Order.find().populate('formRows.itemId');
-        
+
         const branchOrders = orders.filter((order) => order?.formRows?.some(row => row?.itemId?.branch?.toString() === id));
         res.json({
             branchOrders
@@ -379,19 +377,20 @@ export const get_Item_Order = async (req, res) => {
 export const updateReceivedOrder = async (req, res) => {
     try {
         const { itemId, orderId } = req.params;
-        const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag,received_date } = req.body;
+        const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag, received_date } = req.body;
 
         const order = await Order.findById(orderId);
 
         const item = order?.formRows.filter((order) => order?._id.toString() === itemId);
-        
+
         if (receivedQuantity != undefined) {
             item[0].receivedQuantity = receivedQuantity;
             const itemExist = await ItemStock.findByIdAndUpdate(
-            item[0]?.itemId,
+                item[0]?.itemId,
                 {
                     $inc: { quantity: parseInt(receivedQuantity) },
-                    $set: { approval_flag_receive: true ,docApproval_flag: false,receive_quantity:parseInt(receivedQuantity)}                },
+                    $set: { approval_flag_receive: true, docApproval_flag: false, receive_quantity: parseInt(receivedQuantity) }
+                },
                 { new: true }
             )
         }
@@ -604,17 +603,19 @@ export const edit_medical_vendor = async (req, res) => {
 
 export const add_medical_stock = async (req, res) => {
     try {
-        const { medicineName, potency, quantity } = req.body;
-        const medicineexists = await Medicine.findOne({ medicine: medicineName });
-        const potencyexists = await Potency.findOne({ potency });
+        const { medicineName, potency, quantity, branch } = req.body;
+        const itemexists = await Medicine.findOne({ medicine: medicineName });
+        const unitexists = await Potency.findOne({ potency });
 
-        if (!medicineexists || !potencyexists) {
+        if (!itemexists || !unitexists) {
             return res.json({ success: false, message: "Stock does not have these" });
         }
         const newStock = new MedicalStock({
             medicineName,
             potency,
-            quantity
+            quantity,
+            branch: branch,
+            receive_quantity: quantity,
         })
         await newStock.save();
         res.json({
@@ -622,10 +623,84 @@ export const add_medical_stock = async (req, res) => {
             newStock
         })
     } catch (error) {
-        console.log(error.message);
         res.json({ success: false, message: error.message });
     }
+}
 
+export const updateMedicalStock = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: "Missing item ID" });
+        }
+
+        const updateData = {};
+
+        if (req.body.docApproval_flag !== undefined) {
+            updateData.docApproval_flag = req.body.docApproval_flag;
+        }
+
+        if (req.body.issue_quantity !== undefined) {
+            const issueQty = Number(req.body.issue_quantity) || 0;
+            updateData.issue_quantity = issueQty;
+        }
+
+        if (req.body.receive_quantity !== undefined) {
+            updateData.receive_quantity = req.body.receive_quantity;
+        }
+        if (req.body.approval_flag_receive !== undefined) {
+            updateData.approval_flag_receive = req.body.approval_flag_receive;
+        }
+        if (req.body.approval_flag_new !== undefined) {
+            updateData.approval_flag_new = req.body.approval_flag_new;
+        }
+        if (req.body.reorder_level !== undefined) {
+            updateData.reorder_level = req.body.reorder_level;
+        }
+        if (req.body.last_updated !== undefined) {
+            updateData.last_updated = req.body.last_updated;
+        }
+        if (req.body.last_updated !== undefined) {
+            updateData.last_updated = req.body.last_updated;
+        }
+
+        if (req.body.quantity !== undefined && req.body.issue_quantity !== undefined) {
+            const qty = Number(req.body.quantity) || 0;
+            const issueQty = Number(req.body.issue_quantity) || 0;
+            updateData.quantity = qty - issueQty;
+        } else if (req.body.quantity !== undefined) {
+            updateData.quantity = Number(req.body.quantity);
+        }
+
+        const updatedItem = await MedicalStock.findByIdAndUpdate(id, updateData, { new: true });
+
+        if (!updatedItem) {
+            return res.status(404).json({ success: false, message: "Item not found" });
+        }
+
+        res.json({ success: true, updatedItem });
+
+    } catch (error) {
+        console.error("Error updating item stock:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const get_medical_stock = async (req, res) => {
+    try {
+        const { branch } = req.params;
+        const medicalStock = await MedicalStock.find({ branch });
+        res.json({
+            medicalStock,
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            message: error.message,
+            success: false
+        })
+    }
 }
 
 export const medical_items_order = async (req, res) => {

@@ -9,6 +9,7 @@ import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribb
 import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
 import { balanceDue, billPayment, fees } from "../models/PaymentModel.js";
 import { ItemStock } from "../models/ItemModel.js";
+import { MedicalStock } from "../models/MedicineModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -2560,6 +2561,38 @@ export const approveStock = async (req, res) => {
             updated.approval_flag_receive = approval_flag_receive;
         }
         const stock = await ItemStock.findByIdAndUpdate(id,
+            updated
+        )
+        res.json({
+            message: 'Approved by Doctor',
+            success:true
+        })
+    } catch (error) {
+           res.json({
+            message: error.message,
+            success:false
+        })
+    }
+}
+
+export const approveMedicalStock = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { docApproval_flag,approval_flag_new,approval_flag_issue,approval_flag_receive } = req.body;
+        const updated = {};
+        if (docApproval_flag !== undefined) {
+            updated.docApproval_flag = docApproval_flag;
+        }
+         if (approval_flag_new !== undefined) {
+            updated.approval_flag_new = approval_flag_new;
+        }
+        if (approval_flag_issue !== undefined) {
+            updated.approval_flag_issue = approval_flag_issue;
+        }
+        if (approval_flag_receive !== undefined) {
+            updated.approval_flag_receive = approval_flag_receive;
+        }
+        const stock = await MedicalStock.findByIdAndUpdate(id,
             updated
         )
         res.json({
