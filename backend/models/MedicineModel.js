@@ -30,17 +30,27 @@ const orderitemsschema = new mongoose.Schema({
     medicine: {type:String, required:true}
 })
 
-const ordermedicalSchema = new mongoose.Schema({
-    medicine: [
+const orderSchema = new mongoose.Schema({
+    formRows: [
         {
-            itemName: { type: String, required: true },
+            medicineName: { type: String, required: true },
+            vendor: [{ type: String, required: true }],
             pack: { type: String, required: true },
-            vendor: { type: String, required: true },            
             quantity: { type: Number, required: true },
-            deliveryDate: { type: Date, required: true },
+            deliveryDate: { type: String, required: true },
+            medicineId: { type: mongoose.Schema.Types.ObjectId, ref: 'MedicalStock' },
+            order_Delivered_Flag: { type: Boolean, default: false },
+            doctor_Approval_Flag: { type: Boolean, default: false },
+            receivedQuantity: { type: Number, default: 0 },
+            received_date: { type: String }
         }
     ],
-    orderDate: { type: Date, default: Date.now }
+    orderDate: { type: String },
+    Bill: [
+        {
+            imageUrl: { type: String }
+        }
+    ],
 })
 
 
@@ -48,4 +58,4 @@ export const Medicine = mongoose.model('Medicine', medicineSchema);
 export const Potency = mongoose.model('Potency', potencySchema);
 export const MedicalStock = mongoose.model('MedicalStock', MedicalStockSchema);
 export const medicalItem = mongoose.model('medicalItem', orderitemsschema);
-export const medicalOrder = mongoose.model('medicalOrder', ordermedicalSchema);
+export const medicalOrder = mongoose.model('medicalOrder', orderSchema);

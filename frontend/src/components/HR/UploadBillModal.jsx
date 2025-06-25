@@ -56,7 +56,7 @@ const UploadBillModal = ({ onClose, orderId }) => {
           </form>
           <h1 className="text-blue-500 text-xl md:text-2xl my-10 text-center font-semibold">Bill Images</h1>
           {
-            billImages.map((image, index) => (
+            billImages?.map((image, index) => (
               <div className="flex justify-between px-2">
                 <img src={image?.imageUrl} alt="Bill Image" key={index} className="w-[90%] mb-5" />
                 <div title='delete' onClick={()=>deleteBill(image?._id)}  className='text-white max-w-[10%] w-fit h-fit  bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>

@@ -9,7 +9,7 @@ const AddItemStockModal = ({ onClose }) => {
   const { user } = useAuthStore();
   const [item, setitem] = useState();
   const [unit, setunit] = useState();
-  const [quantity, setquantity] = useState();
+  const [quantity, setquantity] = useState(0);
   useEffect(() => {
     getItems();
   }, [getItems]);
@@ -20,6 +20,9 @@ const AddItemStockModal = ({ onClose }) => {
   async function handleSubmit(e) {
     e.preventDefault();
     await addItemStock(item, unit, quantity, user?.branch);
+    setitem('');
+    setunit('');
+    setquantity(0);
     alert("Added stock");
   }
   return (

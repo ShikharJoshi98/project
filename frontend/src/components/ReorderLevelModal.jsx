@@ -15,12 +15,14 @@ const ReorderLevelModal = ({ item, onClose }) => {
             await axios.patch(`${HR_API_URL}/update-stock/${item._id}`, { reorder_level: parseInt(reOrderLevel) });
             toggleStockUpdate();
             setReOrderLevel(0);
+            onClose();
         }
         else {
             e.preventDefault();
             await axios.patch(`${HR_API_URL}/update-medical-stock/${item._id}`, { reorder_level: parseInt(reOrderLevel) });
             medicalStockToggleSubmit();
             setReOrderLevel(0);
+            onClose();
         }
     }
     return (

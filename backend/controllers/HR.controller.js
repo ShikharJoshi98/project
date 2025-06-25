@@ -292,6 +292,9 @@ export const updateItemStock = async (req, res) => {
         if (req.body.approval_flag_receive !== undefined) {
             updateData.approval_flag_receive = req.body.approval_flag_receive;
         }
+        if (req.body.is_order_placed !== undefined) {
+            updateData.is_order_placed = req.body.is_order_placed;
+        }
 
         if (req.body.reorder_level !== undefined) {
             updateData.reorder_level = req.body.reorder_level;
@@ -421,14 +424,26 @@ export const addBillImage = async (req, res) => {
     try {
         let { orderId } = req.params;
         const order = await Order.findById(orderId);
+        const medOrder = await medicalOrder.findById(orderId);
+        if (order) {
+            const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+            if (!req.file) {
+                return res.status(400).json({ message: "No file uploaded" });
+            }
 
-        const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-        if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
+            order.Bill.push({ imageUrl: base64Image });
+            await order.save();
+        }
+        if (medOrder) {
+            const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+            if (!req.file) {
+                return res.status(400).json({ message: "No file uploaded" });
+            }
+
+            medOrder.Bill.push({ imageUrl: base64Image });
+            await medOrder.save();
         }
 
-        order.Bill.push({ imageUrl: base64Image });
-        await order.save();
 
         res.json({
             success: true,
@@ -446,7 +461,15 @@ export const getBillImage = async (req, res) => {
     try {
         const { orderId } = req.params;
         const order = await Order.findById(orderId);
-        const Images = order.Bill;
+        const medOrder = await medicalOrder.findById(orderId);
+        let Images;
+        if (order) {
+            Images = order.Bill;
+        }
+        if (medOrder) {
+            Images = medOrder.Bill;
+        }
+
         res.json({
             Images,
             length: Images.length,
@@ -464,8 +487,15 @@ export const deleteBillImages = async (req, res) => {
     try {
         const { id, orderId } = req.params;
         const order = await Order.findById(orderId);
-        order.Bill = order.Bill.filter((bill) => bill._id.toString() !== id)
-        await order.save();
+        const medOrder = await medicalOrder.findById(orderId);
+        if (order) {
+            order.Bill = order.Bill.filter((bill) => bill._id.toString() !== id)
+            await order.save();
+        }
+        if (medOrder) {
+            medOrder.Bill = medOrder.Bill.filter((bill) => bill._id.toString() !== id)
+            await medOrder.save();
+        }
 
         res.json({
             message: "Deleted Successfully",
@@ -720,11 +750,22 @@ export const medical_items_get = async (req, res) => {
 export const place_medical_order = async (req, res) => {
 
     try {
-        const { medicine } = req.body;
-        if (!medicine || medicine.length === 0) {
+        const { formRows } = req.body;
+
+        let formattedDate = '';
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            formattedDate = `${day}-${month}-${year}`;
+        };
+        updateDate();
+        if (!formRows || formRows.length === 0) {
             return res.status(400).json({ message: "Order items are required" });
         }
-        const newOrder = new medicalOrder({ medicine });
+
+        const newOrder = new medicalOrder({ formRows, orderDate: formattedDate });
         await newOrder.save();
         res.status(201).json({ message: "Order placed successfully", newOrder });
 
@@ -734,6 +775,64 @@ export const place_medical_order = async (req, res) => {
     }
 }
 
+export const get_Medical_Order = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const orders = await medicalOrder.find().populate('formRows.medicineId');
+
+        const branchOrders = orders.filter((order) => order?.formRows?.some(row => row?.medicineId?.branch?.toString() === id));
+        res.json({
+            branchOrders
+        })
+    } catch (error) {
+        res.json({
+            succes: false,
+            message: error.message
+        })
+    }
+}
+
+export const updateMedicalReceivedOrder = async (req, res) => {
+    try {
+        const { medicineId, orderId } = req.params;
+        const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag, received_date } = req.body;
+
+        const order = await medicalOrder.findById(orderId);
+
+        const medicine = order?.formRows.filter((order) => order?._id.toString() === medicineId);
+
+        if (receivedQuantity != undefined) {
+            medicine[0].receivedQuantity = receivedQuantity;
+            await MedicalStock.findByIdAndUpdate(medicine[0]?.medicineId,
+                {
+                    $inc: { quantity: parseInt(receivedQuantity) },
+                    $set: { approval_flag_receive: true, docApproval_flag: false, receive_quantity: parseInt(receivedQuantity) }
+                },
+                { new: true }
+            )
+        }
+        if (order_Delivered_Flag != undefined) {
+            medicine[0].order_Delivered_Flag = order_Delivered_Flag;
+        }
+        if (doctor_Approval_Flag != undefined) {
+            medicine[0].doctor_Approval_Flag = doctor_Approval_Flag
+        }
+        if (received_date != undefined) {
+            medicine[0].received_date = received_date
+        }
+        await order.save();
+
+        res.json({
+            medicines: medicine[0]
+        });
+    } catch (error) {
+        res.json({
+            message: error.message,
+            succes: false
+        })
+    }
+}
 
 //collections
 export const getCollection = async (req, res) => {

@@ -26,6 +26,7 @@ export const useStore = create((set) => ({
   dueBalanceSum: [],
   collection: [],
   ordersPlaced: [],
+  medicalOrders:[],
   medicalStock:[],
   medSection: "general",
   medicalStockToggle: false,
@@ -253,6 +254,14 @@ export const useStore = create((set) => ({
     try {
       const response = await axios.get(`${HR_API_URL}/getItemOrders/${id}`);
       set({ordersPlaced:response.data.branchOrders})
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getMedicalOrders: async (id) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/getMedicalOrders/${id}`);
+      set({medicalOrders:response.data.branchOrders})
     } catch (error) {
       console.log(error.message);
     }
