@@ -8,8 +8,7 @@ import { updateDate } from "../../store/todayDate";
 import UploadBillModal from "./UploadBillModal";
 
 const OrderModal = ({ onClose }) => {
-  // const { getMedicalItem, medicalitems,  getMedicalVendors, vendors, placeOrder } = useStore();
-  const { getMedicine, medicines, potencys, getPotency, getMedicalVendors, vendors, getMedicalStock, medicalStock, medicalStockToggle, getMedicalOrders, medicalOrders,billImagesLength } = useStore();
+  const { getMedicalVendors, vendors, getMedicalStock, medicalStock, medicalStockToggle, getMedicalOrders, medicalOrders,billImagesLength } = useStore();
   const { user } = useAuthStore();
   const [orderId, setOrderId] = useState(null);
   const [formRows, setFormRows] = useState([]);
@@ -33,7 +32,7 @@ const OrderModal = ({ onClose }) => {
 
   useEffect(() => {
     if (medicalStock.length > 0) {
-      const filtered = medicalStock.filter(item => item?.quantity <= item?.reorder_level);
+      const filtered = medicalStock.filter(item => item?.quantity <= item?.reorder_level && item?.is_order_placed === false);
       setLowQuantityItems(filtered);
       const initialFormRows = lowQuantityItems.map(item => ({
         medicineName: item?.medicineName,
@@ -56,7 +55,6 @@ const OrderModal = ({ onClose }) => {
     );
   };
 
-  // Function to handle input changes
   const handleVendorChange = (index, selectedVendors) => {
     setFormRows(prevRows =>
       prevRows.map((row, i) =>
@@ -65,7 +63,6 @@ const OrderModal = ({ onClose }) => {
     );
   };
 
-  // Function to delete a row
   const deleteRow = (index) => {
     setFormRows(prevRows => prevRows.filter((_, i) => i !== index));
   };
@@ -73,34 +70,39 @@ const OrderModal = ({ onClose }) => {
   async function SubmitOrder(e) {
     e.preventDefault();
     try {
-      const formattedFormRows = formRows.map(row => {
+      const hasEmptyVendors = formRows.some(row => row.vendor.length === 0);
+      if (hasEmptyVendors) {
+        alert("Please select at least one vendor for each item.");
+        return;
+      }
+      const formattedFormRows = await Promise.all(formRows.map(async(row) => {
         const [year, month, day] = row.deliveryDate.split("-");
         const item = medicalStock.find(i => i?.medicineName === row.medicineName);
+        await axios.patch(`${HR_API_URL}/update-medical-stock/${item?._id}`, { is_order_placed: true });
+
         return {
           ...row,
           deliveryDate: `${day}-${month}-${year}`,
           medicineId: item ? item?._id : "",
         };
-      });
-      const hasEmptyVendors = formattedFormRows.some(row => row.vendor.length === 0);
-      if (hasEmptyVendors) {
-        alert("Please select at least one vendor for each item.");
-        return;
-      }
+      }));
+      
       await axios.post(`${HR_API_URL}/place-medical-order`, { formRows: formattedFormRows });
-      alert("Order was placed")
+      alert("Order was placed");
+      await getMedicalStock(user?.branch);
       setSubmit(prev => !prev);
     } catch (error) {
       console.log(error.message);
     }
   }
-  const receiveOrder = async (OrderId, medicineId) => {
-    console.log(medicineId);
+  const receiveOrder = async (OrderId, medicineId,medicine) => {
     await axios.patch(`${HR_API_URL}/updateMedicalReceivedOrder/${OrderId}/${medicineId}`, {
       receivedQuantity,
       order_Delivered_Flag: true,
       received_date: todayDate
     });
+    console.log(medicine?._id);
+    await axios.patch(`${HR_API_URL}/update-medical-stock/${medicine?._id}`, { is_order_placed: false });
     setSubmit(prev => !prev);
   }
 
@@ -253,7 +255,7 @@ const OrderModal = ({ onClose }) => {
                                 <td className="py-1 px-1 border text-center">{formRow?.medicineName}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.pack}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.quantity}</td>
-                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
+                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id,formRow?.medicineId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
                                 {formRow?.order_Delivered_Flag === true && <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? (formRow?.quantity - formRow?.receivedQuantity) : '-'}</td>}
                               </tr>
                             ))}

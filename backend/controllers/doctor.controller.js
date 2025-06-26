@@ -7,7 +7,7 @@ import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescriptio
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
-import { balanceDue, billPayment, fees } from "../models/PaymentModel.js";
+import {  billPayment, fees } from "../models/PaymentModel.js";
 import { ItemStock } from "../models/ItemModel.js";
 import { MedicalStock } from "../models/MedicineModel.js";
 
@@ -77,7 +77,7 @@ export const leaveDetails = async (req, res) => {
         const { id } = req.params;
         console.log(id)
         const leaves = await LeaveApplication.find().sort({ createdAt: -1 });
-        const userLeaves = await LeaveApplication.find({username:id}).sort({ createdAt: -1 });
+        const userLeaves = await LeaveApplication.find({ username: id }).sort({ createdAt: -1 });
         console.log(userLeaves);
         res.json({
             success: true,
@@ -664,6 +664,19 @@ export const addNewPrescription = async (req, res) => {
         const { formData, currentDate } = req.body;
         const { id } = req.params;
 
+        const addDays = (dateStr, days) => {
+            days = parseInt(days, 10);
+            let [day, month, year] = dateStr.split("-").map(Number);
+            let date = new Date(year, month - 1, day);
+            date.setDate(date.getDate() + days);
+            let newDay = String(date.getDate()).padStart(2, '0');
+            let newMonth = String(date.getMonth() + 1).padStart(2, '0');
+            let newYear = date.getFullYear();
+            return `${newDay}-${newMonth}-${newYear}`;
+        };
+
+        const next_visit = addDays(currentDate, formData.duration);
+
         const newPatient = await Prescription.create({
             patient: id,
             diagnosis: formData.selectedDiagnosisOptions,
@@ -674,6 +687,7 @@ export const addNewPrescription = async (req, res) => {
             duration: formData.duration,
             note: formData.note,
             prescription_date: currentDate,
+            next_visit,
             send_to_HR: true
         });
 
@@ -840,17 +854,37 @@ export const deleteOtherPrescription = async (req, res) => {
     }
 }
 
+export const updateOtherPrescription = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("hit");
+        const prescription = await OtherPrescription.findOne({ patient: id })
+        prescription.medicine_issued_flag = true;
+        await prescription.save();
+        res.json({
+            success: true,
+            prescription
+        })
+        
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 export const getPrescriptions = async (req, res) => {
     try {
         const allPrescriptions = await Prescription.find().populate('patient');
         res.json({
             allPrescriptions,
-            success:true
+            success: true
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2438,26 +2472,25 @@ export const getBill = async (req, res) => {
 
 export const addPayment = async (req, res) => {
     try {
-        const { billPaid, modeOfPayment,appointmentType,paymentCollectedBy, totalBill } = req.body;
+        const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill,balance_paid_flag } = req.body;
         const { id } = req.params;
+        console.log(billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag);
         let formattedDate;
         const updateDate = () => {
             const today = new Date();
             const day = String(today.getDate()).padStart(2, '0');
             const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
+            const year = today.getFullYear()
             formattedDate = `${day}-${month}-${year}`;
         };
         updateDate();
-        const balance = await balanceDue.findOne({ patient: id });
+        // const balance = await balanceDue.findOne({ patient: id });
         const newBalance = totalBill - billPaid;
-            await balanceDue.updateOne(
-                { patient: id },
-                { $set: { dueBalance: newBalance,date:formattedDate } },
-                { upsert: true }
-            );
-       
-        await billPayment.create({ billPaid, totalBill, modeOfPayment, appointmentType,paymentCollectedBy,patient: id, date:formattedDate });
+        await billPayment.updateOne(
+            { patient: id },
+            { $set: { dueBalance: newBalance, date: formattedDate,transactionDetails,billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy,balance_paid_flag } },
+            { upsert: true }
+        );
         res.json({
             success: true,
             message: "Bill Payment Done",
@@ -2471,25 +2504,25 @@ export const addPayment = async (req, res) => {
 }
 
 export const getBalanceDue = async (req, res) => {
-    
+
     try {
-    const { id } = req.params;
-        const balance = await balanceDue.findOne({ patient: id });
-        
-    if (!balance) {
-        return res.json({
-            message:'No Balance Field',
-            success:true
-        })
-    }
-    res.json({
-        balance,
-        success: true
-    });
+        const { id } = req.params;
+        const balance = await billPayment.findOne({ patient: id });
+
+        if (!balance) {
+            return res.json({
+                message: 'No Balance Field',
+                success: true
+            })
+        }
+        res.json({
+            balance,
+            success: true
+        });
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -2518,40 +2551,18 @@ export const getPaymentBill = async (req, res) => {
     }
 }
 
-export const payBalance = async (req, res) => {
-    try {
-        const { amountPaid } = req.body;
-        const { id } = req.params;
-        console.log(id, amountPaid);
-        const balanceInfo = await balanceDue.findOne({ patient: id });
-        const balance = balanceInfo.dueBalance;
-        const balancePayment = balance - amountPaid;
-        await balanceDue.findOneAndUpdate({ patient: id },
-           { dueBalance:balancePayment}
-        )
-        res.json({
-            message: 'Balance Payment Done',
-            succes:true
-        })
-    } catch (error) {
-        res.json({
-            message: error.message,
-            succes:false
-        })
-    }
-}
 
 //stock
 
 export const approveStock = async (req, res) => {
     try {
         const { id } = req.params;
-        const { docApproval_flag,approval_flag_new,approval_flag_issue,approval_flag_receive } = req.body;
+        const { docApproval_flag, approval_flag_new, approval_flag_issue, approval_flag_receive } = req.body;
         const updated = {};
         if (docApproval_flag !== undefined) {
             updated.docApproval_flag = docApproval_flag;
         }
-         if (approval_flag_new !== undefined) {
+        if (approval_flag_new !== undefined) {
             updated.approval_flag_new = approval_flag_new;
         }
         if (approval_flag_issue !== undefined) {
@@ -2565,12 +2576,12 @@ export const approveStock = async (req, res) => {
         )
         res.json({
             message: 'Approved by Doctor',
-            success:true
+            success: true
         })
     } catch (error) {
-           res.json({
+        res.json({
             message: error.message,
-            success:false
+            success: false
         })
     }
 }
@@ -2578,12 +2589,12 @@ export const approveStock = async (req, res) => {
 export const approveMedicalStock = async (req, res) => {
     try {
         const { id } = req.params;
-        const { docApproval_flag,approval_flag_new,approval_flag_issue,approval_flag_receive } = req.body;
+        const { docApproval_flag, approval_flag_new, approval_flag_issue, approval_flag_receive } = req.body;
         const updated = {};
         if (docApproval_flag !== undefined) {
             updated.docApproval_flag = docApproval_flag;
         }
-         if (approval_flag_new !== undefined) {
+        if (approval_flag_new !== undefined) {
             updated.approval_flag_new = approval_flag_new;
         }
         if (approval_flag_issue !== undefined) {
@@ -2597,12 +2608,12 @@ export const approveMedicalStock = async (req, res) => {
         )
         res.json({
             message: 'Approved by Doctor',
-            success:true
+            success: true
         })
     } catch (error) {
-           res.json({
+        res.json({
             message: error.message,
-            success:false
+            success: false
         })
     }
 }

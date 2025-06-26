@@ -5,7 +5,7 @@ import { medicalItem, medicalOrder, MedicalStock, Medicine, Potency } from "../m
 import { Employee } from "../models/EmployeeModel.js";
 import { Task } from "../models/TaskModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import { balanceDue, billPayment } from "../models/PaymentModel.js";
+import {  billPayment } from "../models/PaymentModel.js";
 import { Appointment } from "../models/AppointmentModel.js";
 export const details = async (req, res) => {
 
@@ -679,6 +679,9 @@ export const updateMedicalStock = async (req, res) => {
         if (req.body.receive_quantity !== undefined) {
             updateData.receive_quantity = req.body.receive_quantity;
         }
+        if (req.body.is_order_placed !== undefined) {
+            updateData.is_order_placed = req.body.is_order_placed;
+        }
         if (req.body.approval_flag_receive !== undefined) {
             updateData.approval_flag_receive = req.body.approval_flag_receive;
         }
@@ -702,9 +705,9 @@ export const updateMedicalStock = async (req, res) => {
         } else if (req.body.quantity !== undefined) {
             updateData.quantity = Number(req.body.quantity);
         }
-
+        
         const updatedItem = await MedicalStock.findByIdAndUpdate(id, updateData, { new: true });
-
+        
         if (!updatedItem) {
             return res.status(404).json({ success: false, message: "Item not found" });
         }
@@ -838,14 +841,23 @@ export const updateMedicalReceivedOrder = async (req, res) => {
 export const getCollection = async (req, res) => {
     try {
         const { branch } = req.params;
-
+        
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+            return formattedDate;
+        };
+        const todayDate = updateDate();
         const collection = await billPayment.find().populate('patient').populate('paymentCollectedBy');
-        const balancesDue = await balanceDue.find().populate('patient');
-        const patientsCollection = collection.filter((item) => item?.patient?.branch === branch);
-        const patientsDueBalances = balancesDue.filter((item) => item?.patient?.branch === branch);
+        const branchCollection = collection.filter((item) => item?.patient?.branch === branch);
+        const patientsCollection = collection.filter((item) => item?.patient?.branch === branch && item?.date===todayDate);
+        
         res.json({
             patientsCollection,
-            patientsDueBalances
+            branchCollection,
         })
     } catch (error) {
         res.json({

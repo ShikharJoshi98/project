@@ -23,8 +23,8 @@ export const useStore = create((set) => ({
   medicalitems: [],
   potencys: [],
   Potency: null,
-  dueBalanceSum: [],
   collection: [],
+  branchCollection: [],
   ordersPlaced: [],
   medicalOrders:[],
   medicalStock:[],
@@ -285,6 +285,6 @@ export const useStore = create((set) => ({
   getCollection: async (branch) => {
     const response = await axios.get(`${HR_API_URL}/collections/${branch}`);
     set({ collection: response.data.patientsCollection });
-    set({ dueBalanceSum: response.data.patientsDueBalances });  
+    set({ branchCollection: response.data.branchCollection });
   }
 }));

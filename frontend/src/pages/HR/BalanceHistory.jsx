@@ -8,15 +8,15 @@ import { useAuthStore } from '../../store/authStore'
 import { useNavigate } from 'react-router-dom'
 
 const BalanceHistory = () => {
-    const { getCollection, collection, dueBalanceSum } = useStore();
+    const { getCollection, branchCollection } = useStore();
     const { user } = useAuthStore();
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     useEffect(() => {
         getCollection(user?.branch);
     }, [getCollection]);
-    const collectionList = collection.filter((item) => (item?.patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-
+    const collectionList = branchCollection.filter((item) => (item?.patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
+    const lastItem = collectionList[collectionList.length - 1];
     return (
         <div>
             <HRnavbar />
@@ -43,20 +43,16 @@ const BalanceHistory = () => {
                                 </thead>
                                 <tbody>
                                     {searchTerm.length > 0 &&
-                                        collectionList.map((item, index) => {
-                                            const dueItem = dueBalanceSum.find(
-                                                (due) => due?.patient?._id === item?.patient?._id
-                                            );
-                                            return <tr className='bg-blue-200'>
-                                                <td className='px-1 text-center py-2'>{item?.patient?.casePaperNo}</td>
-                                                <td className='px-1 text-center py-2'>{item?.patient?.fullname}</td>
-                                                <td className='px-1 text-center py-2'>{item?.patient?.phone}</td>
-                                                <td className='px-1 text-center py-2'>{item?.date}</td>
-                                                <td className='px-1 text-center py-2'>{item?.appointmentType}</td>
-                                                <td className='px-1 text-center py-2'>{dueItem?.dueBalance >= 0 ? `Rs ${dueItem?.dueBalance} due` : `Rs ${dueItem?.dueBalance} advance`}</td>
-                                                <td className='px-1 text-center py-2'><button onClick={() => navigate(`/balance-payment/${item?.patient?._id}`)} className='bg-green-500 text-white py-1 px-3 cursor-pointer w-fit block mx-auto rounded-md'>Pay</button></td>
-                                            </tr>
-                                        })}
+                                        <tr className='bg-blue-200'>
+                                            <td className='px-1 text-center py-2'>{lastItem?.patient?.casePaperNo}</td>
+                                            <td className='px-1 text-center py-2'>{lastItem?.patient?.fullname}</td>
+                                            <td className='px-1 text-center py-2'>{lastItem?.patient?.phone}</td>
+                                            <td className='px-1 text-center py-2'>{lastItem?.date}</td>
+                                            <td className='px-1 text-center py-2'>{lastItem?.appointmentType}</td>
+                                            <td className='px-1 text-center font-bold py-2'>{lastItem?.dueBalance && (lastItem?.dueBalance >= 0 ? `Rs ${lastItem?.dueBalance} due` : `Rs ${lastItem?.dueBalance} advance`)}</td>
+                                            <td className='px-1 text-center py-2'>{lastItem?.dueBalance > 0 ? <button onClick={() => navigate(`/balance-payment/${lastItem?.patient?._id}`)} className='bg-green-500 text-white py-1 px-3 cursor-pointer w-fit block mx-auto rounded-md'>Pay</button> : '-'}</td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>

@@ -1,27 +1,49 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
 import { docStore } from '../../store/DocStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import { updateDate } from '../../store/todayDate';
+import { FaAngleDoubleLeft } from 'react-icons/fa';
+import { recStore } from '../../store/RecStore';
 
 const Prescription = () => {
     const { id } = useParams();
-    const { prescriptionSubmit, fetchPrescription, prescription, otherPrescriptions, getOtherPrescription,balanceDue,getBalanceDue,appointmentSection, getAppdetails, appointments } = docStore();
+    const { getPatientDetails, patients } = recStore();
+    const { prescriptionSubmit, fetchPrescription,getBillInfo,billInfo, prescription, otherPrescriptions, getOtherPrescription,balanceDue,getBalanceDue,appointmentSection, getAppdetails, appointments } = docStore();
     const navigate = useNavigate();
     const todayDate = updateDate();
     useEffect(() => {
         fetchPrescription(id);
         getOtherPrescription(id);
         getBalanceDue(id);
+        getBillInfo(id);
+        getPatientDetails();
         getAppdetails(appointmentSection);
-    }, [fetchPrescription, prescriptionSubmit, getOtherPrescription,getAppdetails])
+    }, [fetchPrescription, prescriptionSubmit, getBillInfo, getOtherPrescription, getAppdetails, getPatientDetails])
+    console.log(balanceDue)
     const appointment = appointments.filter((app) => app?.PatientCase?._id === id && app?.date === todayDate);
+    const patient = patients.filter((patient) => patient?._id === id); 
     return (
         <div>
             <HRnavbar />
             <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
+                <div className='text-stone-800 w-fit text-sm sm:text-xl flex flex-wrap items-center gap-5 font-semibold m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
+                    <h1>{patient[0]?.fullname} </h1>
+                    <p className='text-blue-400'>|</p>
+                    <div className='flex items-center gap-2'>
+                        <h1>Contact No. -</h1>
+                        <h1>{patient[0]?.phone}</h1>
+                    </div>
+                    <p className='text-blue-400'>|</p>
+                    <div className='flex items-center gap-2'>
+                        <h1>Case Paper No. -</h1>
+                        <h1>{patient[0]?.casePaperNo}</h1>
+                    </div>
+                </div>
                 <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
+                    <h1 onClick={() => navigate('/HR-medicine')} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
                     <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Prescription Today</h1>
+                    <h1 className="text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4">{todayDate}</h1>
                     <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] whitespace-nowrap text-white">
@@ -33,13 +55,14 @@ const Prescription = () => {
                                     <th className="px-1 py-2 ">Dose</th>
                                     <th className="px-1 py-2 ">Note</th>
                                     <th className="px-1 py-2 ">Duration</th>
+                                    <th className="px-1 py-2 ">Next Visit</th>
                                     <th className="px-1 py-2 ">Status</th>
                                     <th className="px-1 py-2 ">Balance Due</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    prescription.map((pres, index) => (
+                                    prescription.filter((pres)=>pres?.prescription_date===todayDate).map((pres, index) => (
                                         <tr key={index} className='bg-blue-200'>
                                             <td className='py-2 px-1 text-center'>{pres?.medicine}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.potency}</td>
@@ -48,6 +71,7 @@ const Prescription = () => {
                                             <td className='py-2 px-1 text-center'>{pres?.dose}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.note}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.duration}</td>
+                                            <td className='py-2 px-1 text-center'>{pres?.next_visit}</td>
                                             <td className={`py-2 px-1 ${appointment[0]?.medicine_issued_flag === false?'text-red-500':'text-green-500'} text-center`}>{appointment[0]?.medicine_issued_flag === false?'Pending':'Medicine Issued'}</td>
                                             <td className='py-2 px-1 text-center'>Rs {balanceDue==='No Balance Field'?0:balanceDue.dueBalance}</td>
                                         </tr>
@@ -68,7 +92,7 @@ const Prescription = () => {
                             </thead>
                             <tbody>
                                 {
-                                    otherPrescriptions.map((prescription, index) => (
+                                    otherPrescriptions.filter((prescription)=>prescription?.date===todayDate).map((prescription, index) => (
                                         <tr key={index} className='bg-blue-200'>
                                             <td className='py-2 px-1 text-center'>{index + 1}</td>
                                             <td className='py-2 px-1 text-center'>{prescription?.medicineName}</td>

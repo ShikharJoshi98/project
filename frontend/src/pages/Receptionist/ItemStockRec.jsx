@@ -16,6 +16,7 @@ import { useAuthStore } from '../../store/authStore';
 
 const ItemStockRec = () => {
     const [isItemModalOpen, setItemModalIsOpen] = useState(false);
+    const { user } = useAuthStore();
     const { stockToggle, toggleStockUpdate } = recStore();
     const [isVendorModalOpen, setVendorModalIsOpen] = useState(false);
     const [isAddStockModalOpen, setAddStockModalIsOpen] = useState(false);
@@ -53,7 +54,7 @@ const ItemStockRec = () => {
         }
     }, [isAddStockModalOpen, stockToggle]);
 
-    const itemsList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase()));
+    const itemsList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase()) && item?.branch===user?.branch);
 
     return (
         <div>

@@ -9,7 +9,7 @@ import { recStore } from "../../store/RecStore";
 import { updateDate } from "../../store/todayDate";
 
 const OrderModal = ({ onClose }) => {
-  const { getItems, items, getUnits, getVendors, vendors, placeOrder, getOrders, ordersPlaced, billImagesLength } = useStore();
+  const { getItems, items, getUnits, getVendors, vendors, getOrders, ordersPlaced, billImagesLength } = useStore();
   const { user } = useAuthStore();
   const [orderId, setOrderId] = useState(null);
   const [itemStock, setItemStock] = useState([]);
@@ -35,7 +35,7 @@ const OrderModal = ({ onClose }) => {
     getUnits();
     getOrders(user?.branch)
   }, [getItems, getVendors, getUnits, getOrders, submit]);
-  console.log(submit);
+
   const vendorArray = vendors.map((vendor) => vendor?.vendorname);
   useEffect(() => {
     try {
@@ -47,7 +47,7 @@ const OrderModal = ({ onClose }) => {
 
   useEffect(() => {
     if (itemStock.length > 0) {
-      const lowQuantityItems = itemStock.filter(item => item.quantity <= item.reorder_level && item.is_order_placed === false);
+      const lowQuantityItems = itemStock.filter(item => item.quantity <= item.reorder_level && item?.is_order_placed === false);
       const initialFormRows = lowQuantityItems.map(item => ({
         itemName: item.itemName,
         vendor: [],
@@ -82,10 +82,10 @@ const OrderModal = ({ onClose }) => {
     e.preventDefault();
     try {
       const hasEmptyVendors = formRows.some(row => row.vendor.length === 0);
-    if (hasEmptyVendors) {
-      alert("Please select at least one vendor for each item.");
-      return;
-    }
+      if (hasEmptyVendors) {
+        alert("Please select at least one vendor for each item.");
+        return;
+      }
       const formattedFormRows = await Promise.all(formRows.map(async (row) => {
         const [year, month, day] = row.deliveryDate.split("-");
         const item = itemStock.find(i => i?.itemName === row.itemName);
@@ -97,7 +97,7 @@ const OrderModal = ({ onClose }) => {
           itemId: item ? item?._id : "",
         };
       }));
-      
+
       await axios.post(`${HR_API_URL}/place-item-order`, { formRows: formattedFormRows });
       alert('Placed Order');
       await getItemStock();
@@ -112,7 +112,7 @@ const OrderModal = ({ onClose }) => {
       order_Delivered_Flag: true,
       received_date: todayDate
     });
-
+    await axios.patch(`${HR_API_URL}/update-stock/${item?._id}`, { is_order_placed: false });
     toggleStockUpdate();
     setSubmit(prev => !prev);
   }

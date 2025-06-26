@@ -93,6 +93,9 @@ const prescriptionSchema = new mongoose.Schema({
     prescription_date: {
         type: String
     },
+    next_visit: {
+        type: String
+    },
     medicine_issued_flag: {
         type: Boolean,default:false
     },

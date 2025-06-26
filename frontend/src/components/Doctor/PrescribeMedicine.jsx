@@ -12,7 +12,7 @@ import MultiSelectInput from './MultiSelectInput';
 
 const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
 const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day', '7th Day', '10th Day', '15th Day', '20th Day', '25th Day', '30th Day', '45th Day', '60th Day', '75th Day', '3rd Month', '4th Month', '5th Month'];
-const doseArray = ['Single Dose', '3 Dose Half-Hour Interval', '2 Dose Half-Hour Interval'];
+const doseArray = ['Single Dose', '3 Dose Half-Hour Interval', '2 Dose Half-Hour Interval','3 Dose 1 Hour Interval','2 Dose 1 Hour Interval','Morning-Afternoon-Evening -- Per 1 Dose','Morning-Afternoon-Evening -- Per 2 Dose','Morning-Afternoon-Evening -- Per 3 Dose'];
 
 const PrescribeMedicine = () => {
     const [isDiagnosisOpen, setDiagnosisOpen] = useState(false);

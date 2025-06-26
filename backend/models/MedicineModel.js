@@ -20,7 +20,7 @@ const MedicalStockSchema = new mongoose.Schema({
     approval_flag_new: { type: Boolean, default: true },
     approval_flag_issue: { type: Boolean, default: false },
     approval_flag_receive: { type: Boolean, default: false },
-    is_order_able: { type: Boolean, default: false },
+    is_order_placed: { type: Boolean, default: false },
     typeOfStock: { type: String, default: 'Medicine' }
 }, {
     timestamps: { createdAt: 'timestamp', updatedAt: 'last_updated' }

@@ -45,17 +45,6 @@ const TodayPrescriptions = () => {
 
     const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);    
 
-    const addDays = (dateStr, days) => {
-        days = parseInt(days, 10);
-        let [day, month, year] = dateStr.split("-").map(Number);
-        let date = new Date(year, month - 1, day);
-        date.setDate(date.getDate() + days);
-        let newDay = String(date.getDate()).padStart(2, '0');
-        let newMonth = String(date.getMonth() + 1).padStart(2, '0');
-        let newYear = date.getFullYear();
-        return `${newDay}-${newMonth}-${newYear}`;
-    };
-
     const handleEdit = (index, value) => {
         setEditingRow(index);
         setEditedData(value);
@@ -202,7 +191,7 @@ const TodayPrescriptions = () => {
                                     )}
                                 </td>
                                 <td className="py-4 px-2 border text-center">
-                                    {addDays(value.prescription_date, value.duration)}
+                                    {value?.next_visit}
                                 </td>
                                 <td className="py-4 px-2 border text-center">
                                     {editingRow === index ? (

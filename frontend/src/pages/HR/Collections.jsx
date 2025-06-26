@@ -1,29 +1,28 @@
-import React, { useEffect } from 'react'
+import  { useEffect } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
 import HRSidebar from '../../components/HR/HRSidebar'
 import { useStore } from '../../store/UpdateStore'
 import { useAuthStore } from '../../store/authStore'
-import { updateDate } from '../../store/todayDate'
 
 const Collections = () => {
-    const { getCollection, collection, dueBalanceSum } = useStore();
+    const { getCollection, collection } = useStore();
     const { user } = useAuthStore();
     useEffect(() => {
         getCollection(user?.branch);
     }, [getCollection]);
-    const todayDate = updateDate();
+    
     let collectionSum = 0;
     let cashPayment = 0;
     let onlinePayment = 0;
     let balanceSum = 0;
     let advanceSum = 0;
-
-    collection.map((item, index) => {
-        collectionSum += item.billPaid;
+    console.log(collection);
+    collection.map((item) => {
+        collectionSum += item?.billPaid;
         if (item.modeOfPayment === 'cash') { cashPayment += item.billPaid }
         else { onlinePayment += item.billPaid }
     });
-    dueBalanceSum.map((item, index) => {
+    collection.map((item) => {
         if (item?.dueBalance >= 0) balanceSum += item?.dueBalance
 
         else { advanceSum += item?.dueBalance }
@@ -69,6 +68,8 @@ const Collections = () => {
                                         <th className="px-1 py-4 ">Amount Paid</th>
                                         <th className="px-1 py-4 ">Cash</th>
                                         <th className="px-1 py-4 ">Online</th>
+                                        <th className="px-1 py-4 ">Transaction Details</th>
+                                        <th className="px-1 py-4 ">Status</th>
                                         <th className="px-1 py-4 ">Type</th>
                                         <th className="px-1 py-4 ">Balance(Dues Today)</th>
                                         <th className="px-1 py-4 ">Payment Collected By</th>
@@ -77,18 +78,18 @@ const Collections = () => {
                                 <tbody>
                                     {
                                         collection.map((item, index) => {
-                                            const dueItem = dueBalanceSum.find(
-                                                (due) => due?.patient?._id === item?.patient?._id
-                                            );
-                                            return <tr className='bg-blue-200'>
+                                            
+                                            return <tr key={index} className='bg-blue-200'>
                                                 <td className='px-1 text-center py-2'>{item?.patient?.casePaperNo}</td>
                                                 <td className='px-1 text-center py-2'>{item?.patient?.fullname}</td>
                                                 <td className='px-1 text-center py-2'>{item?.totalBill}</td>
                                                 <td className='px-1 text-center py-2'>{item?.billPaid}</td>
                                                 <td className='px-1 text-center py-2'>{item?.modeOfPayment === 'cash' && 'Cash'}</td>
-                                                <td className='px-1 text-center py-2'>{item?.modeOfPayment === 'online' && 'Online'}</td>
+                                                <td className='px-1 text-center py-2'>{item?.modeOfPayment === 'online' && 'Online'}</td>                                                
+                                                <td className='px-1 text-center py-2'>{item?.transactionDetails}</td>
+                                                <td className='px-1 text-center py-2'>{item?.balance_paid_flag === true ? 'Paid Balance today' : '-'}</td>
                                                 <td className='px-1 text-center py-2'>{item?.appointmentType}</td>
-                                                <td className='px-1 text-center py-2'>{dueItem?.dueBalance}</td>
+                                                <td className={`px-1 text-center py-2 ${item?.dueBalance < 0 ? 'text-green-600' : 'text-red-600'}`}>Rs {Math.abs(item?.dueBalance)} { item?.dueBalance < 0?'Advance':'Balance'}</td>
                                                 <td className='px-1 text-center py-2'>{item?.paymentCollectedBy?.fullname} - {item?.paymentCollectedBy?.username}</td>
                                             </tr>
                                         })}
