@@ -6,6 +6,7 @@ import { DOC_API_URL, docStore } from '../../store/DocStore';
 import axios from 'axios';
 import { updateDate } from '../../store/todayDate';
 import { useAuthStore } from '../../store/authStore';
+import { HR_API_URL } from '../../store/UpdateStore';
 
 const Bill = () => {
     const { getPatientDetails, patients } = recStore();
@@ -29,6 +30,7 @@ const Bill = () => {
         getAppdetails(appointmentSection);
     }, [getPatientDetails, fetchPrescription, prescriptionSubmit, getAppdetails, appointmentSection]);
     const appointment = appointments.filter((appointment) => appointment?.PatientCase._id === id && appointment?.date === todayDate);
+    console.log(appointment);
     const patient = patients.filter((patient) => patient?._id === id);
     const [email, setEmail] = useState('');
     useEffect(() => {
@@ -47,6 +49,7 @@ const Bill = () => {
         let newYear = date.getFullYear();
         return `${newDay}-${newMonth}-${newYear}`;
     };
+    
     const addBill = async () => {
         try {
             await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, {
@@ -55,8 +58,17 @@ const Bill = () => {
                 appointmentType: appointment[0]?.appointmentType,
                 paymentCollectedBy: user?._id,
                 transactionDetails,
-                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance))
+                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance) + parseInt(courierAmount))
             });
+            if(appointment[0]?.appointmentType==='courier'){
+            await axios.post(`${HR_API_URL}/courierPayment/${id}`, {
+                billPaid: parseInt(amountPaid),
+                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance) + parseInt(courierAmount)),
+                transactionDetails,
+                paymentCollectedBy: user?._id,
+                address,
+                email
+            });}
             await axios.patch(`${DOC_API_URL}/update-apppointment/${id}`, {
                 new_appointment_flag: false,
                 complete_appointment_flag: true,
@@ -102,15 +114,15 @@ const Bill = () => {
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Balance Dues : </p><p>Rs {balanceDue < 0 ? balanceDue.dueBalance + 'Advance' : balanceDue > 0 ? balanceDue.dueBalance + 'Balance' : '0'}</p></div>
                         <hr className='my-3 h-0.5 w-full border-none bg-blue-500' />
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Amount to be Paid : </p><p className='text-lg sm:text-2xl'>Rs {billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance)}</p></div>
-                        <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance)+parseInt(courierAmount))}}>
+                        {appointment[0]?.appointmentType === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance) + parseInt(courierAmount)) }}>
                             <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Courier Amount : </p><input type="number" onChange={(e) => setCourierAmount(e.target.value)} required className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md' /></div>
                             <button type='submit' className='bg-yellow-500 block text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Grand Total</button>
-                        </form>
-                        {grandTotal>0 && <div className='flex justify-between mt-5 px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Grand Total Amount : </p><p className='text-lg sm:text-2xl'>Rs {grandTotal}</p></div>}
+                        </form>}
+                        {grandTotal>0 && appointment[0]?.appointmentType === 'courier' &&  <div className='flex justify-between mt-5 px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Grand Total Amount : </p><p className='text-lg sm:text-2xl'>Rs {grandTotal}</p></div>}
                         <div className='flex items-center flex-col  gap-4 mt-4'><p>Mode of Payment : </p><div className='h-10 bg-[#c8c8ce] rounded-[18px]'><button onClick={() => setPaymentMode('cash')} className={`py-1 ${paymentMode === 'cash' ? 'bg-blue-500 rounded-[18px] text-white' : ''} py-1.5 px-5 cursor-pointer`}>Cash</button><button onClick={() => setPaymentMode('online')} className={`py-1.5 px-5 ${paymentMode === 'online' ? 'bg-blue-500 rounded-[18px] text-white' : ''} cursor-pointer`}>Online</button></div></div>
-                        <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Address : </p><input onChange={(e) => setAddress(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>
+                        {appointment[0]?.appointmentType === 'courier' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Address : </p><input onChange={(e) => setAddress(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
                         <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Amount Paid : </p><input type="number" onChange={(e) => setAmountPaid(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>
-                        <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Email : </p><input onChange={(e) => setEmail(e.target.value)} value={email} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>
+                        {appointment[0]?.appointmentType === 'courier' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Email : </p><input onChange={(e) => setEmail(e.target.value)} value={email} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
                         {paymentMode === 'online' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Transaction Details : </p><input onChange={(e) => setTransactionDetails(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
                         <button type='button' onClick={() => addBill()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Done</button>
                     </div>

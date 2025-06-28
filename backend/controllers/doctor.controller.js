@@ -2474,7 +2474,6 @@ export const addPayment = async (req, res) => {
     try {
         const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill,balance_paid_flag } = req.body;
         const { id } = req.params;
-        console.log(billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag);
         let formattedDate;
         const updateDate = () => {
             const today = new Date();
@@ -2484,7 +2483,7 @@ export const addPayment = async (req, res) => {
             formattedDate = `${day}-${month}-${year}`;
         };
         updateDate();
-        // const balance = await balanceDue.findOne({ patient: id });
+        
         const newBalance = totalBill - billPaid;
         await billPayment.updateOne(
             { patient: id },

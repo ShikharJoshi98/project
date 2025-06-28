@@ -8,8 +8,9 @@ import Collections from '../HR/Collections'
 
 const BalanceList = () => {
     const location = useParams();
-    const { getCollection, collection, dueBalanceSum } = useStore();
+    const { getCollection, branchCollection, dueBalanceSum } = useStore();
     const [selectAppointmentType, setSelectAppointmentType] = useState('All');
+    console.log(branchCollection);
     useEffect(() => {
         getCollection(location.location);
     }, [getCollection]);
@@ -50,11 +51,9 @@ const BalanceList = () => {
                                 </thead>
                                 <tbody>
                                     {
-                                        collection.filter(item => selectAppointmentType === 'All' || item?.appointmentType === selectAppointmentType)
+                                        branchCollection.filter(item => selectAppointmentType === 'All' || item?.appointmentType === selectAppointmentType)
                                             .map((item, index) => {
-                                                const dueItem = dueBalanceSum.find(
-                                                    (due) => due?.patient?._id === item?.patient?._id
-                                                );
+                                               
                                                 return <tr key={index} className='bg-blue-200'>
                                                     <td className='px-1 text-center py-2'>{index + 1}</td>
                                                     <td className='px-1 text-center py-2'>{item?.patient?.fullname}</td>
@@ -62,12 +61,8 @@ const BalanceList = () => {
                                                     <td className='px-1 text-center py-2'>{item?.patient?.phone}</td>
                                                     <td className='px-1 text-center py-2'>{item?.appointmentType === 'general' ? 'General' : item?.appointmentType === 'repeat' ? 'Repeat Medicine' : 'Courier Medicine'}</td>
                                                     <td className='px-1 text-center py-2'>{item?.date}</td>
-                                                    <td className='px-1 text-center py-2'>{dueItem?.dueBalance}</td>
+                                                    <td className='px-1 text-center py-2'>{item?.dueBalance}</td>
                                                 </tr>
-
-
-
-
                                             })}
                                 </tbody>
                             </table>

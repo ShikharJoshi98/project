@@ -31,5 +31,25 @@ const billPaymentSchema = new mongoose.Schema({
     }
 })
 
+const courierPaymentSchema = new mongoose.Schema({
+    dueBalance: { type: Number, default: 0 },
+    totalBill: { type: Number },
+    billPaid: { type: Number },
+    transactionDetails: { type: String },
+    paymentCollectedBy:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Employee'
+    },
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    date: { type: String },
+    balance_paid_flag: { type: Boolean, default: false },
+    address: { type: String },
+    email:{type:String}
+})
+
 export const fees = mongoose.model('fees', feeSchema);
 export const billPayment = mongoose.model('billPayment', billPaymentSchema);
+export const courierPayment = mongoose.model('courierPayment', courierPaymentSchema);
