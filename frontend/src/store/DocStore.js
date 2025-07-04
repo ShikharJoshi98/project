@@ -46,7 +46,11 @@ export const docStore = create((set) => ({
     billInfo: [],
     totalBill: [],
     balanceDue: [],
+    billInvoices: [],
+    certificates:[],
     appointmentSection: "general",
+    homeoBhagwatSection: "medicine",
+    setHomeoBhagwatSection: (newsection) => set({ homeoBhagwatSection: newsection }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
     togglePrescriptionSubmit: () => set((state) => ({ prescriptionSubmit: !state.prescriptionSubmit })),
@@ -342,7 +346,14 @@ export const docStore = create((set) => ({
     },
     getPrescriptions: async () => {
         const response = await axios.get(`${DOC_API_URL}/getAllPrescripion`);
-        console.log(response);
         set({ prescriptionsArray: response.data.allPrescriptions });
+    },
+    getBillInvoices: async () => {
+        const response = await axios.get(`${DOC_API_URL}/getBillInvoices`);
+        set({ billInvoices: response.data.billInvoices });
+    },
+    getCertificates: async () => {
+        const response = await axios.get(`${DOC_API_URL}/getCertificates`);
+        set({certificates:response.data.certificates})
     }
 }))

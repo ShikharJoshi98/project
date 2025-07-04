@@ -30,7 +30,7 @@ const RecSidebar = () => {
                 {recTasks.length > 0 && <div className='absolute w-5 h-5 flex items-center justify-center  bg-blue-400 rounded-full top-0 right-1'><span className='p-1'>{recTasks.length}</span></div>}
             </div>
             <SidebarItem active={path.pathname === '/apply-leave-rec'} onClick={() => navigate('/apply-leave-rec')} icon={<CalendarDays />} text={"Apply Leave"} />
-            <SidebarItem active={path.pathname === '/courier-list-rec'} onClick={() => navigate('/courier-list-rec')} icon={<Box />} text={"Courier List"} />
+            <SidebarItem active={path.pathname === `/courier-list-rec/${user?.branch}`} onClick={() => navigate(`/courier-list-rec/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
             <SidebarItem onClick={() => setUploadModalIsOpen(true)} icon={<LuScrollText size={25} />} text={"Upload Old Case Paper"} />
             {isUploadModalOpen && <UploadCase onClose={() => setUploadModalIsOpen(false)} />}
 

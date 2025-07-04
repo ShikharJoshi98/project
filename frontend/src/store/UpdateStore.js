@@ -25,6 +25,8 @@ export const useStore = create((set) => ({
   Potency: null,
   collection: [],
   branchCollection: [],
+  courierPayment: [],
+  branchCourierPayment: [],
   ordersPlaced: [],
   medicalOrders:[],
   medicalStock:[],
@@ -286,5 +288,10 @@ export const useStore = create((set) => ({
     const response = await axios.get(`${HR_API_URL}/collections/${branch}`);
     set({ collection: response.data.patientsCollection });
     set({ branchCollection: response.data.branchCollection });
-  }
+  },
+  getCourierPayment: async (id) => {
+    const response = await axios.get(`${HR_API_URL}/getCourierPayment/${id}`);
+    set({ courierPayment: response.data.patientsCourier });
+    set({ branchCourierPayment: response.data.branchCourier });
+  },
 }));

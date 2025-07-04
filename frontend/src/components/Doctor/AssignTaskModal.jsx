@@ -83,7 +83,7 @@ const AssignTaskModal = ({ onClose }) => {
 
             <table className="border-collapse w-[734px]  border-2 border-gray-500 ">
               <thead>
-                <tr className="bg-blue-500 ">
+                <tr className="bg-blue-500 text-white ">
                   <th className="border border-gray-500 px-1 py-2">Serial No.</th>
                   <th className="border border-gray-500 px-1 py-2">Task</th>
                   <th className="border border-gray-500 px-1 py-2">Assigned To</th>

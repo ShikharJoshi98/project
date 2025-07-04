@@ -1,5 +1,5 @@
 import express from 'express';
-import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  addBillImage,  addCourierPayment,  deleteBillImages,  details,  edit_medical_vendor,  edit_vendor,  get_Item_Order,  get_item_stock,  get_Medical_Order,  get_medical_stock,  get_medical_vendor,  get_vendor,  getBillImage,  getCollection,  getItems,  getMedicine, getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order, register,   update, updateItemStock, updateMedicalReceivedOrder, updateMedicalStock, updateReceivedOrder} from '../controllers/HR.controller.js';
+import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  addBillImage,  addCourierPayment,  courierStatus,  deleteBillImages,  details,  edit_medical_vendor,  edit_vendor,  get_Item_Order,  get_item_stock,  get_Medical_Order,  get_medical_stock,  get_medical_vendor,  get_vendor,  getBillImage,  getCollection,  getCourierPayment,  getItems,  getMedicine, getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order, register,   update, updateItemStock, updateMedicalReceivedOrder, updateMedicalStock, updateReceivedOrder} from '../controllers/HR.controller.js';
 import multer from 'multer';
 
 const storage = multer.memoryStorage();
@@ -57,7 +57,8 @@ HRrouter.patch('/updateMedicalReceivedOrder/:orderId/:medicineId', updateMedical
 HRrouter.get('/collections/:branch',getCollection);
 
 //courier Payment
-HRrouter.post('/courierPayment/:id',addCourierPayment)
-
+HRrouter.post('/courierPayment/:id', addCourierPayment);
+HRrouter.get('/getCourierPayment/:id', getCourierPayment);
+HRrouter.patch('/updateCourierStatus/:id/:patientId', courierStatus);
 
 export default HRrouter;

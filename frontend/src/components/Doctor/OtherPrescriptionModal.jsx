@@ -1,4 +1,4 @@
-import { Pill, Trash, X } from "lucide-react"
+import { Pill, Plus, Trash, X } from "lucide-react"
 import ReactDOM from "react-dom";
 import Input from "../Input";
 import { useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import axios from "axios";
 import { DOC_API_URL, docStore } from "../../store/DocStore";
 import { useParams } from "react-router-dom";
 import { updateDate } from "../../store/todayDate";
+import OtherPrescriptionPriceModal from "./OtherPrescriptionPriceModal";
 
 const OtherPrescriptionModal = ({ onClose }) => {
     const { id } = useParams();
@@ -15,10 +16,22 @@ const OtherPrescriptionModal = ({ onClose }) => {
     })
     const [submit, setSubmit] = useState(false);
     const { otherPrescriptions, getOtherPrescription } = docStore();
+    const [priceModal, setPriceModal] = useState(false);
     const date = updateDate();
+    const [prescriptionPrices, setPrescriptionPrices] = useState([]);
+
+    const getOtherPrescriptionPrices = async () => {
+        const response = await axios.get(`${DOC_API_URL}/getOtherPrescriptionPrice`);
+        setPrescriptionPrices(response.data.prices)
+    }
+
     useEffect(() => {
         getOtherPrescription(id);
+        
+            getOtherPrescriptionPrices();
+        
     }, [getOtherPrescription, submit]);
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues(prev => ({ ...prev, [name]: value }));
@@ -72,15 +85,14 @@ const OtherPrescriptionModal = ({ onClose }) => {
                         <p>Price</p>
                         <select value={formValues.price} onChange={handleChange} name="price" required className="bg-white p-2 px-5 h-10 w-40 border rounded-md" id="">
                             <option value="" disabled selected className='font-normal ' >Select Price</option>
-                            <option value="100">100</option>
-                            <option value="200">200</option>
-                            <option value="300">300</option>
-                            <option value="400">500</option>
-                            <option value="1000">1000</option>
-                            <option value="2000">2000</option>
-                            <option value="3000">3000</option>
+                            {
+                                prescriptionPrices.map((price, index) =>
+                                    <option key={index} value={price?.price}>{price?.price}</option>
+                                )
+                            }
                         </select>
                     </div>
+                    <button type="button" onClick={()=>setPriceModal(true)} className="p-2 bg-blue-500 text-white rounded-md cursor-pointer"><Plus/></button>
                     <button className="bg-blue-500 p-2 text-white rounded-md h-fit cursor-pointer">Submit</button>
                 </form>
                 <div className="overflow-x-auto mt-10 rounded-lg">
@@ -112,6 +124,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
                     <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>Medicine Issued</span></div>
                 </div>
             </div>
+            {priceModal && <OtherPrescriptionPriceModal setSubmit={setSubmit} onClose={()=>setPriceModal(false)}/>}
         </div>,
         document.getElementById("modal-root")
     );

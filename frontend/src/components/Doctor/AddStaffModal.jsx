@@ -6,7 +6,7 @@ import axios from 'axios'
 import { HR_API_URL } from '../../store/UpdateStore'
 import { FaMoneyBill } from 'react-icons/fa6'
 
-const AddStaffModal = ({ onClose }) => {
+const AddStaffModal = ({ setSubmit,onClose }) => {
     const [formValues, setFormValues] = useState({
         fullname: "",
         username: "",
@@ -34,6 +34,7 @@ const AddStaffModal = ({ onClose }) => {
         e.preventDefault();
         const response = await axios.post(`${HR_API_URL}/register`, formValues);
         alert("Employee registered");
+        setSubmit(prev => !prev);
     }
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">

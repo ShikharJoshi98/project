@@ -11,25 +11,31 @@ import { updateDate } from '../../store/todayDate'
 const TodayCollection = () => {
     const location = useParams();
     const [collectionType, setCollectionType] = useState('Collections');
-    const { getCollection, collection, dueBalanceSum, getDetails, employees } = useStore();
+    const { getCollection, collection, getDetails, employees } = useStore();
     const { user } = useAuthStore();
     const [employee, setEmployee] = useState();
     useEffect(() => {
         getCollection(location.location);
         getDetails();
-    }, [getCollection, getDetails]);
+    }, [getCollection, getDetails,location.location]);
     const todayDate = updateDate();
     let collectionSum = 0;
     let cashPayment = 0;
     let onlinePayment = 0;
     let balanceSum = 0;
     let advanceSum = 0;
-    collection.filter((item) => item?.date === todayDate).map((item, index) => {
-        collectionSum += item.billPaid;
+    // collection.filter((item) => item?.date === todayDate).map((item, index) => {
+    //     collectionSum += item.billPaid;
+    //     if (item.modeOfPayment === 'cash') { cashPayment += item.billPaid }
+    //     else { onlinePayment += item.billPaid }
+    // });
+    console.log(collection);
+    collection.map((item) => {
+        collectionSum += item?.billPaid;
         if (item.modeOfPayment === 'cash') { cashPayment += item.billPaid }
         else { onlinePayment += item.billPaid }
     });
-    dueBalanceSum.filter((item) => item?.date === todayDate).map((item, index) => {
+    collection.map((item) => {
         if (item?.dueBalance >= 0) balanceSum += item?.dueBalance
 
         else { advanceSum += item?.dueBalance }
@@ -37,7 +43,7 @@ const TodayCollection = () => {
     const hrArray = employees.filter((employee) => employee?.role === 'hr' && employee?.branch === location.location);
     const collectionEmployee = collection.filter((item) => item?.paymentCollectedBy?._id === employee && item?.date === todayDate);
     const hrPatientIds = collection.filter(item => item?.paymentCollectedBy?._id === employee && item?.date === todayDate).map(item => item?.patient?._id);
-    const filteredDues = dueBalanceSum.filter(item => hrPatientIds.includes(item?.patient?._id));
+    // const filteredDues = dueBalanceSum.filter(item => hrPatientIds.includes(item?.patient?._id));
     return (
         <div>
             <Docnavbar />
@@ -97,8 +103,8 @@ const TodayCollection = () => {
                                 <p className='text-lg'>Total Amount Collected: Rs {employee === 'All' ? collectionSum : collectionEmployee.reduce((sum, item) => sum + item?.billPaid, 0)}</p>
                                 <p className='text-lg'>Total Cash: Rs {employee === 'All' ? cashPayment : collectionEmployee.filter((item) => item?.modeOfPayment === 'cash').reduce((sum, item) => sum + item?.billPaid, 0)}</p>
                                 <p className='text-lg'>Total Online: Rs {employee === 'All' ? onlinePayment : collectionEmployee.filter((item) => item?.modeOfPayment === 'online').reduce((sum, item) => sum + item?.billPaid, 0)}</p>
-                                <p className='text-lg'>Total Balance Rs {employee === 'All' ? balanceSum : filteredDues.filter((item) => item?.dueBalance >= 0).reduce((sum, item) => sum + item?.dueBalance, 0)}</p>
-                                <p className='text-lg'>Total Advance Rs {employee === 'All' ? advanceSum : -1 * (filteredDues.filter((item) => item?.dueBalance < 0).reduce((sum, item) => sum + item?.dueBalance, 0))}</p>
+                                <p className='text-lg'>Total Balance Rs {employee === 'All' ? balanceSum : collectionEmployee.filter((item) => item?.dueBalance >= 0).reduce((sum, item) => sum + item?.dueBalance, 0)}</p>
+                                <p className='text-lg'>Total Advance Rs {employee === 'All' ? advanceSum : -1 * (collectionEmployee.filter((item) => item?.dueBalance < 0).reduce((sum, item) => sum + item?.dueBalance, 0))}</p>
                             </div>
                         </div>}
                         <div className="overflow-x-auto mt-10 rounded-lg">
@@ -119,9 +125,7 @@ const TodayCollection = () => {
                                 <tbody>
                                     {
                                         collection.filter((item) => ((item?.paymentCollectedBy?._id === employee || employee === 'All') && item?.date === todayDate && (item?.appointmentType===collectionType||collectionType==='Collections'))).map((item, index) => {
-                                            const dueItem = dueBalanceSum.find(
-                                                (due) => due?.patient?._id === item?.patient?._id && due?.date === todayDate
-                                            );
+                                            
                                             return <tr className='bg-blue-200'>
                                                 <td className='px-1 text-center py-2'>{item?.patient?.casePaperNo}</td>
                                                 <td className='px-1 text-center py-2'>{item?.patient?.fullname}</td>
@@ -130,7 +134,7 @@ const TodayCollection = () => {
                                                 <td className='px-1 text-center py-2'>{item?.modeOfPayment === 'cash' && 'Cash'}</td>
                                                 <td className='px-1 text-center py-2'>{item?.modeOfPayment === 'online' && 'Online'}</td>
                                                 <td className='px-1 text-center py-2'>{item?.appointmentType}</td>
-                                                <td className='px-1 text-center py-2'>{dueItem?.dueBalance}</td>
+                                                <td className='px-1 text-center py-2'>{item?.dueBalance}</td>
                                                 <td className='px-1 text-center py-2'>{item?.paymentCollectedBy?.fullname} - {item?.paymentCollectedBy?.username}</td>
                                             </tr>
                                         })}

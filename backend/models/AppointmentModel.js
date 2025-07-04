@@ -6,7 +6,7 @@ const createAppointmentSchema = new mongoose.Schema({
     PatientCase: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
     Doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
     appointmentType: { type: String, required: true },
-    new_appointment_flag: { type: Boolean, default: false },
+    new_appointment_flag: { type: Boolean, default: true },
     complete_appointment_flag: { type: Boolean, default: false },
     medicine_issued_flag: { type: Boolean, default: false },
     followUp_appointment_flag:{ type: Boolean, default: false }
@@ -19,7 +19,12 @@ const consultationChargesSchema = new mongoose.Schema({
     date:{type: String},
 })
 
+const consultationChargesPriceSchema = new mongoose.Schema({
+    price: { type: Number },
+})
+
 consultationChargesSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
 
 export const Appointment = mongoose.model('Appointment', createAppointmentSchema);
 export const ConsultationCharges = mongoose.model('ConsultationCharges', consultationChargesSchema);
+export const consultationChargesPrice = mongoose.model('consultationChargesPrice', consultationChargesPriceSchema);

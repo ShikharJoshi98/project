@@ -13,9 +13,6 @@ import ItemStock from "./pages/HR/ItemStock";
 import MedicineStock from "./pages/HR/MedicineStock";
 import HRDashboard from "./pages/HR/HRDashboard";
 import TaskDetails from "./pages/HR/TaskDetails";
-import HomeoMedicine from "./pages/Doctor/HomeoMedicine";
-import HomeoDisease from "./pages/Doctor/HomeoDisease";
-import HomeoRedline from "./pages/Doctor/HomeoRedline";
 import AppointmentDetails from "./pages/Doctor/AppointmentDetails";
 import UploadPatientCase from "./pages/Doctor/UploadPatientCase";
 import UploadDiagnosis from "./pages/Doctor/UploadDiagnosis";
@@ -26,7 +23,6 @@ import Investigation from "./pages/Doctor/Investigation";
 import CaseReport from "./pages/Doctor/CaseReport";
 import StaffManagment from "./pages/Doctor/StaffManagment";
 import BillInvoice from "./pages/Doctor/BillInvoice";
-import BillInfo from "./pages/Doctor/BillInfo";
 import PreviousIssuedInvoice from "./pages/Doctor/PreviousIssuedInvoice";
 import AddCertificate from "./pages/Doctor/AddCertificate";
 import PreviousIssuedCertificates from "./pages/Doctor/PreviousIssuedCertificates";
@@ -64,6 +60,7 @@ import AppointmentList_Doc from "./pages/Doctor/AppointmentList_Doc";
 import Prescription from "./pages/HR/Prescription";
 import Bill from "./pages/HR/Bill";
 import PayBalance from "./pages/HR/PayBalance";
+import HomeoBhagwat from "./pages/Doctor/HomeoBhagwat";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -121,9 +118,7 @@ function App() {
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/appointment-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentList_Doc /></ProtectedRoute>} />
           <Route path="/appointment-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDetails /></ProtectedRoute>} />
-          <Route path="/homeo-book-medicine" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoMedicine /></ProtectedRoute>} />
-          <Route path="/homeo-book-disease" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoDisease /></ProtectedRoute>} />
-          <Route path="/homeo-book-redline" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoRedline /></ProtectedRoute>} />
+          <Route path="/homeo-bhagwat" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoBhagwat /></ProtectedRoute>} />
           <Route path="/upload-case-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadPatientCase /></ProtectedRoute>} />
           <Route path="/upload-diagnosis-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadDiagnosis /></ProtectedRoute>} />
           <Route path="/history-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><HistoryDetails /></ProtectedRoute>} />
@@ -133,7 +128,6 @@ function App() {
           <Route path="/report/:id" element={<ProtectedRoute allowedRoles={['doctor']}><CaseReport /></ProtectedRoute>} />
           <Route path="/staff-update" element={<ProtectedRoute allowedRoles={['doctor']}><StaffManagment /></ProtectedRoute>} />
           <Route path="/bill-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><BillInvoice /></ProtectedRoute>} />
-          <Route path="/bill-info" element={<ProtectedRoute allowedRoles={['doctor']}><BillInfo /></ProtectedRoute>} />
           <Route path="/previous-issued-invoice" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedInvoice /></ProtectedRoute>} />
           <Route path="/add-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><AddCertificate /></ProtectedRoute>} />
           <Route path="/previous-issued-certificate" element={<ProtectedRoute allowedRoles={['doctor']}><PreviousIssuedCertificates /></ProtectedRoute>} />
@@ -171,7 +165,7 @@ function App() {
           <Route path="/medicine-stock-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><MedicineStockRec /></ProtectedRoute>} />
           <Route path="/task-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><TaskDetailsRec /></ProtectedRoute>} />
           <Route path="/apply-leave-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ApplyLeaveRec /></ProtectedRoute>} />
-          <Route path="/courier-list-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><CourierListRec /></ProtectedRoute>} />
+          <Route path="/courier-list-rec/:location" element={<ProtectedRoute allowedRoles={['receptionist']}><CourierListRec /></ProtectedRoute>} />
           <Route path="/appointment-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><AppointmentList /></ProtectedRoute>} />
 
         </Routes>

@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import DocSidebar from '../../components/Doctor/DocSidebar'
 import Input from '../../components/Input'
 import { SearchIcon } from 'lucide-react'
+import { docStore } from '../../store/DocStore'
+import RegenerateCertificateModal from '../../components/Doctor/RegenerateCertificateModal'
 
 const PreviousIssuedCertificates = () => {
+    const { getCertificates, certificates } = docStore();
+    const [regenerateModal, setRegenerateModal] = useState(false);
+    const [certificateDetail, setCertificateDetail] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [submit, setSubmit] = useState(false);
+    useEffect(() => {
+        getCertificates();
+    }, [getCertificates, submit]);    
+
   return (
     <div>
             <Docnavbar />
@@ -14,8 +25,7 @@ const PreviousIssuedCertificates = () => {
                     <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
                         <h1 className='p-4 mb-10 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Previous Issued Certificates</h1>
                         <div className='flex items-center gap-2 '>
-                            <Input icon={SearchIcon} placeholder="Enter Patient's Name/Case Paper no./Mobile Number here" />
-                            <button className='py-2 px-4 bg-blue-500 cursor-pointer font-semibold text-white rounded-lg'>Search</button>
+                            <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={SearchIcon} placeholder="Enter Patient's Name/Case Paper no./Mobile Number here" />
                         </div>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
@@ -28,13 +38,26 @@ const PreviousIssuedCertificates = () => {
                                         <th className="px-2 py-4 ">STATUS</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                              <tbody>
+                                  {
+                                      searchTerm.length>0 && certificates.filter((certificate)=>certificate?.patient?.casePaperNo.toLowerCase().includes(searchTerm.toLowerCase())||certificate?.patient?.fullname.toLowerCase().includes(searchTerm.toLowerCase())||certificate?.patient?.phone.toLowerCase().includes(searchTerm.toLowerCase())).map((certificate, index) => (
+                                          <tr key={index} className='bg-blue-200'>
+                                              <td className="px-2 py-4 text-center">{certificate?.date}</td>
+                                              <td className="px-2 py-4 text-center">{certificate?.patient?.casePaperNo}</td>
+                                              <td className="px-2 py-4 text-center">{certificate?.patient?.fullname}</td>
+                                              <td className="px-2 py-4 text-center">{certificate?.patient?.phone}</td>
+                                              <td className="px-2 py-4 text-center"><button onClick={() => { setRegenerateModal(true); setCertificateDetail(certificate)}} className='p-1 cursor-pointer bg-green-500 text-white rounded-md'>Regenerate Certificate</button></td>
+                                          </tr>
+                                      ))
+                                  }
+                                </tbody>
                             </table>
                         </div>
 
                     </div>
                 </div>
-            </div>
+          </div>
+          {regenerateModal && <RegenerateCertificateModal setSubmit={setSubmit} certificate={certificateDetail} onClose={()=>setRegenerateModal(false)}/>}
         </div>
   )
 }

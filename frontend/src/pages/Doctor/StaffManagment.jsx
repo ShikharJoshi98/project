@@ -99,7 +99,7 @@ const StaffManagment = () => {
                                             <td className="px-1 py-4 text-center">
                                                 <button onClick={() => navigate(`/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                             </td>
-                                            <td className="font-semibold cursor-pointer text-red-500 px-1 py-1"><Trash /></td>
+                                            <td onClick={() => { deleteCol(emp._id); setSubmit(prev=>!prev) }} className="font-semibold cursor-pointer text-red-500 px-1 py-1"><Trash /></td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -133,7 +133,7 @@ const StaffManagment = () => {
                                             <td className="px-1 py-4  text-center">
                                                 <button onClick={() => navigate(`/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                             </td>
-                                            <td className="font-semibold cursor-pointer text-red-500 px-1 py-1"><Trash /></td>
+                                            <td onClick={() => { deleteCol(emp._id); setSubmit(prev=>!prev) }} className="font-semibold cursor-pointer text-red-500 px-1 py-1"><Trash /></td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -142,7 +142,7 @@ const StaffManagment = () => {
                     </div>
                 </div>
             </div>
-            {isAddStaffModalOpen && <AddStaffModal onClose={() => setAddStaffModalIsOpen(false)} />}
+            {isAddStaffModalOpen && <AddStaffModal setSubmit={setSubmit} onClose={() => setAddStaffModalIsOpen(false)} />}
         </div>
     )
 }

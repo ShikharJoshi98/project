@@ -99,13 +99,14 @@ const prescriptionSchema = new mongoose.Schema({
     medicine_issued_flag: {
         type: Boolean,default:false
     },
-    medicine_not_issued_flag: {
-        type: Boolean,default:false
-    },
     send_to_HR: {
         type:Boolean,default:false
     }
 });
+
+const otherPrescriptionPriceSchema = new mongoose.Schema({
+    price:{type:Number}
+})
 
 const followUpPatientSchema = new mongoose.Schema({
     patient: {
@@ -207,4 +208,6 @@ export const WriteUpPatient = mongoose.model('WriteUpPatient', writeUpPatientSch
 export const Investigation = mongoose.model('Investigation', investigationSchema);
 export const OtherPrescription = mongoose.model('OtherPrescription', otherPrescriptionSchema);
 export const diagnosis = mongoose.model('diagnosis', diagnosisMasterSchema);
+export const otherPrescriptionPrice = mongoose.model('otherPrescriptionPrice', otherPrescriptionPriceSchema);
+
 export default Patient

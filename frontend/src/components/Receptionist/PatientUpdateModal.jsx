@@ -56,42 +56,36 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
                     <h1 className='text-3xl font-semibold mb-5 text-center'>Update Patient Details</h1>
                     <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
                     <div className='flex flex-col gap-4 m-auto '>
-                        {/* <div className='flex flex-col gap-2 '>
-                            {(formValues.imageData)!=null?<img src={formValues.imageData} className='size-20 md:size-28 mx-auto rounded-full'/>:<p className='size-20 md:size-28 mx-auto text-white bg-gray-400 flex items-center justify-center rounded-full'>No Image</p>}
-                            <h1>Patient's Image</h1>
-                            <Input icon={Image} name="imageData" type='file' placeholder='Upload Image' />
-                        </div> */}
                         <div className='flex flex-col gap-2 '>
-                            <h1>Username*</h1>
+                            <h1>Username</h1>
                             <Input icon={User} type='text' onChange={handleInputChange} name="username" value={formValues.username} placeholder='Username' />
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Case Paper No.*</h1>
+                            <h1>Case Paper No.</h1>
                             <Input icon={User} type='text' onChange={handleInputChange} name="casePaperNo" value={formValues.casePaperNo} placeholder='Case Paper No.' />
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Name*</h1>
+                            <h1>Name</h1>
                             <Input icon={User} type='text' onChange={handleInputChange} name="fullname" value={formValues.fullname} placeholder='Full Name' />
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Age*</h1>
+                            <h1>Age</h1>
                             <Input icon={User} type='text' onChange={handleInputChange} name="age" value={formValues.age} placeholder='Age' />
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Gender*</h1>
+                            <h1>Gender</h1>
                             <select onChange={handleInputChange} name="gender" value={formValues.gender} className='py-2 pl-2 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900' id="">
                                 <option value="" disabled selected className='font-normal' >Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                             </select>
-                            {/* <Input icon={User} type='text' onChange={handleInputChange} name="gender" value={formValues.gender} placeholder='Gender' /> */}
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Address*</h1>
+                            <h1>Address</h1>
                             <Input icon={HouseIcon} type='text' onChange={handleInputChange} name="address" value={formValues.address} placeholder='Address' />
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Phone Number*</h1>
+                            <h1>Phone Number</h1>
                             <Input icon={Phone} type='tel' onChange={handleInputChange} name="phone" value={formValues.phone} placeholder='Phone Number' />
                         </div>
                         <div className='flex flex-col gap-2 '>
@@ -103,15 +97,15 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
                             <Input icon={Mail} onChange={handleInputChange} name="email" value={formValues.email} placeholder='eg. abc@example.com' type='email' />
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Qualification*</h1>
+                            <h1>Qualification</h1>
                             <Input icon={GraduationCap} onChange={handleInputChange} name="qualification" value={formValues.qualification} type='text' placeholder='enter qualification' />
                         </div>
                         <div className='flex flex-col gap-2 '>
-                            <h1>Occupation*</h1>
+                            <h1>Occupation</h1>
                             <Input icon={BriefcaseBusiness} onChange={handleInputChange} name="occupation" value={formValues.occupation} type='text' placeholder='enter occupation' />
                         </div>
                         <div className='flex flex-col gap-2'>
-                            <h1>Dietary Preference* </h1>
+                            <h1>Dietary Preference </h1>
                             <div className='relative w-full '>
                                 <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                     <Carrot className="size-4 text-blue-500" />
@@ -125,7 +119,7 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
                             </div>
                         </div>
                         <div className='flex flex-col gap-2'>
-                            <h1>Marital Status* </h1>
+                            <h1>Marital Status </h1>
                             <div className='relative w-full '>
                                 <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                     <ImManWoman className="size-4 text-blue-500" />

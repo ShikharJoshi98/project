@@ -1,15 +1,16 @@
 import mongoose from "mongoose";
-import { Appointment, ConsultationCharges } from "../models/AppointmentModel.js";
+import { Appointment, ConsultationCharges, consultationChargesPrice } from "../models/AppointmentModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient, { FollowUpPatient, Investigation, OtherPrescription, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
+import Patient, { FollowUpPatient, Investigation, OtherPrescription, otherPrescriptionPrice, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
-import {  billPayment, fees } from "../models/PaymentModel.js";
+import { billPayment, fees } from "../models/PaymentModel.js";
 import { ItemStock } from "../models/ItemModel.js";
 import { MedicalStock } from "../models/MedicineModel.js";
+import { BillInvoice, Certificate } from "../models/CertificateModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -188,6 +189,58 @@ export const createAppointment = async (req, res) => {
         res.json({
             success: false,
             message: "Error in creating new Appointment"
+        })
+    }
+}
+
+export const createNewAppointment = async (req, res) => {
+    try {
+        const { date, time, PatientCase, Doctor, appointmentType } = req.body;
+        const dateConverter = (date) => {
+            const [y, m, d] = date.split('-');
+            const newDate = String(d + '-' + m + '-' + y);
+            return newDate;
+        }
+        const convertedDate = dateConverter(date);
+        const appointmentExist = await Appointment.findOne({
+            PatientCase,
+            date: convertedDate,
+        })
+        if (appointmentExist) {
+            return res.json({
+                message: "Appointment exist"
+            })
+        }
+        const pastAppointment = await Appointment.find({ PatientCase });
+        let newAppointment;
+        if (pastAppointment.length > 0) {
+            newAppointment = await Appointment.create({
+                date: convertedDate,
+                time,
+                PatientCase,
+                Doctor,
+                appointmentType,
+                new_appointment_flag: false,
+                followUp_appointment_flag: true
+            })
+        }
+        else {
+            newAppointment = await Appointment.create({
+                date: convertedDate,
+                time,
+                PatientCase,
+                Doctor,
+                appointmentType,
+            })
+        }
+        res.json({
+            newAppointment
+        })
+
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
         })
     }
 }
@@ -769,6 +822,25 @@ export const deleteTodayPrescription = async (req, res) => {
     }
 }
 
+export const updatePresInfo = async (req, res) => {
+    try {
+        const { prescription_date } = req.body;
+
+        await Prescription.updateMany(
+            { prescription_date },
+            { $set: { medicine_issued_flag: true } }
+        );
+
+        res.json({
+            message: "Medicine Issued",
+            success: true
+        });
+    } catch (error) {
+        console.error("Error updating prescriptions:", error.message);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
 export const updateTodayPrescription = async (req, res) => {
     try {
         const { editedData } = req.body;
@@ -857,7 +929,6 @@ export const deleteOtherPrescription = async (req, res) => {
 export const updateOtherPrescription = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log("hit");
         const prescription = await OtherPrescription.findOne({ patient: id })
         prescription.medicine_issued_flag = true;
         await prescription.save();
@@ -865,7 +936,40 @@ export const updateOtherPrescription = async (req, res) => {
             success: true,
             prescription
         })
-        
+
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const addOtherPrescriptionPrice = async (req, res) => {
+    try {
+        const { price } = req.body;
+        await otherPrescriptionPrice.create({
+            price
+        })
+        res.json({
+            success: true,
+            message: "Added Other Prescription Price"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getOtherPrescriptionPrice = async (req, res) => {
+    try {
+        const prices = await otherPrescriptionPrice.find();
+        res.json({
+            prices,
+            success: true
+        })
     } catch (error) {
         res.json({
             success: false,
@@ -2343,6 +2447,39 @@ export const deleteConsultationCharges = async (req, res) => {
     }
 }
 
+export const addConsultationPrice = async (req, res) => {
+    try {
+        const { price } = req.body;
+        await consultationChargesPrice.create({
+            price
+        })
+        res.json({
+            success: true,
+            message: "Added  Consultation Charge"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getConsultationPrice = async (req, res) => {
+    try {
+        const prices = await consultationChargesPrice.find();
+        res.json({
+            prices,
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 //payment
 
 export const addPaymentModel = async (req, res) => {
@@ -2472,7 +2609,7 @@ export const getBill = async (req, res) => {
 
 export const addPayment = async (req, res) => {
     try {
-        const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill,balance_paid_flag } = req.body;
+        const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag } = req.body;
         const { id } = req.params;
         let formattedDate;
         const updateDate = () => {
@@ -2483,11 +2620,11 @@ export const addPayment = async (req, res) => {
             formattedDate = `${day}-${month}-${year}`;
         };
         updateDate();
-        
+
         const newBalance = totalBill - billPaid;
         await billPayment.updateOne(
             { patient: id },
-            { $set: { dueBalance: newBalance, date: formattedDate,transactionDetails,billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy,balance_paid_flag } },
+            { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag } },
             { upsert: true }
         );
         res.json({
@@ -2613,6 +2750,129 @@ export const approveMedicalStock = async (req, res) => {
         res.json({
             message: error.message,
             success: false
+        })
+    }
+}
+
+//bill-invoice
+
+export const addBillInvoice = async (req, res) => {
+    try {
+        let { patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee } = req.body;
+        let formattedDate = '';
+
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            formattedDate = `${day}-${month}-${year}`;
+        };
+        updateDate();
+        const convertDateFormat = (dateString) => {
+            const [year, month, date] = dateString.split('-');
+            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
+        };
+        startDate = convertDateFormat(startDate);
+        endDate = convertDateFormat(endDate);
+        await BillInvoice.create({
+            patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee, date: formattedDate
+        });
+        res.json({
+            success: true,
+            message: "Invoice created"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getBillInvoice = async (req, res) => {
+    try {
+        const billInvoices = await BillInvoice.find().populate('patient');
+        res.json({
+            billInvoices,
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            success: true,
+            message: error.message
+        })
+    }
+}
+
+//certificates
+
+export const addCertificateDetails = async (req, res) => {
+    try {
+        let { selectedPatient, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration } = req.body;
+
+        const convertDateFormat = (dateString) => {
+            const [year, month, date] = dateString.split('-');
+            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
+        };
+        date = convertDateFormat(date);
+        restFrom = convertDateFormat(restFrom);
+        restTill = convertDateFormat(restTill);
+        resumeDate = convertDateFormat(resumeDate);
+
+        await Certificate.create({
+            patient: selectedPatient, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration
+        })
+        res.json({
+            success: true,
+            message: "certificate added"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getCertificates = async (req, res) => {
+    try {
+        const certificates = await Certificate.find().populate('patient');
+        res.json({
+            certificates,
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const editCertificate = async (req, res) => {
+    try {
+        let { diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration } = req.body;
+        const { id } = req.params;
+        const convertDateFormat = (dateString) => {
+            const [year, month, date] = dateString.split('-');
+            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
+        };
+        date = convertDateFormat(date);
+        restFrom = convertDateFormat(restFrom);
+        restTill = convertDateFormat(restTill);
+        resumeDate = convertDateFormat(resumeDate);
+        const certificate = await Certificate.findByIdAndUpdate(id,
+            { diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration }
+        );
+        res.json({
+            message: "Updated Successfully",
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            message: error.message,
+            success:false
         })
     }
 }

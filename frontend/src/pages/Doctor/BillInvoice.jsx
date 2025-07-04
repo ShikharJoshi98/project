@@ -1,29 +1,87 @@
 import React, { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import DocSidebar from '../../components/Doctor/DocSidebar'
-import { User } from 'lucide-react'
-import { CiMedicalClipboard } from "react-icons/ci";
+import { Calendar, User } from 'lucide-react'
+import { CiMedicalClipboard, CiMoneyBill } from "react-icons/ci";
 import { AiFillMedicineBox } from 'react-icons/ai';
 import Input from '../../components/Input';
 import { useNavigate } from 'react-router-dom';
 import Select from "react-select";
 import { recStore } from '../../store/RecStore';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
+import axios from 'axios';
+import { generateBillInvoicePdf } from '../../store/generateCertificatePdf';
+import { updateDate } from '../../store/todayDate';
 
 const BillInvoice = () => {
-    const navigate = useNavigate();
-      const { patients, getPatientDetails } = recStore();
-    
+    const { patients, getPatientDetails } = recStore();
+    const { getPrescriptions, prescriptionsArray } = docStore();
+    const [selectedPatient, setSelectedPatient] = useState(null);
+    const [selectedDiagnosis, setSelecetedDiagnosis] = useState(null);
+    const [billStatus, setBillStatus] = useState('first');
+    const [formValues, setFormValues] = useState({
+        patient: '',
+        selectedDiagnosis: '',
+        medicineName: '',
+        startDate: '',
+        endDate: '',
+        consultingFee: '',
+        medicineFee: ''
+    });
+    const todayDate = updateDate();
     useEffect(() => {
         getPatientDetails();
-      }, [getPatientDetails]);
-    
-      const patientArray = patients.map((patient) => ({
-        value: patient?._id,
-        label: `${patient?.fullname} / ${patient?.casePaperNo?patient?.casePaperNo:'-'} / ${patient?.phone} (M)`,
-      }));
-    const [selectedPatient, setSelectedPatient] = useState(null);
-    const handleSubmit = () => {
+        getPrescriptions();
+    }, [getPatientDetails]);
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+    };
+
+    const patientArray = patients.map((patient) => ({
+        value: patient?._id,
+        label: `${patient?.fullname} / ${patient?.casePaperNo ? patient?.casePaperNo : '-'} / ${patient?.phone} (M)`,
+    }));
+    const diagnosisArray = prescriptionsArray.flatMap(prescription =>
+        prescription.diagnosis.map(diagnosisItem => ({
+            label: `${prescription.patient.fullname} / ${diagnosisItem} / ${prescription.prescription_date}`,
+            value: prescription._id
+        }))
+    );
+
+    const nextSection = () => {
+        if (
+            selectedPatient?.value &&
+            selectedDiagnosis?.value &&
+            formValues.medicineName.length > 0
+        ) {
+            setBillStatus('second');
+        } else {
+            alert("Fill the details to go next.");
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        formValues.patient = selectedPatient.value;
+        formValues.selectedDiagnosis = selectedDiagnosis.label;
+        await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
+        const patient = patients.filter((patient) => patient?._id === formValues.patient);
+        generateBillInvoicePdf(patient[0], todayDate, formValues);
+        setFormValues({
+        patient: '',
+        selectedDiagnosis: '',
+        medicineName: '',
+        startDate: '',
+        endDate: '',
+        consultingFee: '',
+        medicineFee: ''
+    })
+        setBillStatus('first');
     }
     return (
         <div>
@@ -35,7 +93,7 @@ const BillInvoice = () => {
                         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Bill Invoice</h1>
                         <p className='text-red-500 mt-10 font-semibold '>Add Diagnoses and Medicines for Patient's For whom Invoice is to be generated.</p>
                         <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8  rounded-xl text-zinc-600   text-sm flex flex-col gap-5' >
-                            <div className='flex flex-col gap-2'>
+                            {billStatus === 'first' && <div><div className='flex flex-col gap-2'>
                                 <h1>Patient Case Paper Number : </h1>
                                 <div className='relative w-full '>
                                     <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
@@ -51,27 +109,53 @@ const BillInvoice = () => {
                                     />
                                 </div>
                             </div>
-                            <div className='flex flex-col gap-2'>
-                                <h1>Diagnose : </h1>
-                                <div className='relative w-full '>
-                                    <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                        <CiMedicalClipboard className="size-4 text-blue-500" />
+                                <div className='flex flex-col gap-2'>
+                                    <h1>Diagnose : </h1>
+                                    <div className='relative w-full '>
+                                        <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
+                                            <CiMedicalClipboard className="size-4 text-blue-500" />
+                                        </div>
+                                        <Select
+                                            options={diagnosisArray}
+                                            placeholder="Search"
+                                            value={selectedDiagnosis}
+                                            onChange={setSelecetedDiagnosis}
+                                            className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200"
+                                            required
+                                        />
                                     </div>
-                                    <select name="patient" required id="patient" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                        <option value="" disabled selected className='font-normal' >Select Diagnosis</option>
-                                        <option value="Patient 1">Diagnosis 1</option>
-                                        <option value="Patient 3">Diagnosis 2</option>
-                                    </select>
                                 </div>
+                                <div className='flex flex-col gap-2'>
+                                    <h1>Medicine Name : </h1>
+                                    <Input icon={AiFillMedicineBox} onChange={handleInputChange} value={formValues.medicineName} name="medicineName" type='text' required placeholder='Please Mention Name of the Medicine if any' />
+                                </div>
+                                <button type='button' onClick={() => nextSection()} className='py-2 px-4 sm:mr-20 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto sm:place-self-end cursor-pointer'>Next</button>
+                                <p className='text-green-500 font-semibold '>Click on Next, after Completing the Submission of above details</p>
+                            </div>}
+
+                            {billStatus === 'second' && <div><div className='flex flex-col gap-2'>
+                                <h1>From (Medicine Start Date)</h1>
+                                <Input icon={Calendar} onChange={handleInputChange} value={formValues.startDate} name="startDate" type='Date' required />
                             </div>
-                            <div className='flex flex-col gap-2'>
-                                <h1>Medicine Name : </h1>
-                                <Input icon={AiFillMedicineBox} type='text' required placeholder='Please Mention Name of the Medicine if any' />
+                                <div className='flex flex-col gap-2'>
+                                    <h1>To (Medicine End Date)</h1>
+                                    <Input icon={Calendar} onChange={handleInputChange} value={formValues.endDate} name="endDate" type='Date' required />
+                                </div>
+                                <div className='flex flex-col gap-2'>
+                                    <h1>Consulting Fees : </h1>
+                                    <Input icon={CiMoneyBill} type='text' onChange={handleInputChange} value={formValues.consultingFee} name="consultingFee" required placeholder='Rs' />
+                                </div>
+                                <div className='flex flex-col gap-2'>
+                                    <h1>Medicine Fees : </h1>
+                                    <Input icon={CiMoneyBill} onChange={handleInputChange} value={formValues.medicineFee} name="medicineFee" type='text' required placeholder='Rs' />
+                                </div>
+                                <button type='submit' className='py-2 px-6 mt-10 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer'>Generate Bill</button>
+
                             </div>
-                            <button className='py-2 px-4 mt-5 rounded-lg text-lg bg-blue-500 text-white font-semibold block mx-auto cursor-pointer'>Submit</button>
+                            }
                         </form>
-                        <p className='text-green-500 font-semibold '>Click on Next, after Completing the Submission of above details</p>
-                        <button onClick={() => navigate('/bill-info')} className='py-2 px-4 sm:mr-20 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto sm:place-self-end cursor-pointer'>Next</button>
+
+                        {/* <button onClick={() => navigate('/bill-info')} className='py-2 px-4 sm:mr-20 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto sm:place-self-end cursor-pointer'>Next</button> */}
                     </div>
                 </div>
             </div>

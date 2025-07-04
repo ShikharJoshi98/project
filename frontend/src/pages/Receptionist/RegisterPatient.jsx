@@ -11,7 +11,6 @@ import { useAuthStore } from '../../store/authStore'
 const RegisterPatient = () => {
     const [isPatientRegisterModalOpen, setPatientRegisterModalIsOpen] = useState(false);
     const { user } = useAuthStore();
-    console.log(user);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [formValues, setFormValues] = useState({
@@ -83,7 +82,7 @@ const RegisterPatient = () => {
                             </div>
                             <div className='flex flex-col gap-2 '>
                                 <h1>Email Address</h1>
-                                <Input icon={Mail} onChange={handleInputChange} value={formValues.email} name="email" placeholder='eg. abc@example.com' type='email' required />
+                                <Input icon={Mail} onChange={handleInputChange} value={formValues.email} name="email" placeholder='eg. abc@example.com' type='email' />
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <h1>Branch* </h1>

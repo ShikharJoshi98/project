@@ -16,7 +16,6 @@ const Collections = () => {
     let onlinePayment = 0;
     let balanceSum = 0;
     let advanceSum = 0;
-    console.log(collection);
     collection.map((item) => {
         collectionSum += item?.billPaid;
         if (item.modeOfPayment === 'cash') { cashPayment += item.billPaid }

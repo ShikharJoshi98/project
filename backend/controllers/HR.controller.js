@@ -60,7 +60,7 @@ export const update = async (req, res) => {
         res.json(updatedUser);
 
     } catch (error) {
-        console.log(error.message);
+
         res.status(500).json({ error: error.message });
 
     }
@@ -885,7 +885,7 @@ export const addCourierPayment = async (req, res) => {
         updateDate();
 
         const balance = findBillDetails?.dueBalance;
-        
+
         const addPayment = await courierPayment.create({
             dueBalance: balance,
             totalBill,
@@ -899,7 +899,63 @@ export const addCourierPayment = async (req, res) => {
         });
         res.json({
             success: true,
-            message:"Add Courier Payment"
+            message: "Add Courier Payment"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getCourierPayment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+            return formattedDate;
+        };
+        const todayDate = updateDate();
+        const allCourier = await courierPayment.find().populate('patient').populate('paymentCollectedBy');
+        const branchCourier = allCourier.filter((item) => item?.patient?.branch === id);
+        const patientsCourier = allCourier.filter((item) => item?.patient?.branch === id && item?.date === todayDate);
+        res.json({
+            branchCourier,
+            patientsCourier,
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const courierStatus = async (req, res) => {
+    try {
+        const { id, patientId } = req.params;
+        const { balance_paid_flag,date } = req.body;
+        
+        const findBillDetails = await billPayment.findOne({ patient: patientId });
+        const balance = findBillDetails?.dueBalance;
+        const updated = { order_Received_flag: true, dueBalance: balance };
+        if (balance_paid_flag !== undefined) {
+            updated.balance_paid_flag = true;
+            updated.receiveDate = date;
+        }
+        const courierOrder =await courierPayment.findByIdAndUpdate(id,
+            { $set: updated }
+        );
+        
+        res.json({
+            success: true,
+            message:"updated courier status"
         })
     } catch (error) {
         res.json({

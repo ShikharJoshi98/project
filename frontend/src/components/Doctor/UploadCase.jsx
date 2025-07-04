@@ -32,6 +32,7 @@ const UploadCase = ({ onClose }) => {
     formData.append("caseImage", image);
       await uploadCase(formData, selectedPatient.value); 
       setSubmit((prev) => !prev);
+      onClose();
     } catch (error) {
       console.error("Upload error:", error);
       alert("Failed to upload image.");

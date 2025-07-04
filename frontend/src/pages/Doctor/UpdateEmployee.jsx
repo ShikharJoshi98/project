@@ -11,23 +11,42 @@ const UpdateEmployee = () => {
     const navigate = useNavigate();
     const location = useParams();
     const { getDetails, employees, update } = useStore();
-    const employee = employees.filter((emp) => emp._id === location.id);
+    const employee = employees.filter((emp) => emp?._id === location.id);
+    const [formValues, setFormValues] = useState({
+        fullname:  "",
+        phone: "",
+        email: "",
+        address: "",
+        branch: "",
+        age: "",
+        gender: "",
+        bloodGroup: "",
+        department: "",
+        Salary: "",
+        attendance: "",
+    })
     useEffect(() => {
         getDetails();
     }, [getDetails])
-    const [formValues, setFormValues] = useState({
-        fullname: employee[0].fullname || "",
-        phone: employee[0].phone || "",
-        email: employee[0].email || "",
-        address: employee[0].address || "",
-        branch: employee[0].branch || "",
-        age: employee[0].age || "",
-        gender: employee[0].gender || "",
-        bloodGroup: employee[0].bloodGroup || "",
-        department: employee[0].department || "",
-        Salary: employee[0].Salary || "",
-        attendance: employee[0].attendance || "",
-    })
+    useEffect(() => {
+    const selectedEmployee = employees.find(emp => emp?._id === location.id);
+    if (selectedEmployee) {
+        setFormValues({
+            fullname: selectedEmployee.fullname || "",
+            phone: selectedEmployee.phone || "",
+            email: selectedEmployee.email || "",
+            address: selectedEmployee.address || "",
+            branch: selectedEmployee.branch || "",
+            age: selectedEmployee.age || "",
+            gender: selectedEmployee.gender || "",
+            bloodGroup: selectedEmployee.bloodGroup || "",
+            department: selectedEmployee.department || "",
+            Salary: selectedEmployee.Salary || "",
+            attendance: selectedEmployee.attendance || "",
+        });
+    }
+}, [employees, location.id]);
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormValues((prevValues) => ({
@@ -115,11 +134,11 @@ const UpdateEmployee = () => {
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Department</h1>
-                        <Input icon={Hospital} onChange={handleInputChange} value={formValues.department} name="department" type='text' required />
+                        <Input icon={Hospital} onChange={handleInputChange} value={formValues.department} name="department" type='text'  />
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Salary</h1>
-                        <Input icon={User} onChange={handleInputChange} name="salary" value={formValues.salary} type='number' />
+                        <Input icon={User} onChange={handleInputChange} name="Salary" value={formValues.Salary} type='number' />
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Attendance</h1>

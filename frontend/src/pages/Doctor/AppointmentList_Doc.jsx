@@ -8,37 +8,30 @@ import UploadCase from '../../components/Doctor/UploadCase';
 import Input from '../../components/Input';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate, useParams } from 'react-router-dom';
+import { updateDate } from '../../store/todayDate';
 
 const AppointmentList_Doc = () => {
   const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppdetails, appointments } = docStore();
-  const [currentDate, setCurrentDate] = useState('');
   const { id } = useParams();
   const { user } = useAuthStore();
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const updateDate = () => {
-      const today = new Date();
-      const day = String(today.getDate()).padStart(2, '0');
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const year = today.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
-      setCurrentDate(formattedDate);
-    };
-    updateDate();
-  }, []);
+  const currentDate = updateDate(); 
 
   useEffect(() => {
     getAppdetails(appointmentSection);
   }, [getAppdetails,appointmentSection, appointmentSubmit]);
-   
+  console.log(appointments,currentDate);
   const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-  const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===false && appointment?.complete_appointment_flag === false).length;
-  const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === false && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag===true && appointment?.complete_appointment_flag === false).length;
+
+  const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag === false && appointment?.complete_appointment_flag === false).length;
+  
+  const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === false && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag === true && appointment?.complete_appointment_flag === false).length;
+  
   const medicineIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === true && appointment?.new_appointment_flag === false).length;
+
   const medicineNotIssuedLength = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag === false ).length;
   return (
     <div>

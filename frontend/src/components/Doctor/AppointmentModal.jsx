@@ -15,8 +15,8 @@ const AppointmentModal = ({ onClose }) => {
   const { getDetails, employees } = useStore();
   const doctors = employees.filter(emp => emp?.role === 'doctor');
   const [appointmentCreated, setAppointmentCreated] = useState('');
-  const today = new Date().toLocaleDateString('en-CA');
   const location = useParams();
+  const today = new Date().toLocaleDateString('en-CA');
   const todayDate = updateDate();
   const [formValues, setFormValues] = useState({
     date: today,
@@ -25,6 +25,8 @@ const AppointmentModal = ({ onClose }) => {
     Doctor: "",
     appointmentType: 'general',
   });
+    console.log(formValues);
+
 
   useEffect(() => {
     getPatientDetails();
@@ -33,7 +35,7 @@ const AppointmentModal = ({ onClose }) => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(`${DOC_API_URL}/appointment`, formValues);
+    const response = await axios.post(`${DOC_API_URL}/new-appointment`, formValues);
     await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
       complete_appointment_flag: false,  
       medicine_issued_flag:false,
@@ -41,6 +43,13 @@ const AppointmentModal = ({ onClose }) => {
     })
     if (response.data.message === 'Appointment exist') {
       alert("Appointment already exists for this date");
+      setFormValues({
+      time: "",
+      PatientCase: "",
+      Doctor: "",
+      appointmentType: "",
+    })
+      return;
     }
     toggleAppointmentSubmit(!appointmentSubmit);
 

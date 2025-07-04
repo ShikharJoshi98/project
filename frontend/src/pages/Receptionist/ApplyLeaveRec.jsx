@@ -48,6 +48,7 @@ const ApplyLeaveRec = () => {
         return acc
 
     }, []);
+    console.log(leavesByMonth);
     
     const groupedLeaves = Object.values(leavesByMonth);
     

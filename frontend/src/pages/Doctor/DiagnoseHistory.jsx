@@ -51,7 +51,7 @@ const DiagnoseHistory = () => {
                                             <tr key={index} className='bg-blue-200'>
                                                 <td className="px-2 py-4 text-center">{index + 1}</td>
                                                 <td className="px-2 py-4 ">{pres?.diagnosis.join(',')}</td>
-                                                <td className="px-2 py-4 text-center">{pres?.medicine}</td>
+                                                <td className="px-2 py-4 text-center">{pres?.medicine} {pres?.potency}</td>
                                                 <td className="px-2 py-4 text-center">{pres?.prescription_date}</td>
                                                 <td className="px-2 py-4 text-center">{pres?.start_date}</td>
                                                 <td className="px-2 py-4 text-center">{pres?.duration}</td>

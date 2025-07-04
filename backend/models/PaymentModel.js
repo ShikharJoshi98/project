@@ -36,6 +36,10 @@ const courierPaymentSchema = new mongoose.Schema({
     totalBill: { type: Number },
     billPaid: { type: Number },
     transactionDetails: { type: String },
+    appointment:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Appointment'
+    },
     paymentCollectedBy:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee'
@@ -45,7 +49,10 @@ const courierPaymentSchema = new mongoose.Schema({
         ref: 'Patient'
     },
     date: { type: String },
+    receiveDate:{type:String},
     balance_paid_flag: { type: Boolean, default: false },
+    order_Received_flag: { type: Boolean, default: false },
+    courier_payment_flag:{type: Boolean, default: false},
     address: { type: String },
     email:{type:String}
 })
