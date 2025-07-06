@@ -11,6 +11,7 @@ import axios from 'axios'
 import { generateFitnessCertificate, generateMedicalCertificate, generateTravellingCertificate, generateUnfitCertificate } from '../../store/generateCertificatePdf'
 import { useAuthStore } from '../../store/authStore'
 import DetailsAddedModal from '../../components/Doctor/DetailsAddedModal'
+import SearchSelect from '../../components/SearchSelect'
 
 const AddCertificate = () => {
     const { user } = useAuthStore();
@@ -50,9 +51,9 @@ const AddCertificate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            formValues.selectedPatient = selectedPatient.value;
+            formValues.selectedPatient = selectedPatient;
             let response = await axios.post(`${DOC_API_URL}/postCertificate`, formValues);
-            console.log(response);
+            
             if (response.data.message === 'certificate added') {
                 setDetailsAddedModal(true);
                 setFormSubmitted(true);
@@ -76,7 +77,7 @@ const AddCertificate = () => {
                         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Certificates</h1>
                         <div className='flex items-center justify-between mt-10'>
                             <p className='text-red-500  font-semibold '>Note: Fill the Details before generating any Certificate</p>
-                            <button onClick={() => {setFormValues({selectedPatient: '',diagnoseOne: '',diagnoseTwo: '',diagnoseThree: '',date: '',restFrom: '',restTill: '',resumeDate: '',duration: ''}); setCertificateDetails(null);setFormSubmitted(false);}} className='p-2 text-lg bg-green-500 flex items-center gap-2 text-white rounded-md'>New certificate <RefreshCcw /></button>
+                            <button onClick={() => {setFormValues({selectedPatient: '',diagnoseOne: '',diagnoseTwo: '',diagnoseThree: '',date: '',restFrom: '',restTill: '',resumeDate: '',duration: ''}); setCertificateDetails(null);setFormSubmitted(false);}} className='p-2 text-lg cursor-pointer bg-green-500 flex items-center gap-2 text-white rounded-md'>New certificate <RefreshCcw /></button>
                         </div>
                         <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[6px] sm:text-[8px] md:text-sm'>
                             <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateMedicalCertificate(certificateDetails, patient[0], user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
@@ -87,19 +88,7 @@ const AddCertificate = () => {
                         <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8 rounded-xl text-zinc-800 text-sm flex flex-col gap-5' >
                             <div className='flex flex-col gap-2'>
                                 <h1>Patient Case Paper Number : </h1>
-                                <div className='relative w-full '>
-                                    <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                        <User className="size-4 text-blue-500" />
-                                    </div>
-                                    <Select
-                                        options={patientArray}
-                                        placeholder="Search"
-                                        value={selectedPatient}
-                                        onChange={setSelectedPatient}
-                                        className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200"
-                                        required
-                                    />
-                                </div>
+                                <SearchSelect options={patientArray} setSelectedPatient={setSelectedPatient} />
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <h1>Diagnose (1) : </h1>

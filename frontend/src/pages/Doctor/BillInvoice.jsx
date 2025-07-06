@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Docnavbar from '../../components/Doctor/DocNavbar'
 import DocSidebar from '../../components/Doctor/DocSidebar'
 import { Calendar, User } from 'lucide-react'
@@ -12,6 +12,7 @@ import { DOC_API_URL, docStore } from '../../store/DocStore';
 import axios from 'axios';
 import { generateBillInvoicePdf } from '../../store/generateCertificatePdf';
 import { updateDate } from '../../store/todayDate';
+import SearchSelect from '../../components/SearchSelect';
 
 const BillInvoice = () => {
     const { patients, getPatientDetails } = recStore();
@@ -55,7 +56,7 @@ const BillInvoice = () => {
 
     const nextSection = () => {
         if (
-            selectedPatient?.value &&
+            selectedPatient &&
             selectedDiagnosis?.value &&
             formValues.medicineName.length > 0
         ) {
@@ -65,9 +66,11 @@ const BillInvoice = () => {
         }
     };
 
+    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        formValues.patient = selectedPatient.value;
+        formValues.patient = selectedPatient;
         formValues.selectedDiagnosis = selectedDiagnosis.label;
         await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
         const patient = patients.filter((patient) => patient?._id === formValues.patient);
@@ -99,14 +102,8 @@ const BillInvoice = () => {
                                     <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                         <User className="size-4 text-blue-500" />
                                     </div>
-                                    <Select
-                                        options={patientArray}
-                                        placeholder="Search"
-                                        value={selectedPatient}
-                                        onChange={setSelectedPatient}
-                                        className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200"
-                                        required
-                                    />
+                                   
+                                    <SearchSelect options={patientArray} setSelectedPatient={setSelectedPatient} />
                                 </div>
                             </div>
                                 <div className='flex flex-col gap-2'>

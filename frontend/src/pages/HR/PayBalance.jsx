@@ -25,7 +25,7 @@ const PayBalance = () => {
   
   const patient = patients.filter((patient) => patient?._id === id);
   const courier = branchCourierPayment.filter((courier) => courier?.patient?._id === patient[0]?._id)
-  console.log(courier);
+  
   const pay = async () => {
     try {
       await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, { billPaid: amountPaid, transactionDetails, modeOfPayment: paymentMode, paymentCollectedBy: user?._id, totalBill: balanceDue.dueBalance, balance_paid_flag: true });

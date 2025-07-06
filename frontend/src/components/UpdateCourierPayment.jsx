@@ -31,7 +31,8 @@ const UpdateCourierPayment = ({ payment,setSubmit, onClose }) => {
         appointmentType: 'courier',
         paymentCollectedBy: user?._id,
         transactionDetails,
-        totalBill: (payment?.dueBalance)
+        totalBill: (payment?.dueBalance),
+        balance_paid_flag: true
       });
       await axios.patch(`${HR_API_URL}/updateCourierStatus/${payment?._id}/${payment?.patient?._id}`, {
         balance_paid_flag: true,

@@ -24,12 +24,8 @@ const TodayCollection = () => {
     let onlinePayment = 0;
     let balanceSum = 0;
     let advanceSum = 0;
-    // collection.filter((item) => item?.date === todayDate).map((item, index) => {
-    //     collectionSum += item.billPaid;
-    //     if (item.modeOfPayment === 'cash') { cashPayment += item.billPaid }
-    //     else { onlinePayment += item.billPaid }
-    // });
-    console.log(collection);
+   
+    
     collection.map((item) => {
         collectionSum += item?.billPaid;
         if (item.modeOfPayment === 'cash') { cashPayment += item.billPaid }
@@ -42,8 +38,6 @@ const TodayCollection = () => {
     });
     const hrArray = employees.filter((employee) => employee?.role === 'hr' && employee?.branch === location.location);
     const collectionEmployee = collection.filter((item) => item?.paymentCollectedBy?._id === employee && item?.date === todayDate);
-    const hrPatientIds = collection.filter(item => item?.paymentCollectedBy?._id === employee && item?.date === todayDate).map(item => item?.patient?._id);
-    // const filteredDues = dueBalanceSum.filter(item => hrPatientIds.includes(item?.patient?._id));
     return (
         <div>
             <Docnavbar />
@@ -126,7 +120,7 @@ const TodayCollection = () => {
                                     {
                                         collection.filter((item) => ((item?.paymentCollectedBy?._id === employee || employee === 'All') && item?.date === todayDate && (item?.appointmentType===collectionType||collectionType==='Collections'))).map((item, index) => {
                                             
-                                            return <tr className='bg-blue-200'>
+                                            return <tr key={index} className='bg-blue-200'>
                                                 <td className='px-1 text-center py-2'>{item?.patient?.casePaperNo}</td>
                                                 <td className='px-1 text-center py-2'>{item?.patient?.fullname}</td>
                                                 <td className='px-1 text-center py-2'>{item?.totalBill}</td>

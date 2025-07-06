@@ -60,7 +60,7 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                                         )}
                                         <td className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
                                         <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag === true ? 'Delivered' : 'Pending'}</span></td>
-                                        <td className="py-2 px-1 border text-center"><span className="border-1 text-red-500 border-red-500 rounded-md py-1 px-2">Pending</span></td>
+                                        <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.doctor_Approval_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.doctor_Approval_Flag === true ? 'Approved' : 'Pending'}</span></td>
                                     </tr>
                                 ))
                             )}

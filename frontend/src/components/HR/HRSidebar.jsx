@@ -25,7 +25,7 @@ const HRSidebar = () => {
                     {hrTasks.length > 0 && <div className='absolute w-5 h-5 flex items-center justify-center  bg-blue-400 rounded-full top-0 right-1'><span className='p-1'>{hrTasks.length}</span></div>}
                 </div>
                 <SidebarItem active={path.pathname === '/apply-leave-HR'} onClick={() => navigate("/apply-leave-HR")} icon={<CalendarDays />} text={"Apply Leave"} />
-                <SidebarItem active={path.pathname === '/all-courier/Dombivali'} onClick={() => navigate("/all-courier/Dombivali")} icon={<Box />} text={"Courier List"} />
+                <SidebarItem active={path.pathname === `/all-courier/${user?.branch}`} onClick={() => navigate(`/all-courier/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
                 <SidebarItem active={path.pathname === '/collections-HR'} onClick={() => navigate("/collections-HR")} icon={<Banknote />} text={"Collections"} />
             </Sidebar>
         </div>

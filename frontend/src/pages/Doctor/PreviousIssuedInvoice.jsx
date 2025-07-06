@@ -14,9 +14,7 @@ const PreviousIssuedInvoice = () => {
     useEffect(() => {
         getBillInvoices();
     }, [getBillInvoices]);
-
-    console.log(billInvoices);
-
+    console.log(billInvoices)
     return (
         <div>
             <Docnavbar />
@@ -41,7 +39,7 @@ const PreviousIssuedInvoice = () => {
                                 </thead>
                                 <tbody>
                                     {
-                                        searchTerm.length>0 && billInvoices.filter((invoice)=>invoice?.patient?.casePaperNo.includes(searchTerm)||invoice?.patient?.fullname.includes(searchTerm)||invoice?.patient?.phone.includes(searchTerm)).map((invoice, index) => (
+                                        searchTerm.length>0 && billInvoices.filter((invoice)=>invoice?.patient?.casePaperNo.toLowerCase().includes(searchTerm.toLowerCase())||invoice?.patient?.fullname.toLowerCase().includes(searchTerm.toLowerCase())||invoice?.patient?.phone.toLowerCase().includes(searchTerm.toLowerCase())).map((invoice, index) => (
                                             <tr key={index} className='bg-blue-200'>
                                                 <td className='px-2 py-4 text-center'>{invoice?.date}</td>
                                                <td className='px-2 py-4 text-center'>{invoice?.patient?.casePaperNo}</td>

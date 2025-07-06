@@ -5,6 +5,7 @@ import Input from '../../components/Input'
 import { MdMedicalInformation } from 'react-icons/md'
 import { FaFilePdf } from 'react-icons/fa'
 import { docStore } from '../../store/DocStore'
+import { generateDiagnoseHistory, generateDiagnoseRow } from '../../store/generateDiagnoseHistory'
 
 const DiagnoseHistory = () => {
     const { prescriptionsArray, getPrescriptions } = docStore();
@@ -29,7 +30,7 @@ const DiagnoseHistory = () => {
                         <div className='flex items-center gap-2'>
                             <Input onChange={(e)=>setSearchTerm(e.target.value)} icon={MdMedicalInformation} placeholder='Search for Disease or Medicine here ..' />
                         </div>
-                        <button className='py-2 px-4 bg-green-500 flex items-center gap-5 text-lg my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
+                        <button onClick={()=>generateDiagnoseHistory(prescriptionsArray)} className='py-2 px-4 bg-green-500 flex items-center gap-5 text-lg my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                                 <thead className="bg-[#337ab7]  text-white">
@@ -57,7 +58,7 @@ const DiagnoseHistory = () => {
                                                 <td className="px-2 py-4 text-center">{pres?.duration}</td>
                                                 <td className="px-2 py-4 text-center">{pres?.patient?.casePaperNo}</td>
                                                 <td className="px-2 py-4 text-center">{pres?.patient?.fullname}</td>
-                                                <td className="px-2 py-4 text-center"><button className='text-white bg-green-500 p-2 cursor-pointer rounded-md'><FaFilePdf className='size-6'/></button></td>
+                                                <td className="px-2 py-4 text-center"><button onClick={()=>generateDiagnoseRow(pres)} className='text-white bg-green-500 p-2 cursor-pointer rounded-md'><FaFilePdf className='size-6'/></button></td>
                                             </tr>
                                         ))
                                     }

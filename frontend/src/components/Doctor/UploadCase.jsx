@@ -4,6 +4,7 @@ import { recStore } from '../../store/RecStore';
 import Input from '../Input';
 import Select from "react-select";
 import { docStore } from '../../store/DocStore';
+import SearchSelect from '../SearchSelect';
 
 const UploadCase = ({ onClose }) => {
   const { patients, getPatientDetails } = recStore();
@@ -30,7 +31,7 @@ const UploadCase = ({ onClose }) => {
 
     const formData = new FormData();
     formData.append("caseImage", image);
-      await uploadCase(formData, selectedPatient.value); 
+      await uploadCase(formData, selectedPatient); 
       setSubmit((prev) => !prev);
       onClose();
     } catch (error) {
@@ -61,14 +62,8 @@ const UploadCase = ({ onClose }) => {
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <User className="size-4 text-blue-500" />
                 </div>
-                <Select
-                  options={patientArray}
-                  placeholder="Search"
-                  value={selectedPatient}
-                  onChange={setSelectedPatient}
-                  className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200"
-                  required
-                />
+                  <SearchSelect options={patientArray} setSelectedPatient={setSelectedPatient} />
+
               </div>
             </div>
 
