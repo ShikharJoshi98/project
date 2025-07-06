@@ -61,6 +61,7 @@ import Prescription from "./pages/HR/Prescription";
 import Bill from "./pages/HR/Bill";
 import PayBalance from "./pages/HR/PayBalance";
 import HomeoBhagwat from "./pages/Doctor/HomeoBhagwat";
+import AudioRecorder from "./pages/Doctor/AudioRecorder";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -142,6 +143,7 @@ function App() {
           <Route path="/update-employee/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UpdateEmployee /></ProtectedRoute>} />
           <Route path="/scribble-pad/:scribbleType/:id" element={<ProtectedRoute allowedRoles={['doctor']}><Scribble /></ProtectedRoute>} />
           <Route path="/new-case-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><NewCaseDetails /></ProtectedRoute>} />
+          <Route path="/audio-recorder/:id" element={<ProtectedRoute allowedRoles={['doctor']}><AudioRecorder /></ProtectedRoute>} />
 
           
           <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />

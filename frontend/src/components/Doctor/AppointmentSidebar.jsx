@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar, { SidebarItem } from '../Sidebar'
-import { Briefcase, CalendarDays, ClipboardPlus, FileText, History, Image, ImagesIcon, LayoutDashboard, LayoutDashboardIcon, LayoutList, ListChecks, NotebookIcon, PlusCircle, ScrollTextIcon, Stethoscope, Users, Video } from 'lucide-react';
+import { Briefcase, CalendarDays, ClipboardPlus, FileText, History, Image, ImagesIcon, LayoutDashboard, LayoutDashboardIcon, LayoutList, ListChecks, Mic, NotebookIcon, PlusCircle, ScrollTextIcon, Stethoscope, Users, Video } from 'lucide-react';
 import { FaMagnifyingGlass, FaMoneyBill, FaUserDoctor } from 'react-icons/fa6';
 import AssignTaskModal from './AssignTaskModal';
 import ApproveLeaveModal from './ApproveLeaveModal';
@@ -42,6 +42,7 @@ const AppointmentSidebar = () => {
         <SidebarItem active={path.pathname === `/investigation/${location.id}`} onClick={() => navigate(`/investigation/${location.id}`)}  icon={<FaMagnifyingGlass size={20} />} text={"Investigation"} />
         <SidebarItem active={path.pathname === `/upload-diagnosis-image/${location.id}`} onClick={() => navigate(`/upload-diagnosis-image/${location.id}`)} icon={<Stethoscope />} text={"Diagnosis Images"} />
         <SidebarItem active={path.pathname === `/report/${location.id}`} onClick={() => navigate(`/report/${location.id}`)} icon={<ScrollTextIcon />} text={"Case Paper Report"} />
+        <SidebarItem active={path.pathname === `/audio-recorder/${location.id}`} onClick={() => navigate(`/audio-recorder/${location.id}`)} icon={<Mic />} text={"Record"} />
       </Sidebar>
       {isTaskModalOpen && <AssignTaskModal onClose={() => setTaskModalIsOpen(false)} />}
       {isLeaveModalOpen && <ApproveLeaveModal onClose={() => setLeaveModalIsOpen(false)} />}
