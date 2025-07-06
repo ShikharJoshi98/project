@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Input from '../Input';
-import { Calendar, Clock, User, X } from 'lucide-react';
+import { Calendar, Clock, X } from 'lucide-react';
 import { FaUserDoctor } from 'react-icons/fa6';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { recStore } from '../../store/RecStore';
@@ -8,59 +8,88 @@ import axios from 'axios';
 import { useStore } from '../../store/UpdateStore';
 import { useParams } from 'react-router-dom';
 import { updateDate } from '../../store/todayDate';
+import { useAuthStore } from '../../store/authStore';
+import SearchSelect from '../SearchSelect';
 
 const AppointmentModal = ({ onClose }) => {
   const { appointmentSubmit, toggleAppointmentSubmit } = docStore();
   const { patients, getPatientDetails } = recStore();
+  const { user } = useAuthStore();
   const { getDetails, employees } = useStore();
   const doctors = employees.filter(emp => emp?.role === 'doctor');
   const [appointmentCreated, setAppointmentCreated] = useState('');
   const location = useParams();
+  const [selectedPatient, setSelectedPatient] = useState(null);
   const today = new Date().toLocaleDateString('en-CA');
   const todayDate = updateDate();
+
   const [formValues, setFormValues] = useState({
     date: today,
     time: "",
     PatientCase: "",
     Doctor: "",
-    appointmentType: 'general',
+    appointmentType: 'general'
   });
-    console.log(formValues);
-
+  let patientArray;
+  if (user?.role !== 'doctor') {
+    patientArray = patients.filter((patient) => patient?.branch === user?.branch).map((patient) => ({
+      value: patient?._id,
+      label: `${patient?.fullname} / ${patient?.casePaperNo ? patient?.casePaperNo : '-'} / ${patient?.phone} (M)`,
+    }));
+  }
+  else {
+    patientArray = patients.map((patient) => ({
+      value: patient?._id,
+      label: `${patient?.fullname} / ${patient?.casePaperNo ? patient?.casePaperNo : '-'} / ${patient?.phone} (M)`,
+    }));
+  }
 
   useEffect(() => {
     getPatientDetails();
     getDetails();
   }, [getPatientDetails, getDetails])
-  
+
+  console.log(formValues.date)
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(`${DOC_API_URL}/new-appointment`, formValues);
+    if (selectedPatient === null) {
+      alert("Select a Patient")
+    }
+    const updatedForm = {
+      ...formValues,
+      PatientCase: selectedPatient
+    };
+    const response = await axios.post(`${DOC_API_URL}/new-appointment`, updatedForm);
+
     await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
-      complete_appointment_flag: false,  
-      medicine_issued_flag:false,
-      date:todayDate
+      complete_appointment_flag: false,
+      medicine_issued_flag: false,
+      date: todayDate
     })
     if (response.data.message === 'Appointment exist') {
       alert("Appointment already exists for this date");
       setFormValues({
-      time: "",
-      PatientCase: "",
-      Doctor: "",
-      appointmentType: "",
-    })
+        date: today,
+        time: "",
+        PatientCase: "",
+        Doctor: "",
+        appointmentType:""
+      })
       return;
     }
     toggleAppointmentSubmit(!appointmentSubmit);
 
     setFormValues({
+      date: today,
       time: "",
       PatientCase: "",
       Doctor: "",
-      appointmentType: "",
+      appointmentType:""
     })
     setAppointmentCreated('Appointment Created');
   };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevValues) => ({
@@ -72,7 +101,7 @@ const AppointmentModal = ({ onClose }) => {
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
       <div className="bg-[#e9ecef] overflow-x-hidden max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
         <button
-          onClick={() => { onClose(); setAppointmentCreated('')}}
+          onClick={() => { onClose(); setAppointmentCreated('') }}
           className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
           <X size={24} />
@@ -80,7 +109,7 @@ const AppointmentModal = ({ onClose }) => {
 
         <div className="bg-[#e9ecef] w-full sm:w-auto  sm:mx-10   rounded-lg">
           <h1 className=" text-center font-semibold  text-[#337ab7] text-xl sm:text-3xl md:text-5xl">Create Appointment</h1>
-          {appointmentCreated.length>0 && <p className='border-2 border-blue-40 text-blue-500 font-semibold p-2 rounded-md w-fit mx-auto my-6'>{appointmentCreated}</p>}
+          {appointmentCreated.length > 0 && <p className='border-2 border-blue-40 text-blue-500 font-semibold p-2 rounded-md w-fit mx-auto my-6'>{appointmentCreated}</p>}
           <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
             <div className="flex flex-col gap-4 m-auto">
               <div className="flex flex-col gap-2">
@@ -95,29 +124,7 @@ const AppointmentModal = ({ onClose }) => {
 
               <div className="flex flex-col gap-2">
                 <h1>Patient Case Paper Number</h1>
-                <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <User className="size-4 text-blue-500" />
-                  </div>
-                  <select
-                    name="PatientCase"
-                    value={formValues.PatientCase}
-                    onChange={handleInputChange}
-                    required
-                    className="py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
-                  >
-                    <option value="" disabled >
-                      Select Case Paper No.
-                    </option>
-                    {
-                      patients.map((patient, idx) => (
-                        <option key={idx} value={patient._id} >
-                          {patient?.fullname} / {patient?.casePaperNo} / {patient?.phone} (M)
-                        </option>
-                      ))
-                    }
-                  </select>
-                </div>
+                <SearchSelect options={patientArray} setSelectedPatient={setSelectedPatient} />
               </div>
 
               <div className="flex flex-col gap-2">

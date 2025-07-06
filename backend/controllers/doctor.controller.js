@@ -196,6 +196,8 @@ export const createAppointment = async (req, res) => {
 export const createNewAppointment = async (req, res) => {
     try {
         const { date, time, PatientCase, Doctor, appointmentType } = req.body;
+        const patient = await Patient.findById(PatientCase);
+        console.log(date);
         const dateConverter = (date) => {
             const [y, m, d] = date.split('-');
             const newDate = String(d + '-' + m + '-' + y);
@@ -203,7 +205,7 @@ export const createNewAppointment = async (req, res) => {
         }
         const convertedDate = dateConverter(date);
         const appointmentExist = await Appointment.findOne({
-            PatientCase,
+            PatientCase:PatientCase.toString(),
             date: convertedDate,
         })
         if (appointmentExist) {
@@ -211,15 +213,17 @@ export const createNewAppointment = async (req, res) => {
                 message: "Appointment exist"
             })
         }
-        const pastAppointment = await Appointment.find({ PatientCase });
+        const pastAppointment = await Appointment.find({ PatientCase:PatientCase.toString() });
         let newAppointment;
-        if (pastAppointment.length > 0) {
+        
+        if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length-1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
                 date: convertedDate,
                 time,
-                PatientCase,
+                PatientCase:PatientCase.toString(),
                 Doctor,
                 appointmentType,
+                branch:patient.branch,
                 new_appointment_flag: false,
                 followUp_appointment_flag: true
             })
@@ -228,11 +232,13 @@ export const createNewAppointment = async (req, res) => {
             newAppointment = await Appointment.create({
                 date: convertedDate,
                 time,
-                PatientCase,
+                PatientCase:PatientCase.toString(),
                 Doctor,
-                appointmentType,
+                appointmentType,    
+                branch:patient.branch,
             })
         }
+        
         res.json({
             newAppointment
         })

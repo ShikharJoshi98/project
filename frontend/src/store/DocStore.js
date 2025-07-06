@@ -1,5 +1,6 @@
 import axios from "axios";
 import { create } from "zustand";
+import { HR_API_URL } from "./UpdateStore";
 
 export const DOC_API_URL = `${import.meta.env.VITE_API_URL}/api/doctor`;
 axios.defaults.withCredentials = true;
@@ -50,6 +51,8 @@ export const docStore = create((set) => ({
     certificates:[],
     appointmentSection: "general",
     homeoBhagwatSection: "medicine",
+    orderId: [],
+    medicalOrderId:[],
     setHomeoBhagwatSection: (newsection) => set({ homeoBhagwatSection: newsection }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
@@ -355,5 +358,13 @@ export const docStore = create((set) => ({
     getCertificates: async () => {
         const response = await axios.get(`${DOC_API_URL}/getCertificates`);
         set({certificates:response.data.certificates})
+    },
+    getOrderId: async () => {
+        const response = await axios.get(`${HR_API_URL}/getOrderId`);
+        set({orderId: response.data.order})
+    },
+    getMedicalOrderId: async () => {
+        const response = await axios.get(`${HR_API_URL}/getMedicalOrderId`);
+        set({medicalOrderId: response.data.medicalOrder})
     }
 }))

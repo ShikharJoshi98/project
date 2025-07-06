@@ -1,5 +1,5 @@
 import express from 'express';
-import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  addBillImage,  addCourierPayment,  courierStatus,  deleteBillImages,  details,  edit_medical_vendor,  edit_vendor,  get_Item_Order,  get_item_stock,  get_Medical_Order,  get_medical_stock,  get_medical_vendor,  get_vendor,  getBillImage,  getCollection,  getCourierPayment,  getItems,  getMedicine, getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order, register,   update, updateItemStock, updateMedicalReceivedOrder, updateMedicalStock, updateReceivedOrder} from '../controllers/HR.controller.js';
+import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  addBillImage,  addCourierPayment,  addMedicalOrderId,  addOrderId,  courierStatus,  deleteBillImages,  details,  edit_medical_vendor,  edit_vendor,  get_Item_Order,  get_item_stock,  get_Medical_Order,  get_medical_stock,  get_medical_vendor,  get_vendor,  getBillImage,  getCollection,  getCourierPayment,  getItems,  getMedicalOrderId,  getMedicine, getOrderId, getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order, register,   update, updateItemStock, updateMedicalReceivedOrder, updateMedicalStock, updateReceivedOrder} from '../controllers/HR.controller.js';
 import multer from 'multer';
 
 const storage = multer.memoryStorage();
@@ -23,7 +23,7 @@ HRrouter.post('/add-item', add_item);
 HRrouter.post('/add-unit', add_unit);
 HRrouter.post('/add-item-vendor', add_item_vendor);
 HRrouter.post('/add-item-stock', add_item_stock);
-HRrouter.get('/get-item-stock',get_item_stock);
+HRrouter.get('/get-item-stock/:branch',get_item_stock);
 HRrouter.post('/place-item-order', place_item_order);
 HRrouter.get('/get-items', getItems);
 HRrouter.get('/get-units', getUnits);
@@ -35,6 +35,8 @@ HRrouter.patch('/updateReceivedOrder/:orderId/:itemId', updateReceivedOrder);
 HRrouter.post('/upload-Bill-image/:orderId', upload.single("Bill"), addBillImage);
 HRrouter.get('/get-Bill-images/:orderId', getBillImage);
 HRrouter.delete('/deleteBillImage/:orderId/:id', deleteBillImages);
+HRrouter.post('/addOrderId', addOrderId);
+HRrouter.get('/getOrderId',getOrderId);
 
 //medical stock
 HRrouter.post('/add-medicine', add_medicine);
@@ -52,6 +54,8 @@ HRrouter.get('/get-medicine-item', medical_items_get);
 HRrouter.post('/place-medical-order', place_medical_order);
 HRrouter.get('/getMedicalOrders/:id', get_Medical_Order);
 HRrouter.patch('/updateMedicalReceivedOrder/:orderId/:medicineId', updateMedicalReceivedOrder);
+HRrouter.post('/addMedicalOrderId', addMedicalOrderId);
+HRrouter.get('/getMedicalOrderId',getMedicalOrderId);
 
 //collections
 HRrouter.get('/collections/:branch',getCollection);

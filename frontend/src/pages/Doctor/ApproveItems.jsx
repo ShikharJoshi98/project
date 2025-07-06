@@ -8,18 +8,19 @@ import OrderItemBalanceModal from '../../components/Doctor/OrderItemBalanceModal
 import OrderItemHistoryModal from '../../components/Doctor/OrderItemHistoryModal';
 import axios from 'axios';
 import { HR_API_URL } from '../../store/UpdateStore';
-import { DOC_API_URL } from '../../store/DocStore';
-
+import { DOC_API_URL, docStore } from '../../store/DocStore';
 
 const ApproveItems = () => {
     const location = useParams();
+    const [id, setId] = useState('');
     const [isOrderItemModalOpen, setOrderItemModalIsOpen] = useState(false);
     const [isOrderItemHistoryModalOpen, setOrderItemHistoryModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [itemStock, setItemStock] = useState([]);
     const [submit, setSubmit] = useState(false);
+    const { orderId, getOrderId } = docStore();
     const getItemStock = async () => {
-        const response = await axios.get(`${HR_API_URL}/get-item-stock`);
+        const response = await axios.get(`${HR_API_URL}/get-item-stock/${location.location}`);
         setItemStock(response.data.itemStock);
     };
 
@@ -37,14 +38,22 @@ const ApproveItems = () => {
         const formattedDate = date.toLocaleString("en-US", options);
         return formattedDate;
     }
-    const ApproveStock = async (id) => {
+    
+    
+    const ApproveStock = async (id, orderFlag) => {
         try {
             await axios.patch(`${DOC_API_URL}/approveStock/${id}`,
                 {
                     docApproval_flag: true,
-                    approval_flag_new:false
-                 }
+                    approval_flag_new: false
+                }
             )
+            
+            if(orderFlag===true){const orderApprove = orderId.filter((order) => order?.item === id);
+
+            await axios.patch(`${HR_API_URL}/updateReceivedOrder/${orderApprove[0]?.order}/${orderApprove[0]?.itemId}`, {
+                doctor_Approval_Flag:true
+            });}
             setSubmit(prev => !prev);
         } catch (error) {
             console.log(error.message);
@@ -53,11 +62,13 @@ const ApproveItems = () => {
     useEffect(() => {
         try {
             getItemStock();
+            getOrderId();
         } catch (error) {
             console.log("Error in fetch API hr getItemStock", error.message);
         }
     }, [submit]);
-    const itemStockList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase())&&item?.branch===location.location);
+
+    const itemStockList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase()));
     return (
         <div>
             <Docnavbar />
@@ -95,13 +106,13 @@ const ApproveItems = () => {
                                             <tr className={`${item.docApproval_flag === false ? 'bg-red-200' : 'bg-blue-200'}`}>
                                                 <td className="px-1 py-2 text-center">{index + 1}</td>
                                                 <td className="px-1 py-2 text-center ">{item?.itemName}</td>
-                                                <td className="px-1 py-2 text-center ">{<span>{item?.quantity} {item?.unit}</span>}</td>
+                                                <td onClick={()=>setId(item?._id)} className="px-1 py-2 text-center ">{<span>{item?.quantity} {item?.unit}</span>}</td>
                                                 <td className="px-1 py-2 text-center ">{<span>{item?.reorder_level}</span>}</td>
                                                 <td className="px-1 py-2 text-center ">{timeStamp(item?.last_updated)}</td>
                                                 <td className="px-1 py-2 text-center ">{item?.issue_quantity}</td>
-                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?item?.receive_quantity:item?.approval_flag_new === true ? item?.receive_quantity : 0}</td>
-                                                <td className="px-1 py-2 text-center "> {item?.docApproval_flag === false ? <button onClick={() => ApproveStock(item?._id)} className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
-                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive===true?"ITEM RECEIVED(ORDER)":item?.approval_flag_issue===true?"ITEM ISSUED":item?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive === true ? item?.receive_quantity : item?.approval_flag_new === true ? item?.receive_quantity : 0}</td>
+                                                <td className="px-1 py-2 text-center "> {item?.docApproval_flag === false ? <button onClick={() => ApproveStock(item?._id, item?.approval_flag_receive)} className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
+                                                <td className="px-1 py-2 text-center ">{item?.approval_flag_receive === true ? "ITEM RECEIVED(ORDER)" : item?.approval_flag_issue === true ? "ITEM ISSUED" : item?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
                                             </tr>
                                         ))}
                                 </tbody>

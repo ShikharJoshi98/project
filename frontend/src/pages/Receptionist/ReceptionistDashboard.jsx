@@ -34,7 +34,7 @@ const ReceptionistDashboard = () => {
     getAppdetails();
   }, [getAppdetails, appointmentSubmit])
 
-  const appointmentList = appointments.filter((appointment) => appointment?.date === currentDate);
+  const appointmentList = appointments.filter((appointment) => appointment?.date === currentDate && appointment?.PatientCase?.branch===user?.branch);
   const pendingAppointment = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false);
   const completeAppointment = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true);
 

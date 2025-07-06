@@ -5,12 +5,13 @@ import { useParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import OrderMedicineBalanceModal from '../../components/Doctor/OrderMedicineBalanceModal';
 import OrderMedicineHistoryModal from '../../components/Doctor/OrderMedicineHistoryModal';
-import { useStore } from '../../store/UpdateStore';
+import { HR_API_URL, useStore } from '../../store/UpdateStore';
 import axios from 'axios';
-import { DOC_API_URL } from '../../store/DocStore';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
 
 const ApproveMedicines = () => {
   const location = useParams();
+  const { getMedicalOrderId,medicalOrderId} = docStore();
   const [isOrderMedicineModalOpen, setOrderMedicineModalIsOpen] = useState(false);
   const [isOrderMedicineHistoryModalOpen, setOrderMedicineHistoryModalIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,7 +23,8 @@ const ApproveMedicines = () => {
     getMedicine();
     getPotency();
     getMedicalStock(location.location);
-  }, [getMedicine, getPotency, getMedicalStock, medicalStockToggle,submit]);
+    getMedicalOrderId();
+  }, [getMedicine, getPotency, getMedicalStock, medicalStockToggle,submit,getMedicalOrderId]);
 
   const timeStamp = (isoDate) => {
         const date = new Date(isoDate);
@@ -38,15 +40,20 @@ const ApproveMedicines = () => {
         const formattedDate = date.toLocaleString("en-US", options);
         return formattedDate;
   }
-  
-  const ApproveMedicalStock = async (id) => {
+  console.log(medicalOrderId)
+  const ApproveMedicalStock = async (id,orderFlag) => {
         try {
             await axios.patch(`${DOC_API_URL}/approveMedicalStock/${id}`,
                 {
                     docApproval_flag: true,
                     approval_flag_new:false
                  }
-            )
+          )
+         if(orderFlag===true){const orderApprove = medicalOrderId.filter((order) => order?.medicine === id);
+
+            await axios.patch(`${HR_API_URL}/updateMedicalReceivedOrder/${orderApprove[0]?.order}/${orderApprove[0]?.medicineId}`, {
+                doctor_Approval_Flag:true
+            });}
             setSubmit(prev => !prev);
         } catch (error) {
             console.log(error.message);
@@ -128,7 +135,7 @@ const ApproveMedicines = () => {
                         <td className="px-1 py-2 text-center ">{timeStamp(medicine?.last_updated)}</td>
                         <td className="px-1 py-2 text-center ">{medicine?.issue_quantity}</td>
                         <td className="px-1 py-2 text-center ">{medicine?.approval_flag_receive === true ? medicine?.receive_quantity : medicine?.approval_flag_new === true ? medicine?.receive_quantity : 0}</td>
-                        <td className="px-1 py-2 text-center "> {medicine?.docApproval_flag === false ? <button onClick={() => ApproveMedicalStock(medicine?._id)}className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
+                        <td className="px-1 py-2 text-center "> {medicine?.docApproval_flag === false ? <button onClick={() => ApproveMedicalStock(medicine?._id,medicine?.approval_flag_receive)}className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
                         <td className="px-1 py-2 text-center ">{medicine?.approval_flag_receive === true ? "ITEM RECEIVED(ORDER)" : medicine?.approval_flag_issue === true ? "ITEM ISSUED" : medicine?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
                       </tr>
                     ))}

@@ -9,6 +9,7 @@ const AddMedicineModal = ({ onClose }) => {
   const [NewPotency, setpotency] = useState("");
   const [searchmedicineTerm, setSearchmedicineTerm] = useState("");
   const [searchpotencyTerm, setSearchpotencyTerm] = useState("");
+  const [submit, setSubmit] = useState(false);
   const filteredMedicine = medicines.filter(medicine =>
     medicine.medicine.toLowerCase().includes(searchmedicineTerm.toLowerCase())
   );
@@ -17,17 +18,18 @@ const AddMedicineModal = ({ onClose }) => {
   );
   useEffect(() => {
     getMedicine();
-  }, [getMedicine]);
+  }, [getMedicine,submit]);
 
   useEffect(() => {
     getPotency();
-  }, [getPotency]);
+  }, [getPotency,submit]);
 
   async function addMedicine(e) {
     e.preventDefault();
     try {
       await AddMedicine(NewMedicine);
       alert("Medicine added");
+      setSubmit(prev => !prev);
     } catch (error) {
       console.log(error.message);
     }
@@ -38,6 +40,7 @@ const AddMedicineModal = ({ onClose }) => {
     try {
       await AddPotency(NewPotency);
       alert("Potency added");
+      setSubmit(prev => !prev);
     } catch (error) {
       console.log(error.message);
     }

@@ -53,9 +53,16 @@ const orderSchema = new mongoose.Schema({
     ],
 })
 
+const medicalOrderIdSchema = new mongoose.Schema({
+    order: { type: mongoose.Schema.Types.ObjectId, ref: 'medicalOrder' },
+    medicineId: { type:String },
+    medicine:{ type: mongoose.Schema.Types.ObjectId, ref: 'MedicalStock' },
+})
+
 
 export const Medicine = mongoose.model('Medicine', medicineSchema);
 export const Potency = mongoose.model('Potency', potencySchema);
 export const MedicalStock = mongoose.model('MedicalStock', MedicalStockSchema);
 export const medicalItem = mongoose.model('medicalItem', orderitemsschema);
 export const medicalOrder = mongoose.model('medicalOrder', orderSchema);
+export const MedicalOrderId = mongoose.model('MedicalOrderId', medicalOrderIdSchema);

@@ -33,9 +33,9 @@ const RecNavbar = () => {
         updateDate();
     }, []);
 
-    const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch && appointment?.medicine_issued_flag===false));
-    const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch && appointment?.medicine_issued_flag===false))
-    const courierAppointments = appointments.filter((appointment)=>(appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === appointment?.Doctor?.branch && appointment?.medicine_issued_flag===false ))
+    const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.PatientCase?.branch === user?.branch && appointment?.medicine_issued_flag===false));
+    const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.PatientCase?.branch === user?.branch && appointment?.medicine_issued_flag===false))
+    const courierAppointments = appointments.filter((appointment)=>(appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.PatientCase?.branch === user?.branch && appointment?.medicine_issued_flag===false ))
     function handleLogout() {
         logout();
         navigate('/login');

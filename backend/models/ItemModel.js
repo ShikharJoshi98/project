@@ -35,23 +35,30 @@ const orderSchema = new mongoose.Schema({
             quantity: { type: Number, required: true },
             deliveryDate: { type: String, required: true },
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'ItemStock' },
-            order_Delivered_Flag: { type: Boolean, default: false },
             doctor_Approval_Flag: { type: Boolean, default: false },
+            order_Delivered_Flag: { type: Boolean, default: false },
             receivedQuantity: { type: Number, default: 0 },
             received_date: { type: String }
         }
     ],
     orderDate: { type: String },
+    
     Bill: [
         {
             imageUrl: { type: String }
         }
     ],
+});
+
+const orderIdSchema = new mongoose.Schema({
+    order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+    itemId: { type:String },
+    item:{ type: mongoose.Schema.Types.ObjectId, ref: 'ItemStock' },
 })
 
 export const Order = mongoose.model('Order', orderSchema);
 export const ItemStock = mongoose.model('ItemStock', StockSchema);
 export const Item = mongoose.model('Item', itemSchema);
 export const Unit = mongoose.model('Unit', unitSchema);
-
+export const OrderId = mongoose.model('OrderId', orderIdSchema);
 

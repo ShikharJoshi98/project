@@ -24,13 +24,14 @@ const RegisterPatient = () => {
         e.preventDefault();
         try {
             const response = await axios.post(`${REC_API_URL}/register`, { ...formValues, username, password });
+            setPatientRegisterModalIsOpen(true)
             setFormValues({
-        fullname: "",
-        phone: "",
-        Altphone: "",
-        email: "",
-        branch: user?.branch
-    })
+                fullname: "",
+                phone: "",
+                Altphone: "",
+                email: "",
+                branch: user?.branch
+            })
         } catch (error) {
             console.log(error.message);
         }
@@ -42,7 +43,7 @@ const RegisterPatient = () => {
             [name]: value,
         }));
     };
-    
+
     function usernameCreator(newName, newPhone) {
         let text = "";
         let firstName = newName.split(" ")[0] || "";
@@ -95,7 +96,7 @@ const RegisterPatient = () => {
                                     </select>
                                 </div>
                             </div>
-                            <button onClick={() => setPatientRegisterModalIsOpen(true)} className='cursor-pointer block mx-auto bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit' >Register</button>
+                            <button className='cursor-pointer block mx-auto bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit' >Register</button>
                         </div>
                     </form>
                 </div>

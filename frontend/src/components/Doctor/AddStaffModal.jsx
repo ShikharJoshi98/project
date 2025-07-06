@@ -33,6 +33,10 @@ const AddStaffModal = ({ setSubmit,onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await axios.post(`${HR_API_URL}/register`, formValues);
+        if (response.data.message === "Employee Already Exists") {
+            alert('Employee Username already exists. Create a new Usernames')
+            return;
+        }
         alert("Employee registered");
         setSubmit(prev => !prev);
     }

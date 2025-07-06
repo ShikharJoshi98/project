@@ -4,7 +4,7 @@ import Patient from "../models/PatientModel.js";
 export const register = async (req, res) => {
     try {
         const { fullname, phone, Altphone, email, branch } = req.body;
-
+        const isBranch = branch === 'Mulund' ? 'MUL' : 'DOM';
         function usernameCreator(newName, newPhone) {
             let text = "";
             let firstName = newName.split(" ")[0] || "";
@@ -12,7 +12,7 @@ export const register = async (req, res) => {
             text = firstName + num.slice(num.length - 4);
             return text;
         }
-        const password = "DOM" + "-" + usernameCreator(fullname, phone);
+        const password = isBranch + "-" + usernameCreator(fullname, phone);
         const username = usernameCreator(fullname, phone);
         const existPatient = await Patient.findOne({ username });
         if (existPatient) {
@@ -20,7 +20,7 @@ export const register = async (req, res) => {
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         const newPatient = new Patient({
-            username, fullname, phone, Altphone, email, password: hashedPassword, branch
+            username,casePaperNo:`${isBranch}-NEW` ,fullname, phone, Altphone, email, password: hashedPassword, branch
         })
         await newPatient.save();
         res.status(200).json({
@@ -39,7 +39,7 @@ export const updatePatient = async (req, res) => {
         const { imageData, username, casePaperNo, fullname, age, gender, address, phone, Altphone, email, qualification, occupation, dietaryPreference, weight, bloodPressure, maritalStatus, referredBy, branch } = req.body;
         let updatedpatient;
  
-        if (casePaperNo.length > 0 && casePaperNo!=='DOM-NEW') {
+        if (casePaperNo.length > 0 && (casePaperNo!=='DOM-NEW' && casePaperNo!=='MUL-NEW')) {
             updatedpatient = await Patient.findByIdAndUpdate(
                 req.params.id,
                 { imageData, username, casePaperNo, Case_Assignment_Flag: true, fullname, age, gender, address, phone, Altphone, email, qualification, occupation, dietaryPreference, weight, bloodPressure, maritalStatus, referredBy, branch },

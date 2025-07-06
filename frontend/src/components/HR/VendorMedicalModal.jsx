@@ -6,10 +6,11 @@ import { useStore } from '../../store/UpdateStore'
 const VendorModal = ({ onClose }) => {
   const [editingRow, setEditingRow] = useState(null);
   const [editedData, setEditedData] = useState({});
+  const [submit, setSubmit] = useState(false);
 
   const handleEditClick = (idx, vendor) => {
     setEditingRow(idx);
-    setEditedData({ ...vendor }); // Store initial values
+    setEditedData({ ...vendor });
   };
   
   const handleChange = (e, col) => {
@@ -41,13 +42,18 @@ const VendorModal = ({ onClose }) => {
     try {
       await addMedicalVendor(vendorname, contact, email, address);
       alert("Added a new Vendor");
+      setSubmit(prev => !prev);
+      setname("");
+      setcontact("");
+      setemail("");
+      setaddress("");
     } catch (error) {
       console.log(error.message);
     }
   }
     useEffect(() => {
         getMedicalVendors();
-    },[getMedicalVendors])
+    },[getMedicalVendors,submit])
   return (
       <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
@@ -68,7 +74,8 @@ const VendorModal = ({ onClose }) => {
               <h1 className="text-black mb-2 text-lg font-semibold">Vendor Name:</h1>
               <Input
                 onChange={(e)=>setname(e.target.value)}
-                icon={User}
+                  icon={User}
+                  value={vendorname}
                 type="text"
                 placeholder="Enter Vendor Name"
                               />
@@ -76,7 +83,8 @@ const VendorModal = ({ onClose }) => {
                <div className='mb-3'>
               <h1 className="text-black mb-2 text-lg font-semibold">Mobile Number:</h1>
               <Input
-                onChange={(e)=>setcontact(e.target.value)}
+                  onChange={(e) => setcontact(e.target.value)}
+                  value={contact}
                 icon={Phone}
                 type="tel"
                 placeholder="Enter Mobile Number"
@@ -85,7 +93,8 @@ const VendorModal = ({ onClose }) => {
               <div className='mb-3'>
               <h1 className="text-black mb-2 text-lg font-semibold">Email :</h1>
               <Input
-                onChange={(e)=>setemail(e.target.value)}
+                  onChange={(e) => setemail(e.target.value)}
+                  value={email}
                 icon={Mail}
                 type="email"
                 placeholder="Enter Email Address"
@@ -94,7 +103,7 @@ const VendorModal = ({ onClose }) => {
                <div className='mb-3 '>
               <h1 className="text-black mb-2 text-lg font-semibold">Address:</h1>             
  
-             <textarea onChange={(e)=>setaddress(e.target.value)} placeholder='Enter Address'  className='w-full  h-56  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
+             <textarea onChange={(e)=>setaddress(e.target.value)} value={address} placeholder='Enter Address'  className='w-full  h-56  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
             duration-200'></textarea>
             </div>          
               <button

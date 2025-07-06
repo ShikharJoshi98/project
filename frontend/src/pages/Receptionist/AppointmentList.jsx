@@ -35,7 +35,7 @@ const AppointmentList = () => {
         updateDate();
     }, []);
 
-    const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === appointment?.Doctor?.branch) &&(appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
+    const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch) &&(appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
     console.log(appointments,appointmentSection);
     return (
         <div>

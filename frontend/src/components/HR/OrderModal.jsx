@@ -7,10 +7,12 @@ import { useAuthStore } from "../../store/authStore";
 import UploadBillModal from "./UploadBillModal";
 import { recStore } from "../../store/RecStore";
 import { updateDate } from "../../store/todayDate";
+import { docStore } from "../../store/DocStore";
 
 const OrderModal = ({ onClose }) => {
   const { getItems, items, getUnits, getVendors, vendors, getOrders, ordersPlaced, billImagesLength } = useStore();
   const { user } = useAuthStore();
+  const { setOrder } = docStore();
   const [orderId, setOrderId] = useState(null);
   const [itemStock, setItemStock] = useState([]);
   const [formRows, setFormRows] = useState([]);
@@ -25,7 +27,7 @@ const OrderModal = ({ onClose }) => {
     return date.toISOString().split("T")[0];
   };
   const getItemStock = async () => {
-    const response = await axios.get(`${HR_API_URL}/get-item-stock`);
+    const response = await axios.get(`${HR_API_URL}/get-item-stock/${user?.branch}`);
     setItemStock(response.data.itemStock);
   };
 
@@ -34,7 +36,7 @@ const OrderModal = ({ onClose }) => {
     getVendors();
     getUnits();
     getOrders(user?.branch)
-  }, [getItems, getVendors, getUnits, getOrders, submit]);
+  }, [getItems, getVendors, getUnits, getOrders,billImagesLength, submit]);
 
   const vendorArray = vendors.map((vendor) => vendor?.vendorname);
   useEffect(() => {
@@ -48,6 +50,7 @@ const OrderModal = ({ onClose }) => {
   useEffect(() => {
     if (itemStock.length > 0) {
       const lowQuantityItems = itemStock.filter(item => item.quantity <= item.reorder_level && item?.is_order_placed === false);
+    
       const initialFormRows = lowQuantityItems.map(item => ({
         itemName: item.itemName,
         vendor: [],
@@ -57,6 +60,7 @@ const OrderModal = ({ onClose }) => {
       setFormRows(initialFormRows);
     }
   }, [itemStock]);
+
 
   const handleInputChange = (index, field, value) => {
     setFormRows(prevRows =>
@@ -112,6 +116,7 @@ const OrderModal = ({ onClose }) => {
       order_Delivered_Flag: true,
       received_date: todayDate
     });
+    await axios.post(`${HR_API_URL}/addOrderId`, { orderID: OrderId,itemID:ItemId,item:item });
     await axios.patch(`${HR_API_URL}/update-stock/${item?._id}`, { is_order_placed: false });
     toggleStockUpdate();
     setSubmit(prev => !prev);
@@ -242,9 +247,9 @@ const OrderModal = ({ onClose }) => {
                           </tbody>
                         </table>
                       </td>}
-                      <td className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
+                      <td onClick={() => { setOrder(order?._id);  console.log(order?._id)}} className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
                       <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag === true ? 'Delivered' : 'Pending'}</span></td>
-                      <td className="py-2 px-1 border text-center"><span className="border-1 text-red-500 border-red-500 rounded-md py-1 px-2">Pending</span></td>
+                      <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.doctor_Approval_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'} rounded-md py-1 px-2`}>{row?.doctor_Approval_Flag === true ? 'Approved' : 'Pending'}</span></td>
                     </tr>
                   ))
                 )}

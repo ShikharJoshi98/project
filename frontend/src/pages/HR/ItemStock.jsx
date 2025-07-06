@@ -27,7 +27,7 @@ const ItemStock = () => {
     const [itemSelect, setItemSelect] = useState();
     const [searchTerm, setSearchTerm] = useState('');
     const getItemStock = async () => {
-        const response = await axios.get(`${HR_API_URL}/get-item-stock`);
+        const response = await axios.get(`${HR_API_URL}/get-item-stock/${user?.branch}`);
         setItemStock(response.data.itemStock);
     };
 
@@ -63,7 +63,7 @@ const ItemStock = () => {
                 <HRSidebar />
                 <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
                     <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg '>
-                        <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Items Stock Dombivali</h1>
+                        <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Items Stock {user?.branch}</h1>
                         <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-white font-semibold  gap-2 sm:gap-10 justify-center items-center md:gap-20 text-[6px] sm:text-[8px] md:text-base'>
                             <button onClick={() => setItemModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>ADD ITEMS/UNIT LIST</button>
                             <button onClick={() => setVendorModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>VENDORS</button>

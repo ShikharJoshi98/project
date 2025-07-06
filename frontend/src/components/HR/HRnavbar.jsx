@@ -34,7 +34,7 @@ const HRnavbar = () => {
             document.removeEventListener("mousedown", handleClikcOutside);
         };
     }, []);
-    const appointmentList = appointments.filter((appointment) => appointment?.medicine_issued_flag === false && appointment?.complete_appointment_flag === true && appointment?.date === date);
+    const appointmentList = appointments.filter((appointment) => appointment?.medicine_issued_flag === false && appointment?.complete_appointment_flag === true && appointment?.date === date && appointment?.branch===user?.branch);
     const generalAppointmentLength = appointmentList.filter((appointment) => appointment?.appointmentType === 'general').length;
     const repeatAppointmentLength = appointmentList.filter((appointment) => appointment?.appointmentType === 'repeat').length;
     const courierAppointmentLength = appointmentList.filter((appointment) => appointment?.appointmentType === 'courier').length;

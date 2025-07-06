@@ -52,6 +52,7 @@ const Pricing = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await axios.patch(`${DOC_API_URL}/updatePayment/${payment[0]?._id}`, formValues);
+        alert('Updated');
         setSubmit(prev => !prev);
     }
     return (
@@ -96,7 +97,7 @@ const Pricing = () => {
                                 <Input icon={CiMoneyBill} type='text' onChange={handleInputChange} name="threeMonths" value={formValues.threeMonths}  placeholder='Rs' />
                             </div>
                             <div className='flex flex-col gap-2'>
-                                <h1>Courier :</h1>
+                                <h1>Online :</h1>
                                 <Input icon={Box} type='text' onChange={handleInputChange} name="Courier" value={formValues.Courier}  placeholder='Rs' />
                             </div>
                             <button className='py-2 px-4 mt-5 rounded-lg text-lg bg-blue-500 text-white font-semibold block mx-auto cursor-pointer'>Update Prices</button>

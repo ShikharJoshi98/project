@@ -116,7 +116,7 @@ function App() {
           <Route path="/upload-patient-image" element={<ProtectedRoute allowedRoles={['patient']}><UploadPatientImage /></ProtectedRoute>} />
 
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
-          <Route path="/appointment-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentList_Doc /></ProtectedRoute>} />
+          <Route path="/appointment-DOCTOR/:branch" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentList_Doc /></ProtectedRoute>} />
           <Route path="/appointment-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentDetails /></ProtectedRoute>} />
           <Route path="/homeo-bhagwat" element={<ProtectedRoute allowedRoles={['doctor']}><HomeoBhagwat /></ProtectedRoute>} />
           <Route path="/upload-case-image/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UploadPatientCase /></ProtectedRoute>} />

@@ -13,7 +13,7 @@ import { generatePDF, generateTablePDF } from '../../store/GenerateHomeoPdf';
 const HomeoBhagwat = () => {
     const { user } = useAuthStore();
     const todayDate = updateDate();
-    const { homeoBhagwatSection, setHomeoBhagwatSection, gethomeobhagwat, Homeo,updatehomeobhagwat,deleteHomeo, homeobhagwat } = docStore();
+    const { homeoBhagwatSection, setHomeoBhagwatSection, gethomeobhagwat, Homeo, updatehomeobhagwat, deleteHomeo, homeobhagwat } = docStore();
     const [editingRow, setEditingRow] = useState(null);
     const [editedData, setEditedData] = useState({});
     const handleEditClick = (idx, medicine) => {
@@ -58,7 +58,7 @@ const HomeoBhagwat = () => {
         try {
             await deleteHomeo(id);
 
-            const updatedMedicines = Homeo.filter((medicine) =>medicine?.section===homeoBhagwatSection && medicine._id !== id);
+            const updatedMedicines = Homeo.filter((medicine) => medicine?.section === homeoBhagwatSection && medicine._id !== id);
             docStore.setState((prevState) => ({
                 ...prevState,
                 Homeo: updatedMedicines,
@@ -88,11 +88,6 @@ const HomeoBhagwat = () => {
             <div className='flex'>
                 <DocSidebar />
                 <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
-                    <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
-                        <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl m-2 md:m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome {user?.fullname}</h1>
-                        <h1 className='text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-3xl m-2 md:m-10   bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span>    <MapPin />
-                        </span>{user?.branch}</h1>
-                    </div>
                     <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg'>
                         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Homeo Bhagwat Gita</h1>
                         <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4'>{todayDate}</h1>
@@ -125,7 +120,7 @@ const HomeoBhagwat = () => {
                             <h1 className='text-3xl mb-3 text-blue-600 font-semibold'>Search</h1>
                             <Input icon={Search} onChange={(e) => setSearchTerm(e.target.value)} type="text" name="name" placeholder='Enter Medicine Name or description' />
                             <div className='w-full flex justify-center sm:justify-end '>
-                                <button onClick={() => {generateTablePDF(Homeo.filter((item) => item?.section === homeoBhagwatSection))}} className='bg-blue-500  p-2 text-white rounded-md cursor-pointer sm:text-xl mt-5 flex items-center gap-4'>Generate Pdf<FaRegFilePdf size={25} /></button>
+                                <button onClick={() => { generateTablePDF(Homeo.filter((item) => item?.section === homeoBhagwatSection)) }} className='bg-blue-500  p-2 text-white rounded-md cursor-pointer sm:text-xl mt-5 flex items-center gap-4'>Generate Pdf<FaRegFilePdf size={25} /></button>
                             </div>
                         </div>
                         <div className="overflow-x-auto p-4 mt-3">
@@ -181,7 +176,7 @@ const HomeoBhagwat = () => {
                                                     )}
                                                 </td>
                                                 <td onClick={() => deleteCol(item?._id)} className="py-3 px-4 border text-center"><Trash /></td>
-                                                <td onClick={()=>generatePDF(item)} className="py-3 px-4 border text-center"><FaRegFilePdf size={25} /></td>
+                                                <td onClick={() => generatePDF(item)} className="py-3 px-4 border text-center"><FaRegFilePdf size={25} /></td>
                                             </tr>
                                         ))
                                     }

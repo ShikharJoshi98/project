@@ -12,20 +12,20 @@ import { updateDate } from '../../store/todayDate';
 
 const AppointmentList_Doc = () => {
   const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppdetails, appointments } = docStore();
-  const { id } = useParams();
+  const { branch } = useParams();
   const { user } = useAuthStore();
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const currentDate = updateDate(); 
-
+  
   useEffect(() => {
     getAppdetails(appointmentSection);
   }, [getAppdetails,appointmentSection, appointmentSubmit]);
-  console.log(appointments,currentDate);
-  const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.PatientCase?.branch === user?.branch) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-
+  
+  const appointmentList = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.branch ===branch && appointment?.Doctor?.fullname===user?.fullname) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
+  
   const newAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === true && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag === false && appointment?.complete_appointment_flag === false).length;
   
   const followUpAppointmentLength = appointmentList.filter((appointment) => appointment?.new_appointment_flag === false && appointment?.medicine_issued_flag === false && appointment?.followUp_appointment_flag === true && appointment?.complete_appointment_flag === false).length;
@@ -40,8 +40,8 @@ const AppointmentList_Doc = () => {
         <DocSidebar />
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
           <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
-            <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>{
-              `${appointmentSection.toUpperCase()} APPOINTMENT`
+            <h1 className='text-xl sm:text-2xl md:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>{
+              `${appointmentSection.toUpperCase()} APPOINTMENT ${branch.toUpperCase()}`
             }</h1>
             <h1 className="text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4">{currentDate}</h1>
             <hr className="h-[0.5px] px-5 border-none bg-blue-500" />
@@ -55,7 +55,7 @@ const AppointmentList_Doc = () => {
               <button onClick={() => setAppointmentSection("courier")} className={`cursor-pointer border-1 border-black hover:scale-102 transition-all duration-300 ${appointmentSection === 'courier' ? 'bg-blue-500 text-white' : 'bg-blue-300 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>COURIER MEDICINE</button>
             </div>
             <div className='flex items-center gap-2 mt-10'>
-              <Input onChange={(e) => setSearchTerm(e.target.value)} icon={SearchIcon} placeholder='Search for Items here' />
+              <Input onChange={(e) => setSearchTerm(e.target.value)} icon={SearchIcon} placeholder='Search for Patient&apos;s Name/Case Paper No./Mobile No.' />
             </div>
             <div className="overflow-x-auto  mt-10">
               <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">

@@ -8,9 +8,11 @@ import PatientUpdateModal from '../../components/Receptionist/PatientUpdateModal
 import AppointmentModal from '../../components/Doctor/AppointmentModal'
 import { recStore } from '../../store/RecStore'
 import { LuSquarePen } from 'react-icons/lu'
+import { useAuthStore } from '../../store/authStore'
 
 const PatientDetails = () => {
     const { getPatientDetails, patients, update } = recStore();
+    const { user } = useAuthStore();
     const [isPatientUpdateModalOpen, setPatientUpdateModalIsOpen] = useState(false);
     const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
     const [patientId, setPatientId] = useState(null);
@@ -19,8 +21,9 @@ const PatientDetails = () => {
     useEffect(() => {
         getPatientDetails();
     }, [getPatientDetails, update]);
+
     const filteredPatient = patients.filter((patient) => (patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
-    console.log(filteredPatient)
+    
     return (
         <div>
             <RecNavbar />
@@ -52,14 +55,14 @@ const PatientDetails = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredPatient.map((patient, index) => (
+                                    {filteredPatient.filter((patient)=>patient?.branch === user?.branch).map((patient, index) => (
                                         <tr key={index} className={`${patient?.Case_Assignment_Flag === false ? 'bg-yellow-200 hover:bg-yellow-300' : 'hover:bg-blue-300 bg-blue-200'} transition-all`}>
                                             <td className="px-1 py-2 text-center">{index + 1}.</td>
-                                            <td className="px-1 py-2 text-center">{patient?.casePaperNo===''?'DOM-NEW':patient?.casePaperNo}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.casePaperNo===''?`${patient?.branch==='Mulund'?'MUL-NEW':'DOM-NEW'}`:patient?.casePaperNo}</td>
                                             <td className="px-1 py-2 text-center">{patient?.username}</td>
                                             <td className="px-1 py-2 text-center">{patient?.fullname}</td>
                                             <td className="px-1 py-2 text-center">{patient?.phone}</td>
-                                            <td className="px-1 py-2 text-center">{patient?.email}</td>
+                                            <td className="px-1 py-2 text-center">{patient?.email}</td> 
                                             <td className="px-1 py-2 text-center">{patient?.gender}</td>
                                             <td className="px-1 py-2 text-center">{patient?.age}</td>
                                             <td className="px-1 py-2 text-center">{patient?.address}</td>

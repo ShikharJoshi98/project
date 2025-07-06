@@ -9,7 +9,8 @@ const createAppointmentSchema = new mongoose.Schema({
     new_appointment_flag: { type: Boolean, default: true },
     complete_appointment_flag: { type: Boolean, default: false },
     medicine_issued_flag: { type: Boolean, default: false },
-    followUp_appointment_flag:{ type: Boolean, default: false }
+    followUp_appointment_flag: { type: Boolean, default: false },
+    branch: { type: String, required: true }    
 })
 
 const consultationChargesSchema = new mongoose.Schema({

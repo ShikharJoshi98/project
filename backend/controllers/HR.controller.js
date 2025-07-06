@@ -1,7 +1,7 @@
 import bcryptjs from "bcryptjs"
-import { Item, ItemStock, Order, Unit } from "../models/ItemModel.js";
+import { Item, ItemStock, Order, OrderId, Unit } from "../models/ItemModel.js";
 import { ItemVendor, MedicalVendor } from "../models/VendorModel.js";
-import { medicalItem, medicalOrder, MedicalStock, Medicine, Potency } from "../models/MedicineModel.js";
+import { medicalItem, medicalOrder, MedicalOrderId, MedicalStock, Medicine, Potency } from "../models/MedicineModel.js";
 import { Employee } from "../models/EmployeeModel.js";
 import { Task } from "../models/TaskModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
@@ -26,6 +26,7 @@ export const register = async (req, res) => {
         const employeeExists = await Employee.findOne({ username });
         if (employeeExists) {
             res.json({ success: false, message: "Employee Already Exists" });
+            return;
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
 
@@ -257,7 +258,8 @@ export const add_item_stock = async (req, res) => {
 // Get Item Stock
 export const get_item_stock = async (req, res) => {
     try {
-        const itemStock = await ItemStock.find({});
+        const { branch } = req.params;
+        const itemStock = await ItemStock.find({branch});
         return res.json({
             itemStock
         });
@@ -328,6 +330,35 @@ export const updateItemStock = async (req, res) => {
     }
 };
 
+export const addOrderId = async (req, res) => {
+    try {
+        const { orderID,itemID,item } = req.body;
+        await OrderId.create({ order: orderID,itemId:itemID,item:item });
+        res.json({
+            message: "OrderId added",
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const getOrderId = async (req, res) => {
+    try {
+        const order = await OrderId.find();
+        res.json({
+            order
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
 
 export const place_item_order = async (req, res) => {
 
@@ -381,11 +412,9 @@ export const updateReceivedOrder = async (req, res) => {
     try {
         const { itemId, orderId } = req.params;
         const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag, received_date } = req.body;
-
         const order = await Order.findById(orderId);
-
         const item = order?.formRows.filter((order) => order?._id.toString() === itemId);
-
+        
         if (receivedQuantity != undefined) {
             item[0].receivedQuantity = receivedQuantity;
             const itemExist = await ItemStock.findByIdAndUpdate(
@@ -407,8 +436,9 @@ export const updateReceivedOrder = async (req, res) => {
             item[0].received_date = received_date
         }
         await order.save();
-        // const fetchItem = await ItemStock.findById(item[0].itemId);
-        // console.log(fetchItem)
+
+        const orderIdDelete = await OrderId.findOneAndDelete({ order: orderId });
+        
         res.json({
             items: item[0]
         });
@@ -792,6 +822,36 @@ export const get_Medical_Order = async (req, res) => {
         res.json({
             succes: false,
             message: error.message
+        })
+    }
+}
+
+export const addMedicalOrderId = async (req, res) => {
+    try {
+        const { orderID,medicineID,medicine } = req.body;
+        await MedicalOrderId.create({ order: orderID,medicineId:medicineID,medicine:medicine });
+        res.json({
+            message: "MedcialOrderId added",
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const getMedicalOrderId = async (req, res) => {
+    try {
+        const medicalOrder = await MedicalOrderId.find();
+        res.json({
+            medicalOrder
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
         })
     }
 }
