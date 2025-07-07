@@ -9,29 +9,26 @@ import SearchSelect from '../SearchSelect';
 const UploadCase = ({ onClose }) => {
   const { patients, getPatientDetails } = recStore();
   const { uploadCase } = docStore();
-      const [isSubmit, setSubmit] = useState(false);
-  
+  const [isSubmit, setSubmit] = useState(false);
+
   useEffect(() => {
     getPatientDetails();
   }, [isSubmit]);
 
   const patientArray = patients.map((patient) => ({
     value: patient?._id,
-    label: `${patient?.fullname} / ${patient?.casePaperNo?patient?.casePaperNo:'-'} / ${patient?.phone} (M)`,
+    label: `${patient?.fullname} / ${patient?.casePaperNo ? patient?.casePaperNo : '-'} / ${patient?.phone} (M)`,
   }));
 
   const [image, setImage] = useState(null);
-  const [selectedPatient, setSelectedPatient] = useState(null); 
+  const [selectedPatient, setSelectedPatient] = useState(null);
 
   async function handleSubmit(e) {
-    
-    
     try {
-      e.preventDefault(); 
-
-    const formData = new FormData();
-    formData.append("caseImage", image);
-      await uploadCase(formData, selectedPatient); 
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("caseImage", image);
+      await uploadCase(formData, selectedPatient);
       setSubmit((prev) => !prev);
       onClose();
     } catch (error) {
@@ -54,7 +51,7 @@ const UploadCase = ({ onClose }) => {
             Upload New Case Paper Images
           </h1>
           <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-12 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
-            
+
             {/* Patient Selection */}
             <div className="flex flex-col gap-2">
               <h1>Patient Case Paper Number</h1>
@@ -62,7 +59,7 @@ const UploadCase = ({ onClose }) => {
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <User className="size-4 text-blue-500" />
                 </div>
-                  <SearchSelect options={patientArray} setSelectedPatient={setSelectedPatient} />
+                <SearchSelect options={patientArray} setSelectedPatient={setSelectedPatient} />
 
               </div>
             </div>

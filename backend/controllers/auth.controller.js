@@ -9,13 +9,14 @@ import { Employee } from "../models/EmployeeModel.js";
 export const register = async (req, res) => {
     try {
         const { fullname, phone, Altphone, email, username, lastLogin, password, branch } = req.body;
+        const isBranch = branch === 'Mulund' ? 'MUL' : 'DOM';
         const existUser = await Patient.findOne({ username });
         if (existUser) {
             return res.status(400).json({ success: false, message: "Already exists try logging in." })
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         const newUser = new Patient({
-            fullname, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
+            fullname,casePaperNo:`${isBranch}-NEW`, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
         })
         await newUser.save();
         generateTokenAndSetCookie(res, newUser._id);
@@ -149,7 +150,7 @@ export const checkAuth = async (req, res) => {
         if (req.role === 'patient') {
             user = await Patient.findById(req.userId).select("-password");
             if (user) {
-                res.status(200).json({ success: true, user: { ...user, role: "patient" } });
+                res.status(200).json({ success: true, user });
             }
         } else {
             user = await Employee.findById(req.userId).select("-password");
@@ -159,11 +160,9 @@ export const checkAuth = async (req, res) => {
             }
             else {
                 return res.status(400).json({ success: false, message: "Not found" });
-
             }
         }
     } catch (error) {
-        console.log("checkauth", error.message);
         res.status(400).json({
             success: false,
             message: error.message

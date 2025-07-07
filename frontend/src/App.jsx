@@ -63,6 +63,7 @@ import PayBalance from "./pages/HR/PayBalance";
 import HomeoBhagwat from "./pages/Doctor/HomeoBhagwat";
 import AudioRecorder from "./pages/Doctor/AudioRecorder";
 import HomeLayout from "./components/Layouts/HomeLayout";
+import PatientLayout from "./components/Layouts/PatientLayout";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -107,17 +108,20 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeLayout />}>
             <Route index element={<Home />} />//
-            <Route path="/login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />//
-            <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />//
-            <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />//
-            <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />//            
+            <Route path="login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />//
+            <Route path="register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />//
+            <Route path="forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />//
+            <Route path="reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />//
           </Route>
+
           <Route path="/access-denied" element={<AccessDenied />} />//
 
-          <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
-          <Route path="/update-profile" element={<ProtectedRoute allowedRoles={['patient']}><UpdateProfile /></ProtectedRoute>} />
-          <Route path="/patient-appointment" element={<ProtectedRoute allowedRoles={['patient']}><PatientAppointment /></ProtectedRoute>} />
-          <Route path="/upload-patient-image" element={<ProtectedRoute allowedRoles={['patient']}><UploadPatientImage /></ProtectedRoute>} />
+          <Route path="/dashboard-PATIENT" element={<PatientLayout />}>
+            <Route index element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />//
+            <Route path="update-profile" element={<ProtectedRoute allowedRoles={['patient']}><UpdateProfile /></ProtectedRoute>} />//
+            <Route path="patient-appointment" element={<ProtectedRoute allowedRoles={['patient']}><PatientAppointment /></ProtectedRoute>} />//after appointment make this
+            <Route path="upload-patient-image" element={<ProtectedRoute allowedRoles={['patient']}><UploadPatientImage /></ProtectedRoute>} />//
+          </Route>
 
           <Route path="/dashboard-DOCTOR" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/appointment-DOCTOR/:branch" element={<ProtectedRoute allowedRoles={['doctor']}><AppointmentList_Doc /></ProtectedRoute>} />
