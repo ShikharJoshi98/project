@@ -11,18 +11,20 @@ export const register = async (req, res) => {
         const { fullname, phone, Altphone, email, username, lastLogin, password, branch } = req.body;
         const existUser = await Patient.findOne({ username });
         if (existUser) {
-            return res.status(400).json({success:false,message:"Already exists try logging in."})
+            return res.status(400).json({ success: false, message: "Already exists try logging in." })
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         const newUser = new Patient({
-            fullname,phone,Altphone,email,username,lastLogin, password:hashedPassword,branch
+            fullname, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
         })
         await newUser.save();
         generateTokenAndSetCookie(res, newUser._id);
-        res.status(200).json({ newUser: {
-            ...newUser._doc,
-            password:undefined
-    } });
+        res.status(200).json({
+            newUser: {
+                ...newUser._doc,
+                password: undefined
+            }
+        });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -34,39 +36,42 @@ export const login = async (req, res) => {
         if (role === 'patient') {
             const user = await Patient.findOne({ username });
             if (!user) {
-            return res.status(400).json({ success: false, message: "Invalid Credentials." });
-        }
-        const isPasswordValid = await bcryptjs.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ success: false, message: "Password incorrect" });
-        }
-        generateTokenAndSetCookie(res, user._id, role);
-        user.lastLogin = new Date();
-        await user.save();
-        res.status(200).json({
-            success: true, message: "Logged in Successfully", User: {
-                ...user._doc,
-                password:undefined,
-                role: "patient"
-        } });
+                return res.status(400).json({ success: false, message: "Invalid Credentials." });
+            }
+            const isPasswordValid = await bcryptjs.compare(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ success: false, message: "Password incorrect" });
+            }
+            generateTokenAndSetCookie(res, user._id, role);
+            user.lastLogin = new Date();
+            await user.save();
+            res.status(200).json({
+                success: true, message: "Logged in Successfully", User: {
+                    ...user._doc,
+                    password: undefined,
+                    role: "patient"
+                }
+            });
         }
         else {
             const user = await Employee.findOne({ username, role });
-        if (!user) {
-            return res.status(400).json({ success: false, message: "Invalid Credentials." });
+            if (!user) {
+                return res.status(400).json({ success: false, message: "Invalid Credentials." });
+            }
+            const isPasswordValid = await bcryptjs.compare(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ success: false, message: "Password incorrect" });
+            }
+            generateTokenAndSetCookie(res, user._id, role);
+            user.lastLogin = new Date();
+            await user.save();
+            res.status(200).json({
+                success: true, message: "Logged in Successfully", User: {
+                    ...user._doc,
+                    password: undefined
+                }
+            });
         }
-        const isPasswordValid = await bcryptjs.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ success: false, message: "Password incorrect" });
-        }
-        generateTokenAndSetCookie(res, user._id, role);
-        user.lastLogin = new Date();
-        await user.save();
-        res.status(200).json({
-            success: true, message: "Logged in Successfully", User: {
-                ...user._doc,
-                password:undefined
-        } });}      
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -77,7 +82,7 @@ export const logout = async (req, res) => {
     res.status(200).json({ success: true, message: "Logged out successfully" });
 }
 
-export const forgotPassword = async (req,res) => {
+export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     try {
         const user = await Patient.findOne({ email });
@@ -97,26 +102,26 @@ export const forgotPassword = async (req,res) => {
     } catch (error) {
         res.status(400).json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
-    
+
 }
 
 export const resetPassword = async (req, res) => {
     try {
         const { token } = req.params;
-    const { password } = req.body;
-    const user = await Patient.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpiresAt: { $gt: Date.now() }
-    });
-    if (!user) {
-        return res.status(400).json({
-            success: false,
-            message: "Invalid or expired Session"
-        })
-    }
+        const { password } = req.body;
+        const user = await Patient.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpiresAt: { $gt: Date.now() }
+        });
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid or expired Session"
+            })
+        }
         const hashedPassword = await bcryptjs.hash(password, 10);
         user.password = hashedPassword;
         user.resetPasswordToken = undefined;
@@ -132,30 +137,33 @@ export const resetPassword = async (req, res) => {
             success: false,
             message: error.message
         })
-    }  
+    }
 }
 
 export const checkAuth = async (req, res) => {
     try {
+        if (!req.role || !req.userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized - missing role or user ID" });
+        }
         let user;
-        if(req.role === 'patient'){
+        if (req.role === 'patient') {
             user = await Patient.findById(req.userId).select("-password");
-            if(user){
-                res.status(200).json({ success: true, user: {...user, role: "patient"} });
+            if (user) {
+                res.status(200).json({ success: true, user: { ...user, role: "patient" } });
             }
-        }else {
+        } else {
             user = await Employee.findById(req.userId).select("-password");
-            
+
             if (req.role === user.role) {
                 res.status(200).json({ success: true, user });
             }
             else {
                 return res.status(400).json({ success: false, message: "Not found" });
-    
+
             }
-        }       
+        }
     } catch (error) {
-        console.log(error.message);
+        console.log("checkauth", error.message);
         res.status(400).json({
             success: false,
             message: error.message

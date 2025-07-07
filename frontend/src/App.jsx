@@ -62,6 +62,7 @@ import Bill from "./pages/HR/Bill";
 import PayBalance from "./pages/HR/PayBalance";
 import HomeoBhagwat from "./pages/Doctor/HomeoBhagwat";
 import AudioRecorder from "./pages/Doctor/AudioRecorder";
+import HomeLayout from "./components/Layouts/HomeLayout";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -104,12 +105,14 @@ function App() {
     <div >
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />
-          <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />
-          <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />
-          <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />
-          <Route path="/access-denied" element={<AccessDenied />} />
+          <Route path="/" element={<HomeLayout />}>
+            <Route index element={<Home />} />//
+            <Route path="/login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />//
+            <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />//
+            <Route path="/forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />//
+            <Route path="/reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />//            
+          </Route>
+          <Route path="/access-denied" element={<AccessDenied />} />//
 
           <Route path="/dashboard-PATIENT" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/update-profile" element={<ProtectedRoute allowedRoles={['patient']}><UpdateProfile /></ProtectedRoute>} />
@@ -145,7 +148,7 @@ function App() {
           <Route path="/new-case-details/:id" element={<ProtectedRoute allowedRoles={['doctor']}><NewCaseDetails /></ProtectedRoute>} />
           <Route path="/audio-recorder/:id" element={<ProtectedRoute allowedRoles={['doctor']}><AudioRecorder /></ProtectedRoute>} />
 
-          
+
           <Route path="/dashboard-HR" element={<ProtectedRoute allowedRoles={['hr']}><HRDashboard /></ProtectedRoute>} />
           <Route path="/items-stock" element={<ProtectedRoute allowedRoles={['hr']}><ItemStock /></ProtectedRoute>} />
           <Route path="/medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock /></ProtectedRoute>} />

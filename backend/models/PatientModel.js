@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 
 const PatientSchema = new mongoose.Schema({
     imageData: { type: Buffer},
-    username: { type: String, required:true },
+    username: { type: String, required: true },
+    role:{type:String,default:'patient'},
     casePaperNo: { type: String },
     caseImages: [
         {
