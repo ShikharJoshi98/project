@@ -13,6 +13,7 @@ const Login = () => {
   const [role, setRole] = useState('PATIENT');
 
   const { login, isLoading, error } = useAuthStore();
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newRole = role.toLowerCase()

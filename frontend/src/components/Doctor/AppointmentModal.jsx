@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Input from '../Input';
+import ReactDOM from "react-dom";
 import { Calendar, Clock, X } from 'lucide-react';
 import { FaUserDoctor } from 'react-icons/fa6';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
@@ -97,7 +98,7 @@ const AppointmentModal = ({ onClose }) => {
       [name]: value,
     }));
   };
-  return (
+  return ReactDOM.createPortal(
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
       <div className="bg-[#e9ecef] overflow-x-hidden max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
         <button
@@ -178,7 +179,8 @@ const AppointmentModal = ({ onClose }) => {
           </form>
         </div>
       </div>
-    </div>
+    </div>,
+        document.getElementById("modal-root")
   )
 }
 

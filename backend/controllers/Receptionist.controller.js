@@ -20,7 +20,7 @@ export const register = async (req, res) => {
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         const newPatient = new Patient({
-            username,casePaperNo:`${isBranch}-NEW` ,fullname, phone, Altphone, email, password: hashedPassword, branch
+            username, casePaperNo: `${isBranch}-NEW`, fullname, phone, Altphone, email, password: hashedPassword, branch
         })
         await newPatient.save();
         res.status(200).json({
@@ -38,8 +38,8 @@ export const updatePatient = async (req, res) => {
     try {
         const { imageData, username, casePaperNo, fullname, age, gender, address, phone, Altphone, email, qualification, occupation, dietaryPreference, weight, bloodPressure, maritalStatus, referredBy, branch } = req.body;
         let updatedpatient;
- 
-        if (casePaperNo.length > 0 && (casePaperNo!=='DOM-NEW' && casePaperNo!=='MUL-NEW')) {
+
+        if (casePaperNo.length > 0 && (casePaperNo !== 'DOM-NEW' && casePaperNo !== 'MUL-NEW')) {
             updatedpatient = await Patient.findByIdAndUpdate(
                 req.params.id,
                 { imageData, username, casePaperNo, Case_Assignment_Flag: true, fullname, age, gender, address, phone, Altphone, email, qualification, occupation, dietaryPreference, weight, bloodPressure, maritalStatus, referredBy, branch },
@@ -57,14 +57,13 @@ export const updatePatient = async (req, res) => {
         if (!updatedpatient) {
             return res.status(404).json({ message: "Patient not found" });
         }
-        res.json(updatedpatient);
+        res.status(200).json(updatedpatient);
 
     } catch (error) {
-        console.log(error.message);
         res.status(500).json({ error: error.message });
-
     }
 }
+
 export const getPatients = async (req, res) => {
     try {
         const patients = await Patient.find();
