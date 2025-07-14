@@ -18,15 +18,15 @@ const HRSidebar = () => {
     return (
         <div>
             <Sidebar>
-                <SidebarItem active={path.pathname === '/items-stock'} onClick={() => navigate("/items-stock")} icon={<ShoppingCart />} text={"Items Stock"} />
-                <SidebarItem active={path.pathname === '/medicine-stock'} onClick={() => navigate("/medicine-stock")} icon={<PillBottle />} text={"Medicine Stock"} />
+                <SidebarItem active={path.pathname === '/dashboard-HR/items-stock'} onClick={() => navigate("/dashboard-HR/items-stock")} icon={<ShoppingCart />} text={"Items Stock"} />
+                <SidebarItem active={path.pathname === '/dashboard-HR/medicine-stock'} onClick={() => navigate("/dashboard-HR/medicine-stock")} icon={<PillBottle />} text={"Medicine Stock"} />
                 <div className='relative'>
-                    <SidebarItem active={path.pathname === '/task-details-HR'} onClick={() => navigate("/task-details-HR")} icon={<ListTodo />} text={"Task Details"} />
+                    <SidebarItem active={path.pathname === '/dashboard-HR/task-details-HR'} onClick={() => navigate("/dashboard-HR/task-details-HR")} icon={<ListTodo />} text={"Task Details"} />
                     {hrTasks.length > 0 && <div className='absolute w-5 h-5 flex items-center justify-center  bg-blue-400 rounded-full top-0 right-1'><span className='p-1'>{hrTasks.length}</span></div>}
                 </div>
-                <SidebarItem active={path.pathname === '/apply-leave-HR'} onClick={() => navigate("/apply-leave-HR")} icon={<CalendarDays />} text={"Apply Leave"} />
-                <SidebarItem active={path.pathname === `/all-courier/${user?.branch}`} onClick={() => navigate(`/all-courier/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
-                <SidebarItem active={path.pathname === '/collections-HR'} onClick={() => navigate("/collections-HR")} icon={<Banknote />} text={"Collections"} />
+                <SidebarItem active={path.pathname === '/dashboard-HR/apply-leave-HR'} onClick={() => navigate("/dashboard-HR/apply-leave-HR")} icon={<CalendarDays />} text={"Apply Leave"} />
+                <SidebarItem active={path.pathname === `/dashboard-HR/all-courier/${user?.branch}`} onClick={() => navigate(`/dashboard-HR/all-courier/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
+                <SidebarItem active={path.pathname === '/dashboard-HR/collections-HR'} onClick={() => navigate("/dashboard-HR/collections-HR")} icon={<Banknote />} text={"Collections"} />
             </Sidebar>
         </div>
     )

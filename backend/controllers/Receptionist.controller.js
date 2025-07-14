@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import Patient from "../models/PatientModel.js";
+import { Appointment } from "../models/AppointmentModel.js";
 
 export const register = async (req, res) => {
     try {
@@ -66,18 +67,50 @@ export const updatePatient = async (req, res) => {
 
 export const getPatients = async (req, res) => {
     try {
-        const patients = await Patient.find();
-        if (patients) {
-            res.json({
-                success: true, patients
-            })
+        const { role, branch } = req.params;
+        let patients;
+        if (role === 'doctor') {
+            patients = await Patient.find();
         }
         else {
-            res.json({
-                success: false, message: "No Data"
-            })
+            patients = await Patient.find({ branch });
         }
+        res.json({
+            success: true, patients
+        })
     } catch (error) {
         res.json({ success: false, message: error.message });
+    }
+}
+
+export const getPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const patient = await Patient.findById(id);
+        res.json({
+            patient,
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
+export const getAppointment = async (req, res) => {
+    try {
+        const { branch } = req.params;
+        const appointments = await Appointment.find({ branch }).populate('Doctor').populate('PatientCase');
+        res.json({
+            appointments,
+            success:true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message:error.message
+        })
     }
 }

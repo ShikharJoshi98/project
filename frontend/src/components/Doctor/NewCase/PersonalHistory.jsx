@@ -1,11 +1,6 @@
-import { Eraser, Pen, Plus, Redo, Trash, Undo } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react'
-import { ReactSketchCanvas } from 'react-sketch-canvas';
 import Scribble from '../Scribble';
 
 const PersonalHistory = ({complaint}) => {
- 
-
     const historyArray = ["Desire", "Aversion", "Appetite", "Thirst", "Stool", "Urine", "Sleep", "Dreams", "Menstrual History", "Obstetric History", "Sexual History"];
 
     return (

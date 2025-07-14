@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { ReactSketchCanvas } from 'react-sketch-canvas'
 import { DOC_API_URL } from '../../store/DocStore';
 import { useParams } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Scribble = ({ complaint }) => {
     const canvasRef = useRef(null);
@@ -55,7 +56,7 @@ const Scribble = ({ complaint }) => {
                 await axios.post(`${DOC_API_URL}/add-mentalCausative-scribble/${id}`, { savedImage: mentalCausativeData });
                 canvasRef.current?.clearCanvas();
                 window.scrollTo(0, 0);
-
+                toast("Saved");
                 break;
             case 'Chief Complaints':
                 const chiefComplaintData = await canvasRef.current.exportImage("png");
@@ -63,58 +64,40 @@ const Scribble = ({ complaint }) => {
                     `${DOC_API_URL}/add-chiefComplaint-scribble/${id}`, { savedImage: chiefComplaintData });
                 canvasRef.current?.clearCanvas();
                 window.scrollTo(0, 0);
-
+                toast("Saved");
                 break;
             case 'Personal History':
                 const personalHistoryData = await canvasRef.current.exportImage("png");
                 await axios.post(`${DOC_API_URL}/add-personalHistory-scribble/${id}`, { savedImage: personalHistoryData });
                 canvasRef.current?.clearCanvas();
                 window.scrollTo(0, 0);
-
+                toast("Saved");
                 break;
             case 'Mental Personality Character':
                 const mentalPersonalityData = await canvasRef.current.exportImage("png");
                 await axios.post(`${DOC_API_URL}/add-mentalPersonality-scribble/${id}`, { savedImage: mentalPersonalityData });
                 canvasRef.current?.clearCanvas();
                 window.scrollTo(0, 0);
-
+                toast("Saved");
                 break;
             case 'Brief Mind Symptoms':
                 const briefMindSymptomData = await canvasRef.current.exportImage("png");
                 await axios.post(`${DOC_API_URL}/add-briefMindSymptom-scribble/${id}`, { savedImage: briefMindSymptomData });
                 canvasRef.current?.clearCanvas();
                 window.scrollTo(0, 0);
-
+                toast("Saved");
                 break;
         }
     }
     return (
-
-        <div className="bg-[rgb(248,249,250)] rounded-xl  ">
+        <div className="bg-[rgb(248,249,250)] rounded-xl">
+            <ToastContainer/>
             <div className='mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[85vw]'>
                 <div id="canvas-wrapper" style={{ touchAction: "none", pointerEvents: "auto" }} className="flex-1">
-                    <ReactSketchCanvas
-                        ref={canvasRef}
-                        width="100%"
-                        height="1073px"
-                        strokeColor="black"
-                        canvasColor="white"
-                        strokeWidth={strokeWidth}
-                        eraserWidth={20}
-                        className="!rounded-md !border-2 !border-blue-400"
-                    />
+                    <ReactSketchCanvas ref={canvasRef} width="100%" height="1073px" strokeColor="black" canvasColor="white" strokeWidth={strokeWidth} eraserWidth={20} className="!rounded-md !border-2 !border-blue-400"/>
                 </div>
-
                 <div className="flex flex-col items-center justify-start gap-4 p-2">
-                    <button
-                        title="Pen"
-                        onClick={() => handleToolChange("pen")}
-                        disabled={!eraseMode}
-                        className={`p-3 rounded-lg border-2 bg-gray-200 shadow-md transition ${eraseMode
-                            ? "text-black border-blue-400"
-                            : "text-gray-400 border-gray-300"
-                            }`}
-                    >
+                    <button title="Pen" onClick={() => handleToolChange("pen")} disabled={!eraseMode} className={`p-3 rounded-lg border-2 bg-gray-200 shadow-md transition ${eraseMode? "text-black border-blue-400": "text-gray-400 border-gray-300"}`}>
                         <Pen size={16} />
                     </button>
                     <div className="flex flex-col items-center gap-1">

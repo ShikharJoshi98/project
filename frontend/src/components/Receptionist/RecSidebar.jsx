@@ -22,15 +22,15 @@ const RecSidebar = () => {
 
     return (
         <Sidebar>
-            <SidebarItem active={path.pathname === '/patient-details'} onClick={() => navigate('/patient-details')} icon={<BiSolidUserDetail size={25} />} text={"Patient Details"} />
-            <SidebarItem active={path.pathname === '/items-stock-rec'} onClick={() => navigate('/items-stock-rec')} icon={<ShoppingCart />} text={"Items Stock"} />
-            <SidebarItem active={path.pathname === '/medicine-stock-rec'} onClick={() => navigate('/medicine-stock-rec')} icon={<PillBottle />} text={"Medicine Stock"} />
+            <SidebarItem active={path.pathname === '/dashboard-RECEPTIONIST/patient-details'} onClick={() => navigate('/dashboard-RECEPTIONIST/patient-details')} icon={<BiSolidUserDetail size={25} />} text={"Patient Details"} />
+            <SidebarItem active={path.pathname === '/dashboard-RECEPTIONIST/items-stock-rec'} onClick={() => navigate('/dashboard-RECEPTIONIST/items-stock-rec')} icon={<ShoppingCart />} text={"Items Stock"} />
+            <SidebarItem active={path.pathname === '/dashboard-RECEPTIONIST/medicine-stock-rec'} onClick={() => navigate('/dashboard-RECEPTIONIST/medicine-stock-rec')} icon={<PillBottle />} text={"Medicine Stock"} />
             <div className='relative'>
-                <SidebarItem active={path.pathname === '/task-details-rec'} onClick={() => navigate('/task-details-rec')} icon={<ListTodo />} text={"Task Details"} />
+                <SidebarItem active={path.pathname === '/dashboard-RECEPTIONIST/task-details-rec'} onClick={() => navigate('/dashboard-RECEPTIONIST/task-details-rec')} icon={<ListTodo />} text={"Task Details"} />
                 {recTasks.length > 0 && <div className='absolute w-5 h-5 flex items-center justify-center  bg-blue-400 rounded-full top-0 right-1'><span className='p-1'>{recTasks.length}</span></div>}
             </div>
-            <SidebarItem active={path.pathname === '/apply-leave-rec'} onClick={() => navigate('/apply-leave-rec')} icon={<CalendarDays />} text={"Apply Leave"} />
-            <SidebarItem active={path.pathname === `/courier-list-rec/${user?.branch}`} onClick={() => navigate(`/courier-list-rec/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
+            <SidebarItem active={path.pathname === '/dashboard-RECEPTIONIST/apply-leave-rec'} onClick={() => navigate('/dashboard-RECEPTIONIST/apply-leave-rec')} icon={<CalendarDays />} text={"Apply Leave"} />
+            <SidebarItem active={path.pathname === `/dashboard-RECEPTIONIST/courier-list-rec/${user?.branch}`} onClick={() => navigate(`/dashboard-RECEPTIONIST/courier-list-rec/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
             <SidebarItem onClick={() => setUploadModalIsOpen(true)} icon={<LuScrollText size={25} />} text={"Upload Old Case Paper"} />
             {isUploadModalOpen && <UploadCase onClose={() => setUploadModalIsOpen(false)} />}
 

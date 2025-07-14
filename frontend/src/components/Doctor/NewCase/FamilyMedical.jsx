@@ -1,6 +1,4 @@
-import { PlusCircle, Trash, User, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
-import MultiSelectDropdown from '../MultiSelectInput';
+import { useEffect, useState } from 'react'
 import Input from '../../Input';
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
@@ -8,6 +6,8 @@ import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import MultiSelectInput from '../MultiSelectInput';
+import { FaUsers } from 'react-icons/fa';
+import { CiCirclePlus, CiTrash, CiUser } from 'react-icons/ci';
 
 const FamilyMedical = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
@@ -25,7 +25,8 @@ const FamilyMedical = ({ complaint }) => {
     })
 
     useEffect(() => { getCaseData(complaint); getFamilyMedicalData(id) },
-        [getCaseData, getFamilyMedicalData,submit]);
+        [getCaseData, getFamilyMedicalData, submit]);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -40,7 +41,7 @@ const FamilyMedical = ({ complaint }) => {
             });
             setSelectedInvestigationOptions([]);
         } catch (error) {
-            console.log(error.message);
+            console.error(error.message);
         }
     }
     const handleInputChange = (e) => {
@@ -55,7 +56,7 @@ const FamilyMedical = ({ complaint }) => {
             await axios.delete(`${DOC_API_URL}/deleteFamilyMedical/${id}`);
             setSubmit(prev => !prev);
         } catch (error) {
-            console.log(error.message);
+            console.error(error.message);
         }
     }
 
@@ -64,12 +65,12 @@ const FamilyMedical = ({ complaint }) => {
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold'>Add {complaint}</h1>
-                    <button type='button' onClick={()=>{setFormValues({patient: "",relation: "",anyOther: "",lifeStatus: "",age: ""}); setSelectedInvestigationOptions([]);}} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg text-white">Clear Form</button>
+                    <button type='button' onClick={() => { setFormValues({ patient: "", relation: "", anyOther: "", lifeStatus: "", age: "" }); setSelectedInvestigationOptions([]); }} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg text-white">Clear Form</button>
                     <div className='flex flex-col gap-2'>
                         <h1>Relation*</h1>
                         <div className='relative w-full '>
                             <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                <Users className="size-4 text-blue-500" />
+                                <FaUsers className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="relation" value={formValues.relation} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
                                 <option value="" disabled selected className='font-normal ' >Please Select the Relation</option>
@@ -90,13 +91,13 @@ const FamilyMedical = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Any Other</h1>
-                        <Input icon={PlusCircle} onChange={handleInputChange} name="anyOther" value={formValues.anyOther} type="text" placeholder="Enter if any other" />
+                        <Input icon={CiCirclePlus} onChange={handleInputChange} name="anyOther" value={formValues.anyOther} type="text" placeholder="Enter if any other" />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Dead alive* </h1>
                         <div className='relative w-full '>
                             <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                <User className="size-4 text-blue-500" />
+                                <CiUser className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="lifeStatus" value={formValues.lifeStatus} anyOther className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
                                 <option value="" disabled selected className='font-normal ' >Please Select</option>
@@ -107,7 +108,7 @@ const FamilyMedical = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Age*</h1>
-                        <Input icon={User} onChange={handleInputChange} name="age" value={formValues.age} type="text" placeholder="Enter Age" required />
+                        <Input icon={CiUser} onChange={handleInputChange} name="age" value={formValues.age} type="text" placeholder="Enter Age" required />
                     </div>
                     <button className="bg-blue-500 block mx-auto transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>
                 </form>
@@ -147,7 +148,7 @@ const FamilyMedical = ({ complaint }) => {
                                     <td className='py-2 px-2 text-center'>{data?.diseases.join(',')}</td>
                                     <td className='py-2 px-2 text-center'>{data?.anyOther}</td>
                                     <td className='py-2 px-2 text-center'>{data?.lifeStatus}</td>
-                                    <td onClick={() => deleteFamilyMedical(data?._id)} className='py-2 px-1 place-items-center'><Trash /></td>
+                                    <td onClick={() => deleteFamilyMedical(data?._id)} className='py-2 px-1 place-items-center'><CiTrash /></td>
                                 </tr>
                             ))
                         }

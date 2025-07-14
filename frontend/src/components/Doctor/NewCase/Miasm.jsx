@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MultiSelectDropdown from '../MultiSelectInput';
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Trash } from 'lucide-react';
+import { CiTrash } from 'react-icons/ci';
 
 const Miasm = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
     const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
-    const { getCaseData, list,getMiasm,MiasmData } = docStore();
+    const { getCaseData, list, getMiasm, MiasmData } = docStore();
     const [submit, setSubmit] = useState(false);
-    console.log(MiasmData);
+
     const listType = list.map((data) => data?.name);
     const { id } = useParams();
-    useEffect(() => { getCaseData(complaint);  getMiasm(id)},
-        [getCaseData,getMiasm,submit]);
-    const handleSubmit =async (e) => {
+    useEffect(() => { getCaseData(complaint); getMiasm(id) },
+        [getCaseData, getMiasm, submit]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         await axios.post(`${DOC_API_URL}/add-miasm-patient/${id}`, {
             selectedInvestigationOptions
@@ -25,14 +26,16 @@ const Miasm = ({ complaint }) => {
         setSubmit(prev => !prev);
         setSelectedInvestigationOptions([]);
     }
+
     const deleteData = async (id, index) => {
         try {
-          await axios.delete(`${DOC_API_URL}/deleteMiasm/${id}/${index}`);
-          setSubmit(prev => !prev);
+            await axios.delete(`${DOC_API_URL}/deleteMiasm/${id}/${index}`);
+            setSubmit(prev => !prev);
         } catch (error) {
-          console.log(error.message);
+            console.log(error.message);
         }
-      }
+    }
+
     return (
         <div>
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
@@ -66,7 +69,7 @@ const Miasm = ({ complaint }) => {
                     {MiasmData[0]?.diseases.map((data, index) => (
                         <div className='text-xl flex items-center gap-8' key={index}>
                             <p>{index + 1}. {data}</p>
-                            <Trash onClick={() => deleteData(MiasmData[0]?.patient, index)} className='cursor-pointer' />
+                            <CiTrash onClick={() => deleteData(MiasmData[0]?.patient, index)} className='cursor-pointer' />
                         </div>
                     ))}
                 </div>

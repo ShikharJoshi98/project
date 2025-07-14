@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
 import { recStore } from '../../store/RecStore'
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,12 +6,13 @@ import { DOC_API_URL, docStore } from '../../store/DocStore';
 import axios from 'axios';
 import { updateDate } from '../../store/todayDate';
 import { useAuthStore } from '../../store/authStore';
-import { HR_API_URL } from '../../store/UpdateStore';
+import { HR_API_URL, useStore } from '../../store/UpdateStore';
 
 const Bill = () => {
     const { getPatientDetails, patients } = recStore();
-    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue, appointmentSection, getAppdetails, appointments } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue, appointmentSection } = docStore();
     const { user } = useAuthStore();
+    const { getAppointmentDetails, appointments } = useStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id } = useParams();
     const navigate = useNavigate();
@@ -22,13 +23,13 @@ const Bill = () => {
     const [address, setAddress] = useState('');
     const todayDate = updateDate();
     useEffect(() => {
-        getPatientDetails();
+        getPatientDetails(user?.role, user?.branch);
         fetchPrescription(id);
         getBillInfo(id);
         getBalanceDue(id);
-        getAppdetails(appointmentSection);
-    }, [getPatientDetails, fetchPrescription, prescriptionSubmit, getAppdetails, appointmentSection]);
-    const appointment = appointments.filter((appointment) => appointment?.PatientCase._id === id && appointment?.date === todayDate);
+        getAppointmentDetails(user?.branch, appointmentSection);
+    }, [getPatientDetails, fetchPrescription, prescriptionSubmit, getAppointmentDetails,appointmentSection]);
+    const appointment = appointments.filter((appointment) => appointment?.PatientCase?._id === id && appointment?.date === todayDate);
     const patient = patients.filter((patient) => patient?._id === id);
     const [email, setEmail] = useState('');
     useEffect(() => {
@@ -57,12 +58,12 @@ const Bill = () => {
                 appointmentType: appointment[0]?.appointmentType,
                 paymentCollectedBy: user?._id,
                 transactionDetails,
-                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance) + parseInt(courierAmount))
+                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount))
             });
             if(appointment[0]?.appointmentType==='courier'){
             await axios.post(`${HR_API_URL}/courierPayment/${id}`, {
                 billPaid: parseInt(amountPaid),
-                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance) + parseInt(courierAmount)),
+                totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)),
                 transactionDetails,
                 paymentCollectedBy: user?._id,
                 address,
@@ -113,8 +114,8 @@ const Bill = () => {
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Total Amount : </p><p>Rs {billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice}</p></div>
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Balance Dues : </p><p>Rs {balanceDue?.dueBalance < 0 ? balanceDue?.dueBalance + ' Advance' : balanceDue?.dueBalance > 0 ? balanceDue?.dueBalance + ' Balance' : '0'}</p></div>
                         <hr className='my-3 h-0.5 w-full border-none bg-blue-500' />
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Amount to be Paid : </p><p className='text-lg sm:text-2xl'>Rs {billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance)}</p></div>
-                        {appointment[0]?.appointmentType === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance) + parseInt(courierAmount)) }}>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Amount to be Paid : </p><p className='text-lg sm:text-2xl'>Rs {billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance)}</p></div>
+                        {appointment[0]?.appointmentType === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)) }}>
                             <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Courier Amount : </p><input type="number" onChange={(e) => setCourierAmount(e.target.value)} required className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md' /></div>
                             <button type='submit' className='bg-yellow-500 block text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Grand Total</button>
                         </form>}

@@ -11,20 +11,23 @@ export const docStore = create((set) => ({
     leaves: [],
     userLeaves:[],
     appointments: [],
-    allAppointments: [],
+    domGeneralAppointments: [],
+    mulGeneralAppointments: [],
+    domRepeatAppointments: [],
+    mulRepeatAppointments: [],
+    domCourierAppointments: [],
+    mulCourierAppointments: [],
     Homeo: [],
     appointment: null,
     caseImages: [],
     prescription: [],
     diagnosisImages: [],
-    followUpImages: [],
-    writeUp: [],
+    historyDetails:[],
     allPrescriptions: [],
     list: [],
     payment: [],
     PresentComplaintData: [],
-    PresentComplaintScribble: [],
-    PresentComplaintWriteUp: [],
+    
     briefMindSymptomScribble: [],
     PastHistoryData: [],
     FamilyMedicalData: [],
@@ -75,7 +78,6 @@ export const docStore = create((set) => ({
     DeleteTask: async (id) => {
         try {
             await axios.delete(`${DOC_API_URL}/delete-task/${id}`);
-
         } catch (error) {
             console.log(error.message);
         }
@@ -199,39 +201,26 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    deleteHomeo: async (id) => {
+    getAllAppointments: async (Doctor) => {
         try {
-            const response = await axios.delete(`${DOC_API_URL}/homeo-delete/${id}`)
-
-        } catch (error) {
-            console.log(error.message);
-        }
-    },
-    getAllAppointments: async () => {
-        try {
-            const response = await axios.get(`${DOC_API_URL}/get-appointments`);
-            set({ allAppointments: response.data.appointments })
-
+            const response = await axios.get(`${DOC_API_URL}/allAppointments/${Doctor}`);
+            set({ domGeneralAppointments: response.data.domGeneralAppointments });
+            set({ mulGeneralAppointments: response.data.mulGeneralAppointments });
+            set({ domRepeatAppointments: response.data.domRepeatAppointments });
+            set({ mulRepeatAppointments: response.data.mulRepeatAppointments });
+            set({ domCourierAppointments: response.data.domCourierAppointments });
+            set({ mulCourierAppointments: response.data.mulCourierAppointments });
         } catch (error) {
             console.log(error.message);
         }
     },
     getAppdetails: async (appointmentType) => {
-        let response = await axios.get(`${DOC_API_URL}/allAppointments`);
-
+        let response = await axios.get(`${DOC_API_URL}/Appointments/${appointmentType}`);
         set({ appointments: response.data.Appointments });
     },
     deleteCaseImage: async (patientId, imageId) => {
         let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);
 
-    },
-    getFollowUpImages: async (id) => {
-        try {
-            const response = await axios.get(`${DOC_API_URL}/get-follow-up-patient/${id}`)
-            set({ followUpImages: response.data.followUpImages });
-        } catch (error) {
-            console.log(error.message);
-        }
     },
     fetchPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);
@@ -242,9 +231,13 @@ export const docStore = create((set) => ({
         const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);
         set({ allPrescriptions: response.data.presToday });
     },
-    getWriteUp: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}/get-write-up-patient/${id}`);
-        set({ writeUp: response.data.writeUpData });
+    getHistoryDetails: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getHistoryDetails/${id}`);
+        set({historyDetails:response.data.combinedArray})
+    },
+    getPresentComplaint: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getPresentComplaint/${id}`);
+        set({PresentComplaintData:response.data.combinedArray})
     },
     getCaseData: async (complaint) => {
         const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(/\s+/g, "")}`);

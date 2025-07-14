@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaAngleDoubleLeft } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom'
 import { recStore } from '../../store/RecStore';
@@ -15,32 +15,31 @@ import ThermalReaction from '../../components/Doctor/NewCase/ThermalReaction';
 import Miasm from '../../components/Doctor/NewCase/Miasm';
 
 const NewCaseDetails = () => {
-    const { patients, getPatientDetails } = recStore();
+    const { patient, getPatient } = recStore();
     const navigate = useNavigate();
     const location = useParams();
     const [complaint, setComplaint] = useState('Present Complaints');
     const [isHealthAssessmentModalOpen, setHealthAssessmentModalIsOpen] = useState(false);
 
     useEffect(() => {
-        getPatientDetails();
-    }, [getPatientDetails])
+        getPatient(location.id);
+    }, [getPatient]);
 
-    const patient = patients.filter((cand => (cand._id) === location.id));
-    const testArray = [{ title: 'Present Complaints', color: 'green' }, { title: 'Chief Complaints', color: 'blue' }, { title: 'Past History', color: 'brown' }, { title: 'Personal History', color: 'orange' }, { title: 'Family Medical', color: 'blue' }, { title: 'Mental Causative Factor', color: 'black' }, { title: 'Mental Personality Character', color: 'purple' }, { title: 'Brief Mind Symptoms', color: 'green' }, { title: 'Thermal Reaction', color: 'brown' }, { title: 'Miasm', color: 'indigo' }];
-    
+    const testArray = [{ title: 'Present Complaints', color: 'green' }, { title: 'Chief Complaints', color: 'blue' }, { title: 'Past History', color: 'brown' }, { title: 'Personal History', color: 'orange' }, { title: 'Family History', color: 'blue' }, { title: 'Mental Causative Factor', color: 'black' }, { title: 'Mental Personality Character', color: 'purple' }, { title: 'Brief Mind Symptoms', color: 'green' }, { title: 'Thermal Reaction', color: 'brown' }, { title: 'Miasm', color: 'indigo' }];
+
     return (
         <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
             <div className='text-stone-800 w-fit text-sm sm:text-xl flex flex-wrap items-center gap-5 font-semibold m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
-                <h1>{patient[0]?.fullname} </h1>
+                <h1>{patient?.fullname} </h1>
                 <p className='text-blue-400'>|</p>
                 <div className='flex items-center gap-2'>
                     <h1>Contact No. -</h1>
-                    <h1>{patient[0]?.phone}</h1>
+                    <h1>{patient?.phone}</h1>
                 </div>
                 <p className='text-blue-400'>|</p>
                 <div className='flex items-center gap-2'>
                     <h1>Case Paper No. -</h1>
-                    <h1>{patient[0]?.casePaperNo}</h1>
+                    <h1>{patient?.casePaperNo}</h1>
                 </div>
             </div>
             <div className="bg-[#e9ecef] w-auto  p-5 mx-10 my-6 rounded-lg">
@@ -60,15 +59,15 @@ const NewCaseDetails = () => {
                     }
                 </ul>
                 {complaint === 'Present Complaints' && <PresentComplaints complaint={complaint} />}
-                {complaint === 'Chief Complaints' && <ChiefComplaints complaint={complaint}/>}
+                {complaint === 'Chief Complaints' && <ChiefComplaints complaint={complaint} />}
                 {complaint === 'Past History' && <PastHistory complaint={complaint} />}
-                {complaint === 'Personal History' && <PersonalHistory complaint={complaint}/>}
-                {complaint === 'Family Medical' && <FamilyMedical complaint={complaint}/>}
-                {complaint === 'Mental Causative Factor' && <MentalCausative complaint={complaint}/>}
-                {complaint === 'Mental Personality Character' && <MentalPersonality complaint={complaint}/>}
-                {complaint === 'Brief Mind Symptoms' && <BriefMindSymptom complaint={complaint}/>}
-                {complaint === 'Thermal Reaction' && <ThermalReaction complaint={complaint}/>}
-                {complaint === 'Miasm' && <Miasm complaint={complaint}/>}
+                {complaint === 'Personal History' && <PersonalHistory complaint={complaint} />}
+                {complaint === 'Family History' && <FamilyMedical complaint={complaint} />}
+                {complaint === 'Mental Causative Factor' && <MentalCausative complaint={complaint} />}
+                {complaint === 'Mental Personality Character' && <MentalPersonality complaint={complaint} />}
+                {complaint === 'Brief Mind Symptoms' && <BriefMindSymptom complaint={complaint} />}
+                {complaint === 'Thermal Reaction' && <ThermalReaction complaint={complaint} />}
+                {complaint === 'Miasm' && <Miasm complaint={complaint} />}
             </div>
             {isHealthAssessmentModalOpen && <HealthAssessmentModal onClose={() => setHealthAssessmentModalIsOpen(false)} />}
         </div>

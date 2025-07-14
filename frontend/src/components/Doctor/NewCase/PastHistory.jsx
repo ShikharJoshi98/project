@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Input from '../../Input'
-import { Calendar, ClipboardPlus, Trash } from 'lucide-react'
 import { BiCalendar } from 'react-icons/bi';
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { CiCalendar, CiMedicalClipboard, CiTrash } from 'react-icons/ci';
 
 const PastHistory = ({ complaint }) => {
     const [pastHistoryInput, setpastHistoryInput] = useState("");
@@ -21,7 +21,8 @@ const PastHistory = ({ complaint }) => {
         duration: "",
         durationSuffix: "",
         remark: "",
-    })
+    });
+    
     useEffect(() => { getCaseData('Present Complaints'); getPastHistoryData(id) },
         [getCaseData, getPastHistoryData, submit]);
 
@@ -48,7 +49,7 @@ const PastHistory = ({ complaint }) => {
                 remark: "",
             });
         } catch (error) {
-            console.log(error.message);
+            console.error(error.message);
         }        
     }
 
@@ -57,22 +58,22 @@ const PastHistory = ({ complaint }) => {
             const respose = await axios.delete(`${DOC_API_URL}/deletepastHistory/${id}`);
             setSubmit(prev => !prev);
         } catch (error) {
-            console.log(error.message);
+            console.error(error.message);
         }
     }
     return (
-        <div>
+        <>
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold mb-9'>Add {complaint}</h1>
                     <button type='button' onClick={()=>{setpastHistoryInput(""); setFormValues({ patient: "",lastDiagnosed: "",lastSuffix: "",duration: "",durationSuffix: "",remark: "",})}} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg mt-3 text-white">Clear Form</button>
                     <div className='flex flex-col gap-2 '>
                         <h1>Complaint*</h1>
-                        <Input icon={ClipboardPlus} onChange={(e) => { setpastHistoryInput(e.target.value); handleInputChange(e) }} type="text" placeholder="Enter Complaint" value={pastHistoryInput} required />
+                        <Input icon={CiMedicalClipboard} onChange={(e) => { setpastHistoryInput(e.target.value); handleInputChange(e) }} type="text" placeholder="Enter Complaint" value={pastHistoryInput} required />
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Last diagnosed*</h1>
-                        <Input icon={Calendar} onChange={handleInputChange} name="lastDiagnosed" value={formValues.lastDiagnosed} type="text" placeholder="eg. : 2,4,5 .." required />
+                        <Input icon={CiCalendar} onChange={handleInputChange} name="lastDiagnosed" value={formValues.lastDiagnosed} type="text" placeholder="eg. : 2,4,5 .." required />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Last Suffix* </h1>
@@ -92,7 +93,7 @@ const PastHistory = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Duration*</h1>
-                        <Input icon={Calendar} onChange={handleInputChange} name="duration" value={formValues.duration} type="text" placeholder="Enter Number for Duration" required />
+                        <Input icon={CiCalendar} onChange={handleInputChange} name="duration" value={formValues.duration} type="text" placeholder="Enter Number for Duration" required />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Duration Suffix* </h1>
@@ -111,7 +112,7 @@ const PastHistory = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Remark</h1>
-                        <Input onChange={handleInputChange} name="remark" value={formValues.remark} icon={Calendar} type="text" placeholder="Enter Remark if any" />
+                        <Input onChange={handleInputChange} name="remark" value={formValues.remark} icon={CiCalendar} type="text" placeholder="Enter Remark if any" />
                     </div>
                     <button className="bg-blue-500 block mx-auto transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>
                 </form>
@@ -153,15 +154,14 @@ const PastHistory = ({ complaint }) => {
                                     <td className='py-2 px-2 text-center'>{data?.lastDiagnosed} {data?.lastSuffix}</td>
                                     <td className='py-2 px-2 text-center'>{data?.duration} {data?.durationSuffix}</td>
                                     <td className='py-2 px-2 text-center'>{data?.remark}</td>
-                                    <td onClick={()=>deletePastHistory(data?._id)} className='py-2 px-1 place-items-center'><Trash/></td>
+                                    <td onClick={()=>deletePastHistory(data?._id)} className='py-2 px-1 place-items-center'><CiTrash/></td>
                                 </tr>
-                            ))
-                       }
+                            ))}
                     </tbody>
                 </table>
             </div>
             {isComplaintModalOpen && <AddComplaintModal onClose={() => setComplaintModalIsOpen(false)} complaint={complaint} />}
-        </div>
+        </>
     )
 }
 

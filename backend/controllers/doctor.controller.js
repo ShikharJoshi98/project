@@ -11,6 +11,7 @@ import { billPayment, fees } from "../models/PaymentModel.js";
 import { ItemStock } from "../models/ItemModel.js";
 import { MedicalStock } from "../models/MedicineModel.js";
 import { BillInvoice, Certificate } from "../models/CertificateModel.js";
+import { updateDate } from "../utils/todayDate.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -197,7 +198,6 @@ export const createNewAppointment = async (req, res) => {
     try {
         const { date, time, PatientCase, Doctor, appointmentType } = req.body;
         const patient = await Patient.findById(PatientCase);
-        console.log(date);
         const dateConverter = (date) => {
             const [y, m, d] = date.split('-');
             const newDate = String(d + '-' + m + '-' + y);
@@ -205,7 +205,7 @@ export const createNewAppointment = async (req, res) => {
         }
         const convertedDate = dateConverter(date);
         const appointmentExist = await Appointment.findOne({
-            PatientCase:PatientCase.toString(),
+            PatientCase: PatientCase.toString(),
             date: convertedDate,
         })
         if (appointmentExist) {
@@ -213,17 +213,17 @@ export const createNewAppointment = async (req, res) => {
                 message: "Appointment exist"
             })
         }
-        const pastAppointment = await Appointment.find({ PatientCase:PatientCase.toString() });
+        const pastAppointment = await Appointment.find({ PatientCase: PatientCase.toString() });
         let newAppointment;
-        
-        if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length-1].new_appointment_flag === false) {
+
+        if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length - 1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
                 date: convertedDate,
                 time,
-                PatientCase:PatientCase.toString(),
+                PatientCase: PatientCase.toString(),
                 Doctor,
                 appointmentType,
-                branch:patient.branch,
+                branch: patient.branch,
                 new_appointment_flag: false,
                 followUp_appointment_flag: true
             })
@@ -232,13 +232,13 @@ export const createNewAppointment = async (req, res) => {
             newAppointment = await Appointment.create({
                 date: convertedDate,
                 time,
-                PatientCase:PatientCase.toString(),
+                PatientCase: PatientCase.toString(),
                 Doctor,
-                appointmentType,    
-                branch:patient.branch,
+                appointmentType,
+                branch: patient.branch,
             })
         }
-        
+
         res.json({
             newAppointment
         })
@@ -251,9 +251,12 @@ export const createNewAppointment = async (req, res) => {
     }
 }
 
-export const getAllAppointments = async (req, res) => {
+export const getAppointments = async (req, res) => {
     try {
-        const Appointments = await Appointment.find({}).populate('PatientCase').populate('Doctor');
+        const { appointmentType } = req.params;
+        const date = updateDate();
+        const Appointments = await Appointment.find({ date, appointmentType }).populate('PatientCase').populate('Doctor');
+       
         return res.json({
             Appointments,
             success: true
@@ -265,6 +268,61 @@ export const getAllAppointments = async (req, res) => {
         })
     }
 }
+
+export const getAllAppointments = async (req, res) => {
+    try {
+        const { Doctor } = req.params;
+        const date = updateDate();
+
+        const result = await Appointment.aggregate([
+            {
+                $match: {
+                    date,
+                    Doctor: new mongoose.Types.ObjectId(Doctor),
+                    complete_appointment_flag: false,
+                    medicine_issued_flag: false,
+                    branch: { $in: ['Dombivali', 'Mulund'] },
+                    appointmentType: { $in: ['general', 'repeat', 'courier'] }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        branch: "$branch",
+                        appointmentType: "$appointmentType"
+                    },
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const counts = {
+            domGeneralAppointments: 0,
+            domRepeatAppointments: 0,
+            domCourierAppointments: 0,
+            mulGeneralAppointments: 0,
+            mulRepeatAppointments: 0,
+            mulCourierAppointments: 0
+        };
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        result.forEach(({ _id, count }) => {
+            const key = `${_id.branch === 'Dombivali' ? 'dom' : 'mul'}${capitalize(_id.appointmentType)}Appointments`;
+            counts[key] = count;
+        });
+
+        res.json({
+            success: true,
+            ...counts
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
 
 export const updateAppointment = async (req, res) => {
     try {
@@ -320,7 +378,6 @@ export const updateAppointment = async (req, res) => {
 // }
 
 export const HomeoBhagwat = async (req, res) => {
-
     try {
         const { name, description, section } = req.body;
         const newInfo = new Homeo({
@@ -340,6 +397,7 @@ export const HomeoBhagwat = async (req, res) => {
         })
     }
 }
+
 export const getHomeoBhagwat = async (req, res) => {
 
     try {
@@ -1030,25 +1088,84 @@ export const addFollowUpPatient = async (req, res) => {
     }
 }
 
-export const getFollowUpPatient = async (req, res) => {
+export const getHistoryDetails = async (req, res) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
 
-        const followUpImages = await FollowUpPatient.find({
-            patient: id
-        })
+        const followUpImages = await FollowUpPatient.find({ patient: id }).sort({ date: -1 });
+        const writeUp = await WriteUpPatient.find({ patient: id }).sort({ date: -1 });
 
-        return res.json({
-            followUpImages
-        })
+        let combineObject = {};
 
+        writeUp?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    followUps: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].writeUps.push({writeUp:item?.writeUp_value,id:item?._id});
+        });
+
+        followUpImages?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    followUps: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].followUps.push({followUp:item?.follow_string,id:item?._id});
+        });
+
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date));
+        res.json({ success: true, combinedArray });
     } catch (error) {
-        console.log("Error in getFollowUpPatient controller", error.message);
-        return res.json({
+        res.json({
+            success: false,
             message: error.message
         });
     }
+};
+
+export const getPresentComplaintHistory = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const scribble = await PresentComplaintScribble.find({ patient: id }).sort({ date: -1 });
+        const writeUp = await PresentComplaintWriteUp.find({ patient: id }).sort({ date: -1 });
+         let combineObject = {};
+
+        writeUp?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    scribble: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].writeUps.push({writeUp:item?.writeUp_value,id:item?._id});
+        });
+
+        scribble?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    scribble: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].scribble.push({scribble:item?.follow_string,id:item?._id});
+        });
+
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date));
+        res.json({ success: true, combinedArray });
+    } catch (error) {
+        res.js
+    }
 }
+
 
 //FOLLOW-UP WRITE PAD
 export const addWriteUpPatient = async (req, res) => {
@@ -1080,26 +1197,6 @@ export const addWriteUpPatient = async (req, res) => {
     }
 }
 
-export const getWriteUpPatient = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const writeUpData = await WriteUpPatient.find({
-            patient: id
-        })
-
-        return res.json({
-            writeUpData
-        });
-
-    } catch (error) {
-        console.log("Error in getWriteUpPatient controller", error.message);
-        return res.json({
-            message: error.message
-        });
-    }
-}
-
 export const getWriteUpUpdate = async (req, res) => {
     try {
         const { id } = req.params;
@@ -1121,7 +1218,6 @@ export const getWriteUpUpdate = async (req, res) => {
 export const deleteWriteUp = async (req, res) => {
     try {
         const { patientId, imageId } = req.params;
-
         if (!mongoose.Types.ObjectId.isValid(imageId)) {
             return res.status(400).json({ message: "Invalid Image ID" });
         }
@@ -2873,12 +2969,12 @@ export const editCertificate = async (req, res) => {
         );
         res.json({
             message: "Updated Successfully",
-            success:true
+            success: true
         })
     } catch (error) {
         res.json({
             message: error.message,
-            success:false
+            success: false
         })
     }
 }

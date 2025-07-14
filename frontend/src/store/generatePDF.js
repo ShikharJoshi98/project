@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const img = '/report.png';
+const img = '/header_pdf.jpg';
 const today = new Date();
 const dd = String(today.getDate()).padStart(2, '0');
 const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -13,6 +13,7 @@ export const generateTablePDF = (
   PresentComplaintData,
   chiefComplaints,
   PastHistoryData,
+  personalHistory,
   FamilyMedicalData,
   mentalCausative,
   mentalCausativeScribble,
@@ -161,6 +162,20 @@ export const generateTablePDF = (
     didDrawPage: data => { nextY = data.cursor.y + 10; }
   });
 
+  //Personal History
+
+  checkPageBreak(20);
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold");
+  doc.text("Personal History", 20, nextY);
+  nextY += 6;
+
+  const personalHistoryImages = personalHistory?.map(record => record?.image) || [];
+  for (const image of personalHistoryImages) {
+    checkPageBreak(110);
+    doc.addImage(image, "JPEG", 15, nextY, 180, 100);
+    nextY += 110;
+  }
   // Family Medical History Table
   checkPageBreak(30);
   doc.setFontSize(13);

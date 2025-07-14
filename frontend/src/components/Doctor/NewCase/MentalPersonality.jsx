@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MultiSelectDropdown from '../MultiSelectInput';
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
@@ -6,7 +6,7 @@ import ScribbleModal from './ScribbleModal';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Trash } from 'lucide-react';
+import { CiTrash } from 'react-icons/ci';
 
 const MentalPersonality = ({ complaint }) => {
   const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
@@ -16,8 +16,10 @@ const MentalPersonality = ({ complaint }) => {
   const [submit, setSubmit] = useState(false);
   const { id } = useParams();
   const listType = list.map((data) => data?.name);
+
   useEffect(() => { getCaseData(complaint); getMentalPersonality(id) },
     [getCaseData, submit]);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
      await axios.post(`${DOC_API_URL}/add-mental-personality-patient/${id}`, {
@@ -31,7 +33,7 @@ const MentalPersonality = ({ complaint }) => {
       await axios.delete(`${DOC_API_URL}/deleteMentalPersonality/${id}/${index}`);
       setSubmit(prev => !prev);
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   }
 
@@ -68,7 +70,7 @@ const MentalPersonality = ({ complaint }) => {
           {MentalPersonalityData[0]?.diseases.map((data, index) => (
             <div className='text-xl flex items-center gap-8' key={index}>
               <p>{index + 1}. {data}</p>
-              <Trash onClick={() => deleteData(MentalPersonalityData[0]?.patient, index)} className='cursor-pointer' />
+              <CiTrash onClick={() => deleteData(MentalPersonalityData[0]?.patient, index)} className='cursor-pointer' />
             </div>
           ))}
         </div>

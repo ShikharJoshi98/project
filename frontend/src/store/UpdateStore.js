@@ -23,6 +23,10 @@ export const useStore = create((set) => ({
   medicalitems: [],
   potencys: [],
   Potency: null,
+  generalAppointments: [],
+  repeatAppointments: [],
+  courierAppointments: [],
+  appointments:[],
   collection: [],
   branchCollection: [],
   courierPayment: [],
@@ -43,7 +47,6 @@ export const useStore = create((set) => ({
     }
   },
   update: async (id, updatedData) => {
-
     try {
       const response = await axios.put(`${HR_API_URL}/update/${id}`, updatedData);
       set((state) => ({
@@ -57,9 +60,7 @@ export const useStore = create((set) => ({
       throw error;
     }
   },
-
   getItems: async () => {
-
     try {
       const response = await axios.get(`${HR_API_URL}/get-items`);
 
@@ -71,14 +72,30 @@ export const useStore = create((set) => ({
   AddItem: async (newitem) => {
     try {
       const response = await axios.post(`${HR_API_URL}/add-item`, { item: newitem });
-
       set({ Item: response.data.newItem })
       console.log(Item);
     } catch (error) {
       console.log(error.message);
     }
-  }
-  ,
+  },
+  getAppointment: async (branch) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/getHrAppointments/${branch}`);
+      set({ generalAppointments: response.data.generalAppointments });
+      set({ repeatAppointments: response.data.repeatAppointments });
+      set({ courierAppointments: response.data.courierAppointments });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getAppointmentDetails: async (branch, appointmentType) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/appDetails/${branch}/${appointmentType}`);
+      set({appointments:response.data.appointments})
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   getUnits: async () => {
     try {
       const response = await axios.get(`${HR_API_URL}/get-units`);
