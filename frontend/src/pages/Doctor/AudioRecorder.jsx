@@ -11,9 +11,18 @@ const AudioRecorder = () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const mediaRecorder = new MediaRecorder(stream);
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
 
             audioChunk.current = []; // clear previous recording
+            audioChunk.current = []; // clear previous recording
 
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    audioChunk.current.push(e.data);
+                }
+            };
             mediaRecorder.ondataavailable = (e) => {
                 if (e.data.size > 0) {
                     audioChunk.current.push(e.data);
@@ -24,7 +33,14 @@ const AudioRecorder = () => {
                 const audioBlob = new Blob(audioChunk.current, { type: 'audio/wav' });
                 const audioUrl = URL.createObjectURL(audioBlob);
                 setRecordings(prev => [...prev, audioUrl]);
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunk.current, { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                setRecordings(prev => [...prev, audioUrl]);
 
+                // 🔒 Release the microphone
+                stream.getTracks().forEach(track => track.stop());
+            };
                 // 🔒 Release the microphone
                 stream.getTracks().forEach(track => track.stop());
             };
@@ -36,6 +52,11 @@ const AudioRecorder = () => {
         }
     };
 
+    const stopRec = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+            mediaRecorderRef.current.stop(); // triggers 'onstop'
+        }
+    };
     const stopRec = () => {
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop(); // triggers 'onstop'
