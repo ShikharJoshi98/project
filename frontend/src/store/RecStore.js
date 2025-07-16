@@ -5,21 +5,28 @@ export const REC_API_URL = `${import.meta.env.VITE_API_URL}/api/receptionist`;
 axios.defaults.withCredentials = true;
 
 export const recStore = create((set) => ({
-    patients: [],
+    patients: [],//
     appointments:[],
     patient: null,
+    patientLength: null,
     appointmentSection: "general",
     update: false,
     stockToggle: false,
     toggleStockUpdate: () => set((state) => ({ stockToggle: !state.stockToggle })),
     setUpdate: (updateStatus) => set({ update: updateStatus }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
-    getPatientDetails: async (role,branch) => {
+    getPatientDetails: async (page,search) => {//
         try {
-            const response = await axios.get(`${REC_API_URL}/get-patients/${role}/${branch}`);
+            const response = await axios.get(`${REC_API_URL}/get-patients`, {
+                params: {
+                    page: page,
+                    search,search
+                }
+            });
             set({ patients: response.data.patients });
+            set({ patientLength: response.data.patientLength });
         } catch (error) {
-            console.log(error.message);
+            console.error(error.message);
         }
     },
     getPatient: async (id) => {
@@ -29,14 +36,5 @@ export const recStore = create((set) => ({
         } catch (error) {
             console.log(error.message);
         }
-    },
-    getAppointment: async (branch) => {
-        try {
-            const response = await axios.get(`${REC_API_URL}/getAppointments/${branch}`);
-            set({ appointments: response.data.appointments });
-        } catch (error) {
-            console.log(error.message);
-        }
     }
-
 }))

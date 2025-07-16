@@ -1,5 +1,4 @@
-import { Plus, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HR_API_URL, useStore } from "../../store/UpdateStore";
 import axios from "axios";
 import MultiSelectInput from "../Doctor/MultiSelectInput";
@@ -8,6 +7,8 @@ import UploadBillModal from "./UploadBillModal";
 import { recStore } from "../../store/RecStore";
 import { updateDate } from "../../store/todayDate";
 import { docStore } from "../../store/DocStore";
+import { RxCross2 } from "react-icons/rx";
+import { FaPlus } from "react-icons/fa";
 
 const OrderModal = ({ onClose }) => {
   const { getItems, items, getUnits, getVendors, vendors, getOrders, ordersPlaced, billImagesLength } = useStore();
@@ -129,7 +130,7 @@ const OrderModal = ({ onClose }) => {
           onClick={onClose}
           className="place-self-end cursor-pointer transition-all mb-8 duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
-          <X size={24} />
+          <RxCross2 size={24} />
         </button>
         <div className="overflow-y-auto">
 
@@ -223,7 +224,7 @@ const OrderModal = ({ onClose }) => {
                         </td>
                       )}
                       <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border">{billImagesLength > 0 ? <button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">View</button> : <button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <Plus /></button>}</td>
+                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <FaPlus /></button></td>
                       }
                       {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border ">
                         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg">

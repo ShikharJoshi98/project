@@ -10,13 +10,7 @@ export const docStore = create((set) => ({
     task: null,
     leaves: [],
     userLeaves:[],
-    appointments: [],
-    domGeneralAppointments: [],
-    mulGeneralAppointments: [],
-    domRepeatAppointments: [],
-    mulRepeatAppointments: [],
-    domCourierAppointments: [],
-    mulCourierAppointments: [],
+    appointments: [],//
     Homeo: [],
     appointment: null,
     caseImages: [],
@@ -26,8 +20,7 @@ export const docStore = create((set) => ({
     allPrescriptions: [],
     list: [],
     payment: [],
-    PresentComplaintData: [],
-    
+    PresentComplaintData: [],    
     briefMindSymptomScribble: [],
     PastHistoryData: [],
     FamilyMedicalData: [],
@@ -201,26 +194,16 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAllAppointments: async (Doctor) => {
-        try {
-            const response = await axios.get(`${DOC_API_URL}/allAppointments/${Doctor}`);
-            set({ domGeneralAppointments: response.data.domGeneralAppointments });
-            set({ mulGeneralAppointments: response.data.mulGeneralAppointments });
-            set({ domRepeatAppointments: response.data.domRepeatAppointments });
-            set({ mulRepeatAppointments: response.data.mulRepeatAppointments });
-            set({ domCourierAppointments: response.data.domCourierAppointments });
-            set({ mulCourierAppointments: response.data.mulCourierAppointments });
-        } catch (error) {
-            console.log(error.message);
-        }
-    },
-    getAppdetails: async (appointmentType) => {
-        let response = await axios.get(`${DOC_API_URL}/Appointments/${appointmentType}`);
-        set({ appointments: response.data.Appointments });
+    getAppDetails: async (branch) => {//
+      try {
+          const response = await axios.get(`${DOC_API_URL}/getAppointments/${branch}`);
+          set({appointments:response.data.Appointments})
+      } catch (error) {
+          console.error(error.message);
+      }  
     },
     deleteCaseImage: async (patientId, imageId) => {
         let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);
-
     },
     fetchPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);

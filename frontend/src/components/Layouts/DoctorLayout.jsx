@@ -5,7 +5,7 @@ import DocSidebar from "../Doctor/DocSidebar"
 const DoctorLayout = () => {
   return (
       <div>
-          <Docnavbar />
+          {/* <Docnavbar /> */}
           <div className='flex'>
               <DocSidebar />
               <Outlet/>

@@ -65,18 +65,26 @@ export const updatePatient = async (req, res) => {
     }
 }
 
-export const getPatients = async (req, res) => {
+export const getPatients = async (req, res) => {//
     try {
-        const { role, branch } = req.params;
-        let patients;
-        if (role === 'doctor') {
-            patients = await Patient.find();
-        }
-        else {
-            patients = await Patient.find({ branch });
-        }
+        const { page } = req.query;
+        const { search = "" } = req.query;
+        const pageNum = Number(page) || 1;
+        const limitNum = 10;
+        const skipPage = (pageNum - 1) * limitNum;
+
+        const searchQuery = {
+            $or: [
+                { fullname: { $regex: search, $options: "i" } },
+                { casePaperNo: { $regex: search, $options: "i" } },
+                { phone: { $regex: search, $options: "i" } }
+            ]
+        };
+
+        const patientLength = await Patient.countDocuments();
+        const patients = await Patient.find(search ? searchQuery : {}).skip(skipPage).limit(limitNum);
         res.json({
-            success: true, patients
+            success: true, patients, patientLength
         })
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -89,12 +97,12 @@ export const getPatient = async (req, res) => {
         const patient = await Patient.findById(id);
         res.json({
             patient,
-            success:true
+            success: true
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -105,12 +113,12 @@ export const getAppointment = async (req, res) => {
         const appointments = await Appointment.find({ branch }).populate('Doctor').populate('PatientCase');
         res.json({
             appointments,
-            success:true
+            success: true
         })
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }

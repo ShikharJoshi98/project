@@ -1,14 +1,15 @@
-import { Plus, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HR_API_URL, useStore } from "../../store/UpdateStore";
 import { useAuthStore } from "../../store/authStore";
 import MultiSelectInput from "../Doctor/MultiSelectInput";
 import axios from "axios";
 import { updateDate } from "../../store/todayDate";
 import UploadBillModal from "./UploadBillModal";
+import { FaPlus } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 
 const OrderModal = ({ onClose }) => {
-  const { getMedicalVendors, vendors, getMedicalStock, medicalStock, medicalStockToggle, getMedicalOrders, medicalOrders,billImagesLength } = useStore();
+  const { getMedicalVendors, vendors, getMedicalStock, medicalStock, medicalStockToggle, getMedicalOrders, medicalOrders } = useStore();
   const { user } = useAuthStore();
   const [orderId, setOrderId] = useState(null);
   const [formRows, setFormRows] = useState([]);
@@ -17,6 +18,7 @@ const OrderModal = ({ onClose }) => {
   const todayDate = updateDate();
   const [billModal, setBillModal] = useState(false);
   const [submit, setSubmit] = useState(false);
+  const [billImagesLength, setBillImagesLength] = useState(0);
   useEffect(() => {
     getMedicalStock(user?.branch)
     getMedicalVendors();
@@ -109,18 +111,11 @@ const OrderModal = ({ onClose }) => {
   return (
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
       <div className="bg-[#e9ecef] max-h-[90vh] max-w-[99vw] flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg">
-        <button
-          onClick={onClose}
-          className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
-        >
-          <X size={24} />
-        </button>
+        <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
         <div className="overflow-y-auto">
-          <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
-            Place Order
-          </h1>
+          <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">Place Order</h1>
           <div className="p-4 rounded-lg">
-            <table className="w-full border  border-gray-300">
+            <table className="w-full border border-gray-300">
               <thead>
                 <tr className="bg-blue-500 text-white font-semibold">
                   <th className="border p-2">Order Items</th>
@@ -134,22 +129,8 @@ const OrderModal = ({ onClose }) => {
               <tbody>
                 {formRows.map((row, index) => (
                   <tr key={row.id} className="bg-blue-200">
-                    {/* Item Name Dropdown */}
                     <td className="p-2">
-                      <select
-                        value={`${row.medicineName}${row.potency}`}
-                        required
-                        onChange={(e) => {
-                          const selected = lowQuantityItems.find(
-                            (item) => item.medicineName + item.potency === e.target.value
-                          );
-                          if (selected) {
-                            handleInputChange(index, "medicineName", selected.medicineName);
-                            handleInputChange(index, "potency", selected.potency);
-                          }
-                        }}
-                        className="py-2 bg-white rounded-lg w-50 border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
-                      >
+                      <select value={`${row.medicineName}${row.potency}`} required onChange={(e) => {const selected = lowQuantityItems.find((item) => item.medicineName + item.potency === e.target.value); if (selected) {handleInputChange(index, "medicineName", selected.medicineName); handleInputChange(index, "potency", selected.potency);}}} className="py-2 bg-white rounded-lg w-50 border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
                         <option value="">Select Item</option>
                         {lowQuantityItems.map((item, i) => (
                           <option key={i} value={item?.medicineName + item?.potency}>
@@ -159,20 +140,11 @@ const OrderModal = ({ onClose }) => {
                       </select>
                     </td>
                     <td className="p-2">
-                      <input
-                        type="text"
-                        value={row.pack}
-                        onChange={(e) => handleInputChange(index, "pack", e.target.value)}
-                        className="w-full bg-white p-1 border border-gray-500 rounded"
-                      />
+                      <input type="text" value={row.pack} onChange={(e) => handleInputChange(index, "pack", e.target.value)} className="w-full bg-white p-1 border border-gray-500 rounded"/>
                     </td>
-
-
                     <td className="p-2 w-72">
                       <MultiSelectInput Options={vendorArray} setSelectedOptions={(options) => handleVendorChange(index, options)} selectedOptions={row.vendor} />
                     </td>
-
-
                     <td className="p-2">
                       <input
                         type="number"
@@ -183,8 +155,6 @@ const OrderModal = ({ onClose }) => {
                         required
                       />
                     </td>
-
-
                     <td className="p-2">
                       <input
                         type="date"
@@ -236,7 +206,7 @@ const OrderModal = ({ onClose }) => {
                         </td>
                       )}
                       <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border">{billImagesLength>0?<button onClick={() => { setBillModal(true);  setOrderId(order?._id)}} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">View</button>:<button onClick={() => { setBillModal(true);  setOrderId(order?._id)}} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <Plus /></button>}</td>
+                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillModal(true);  setOrderId(order?._id)}} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <FaPlus /></button></td>
                                             }
                       {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border ">
                         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg">
@@ -273,7 +243,7 @@ const OrderModal = ({ onClose }) => {
           </div>
         </div>
       </div>
-      {billModal && <UploadBillModal onClose={() => setBillModal(false)} orderId={orderId} />}
+      {billModal && <UploadBillModal setBillImagesLength={setBillImagesLength} onClose={() => setBillModal(false)} orderId={orderId} />}
     </div>
 
   );

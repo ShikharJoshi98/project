@@ -1,7 +1,7 @@
-import { Mail, Phone, User, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from '../../store/UpdateStore';
 import { useAuthStore } from '../../store/authStore';
+import { RxCross1 } from 'react-icons/rx';
 
 const AddMedicalStockModel = ({ onClose }) => {
   const { getMedicine, medicines, potencys, getPotency, addMedicineStock, medicalStockToggleSubmit } = useStore();
@@ -34,7 +34,7 @@ const AddMedicalStockModel = ({ onClose }) => {
           onClick={onClose}
           className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
-          <X size={24} />
+          <RxCross1 size={24} />
         </button>
         <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
           Add Medicine to Stock

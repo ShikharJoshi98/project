@@ -8,9 +8,7 @@ const AudioRecorder = () => {
     const mediaRecorderRef = useRef(null);
 
     const startRec = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
+        
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const mediaRecorder = new MediaRecorder(stream);
@@ -38,10 +36,8 @@ const AudioRecorder = () => {
                 const audioUrl = URL.createObjectURL(audioBlob);
                 setRecordings(prev => [...prev, audioUrl]);
 
-                // 🔒 Release the microphone
                 stream.getTracks().forEach(track => track.stop());
             };
-                // 🔒 Release the microphone
                 stream.getTracks().forEach(track => track.stop());
             };
 
@@ -52,11 +48,11 @@ const AudioRecorder = () => {
         }
     };
 
-    const stopRec = () => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-            mediaRecorderRef.current.stop(); // triggers 'onstop'
-        }
-    };
+    // const stopRec = () => {
+    //     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+    //         mediaRecorderRef.current.stop(); // triggers 'onstop'
+    //     }
+    // };
     const stopRec = () => {
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop(); // triggers 'onstop'

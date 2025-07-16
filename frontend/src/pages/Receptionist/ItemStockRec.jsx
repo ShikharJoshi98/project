@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import AddItemModal from '../../components/HR/AddItemModal';
 import VendorModal from '../../components/HR/VendorModal';
 import AddItemStockModal from '../../components/HR/AddItemStockModal';
@@ -9,9 +9,9 @@ import ReorderLevelModal from '../../components/ReorderLevelModal';
 import StockIssueModal from '../../components/StockIssueModal';
 import { recStore } from '../../store/RecStore';
 import Input from '../../components/Input';
-import { SearchIcon } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { CiSearch } from 'react-icons/ci';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const ItemStockRec = () => {
     const [isItemModalOpen, setItemModalIsOpen] = useState(false);
@@ -25,6 +25,8 @@ const ItemStockRec = () => {
     const [issueModal, setissueModal] = useState(false);
     const [itemSelect, setItemSelect] = useState();
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const getItemStock = async () => {
         const response = await axios.get(`${HR_API_URL}/get-item-stock/${user?.branch}`);
         setItemStock(response.data.itemStock);
@@ -46,10 +48,13 @@ const ItemStockRec = () => {
     }
     useEffect(() => {
         try {
-            getItemStock();
-
+            const timeout = setTimeout(() => setLoading(true), 200);
+            getItemStock().finally(() => {
+                clearTimeout(timeout);
+                setLoading(false);
+            });
         } catch (error) {
-            console.log("Error in fetch API hr getItemStock", error.message);
+            console.error("Error in fetch API hr getItemStock", error.message);
         }
     }, [isAddStockModalOpen, stockToggle]);
 
@@ -57,19 +62,19 @@ const ItemStockRec = () => {
 
     return (
         <>
-            <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
-                <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg '>
-                    <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Items Stock {user?.branch}</h1>
-                    <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-white font-semibold  gap-2 sm:gap-10 justify-center items-center md:gap-20 text-[6px] sm:text-[8px] md:text-base'>
-                        <button onClick={() => setItemModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>ADD ITEMS/UNIT LIST</button>
-                        <button onClick={() => setVendorModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>VENDORS</button>
-                        <button onClick={() => setAddStockModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>ADD STOCK</button>
-                        <button onClick={() => setOrderModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>PLACE ORDER</button>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full'>
+                <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg '>
+                    <h1 className='text-center font-semibold text-[#337ab7] text-lg sm:text-xl md:text-4xl'>Items Stock {user?.branch}</h1>
+                    <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold gap-2 sm:gap-10 justify-center items-center md:gap-20 text-[6px] sm:text-[8px] md:text-base'>
+                        <button onClick={() => setItemModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>ADD ITEMS/UNIT LIST</button>
+                        <button onClick={() => setVendorModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>VENDORS</button>
+                        <button onClick={() => setAddStockModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>ADD STOCK</button>
+                        <button onClick={() => setOrderModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>PLACE ORDER</button>
                     </div>
-                    <div className='flex items-center justify-center gap-2 mt-10'>
+                    <div className='mt-10'>
                         <Input onChange={(e) => setSearchTerm(e.target.value)} icon={CiSearch} placeholder='Search for Items Here' />
                     </div>
-                    <div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:<div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] text-sm text-white">
                                 <tr >
@@ -87,7 +92,6 @@ const ItemStockRec = () => {
                             <tbody className='text-black'>
                                 {
                                     itemsList?.map((item, index) => (
-
                                         <tr className={`${item.docApproval_flag === false ? 'bg-red-200' : 'bg-blue-200'}`}>
                                             <td className="px-1 py-2 text-center">{index + 1}</td>
                                             <td className="px-1 py-2 text-center ">{item?.itemName}</td>
@@ -102,7 +106,7 @@ const ItemStockRec = () => {
                                     ))}
                             </tbody>
                         </table>
-                    </div>
+                    </div>}
                 </div>
             </div>
             {isItemModalOpen && <AddItemModal onClose={() => setItemModalIsOpen(false)} />}

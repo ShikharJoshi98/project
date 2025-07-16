@@ -18,6 +18,7 @@ const RegisterPatient = () => {
         email: "",
         branch: user?.branch
     })
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -41,15 +42,14 @@ const RegisterPatient = () => {
             [name]: value,
         }));
     };
-
-    function usernameCreator(newName, newPhone) {
+    const usernameCreator = (newName, newPhone) => {
         let text = "";
         let firstName = newName.split(" ")[0] || "";
         let num = String(newPhone);
         text = firstName + num.slice(num.length - 4);
         setUsername(text);
     }
-    function passwordCreator(newName, newPhone, branch) {
+    const passwordCreator = (newName, newPhone, branch) => {
         let text = "";
         let firstName = newName.split(" ")[0] || "";
         let num = String(newPhone);
@@ -59,10 +59,10 @@ const RegisterPatient = () => {
 
     return (
         <>
-            <div onSubmit={handleSubmit} className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden'>
-                <form className='z-10 my-8 mx-auto bg-white p-8 sm:max-w-[50vw] w-full border rounded-xl text-zinc-800 text-sm shadow-lg ' >
-                    <h1 className='text-3xl font-semibold mb-5 text-center'>Register Patient </h1>
-                    <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
+            <div onSubmit={handleSubmit} className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen  w-full'>
+                <form className='z-10 my-8 mx-auto bg-white p-8 sm:max-w-[50vw] w-full border rounded-xl text-zinc-800 text-sm shadow-lg'>
+                    <h1 className='text-2xl font-semibold mb-5 w-fit mx-auto'>Register Patient</h1>
+                    <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto'/>
                     <div className='flex flex-col gap-4 m-auto '>
                         <div className='flex flex-col gap-2 '>
                             <h1>Name*</h1>
@@ -86,12 +86,12 @@ const RegisterPatient = () => {
                                 <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                     <CiHospital1 className="size-4 text-blue-500" />
                                 </div>
-                                <select onChange={(e) => { handleInputChange(e); passwordCreator(formValues.fullname, formValues.phone, e.target.value) }} value={formValues.branch} name="branch" required id="branch" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
+                                <select onChange={(e) => { handleInputChange(e); passwordCreator(formValues.fullname, formValues.phone, e.target.value) }} value={formValues.branch} name="branch" required id="branch" className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300'>
                                     <option value={user?.branch}>{user?.branch}</option>
                                 </select>
                             </div>
                         </div>
-                        <button className='cursor-pointer block mx-auto bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit' >Register</button>
+                        <button className='cursor-pointer block mx-auto bg-blue-500 text-lg font-semibold hover:text-gray-200 text-white mt-7 w-52 p-2 rounded-full' type='submit' >Register</button>
                     </div>
                 </form>
             </div>

@@ -116,25 +116,6 @@ export const updateleave = async (req, res) => {
         })
     }
 }
-// export const AppointmentDoc = async (req, res) => {
-//     try {
-//         let { AppointmentDate, Time, PatientCase, Doctor, AppointmentType } = req.body;
-//         console.log("appointment hit");
-//         const newAppointment = new AppointmentDoctor({
-//             AppointmentDate, Time, PatientCase, Doctor, AppointmentType
-//         })
-//         await newAppointment.save();
-//         res.json({
-//             success: true,
-//             newAppointment
-//         })
-//     } catch (error) {
-//         res.json({
-//             success: false,
-//             message: error.message
-//         })
-//     }
-// }
 
 //appointments
 export const createAppointment = async (req, res) => {
@@ -251,78 +232,21 @@ export const createNewAppointment = async (req, res) => {
     }
 }
 
-export const getAppointments = async (req, res) => {
+export const getAppointments = async (req, res) => {//
     try {
-        const { appointmentType } = req.params;
-        const date = updateDate();
-        const Appointments = await Appointment.find({ date, appointmentType }).populate('PatientCase').populate('Doctor');
-       
-        return res.json({
+        const { branch } = req.params;
+        const Appointments = await Appointment.find({ branch });
+        res.json({
             Appointments,
             success: true
-        })
+        });
     } catch (error) {
-        return res.json({
+        res.json({
             success: false,
-            message: error.message
+            message:error.message
         })
     }
 }
-
-export const getAllAppointments = async (req, res) => {
-    try {
-        const { Doctor } = req.params;
-        const date = updateDate();
-
-        const result = await Appointment.aggregate([
-            {
-                $match: {
-                    date,
-                    Doctor: new mongoose.Types.ObjectId(Doctor),
-                    complete_appointment_flag: false,
-                    medicine_issued_flag: false,
-                    branch: { $in: ['Dombivali', 'Mulund'] },
-                    appointmentType: { $in: ['general', 'repeat', 'courier'] }
-                }
-            },
-            {
-                $group: {
-                    _id: {
-                        branch: "$branch",
-                        appointmentType: "$appointmentType"
-                    },
-                    count: { $sum: 1 }
-                }
-            }
-        ]);
-
-        const counts = {
-            domGeneralAppointments: 0,
-            domRepeatAppointments: 0,
-            domCourierAppointments: 0,
-            mulGeneralAppointments: 0,
-            mulRepeatAppointments: 0,
-            mulCourierAppointments: 0
-        };
-        function capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-        result.forEach(({ _id, count }) => {
-            const key = `${_id.branch === 'Dombivali' ? 'dom' : 'mul'}${capitalize(_id.appointmentType)}Appointments`;
-            counts[key] = count;
-        });
-
-        res.json({
-            success: true,
-            ...counts
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
-};
 
 export const updateAppointment = async (req, res) => {
     try {
@@ -1105,7 +1029,7 @@ export const getHistoryDetails = async (req, res) => {
                     writeUps: []
                 };
             }
-            combineObject[item?.date].writeUps.push({writeUp:item?.writeUp_value,id:item?._id});
+            combineObject[item?.date].writeUps.push({ writeUp: item?.writeUp_value, id: item?._id });
         });
 
         followUpImages?.forEach(item => {
@@ -1116,7 +1040,7 @@ export const getHistoryDetails = async (req, res) => {
                     writeUps: []
                 };
             }
-            combineObject[item?.date].followUps.push({followUp:item?.follow_string,id:item?._id});
+            combineObject[item?.date].followUps.push({ followUp: item?.follow_string, id: item?._id });
         });
 
         const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -1132,10 +1056,10 @@ export const getHistoryDetails = async (req, res) => {
 export const getPresentComplaintHistory = async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         const scribble = await PresentComplaintScribble.find({ patient: id }).sort({ date: -1 });
         const writeUp = await PresentComplaintWriteUp.find({ patient: id }).sort({ date: -1 });
-         let combineObject = {};
+        let combineObject = {};
 
         writeUp?.forEach(item => {
             if (!combineObject[item?.date]) {
@@ -1145,7 +1069,7 @@ export const getPresentComplaintHistory = async (req, res) => {
                     writeUps: []
                 };
             }
-            combineObject[item?.date].writeUps.push({writeUp:item?.writeUp_value,id:item?._id});
+            combineObject[item?.date].writeUps.push({ writeUp: item?.writeUp_value, id: item?._id });
         });
 
         scribble?.forEach(item => {
@@ -1156,7 +1080,7 @@ export const getPresentComplaintHistory = async (req, res) => {
                     writeUps: []
                 };
             }
-            combineObject[item?.date].scribble.push({scribble:item?.follow_string,id:item?._id});
+            combineObject[item?.date].scribble.push({ scribble: item?.follow_string, id: item?._id });
         });
 
         const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date));

@@ -34,7 +34,7 @@ const AppointmentModal = ({ onClose }) => {
   });
 
   useEffect(() => {
-    getPatientDetails(user?.role, user?.branch);
+    getPatientDetails();
     getDetails();
   }, [getPatientDetails, getDetails])
 

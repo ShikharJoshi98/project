@@ -6,7 +6,7 @@ const Sidebar = ({ children }) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
-        <div className='sticky h-screen top-18 z-50  bg-[#404858]'>            
+        <div className='sticky h-screen top-14 z-50  bg-[#404858]'>            
             <div className={`${expanded ? "w-32 md:w-56" : "w-18"} min-h-screen text-white transition-all duration-300 `}>
                 <div onClick={() => setExpanded(!expanded)} className={`p-4 text-xl pb-2 cursor-pointer`}>
                     ☰

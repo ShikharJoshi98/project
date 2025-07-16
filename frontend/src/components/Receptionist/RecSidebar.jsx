@@ -33,7 +33,6 @@ const RecSidebar = () => {
             <SidebarItem active={path.pathname === `/dashboard-RECEPTIONIST/courier-list-rec/${user?.branch}`} onClick={() => navigate(`/dashboard-RECEPTIONIST/courier-list-rec/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
             <SidebarItem onClick={() => setUploadModalIsOpen(true)} icon={<LuScrollText size={25} />} text={"Upload Old Case Paper"} />
             {isUploadModalOpen && <UploadCase onClose={() => setUploadModalIsOpen(false)} />}
-
         </Sidebar>
     )
 }

@@ -1,17 +1,30 @@
-import { Image, Trash2, X } from "lucide-react"
 import Input from "../Input"
 import { useEffect, useState } from "react"
 import { HR_API_URL, useStore } from "../../store/UpdateStore";
 import axios from "axios";
+import { CiImageOn, CiTrash } from "react-icons/ci";
+import { RxCross2 } from "react-icons/rx";
+import { LuLoaderCircle } from "react-icons/lu";
 
 
-const UploadBillModal = ({ onClose, orderId }) => {
+const UploadBillModal = ({ onClose, setBillImagesLength=()=>{},orderId }) => {
   const [image, setImage] = useState(null);
   const [submit, setSubmit] = useState(false);
   const { getBillImages, billImages } = useStore();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    getBillImages(orderId)
-  }, [getBillImages,submit]);
+    const timeout = setTimeout(() => { setLoading(true) }, 200);
+    getBillImages(orderId).finally(() => {
+      clearTimeout(timeout);
+      setLoading(false);
+    });
+  }, [getBillImages, submit]);
+  
+  useEffect(() => {
+  if (billImages) {
+    setBillImagesLength(billImages.length);
+  }
+}, [billImages, setBillImagesLength]);
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +53,7 @@ const UploadBillModal = ({ onClose, orderId }) => {
           onClick={onClose}
           className="place-self-end cursor-pointer transition-all mb-8 duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
-          <X size={24} />
+          <RxCross2 size={24} />
         </button>
         <div className="overflow-y-auto">
 
@@ -48,7 +61,7 @@ const UploadBillModal = ({ onClose, orderId }) => {
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col mt-5 gap-2">
               <h1>Upload Bill</h1>
-              <Input icon={Image} type="file" onChange={(e) => setImage(e.target.files[0])} name="Bill" required />
+              <Input icon={CiImageOn} type="file" onChange={(e) => setImage(e.target.files[0])} name="Bill" required />
             </div>
             <button className="cursor-pointer mx-auto block bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">
               Upload
@@ -56,10 +69,10 @@ const UploadBillModal = ({ onClose, orderId }) => {
           </form>
           <h1 className="text-blue-500 text-xl md:text-2xl my-10 text-center font-semibold">Bill Images</h1>
           {
-            billImages?.map((image, index) => (
+            loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:billImages?.map((image, index) => (
               <div className="flex justify-between px-2">
                 <img src={image?.imageUrl} alt="Bill Image" key={index} className="w-[90%] mb-5" />
-                <div title='delete' onClick={()=>deleteBill(image?._id)}  className='text-white max-w-[10%] w-fit h-fit  bg-red-500 p-2 rounded-full cursor-pointer'><Trash2 /></div>
+                <div title='delete' onClick={()=>deleteBill(image?._id)}  className='text-white max-w-[10%] w-fit h-fit  bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash /></div>
               </div>
             ))
           }

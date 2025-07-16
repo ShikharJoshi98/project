@@ -7,6 +7,7 @@ import { useStore } from '../../store/UpdateStore'
 import { useAuthStore } from '../../store/authStore'
 import ReorderLevelModal from '../../components/ReorderLevelModal'
 import StockIssueModal from '../../components/StockIssueModal'
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const MedicineStockRec = () => {
     const [isMedicineModalOpen, setMedicineModalIsOpen] = useState(false);
@@ -20,10 +21,16 @@ const MedicineStockRec = () => {
     const [medicineSelect, setMedicineSelect] = useState();
     const { getMedicine, medicines, potencys, getPotency, getMedicalStock, medicalStock, medicalStockToggle } = useStore();
     const { user } = useAuthStore();
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         getMedicine();
         getPotency();
-        getMedicalStock(user?.branch);
+        const timeout = setTimeout(() => setLoading(true), 200);
+        getMedicalStock(user?.branch).finally(() => {
+            clearTimeout(timeout);
+            setLoading(false);
+        });
     }, [getMedicine, getPotency, getMedicalStock, medicalStockToggle]);
 
     const timeStamp = (isoDate) => {
@@ -87,7 +94,7 @@ const MedicineStockRec = () => {
                             ))}
                         </select>
                     </div>
-                    <div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:<div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] text-sm text-white">
                                 <tr >
@@ -121,7 +128,7 @@ const MedicineStockRec = () => {
                                     ))}
                             </tbody>
                         </table>
-                    </div>
+                    </div>}
                 </div>
             </div>
             {isMedicineModalOpen && <AddMedicineModal onClose={() => setMedicineModalIsOpen(false)} />}
