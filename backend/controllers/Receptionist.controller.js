@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import Patient from "../models/PatientModel.js";
 import { Appointment } from "../models/AppointmentModel.js";
+import { updateDate } from "../utils/todayDate.js";
 
 export const register = async (req, res) => {
     try {
@@ -67,22 +68,26 @@ export const updatePatient = async (req, res) => {
 
 export const getPatients = async (req, res) => {//
     try {
+        const { branch } = req.params;
         const { page } = req.query;
         const { search = "" } = req.query;
         const pageNum = Number(page) || 1;
         const limitNum = 10;
         const skipPage = (pageNum - 1) * limitNum;
-
-        const searchQuery = {
-            $or: [
+        console.log(branch)
+        const baseQuery = {
+            branch: branch
+        };
+        if (search) {
+            baseQuery.$or = [
                 { fullname: { $regex: search, $options: "i" } },
                 { casePaperNo: { $regex: search, $options: "i" } },
                 { phone: { $regex: search, $options: "i" } }
-            ]
-        };
+            ];
+        }
 
-        const patientLength = await Patient.countDocuments();
-        const patients = await Patient.find(search ? searchQuery : {}).skip(skipPage).limit(limitNum);
+        const patientLength = await Patient.countDocuments(baseQuery);
+        const patients = await Patient.find(baseQuery).skip(skipPage).limit(limitNum);
         res.json({
             success: true, patients, patientLength
         })
@@ -107,18 +112,23 @@ export const getPatient = async (req, res) => {
     }
 }
 
-export const getAppointment = async (req, res) => {
+export const getAppointmentsRec = async (req, res) => {//
     try {
         const { branch } = req.params;
-        const appointments = await Appointment.find({ branch }).populate('Doctor').populate('PatientCase');
+        const todayDate = updateDate();
+        const appointments = await Appointment.find({ date: todayDate, branch });
+        const pendingAppointmentLength = appointments?.filter((appointment) => appointment?.complete_appointment_flag === false).length;
+        const completeAppointmentLength = appointments?.filter((appointment) => appointment?.complete_appointment_flag === true).length;
         res.json({
+            success:true,
             appointments,
-            success: true
+            pendingAppointmentLength,
+            completeAppointmentLength
         })
     } catch (error) {
         res.json({
             success: false,
-            message: error.message
+            message:error.message
         })
     }
 }

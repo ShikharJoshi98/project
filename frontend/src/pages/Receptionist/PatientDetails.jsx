@@ -22,7 +22,7 @@ const PatientDetails = () => {
 
     useEffect(() => {
         const timeout = setTimeout(() => setLoading(true), 200);
-        getPatientDetails(page,searchTerm).finally(() => {
+        getPatientDetails(page,searchTerm,user?.branch).finally(() => {
             clearTimeout(timeout);
             setLoading(false);
         });

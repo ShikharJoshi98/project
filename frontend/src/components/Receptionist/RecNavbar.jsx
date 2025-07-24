@@ -12,17 +12,17 @@ const RecNavbar = () => {
     const menuRef = useRef(null);
     const [isMedicineHovered, setIsMedicineHovered] = useState(false);
     const navigate = useNavigate();
-    const { appointmentSubmit } = docStore();
-    // const { setAppointmentSection,getAppointment, appointments } = recStore();
+    const { appointmentSubmit,appointments,getAppDetails } = docStore();
+    const { setAppointmentSection } = recStore();
     const currentDate = updateDate();
 
-    // useEffect(() => {
-    //     getAppointment(user?.branch);
-    // }, [getAppointment, appointmentSubmit]);   
+    useEffect(() => {
+        getAppDetails();
+    }, [getAppDetails, appointmentSubmit]);   
 
-    // const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'general' && appointment?.medicine_issued_flag===false));
-    // const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'repeat' && appointment?.medicine_issued_flag===false))
-    // const courierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === 'courier' && appointment?.medicine_issued_flag === false))
+    const generalAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.branch === user?.branch && appointment?.appointmentType === 'general' && appointment?.medicine_issued_flag===false));
+    const repeatAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.branch === user?.branch  && appointment?.appointmentType === 'repeat' && appointment?.medicine_issued_flag===false))
+    const courierAppointments = appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.branch === user?.branch  && appointment?.appointmentType === 'courier' && appointment?.medicine_issued_flag === false))
     
     function handleLogout() {
         logout();
@@ -40,7 +40,7 @@ const RecNavbar = () => {
                     <li onClick={() => navigate('/dashboard-RECEPTIONIST/register-patient')} className="cursor-pointer">Register Patient</li>
                     <div className="relative" onMouseEnter={() => setIsMedicineHovered(true)} onMouseLeave={() => setIsMedicineHovered(false)}>
                         <li className="cursor-pointer">Medicine</li>
-                        {/* {isMedicineHovered && (
+                        {isMedicineHovered && (
                             <div className="absolute top-6 left-0 rounded-md border border-white bg-[#404858] w-52 flex flex-col h-auto">
                                 <div onClick={() => { navigate('/dashboard-RECEPTIONIST/appointment-details-rec'); setAppointmentSection('general') }} className="flex cursor-pointer hover:bg-gray-200/30 py-3 px-5 items-center justify-between">
                                     <h1>General</h1>
@@ -55,7 +55,7 @@ const RecNavbar = () => {
                                     <span className="bg-blue-400 w-7 h-7 flex items-center justify-center rounded-full text-white font-semibold">{courierAppointments.length}</span>
                                 </div>
                             </div>
-                        )} */}
+                        )}
                     </div>
                     <li onClick={handleLogout} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Logout</li>
                 </ul>

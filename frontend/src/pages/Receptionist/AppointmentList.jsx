@@ -7,40 +7,45 @@ import { docStore } from '../../store/DocStore';
 import { useAuthStore } from '../../store/authStore';
 import { updateDate } from '../../store/todayDate';
 import { CiSearch } from 'react-icons/ci';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const AppointmentList = () => {
-    const { appointmentSubmit } = docStore();
-    const { getAppointment, appointments } = recStore();
+    const { appointmentSubmit,appointments,getAppDetails } = docStore();
     const { user } = useAuthStore();
     const { setAppointmentSection, appointmentSection } = recStore();
     const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const currentDate = updateDate();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getAppointment(user?.branch);
-    }, [ appointmentSection, appointmentSubmit]);
-
-    const appointmentList = useMemo(()=>{return  appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection) && (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())))},[appointments, searchTerm, appointmentSection, currentDate]);
-
+        const timeout = setTimeout(() => setLoading(true), 200);
+        getAppDetails().finally(() => {
+            clearTimeout(timeout);
+            setLoading(false);
+        });
+    }, [appointmentSection, appointmentSubmit]);
+    
+    const appointmentList = useMemo(()=>{return  appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.branch === user?.branch) && (appointment?.PatientCase?.fullname.toLowerCase().includes(searchTerm.toLowerCase())) )},[appointments, searchTerm, appointmentSection, currentDate]);
+    
     return (
         <>
             <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
                 <div className=' px-10 pt-10 '>
-                    <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold text-lg md:text-2xl hover:scale-98 transition-all duration-300 shadow-gray-600 shadow-md border-1 border-gray-600 bg-blue-500 p-2 hover:bg-blue-700 rounded-lg'>Create Appointment <TbPencilPlus /></button>
+                    <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold hover:scale-99 transition-all duration-300 shadow-gray-600 shadow-md text-lg bg-blue-500 px-4 py-2 hover:bg-blue-700 rounded-lg'>Create Appointment <TbPencilPlus /></button>
                 </div>
                 <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg '>
                     <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl md:text-4xl'>{appointmentSection.toUpperCase()} {(appointmentSection === 'repeat' || appointmentSection === 'courier') && "MEDICINE"} DETAILS</h1>
                     <h1 className="text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4">{currentDate}</h1>
-                    <div className='sm:flex grid grid-cols-2 mt-8 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base md:text-lg'>
+                    <div className='sm:flex grid grid-cols-2 mt-8 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base'>
                         <button onClick={() => setAppointmentSection("general")} className={`cursor-pointer border-1 border-black hover:scale-102 transition-all duration-300 ${appointmentSection === 'general' ? 'bg-blue-500 text-white' : 'bg-blue-300 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>GENERAL </button>
                         <button onClick={() => setAppointmentSection("repeat")} className={`cursor-pointer border-1 border-black hover:scale-102 transition-all duration-300 ${appointmentSection === 'repeat' ? 'bg-blue-500 text-white' : 'bg-blue-300 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>REPEAT MEDICINE </button>
                         <button onClick={() => setAppointmentSection("courier")} className={`cursor-pointer border-1 border-black hover:scale-102 transition-all duration-300 ${appointmentSection === 'courier' ? 'bg-blue-500 text-white' : 'bg-blue-300 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>COURIER MEDICINE</button>
                     </div>
                     <div className='flex items-center gap-2 mt-10'>
-                        <Input onChange={(e) => setSearchTerm(e.target.value)} icon={CiSearch} placeholder='Search for Patient&apos;s Name/Case Paper No./Mobile No.' />
+                        <Input onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} icon={CiSearch} placeholder='Search for Patient&apos;s Name/Case Paper No./Mobile No.' />
                     </div>
-                    <div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:<div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] whitespace-nowrap text-white">
                                 <tr >
@@ -69,7 +74,7 @@ const AppointmentList = () => {
                                 }
                             </tbody>
                         </table>
-                    </div>
+                    </div>}
                     <div className='flex flex-col gap-4 mt-20'>
                         <div className='flex items-center gap-4'><div className='w-7 h-7 inline-block border-1 bg-yellow-200'></div><div>New Patient Appointment</div></div>
                         <div className='flex items-center gap-4'><div className='w-7 h-7 inline-block border-1 bg-green-200'></div><div>Follow Up Appointment</div></div>

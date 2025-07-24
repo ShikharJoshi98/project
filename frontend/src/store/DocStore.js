@@ -196,7 +196,7 @@ export const docStore = create((set) => ({
     },
     getAppDetails: async (branch) => {//
       try {
-          const response = await axios.get(`${DOC_API_URL}/getAppointments/${branch}`);
+          const response = await axios.get(`${DOC_API_URL}/getAppointments`);
           set({appointments:response.data.Appointments})
       } catch (error) {
           console.error(error.message);

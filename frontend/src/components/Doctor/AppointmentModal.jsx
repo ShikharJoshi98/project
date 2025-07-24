@@ -24,7 +24,6 @@ const AppointmentModal = ({ onClose }) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const today = new Date().toLocaleDateString('en-CA');
   const todayDate = updateDate();
-
   const [formValues, setFormValues] = useState({
     date: today,
     time: "",
@@ -32,12 +31,12 @@ const AppointmentModal = ({ onClose }) => {
     Doctor: "",
     appointmentType: 'general'
   });
-
+  
   useEffect(() => {
-    getPatientDetails();
+    getPatientDetails(1,"",user?.branch);
     getDetails();
   }, [getPatientDetails, getDetails])
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedPatient === null) {

@@ -17,7 +17,7 @@ const UploadCase = ({ onClose }) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   useEffect(() => {
-    getPatientDetails(user?.role,user?.branch);
+    getPatientDetails();
   }, [getPatientDetails]);  
 
   const handleSubmit = async (e) => {
@@ -43,7 +43,7 @@ const UploadCase = ({ onClose }) => {
             <div className="flex flex-col gap-2">
               <h1>Patient Case Paper Number</h1>
               <div className="relative w-full">
-                  <SearchSelect options={patients} setSelectedPatient={setSelectedPatient} />
+                <SearchSelect options={patients} branch={user?.branch} setSelectedPatient={setSelectedPatient} />
               </div>
             </div>
             <div className="flex flex-col mt-5 gap-2">

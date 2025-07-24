@@ -16,7 +16,7 @@ import { LuLoaderCircle } from 'react-icons/lu';
 const ItemStockRec = () => {
     const [isItemModalOpen, setItemModalIsOpen] = useState(false);
     const { user } = useAuthStore();
-    const { stockToggle, toggleStockUpdate } = recStore();
+    const { stockToggle } = recStore();
     const [isVendorModalOpen, setVendorModalIsOpen] = useState(false);
     const [isAddStockModalOpen, setAddStockModalIsOpen] = useState(false);
     const [isOrderModalOpen, setOrderModalIsOpen] = useState(false);
@@ -46,6 +46,7 @@ const ItemStockRec = () => {
         const formattedDate = date.toLocaleString("en-US", options);
         return formattedDate;
     }
+    console.log(itemStock);
     useEffect(() => {
         try {
             const timeout = setTimeout(() => setLoading(true), 200);

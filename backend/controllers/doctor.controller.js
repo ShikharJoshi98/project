@@ -232,10 +232,9 @@ export const createNewAppointment = async (req, res) => {
     }
 }
 
-export const getAppointments = async (req, res) => {//
+export const getAppointments = async (req, res) => {
     try {
-        const { branch } = req.params;
-        const Appointments = await Appointment.find({ branch });
+        const Appointments = await Appointment.find().populate('PatientCase').populate('Doctor');
         res.json({
             Appointments,
             success: true

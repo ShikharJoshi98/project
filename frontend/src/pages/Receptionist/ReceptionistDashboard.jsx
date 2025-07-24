@@ -7,20 +7,18 @@ import AppointmentModal from '../../components/Doctor/AppointmentModal';
 import { docStore } from '../../store/DocStore';
 import { updateDate } from '../../store/todayDate';
 import { LuMapPin } from 'react-icons/lu';
+import { recStore } from '../../store/RecStore';
 
 const ReceptionistDashboard = () => {
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const { user } = useAuthStore();
-  const { appointmentSubmit,getAppDetails,appointments } = docStore();
+  const { appointmentSubmit } = docStore();
+  const { getAppointmentsRec, appointments,completeAppointmentLength,pendingAppointmentLength } = recStore();
   const currentDate = updateDate();
 
   useEffect(() => {
-    getAppDetails(user?.branch);
-  }, [getAppDetails, appointmentSubmit])
-
-  const appointmentList = appointments.filter((appointment) => appointment?.date === currentDate);
-  const pendingAppointment = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === false);
-  const completeAppointment = appointmentList.filter((appointment) => appointment?.complete_appointment_flag === true);
+    getAppointmentsRec(user?.branch);
+  }, [getAppointmentsRec, appointmentSubmit])
 
   return (
     <>
@@ -40,18 +38,18 @@ const ReceptionistDashboard = () => {
               <span className='text-zinc-800 mb-3 flex'>Total Appointments</span>
               <hr className='h-0.5 border-none mb-4 bg-white' />
               <h1 className='flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span><FaUserDoctor />
-              </span>{appointmentList.length}</h1>
+              </span>{appointments.length}</h1>
             </div>
             <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300  py-5 px-8  rounded-lg bg-[#ffc36d] '>
               <span className='text-zinc-800  mb-3 flex'>Pending Appointments</span>
               <hr className='h-0.5 border-none mb-4 bg-white' />
-              <h1 className='flex font-semibold  items-center gap-8 sm:gap-36 md:gap-10'><span><FaUsers /></span>{pendingAppointment.length}</h1>
+              <h1 className='flex font-semibold  items-center gap-8 sm:gap-36 md:gap-10'><span><FaUsers /></span>{pendingAppointmentLength}</h1>
             </div>
             <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300 py-5 px-8 rounded-lg bg-[#55abff] '>
               <span className='text-zinc-800  mb-3 flex'>Appointments Completed</span>
               <hr className='h-0.5 border-none mb-4 bg-white' />
               <h1 className='flex font-semibold items-center gap-10 sm:gap-36 md:gap-10'><span><FaRegCheckCircle />
-              </span>{completeAppointment.length}</h1>
+              </span>{completeAppointmentLength}</h1>
             </div>
           </div>
         </div>

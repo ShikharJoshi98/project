@@ -6,7 +6,6 @@ import { CiImageOn, CiTrash } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import { LuLoaderCircle } from "react-icons/lu";
 
-
 const UploadBillModal = ({ onClose, setBillImagesLength=()=>{},orderId }) => {
   const [image, setImage] = useState(null);
   const [submit, setSubmit] = useState(false);

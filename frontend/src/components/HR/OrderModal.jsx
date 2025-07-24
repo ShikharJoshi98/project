@@ -47,12 +47,11 @@ const OrderModal = ({ onClose }) => {
       console.log("Error in fetch API hr getItemStock", error.message);
     }
   }, []);
-
+  console.log(itemStock);
   useEffect(() => {
     if (itemStock.length > 0) {
       const lowQuantityItems = itemStock.filter(item => item.quantity <= item.reorder_level && item?.is_order_placed === false);
-    
-      const initialFormRows = lowQuantityItems.map(item => ({
+          const initialFormRows = lowQuantityItems.map(item => ({
         itemName: item.itemName,
         vendor: [],
         quantity: 1,
