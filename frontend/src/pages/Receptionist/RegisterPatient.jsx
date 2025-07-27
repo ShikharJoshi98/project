@@ -59,8 +59,8 @@ const RegisterPatient = () => {
 
     return (
         <>
-            <div onSubmit={handleSubmit} className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen  w-full'>
-                <form className='z-10 my-8 mx-auto bg-white p-8 sm:max-w-[50vw] w-full border rounded-xl text-zinc-800 text-sm shadow-lg'>
+            <div onSubmit={handleSubmit} className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden p-8'>
+                <form className='z-10 mx-auto bg-white p-8 sm:max-w-[50vw] w-full border rounded-xl text-zinc-800 text-sm shadow-lg'>
                     <h1 className='text-2xl font-semibold mb-5 w-fit mx-auto'>Register Patient</h1>
                     <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto'/>
                     <div className='flex flex-col gap-4 m-auto '>

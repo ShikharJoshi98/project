@@ -5,6 +5,7 @@ import OrderMedicineHistoryModal from '../../components/Doctor/OrderMedicineHist
 import { HR_API_URL, useStore } from '../../store/UpdateStore';
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const ApproveMedicines = () => {
   const location = useParams();
@@ -15,9 +16,18 @@ const ApproveMedicines = () => {
   const [searchPotency, setSearchPotency] = useState('');
   const [submit, setSubmit] = useState(false);
   const { getMedicine, medicines, potencys, getPotency, getMedicalStock, medicalStock, medicalStockToggle } = useStore();
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    getMedicine(); getPotency(); getMedicalStock(location.location); getMedicalOrderId();
+    getMedicine();
+    getPotency();
+    const timeout = setTimeout(() => {
+      setLoading(true);
+    }, 200);
+    getMedicalStock(location.location).finally(() => {
+      clearTimeout(timeout);
+      setLoading(false);
+    });
+    getMedicalOrderId();
   }, [getMedicine, getPotency, getMedicalStock, medicalStockToggle, submit, getMedicalOrderId]);
 
   const timeStamp = (isoDate) => {
@@ -33,7 +43,6 @@ const ApproveMedicines = () => {
     const formattedDate = date.toLocaleString("en-US", options);
     return formattedDate;
   }
-
   const ApproveMedicalStock = async (id, orderFlag) => {
     try {
       await axios.patch(`${DOC_API_URL}/approveMedicalStock/${id}`,
@@ -53,7 +62,6 @@ const ApproveMedicines = () => {
       console.error(error.message);
     }
   }
-
   const filteredMedicalStock = medicalStock.filter((medicine) => {
     const matchesMedicine = searchTerm === '' || medicine?.medicineName === searchTerm;
     const matchesPotency = searchPotency === '' || medicine?.potency === searchPotency;
@@ -62,10 +70,10 @@ const ApproveMedicines = () => {
 
   return (
     <>
-      <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
+      <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
         <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
-          <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Medicine Stock {location.location}</h1>
-          <div className='sm:flex grid grid-cols-1 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9  md:text-lg'>
+          <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Medicine Stock {location.location}</h1>
+          <div className='sm:flex grid grid-cols-1 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9'>
             <button onClick={() => setOrderMedicineHistoryModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Order History</button>
             <button onClick={() => setOrderMedicineModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Order Balances</button>
           </div>
@@ -87,9 +95,9 @@ const ApproveMedicines = () => {
               ))}
             </select>
           </div>
-          <div className="overflow-x-auto mt-10 rounded-lg">
+          {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
-              <thead className="bg-[#337ab7]  text-white">
+              <thead className="bg-[#337ab7] text-white">
                 <tr >
                   <th className="px-2 py-4 ">Count</th>
                   <th className="px-2 py-4 ">Medicine</th>
@@ -121,7 +129,7 @@ const ApproveMedicines = () => {
                   ))}
               </tbody>
             </table>
-          </div>
+          </div>}
         </div>
       </div>
       {isOrderMedicineModalOpen && <OrderMedicineBalanceModal location={location.location} onClose={() => setOrderMedicineModalIsOpen(false)} />}

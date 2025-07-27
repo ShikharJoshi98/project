@@ -1,9 +1,9 @@
 import axios from "axios";
-import { X } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import ReactDOM from "react-dom";
 import { DOC_API_URL } from "../../store/DocStore";
 import { useParams } from "react-router-dom";
+import { RxCross2 } from "react-icons/rx";
 
 const WritingModal = ({ writeUpType,onClose }) => {
     const location = useParams();
@@ -29,7 +29,7 @@ const WritingModal = ({ writeUpType,onClose }) => {
                     onClick={onClose}
                     className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
                 >
-                    <X size={24} />
+                    <RxCross2 size={24} />
                 </button>
                 <h1 className="text-blue-500 text-2xl md:text-3xl  text-center font-semibold">
                     Writing Pad

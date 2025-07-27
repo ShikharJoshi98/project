@@ -7,6 +7,7 @@ import { updateDate } from "../../store/todayDate";
 import UploadBillModal from "./UploadBillModal";
 import { FaPlus } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+import { LuLoaderCircle } from "react-icons/lu";
 
 const OrderModal = ({ onClose }) => {
   const { getMedicalVendors, vendors, getMedicalStock, medicalStock, medicalStockToggle, getMedicalOrders, medicalOrders } = useStore();
@@ -19,10 +20,17 @@ const OrderModal = ({ onClose }) => {
   const [billModal, setBillModal] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [billImagesLength, setBillImagesLength] = useState(0);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     getMedicalStock(user?.branch)
     getMedicalVendors();
-    getMedicalOrders(user?.branch);
+    const timeout = setTimeout(() => {
+      setLoading(true);
+    }, 200);
+    getMedicalOrders(user?.branch).finally(() => {
+      clearTimeout(timeout);
+      setLoading(false);
+    });
   }, [getMedicalStock, getMedicalVendors, submit]);
 
   const getFutureDate = (daysToAdd = 7) => {
@@ -183,7 +191,7 @@ const OrderModal = ({ onClose }) => {
           <h1 className="text-blue-500 text-2xl md:text-3xl mt-10 mb-6 text-center font-semibold">
             Medical Order Details
           </h1>
-          <div className="overflow-x-auto">
+          {loading?<LuLoaderCircle className="animate-spin mx-auto mt-10"/>:<div className="overflow-x-auto">
             <table className=" min-w-[1200px] mx-auto bg-white border border-gray-300 shadow-md rounded-lg">
               <thead>
                 <tr className=" bg-blue-500 text-white text-sm">
@@ -240,7 +248,7 @@ const OrderModal = ({ onClose }) => {
                 )}
               </tbody>
             </table>
-          </div>
+          </div>}
         </div>
       </div>
       {billModal && <UploadBillModal setBillImagesLength={setBillImagesLength} onClose={() => setBillModal(false)} orderId={orderId} />}

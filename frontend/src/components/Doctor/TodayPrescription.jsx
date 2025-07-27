@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Pen, Trash, Check, X } from 'lucide-react';
 import MultiSelectInput from './MultiSelectInput';
 import { updateDate } from '../../store/todayDate';
+import { LuCheck } from 'react-icons/lu';
+import { RxCross2 } from 'react-icons/rx';
+import { FaPen, FaTrash } from 'react-icons/fa';
 
 const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
 const doseArray = ['Single Dose', '3 Dose Half-Hour Interval', '2 Dose Half-Hour Interval'];
@@ -77,10 +79,7 @@ const TodayPrescriptions = () => {
 
     return (
         <div>
-            <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>
-                TODAY'S PRESCRIPTION
-            </h1>
-
+            <h1 className='text-xl sm:text-4xl text-center font-semibold my-10 text-[#337ab7]'>TODAY'S PRESCRIPTION</h1>
             <div className="overflow-x-auto mt-3">
                 <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                     <thead>
@@ -161,7 +160,7 @@ const TodayPrescriptions = () => {
                                     {editingRow === index ? (
                                         <div className=''>
                                             <button onClick={() => setEditNote(true)} className='p-2 rounded-md text-white bg-blue-500 cursor-pointer'>Edit Note</button>
-                                            {editNote && <div onClick={() => setEditNote(false)} className='absolute right-0 top-9'><X /></div>}
+                                            {editNote && <div onClick={() => setEditNote(false)} className='absolute right-0 top-9'><RxCross2 /></div>}
                                             {editNote && <div className='w-72 h-20 right-0  rounded-lg  bottom-10 bg-white '>
                                                 <textarea
                                                     type="text"
@@ -196,27 +195,27 @@ const TodayPrescriptions = () => {
                                 <td className="py-4 px-2 border text-center">
                                     {editingRow === index ? (
                                         <div className="flex justify-center gap-2">
-                                            <Check
+                                            <LuCheck
                                                 onClick={() => {
                                                     handleUpdate(value._id)
                                                     setEditingRow(false)
                                                 }}
                                                 className="border p-1 size-7 text-green-500 rounded-md cursor-pointer"
                                             />
-                                            <X
+                                            <RxCross2
                                                 onClick={() => setEditingRow(null)}
                                                 className="border p-1 size-7 text-red-500 rounded-md cursor-pointer"
                                             />
                                         </div>
                                     ) : (
-                                        <Pen
+                                        <FaPen
                                             onClick={() => handleEdit(index, value)}
                                             className="border p-1 size-7 rounded-md cursor-pointer"
                                         />
                                     )}
                                 </td>
                                 <td className="py-4 px-2 border text-center">
-                                    <Trash
+                                    <FaTrash
                                         onClick={() => handleDelete(value._id)}
                                         className="border p-1 size-7 text-red-500 rounded-md cursor-pointer"
                                     />

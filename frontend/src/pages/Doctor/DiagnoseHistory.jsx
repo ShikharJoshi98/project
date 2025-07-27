@@ -4,13 +4,19 @@ import { MdMedicalInformation } from 'react-icons/md'
 import { FaFilePdf } from 'react-icons/fa'
 import { docStore } from '../../store/DocStore'
 import { generateDiagnoseHistory, generateDiagnoseRow } from '../../store/generateDiagnoseHistory'
+import { LuLoaderCircle } from 'react-icons/lu'
 
 const DiagnoseHistory = () => {
     const { prescriptionsArray, getPrescriptions } = docStore();
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getPrescriptions();
+        const timeout = setTimeout(() => setLoading(true), 200);
+        getPrescriptions().finally(() => {
+            clearTimeout(timeout);
+            setLoading(false);
+        });
     }, [getPrescriptions]);
 
     const filteredPrescriptions = prescriptionsArray.filter((prescription) => {
@@ -21,14 +27,12 @@ const DiagnoseHistory = () => {
 
     return (
 
-        <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full p-8'>
             <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
-                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Diagnose History</h1>
-                <div className='flex items-center gap-2'>
-                    <Input onChange={(e) => setSearchTerm(e.target.value)} icon={MdMedicalInformation} placeholder='Search for Disease or Medicine here ..' />
-                </div>
-                <button onClick={() => generateDiagnoseHistory(prescriptionsArray)} className='py-2 px-4 bg-green-500 flex items-center gap-5 text-lg my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
-                <div className="overflow-x-auto mt-10 rounded-lg">
+                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl mb-10 sm:text-4xl'>Diagnose History</h1>
+                <Input onChange={(e) => setSearchTerm(e.target.value)} icon={MdMedicalInformation} placeholder='Search for Disease or Medicine here ..' />
+                <button onClick={() => generateDiagnoseHistory(filteredPrescriptions)} className='py-2 px-4 bg-green-500 flex items-center gap-5 my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
+                {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >
@@ -61,7 +65,7 @@ const DiagnoseHistory = () => {
                             }
                         </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
         </div>
     )

@@ -3,6 +3,7 @@ import Input from '../../components/Input'
 import { docStore } from '../../store/DocStore'
 import RegenerateCertificateModal from '../../components/Doctor/RegenerateCertificateModal'
 import { CiSearch } from 'react-icons/ci'
+import { LuLoaderCircle } from 'react-icons/lu'
 
 const PreviousIssuedCertificates = () => {
     const { getCertificates, certificates } = docStore();
@@ -10,27 +11,30 @@ const PreviousIssuedCertificates = () => {
     const [certificateDetail, setCertificateDetail] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [submit, setSubmit] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getCertificates();
+        const timeout = setTimeout(() => setLoading(true), 200);
+        getCertificates().finally(() => {
+            clearTimeout(timeout);
+            setLoading(false);
+        });
     }, [getCertificates, submit]);
 
     return (
-        <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden'>
-            <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
-                <h1 className='p-4 mb-10 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Previous Issued Certificates</h1>
-                <div className='flex items-center gap-2 '>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full p-8'>
+            <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
+                <h1 className='p-4 mb-10 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Previous Issued Certificates</h1>
                     <Input onChange={(e) => setSearchTerm(e.target.value)} icon={CiSearch} placeholder="Enter Patient's Name/Case Paper no./Mobile Number here" />
-                </div>
-                <div className="overflow-x-auto mt-10 rounded-lg">
+                {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
-                        <thead className="bg-[#337ab7]  text-white">
+                        <thead className="bg-[#337ab7] text-white">
                             <tr >
-                                <th className="px-2 py-4 ">ISSUED DATE</th>
-                                <th className="px-2 py-4 ">CASE PAPER NO.</th>
-                                <th className="px-4 py-4 ">NAME</th>
-                                <th className="px-2 py-4 ">CONTACT NO.</th>
-                                <th className="px-2 py-4 ">STATUS</th>
+                                <th className="px-2 py-4">ISSUED DATE</th>
+                                <th className="px-2 py-4">CASE PAPER NO.</th>
+                                <th className="px-4 py-4">NAME</th>
+                                <th className="px-2 py-4">CONTACT NO.</th>
+                                <th className="px-2 py-4">STATUS</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,7 +48,7 @@ const PreviousIssuedCertificates = () => {
                                 </tr>))}
                         </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
             {regenerateModal && <RegenerateCertificateModal setSubmit={setSubmit} certificate={certificateDetail} onClose={() => setRegenerateModal(false)} />}
         </div>

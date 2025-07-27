@@ -16,11 +16,11 @@ import { CiCalendar, CiClock1 } from 'react-icons/ci';
 
 const AppointmentModal = ({ onClose }) => {
   const { appointmentSubmit, toggleAppointmentSubmit } = docStore();
-  const { patients, getPatientDetails } = recStore();
+  const { allBranchPatients, getPatientDetails } = recStore();
+  const { branch } = useParams();
   const { user } = useAuthStore();
   const { getDetails, employees } = useStore();
   const doctors = employees.filter(emp => emp?.role === 'doctor');
-  const location = useParams();
   const [selectedPatient, setSelectedPatient] = useState(null);
   const today = new Date().toLocaleDateString('en-CA');
   const todayDate = updateDate();
@@ -33,7 +33,7 @@ const AppointmentModal = ({ onClose }) => {
   });
   
   useEffect(() => {
-    getPatientDetails(1,"",user?.branch);
+    getPatientDetails(undefined,"",branch||user?.branch);
     getDetails();
   }, [getPatientDetails, getDetails])
   
@@ -48,7 +48,7 @@ const AppointmentModal = ({ onClose }) => {
       PatientCase: selectedPatient
     };
     const response = await axios.post(`${DOC_API_URL}/new-appointment`, updatedForm);
-    await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
+    await axios.patch(`${DOC_API_URL}/update-apppointment/${selectedPatient}`, {
       complete_appointment_flag: false,
       medicine_issued_flag: false,
       date: todayDate
@@ -86,10 +86,10 @@ const AppointmentModal = ({ onClose }) => {
   return ReactDOM.createPortal(
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
       <ToastContainer />
-      <div className="bg-[#e9ecef] overflow-x-hidden max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
+      <div className="bg-[#e9ecef] overflow-x-hidden max-h-[90vh] max-w-[80vw] overflow-y-auto flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg">
         <button onClick={() => onClose()} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
-        <div className="bg-[#e9ecef] w-full sm:w-auto  sm:mx-10   rounded-lg">
-          <h1 className=" text-center font-semibold  text-[#337ab7] text-xl sm:text-3xl md:text-5xl">Create Appointment</h1>
+        <div className="bg-[#e9ecef] w-full sm:w-auto sm:mx-10 rounded-lg">
+          <h1 className=" text-center font-semibold text-[#337ab7] text-xl sm:text-4xl">Create Appointment</h1>
           <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
             <div className="flex flex-col gap-4 m-auto">
               <div className="flex flex-col gap-2">
@@ -102,7 +102,7 @@ const AppointmentModal = ({ onClose }) => {
               </div>
               <div className="flex flex-col gap-2">
                 <h1>Patient Case Paper Number</h1>
-                <SearchSelect options={patients} setSelectedPatient={setSelectedPatient} />
+                <SearchSelect options={allBranchPatients} setSelectedPatient={setSelectedPatient} />
               </div>
               <div className="flex flex-col gap-2">
                 <h1>Doctor</h1>

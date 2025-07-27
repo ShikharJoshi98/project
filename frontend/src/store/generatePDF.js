@@ -225,10 +225,14 @@ export const generateTablePDF = (
     doc.text(title, 20, nextY);
     nextY += 10;
     for (const image of imageList || []) {
-      checkPageBreak(110);
-      doc.addImage(image, "JPEG", 15, nextY, 180, 100);
-      nextY += 110;
-    }
+  if (!image || typeof image !== 'string' || !image.startsWith("data:image/")) {
+    console.warn("Skipping invalid image", image);
+    continue;
+  }
+  checkPageBreak(110);
+  doc.addImage(image, "JPEG", 15, nextY, 180, 100);
+  nextY += 110;
+}
   };
 
   renderList("Mental Causative Factors", mentalCausative);

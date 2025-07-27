@@ -21,7 +21,7 @@ const PatientDetails = () => {
     const [startSearch, setStartSearch] = useState(false);
 
     useEffect(() => {
-        const timeout = setTimeout(() => setLoading(true), 200);
+        const timeout = setTimeout(() =>{ setLoading(true)}, 200);
         getPatientDetails(page,searchTerm,user?.branch).finally(() => {
             clearTimeout(timeout);
             setLoading(false);
@@ -39,15 +39,11 @@ const PatientDetails = () => {
         }
     }
 
-    const filteredPatient = patients?.filter((patient) => patient?.branch === user?.branch);
-
     return (
         <>
-            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full'>
-                <div className='p-5 md:p-10'>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen p-8 w-full overflow-hidden'>
                     <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold hover:scale-99 transition-all duration-300 shadow-gray-600 shadow-md text-lg bg-blue-500 px-4 py-2 hover:bg-blue-700 rounded-lg'>Create Appointment<TbPencilPlus /></button>
-                </div>
-                <div className='bg-[#e9ecef] w-auto p-5 mx-10 rounded-lg'>
+                <div className='bg-[#e9ecef] w-auto p-5 mt-10 rounded-lg'>
                     <h1 className='w-fit mx-auto font-semibold text-[#337ab7] text-lg sm:text-xl md:text-4xl'>Patient's Details</h1>
                     <div className='mt-10 flex items-center gap-2'>
                         <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} placeholder="Search for Patient's Name/Case Paper No./Mobile No." />
@@ -72,7 +68,7 @@ const PatientDetails = () => {
                             </thead>
                             <tbody>
                                 
-                                {filteredPatient.map((patient, index) => (
+                                {patients.map((patient, index) => (
                                     <tr key={index} className={`${patient?.Case_Assignment_Flag === false ? 'bg-yellow-200 hover:bg-yellow-300' : 'hover:bg-blue-300 bg-blue-200'} transition-all`}>
                                         <td className="px-1 py-2 text-center">{index + 1}.</td>
                                         <td className="px-1 py-2 text-center">{patient?.casePaperNo === '' ? `${patient?.branch === 'Mulund' ? 'MUL-NEW' : 'DOM-NEW'}` : patient?.casePaperNo}</td>

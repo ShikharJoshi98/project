@@ -4,12 +4,12 @@ const PatientDashboard = () => {
   const { user } = useAuthStore();
 
   return (
-    <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden'>
-      <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
+    <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 w-full p-8 h-full min-h-screen'>
+      <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
         <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl p-5 rounded-lg'>Welcome {user?.fullname} !</h1>
         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
           <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
-            <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
+            {user?.gender==='Female'?<img src="/user_female.webp" alt="user_image" className='size-20 md:size-28' />:<img src="/user.png" alt="user_image" className='size-20 md:size-28' />}
             <h1 className='text-lg md:text-xl font-semibold'>{user?.fullname}</h1>
             <h1 className='text-sm md:text-base'>{user?.casePaperNo}</h1>
           </div>

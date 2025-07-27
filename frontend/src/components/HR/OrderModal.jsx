@@ -22,6 +22,7 @@ const OrderModal = ({ onClose }) => {
   const [billModal, setBillModal] = useState(false);
   const { toggleStockUpdate } = recStore();
   const todayDate = updateDate();
+  const [loading, setLoading] = useState(false);
   const getFutureDate = (daysToAdd = 7) => {
     const date = new Date();
     date.setDate(date.getDate() + daysToAdd);
@@ -36,7 +37,13 @@ const OrderModal = ({ onClose }) => {
     getItems();
     getVendors();
     getUnits();
-    getOrders(user?.branch)
+    const timeout = setTimeout(() => {
+      setLoading(true);
+    }, 200);
+    getOrders(user?.branch).finally(() => {
+      clearTimeout(timeout);
+      setLoading(false);
+    })
   }, [getItems, getVendors, getUnits, getOrders,billImagesLength, submit]);
 
   const vendorArray = vendors.map((vendor) => vendor?.vendorname);
@@ -200,7 +207,7 @@ const OrderModal = ({ onClose }) => {
           <h1 className="text-blue-500 text-2xl md:text-3xl mt-10 mb-6 text-center font-semibold">
             Order Details
           </h1>
-          <div className="overflow-x-auto">
+          {loading?<LuLoaderCircle className="animate-spin mx-auto mt-10"/>:<div className="overflow-x-auto">
             <table className=" min-w-[1200px] mx-auto bg-white border border-gray-300 shadow-md rounded-lg">
               <thead>
                 <tr className=" bg-blue-500 text-white text-sm">
@@ -255,7 +262,7 @@ const OrderModal = ({ onClose }) => {
                 )}
               </tbody>
             </table>
-          </div>
+          </div>}
         </div>
       </div>
       {billModal && <UploadBillModal onClose={() => setBillModal(false)} orderId={orderId} />}

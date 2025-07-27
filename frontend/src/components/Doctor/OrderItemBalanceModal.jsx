@@ -3,13 +3,19 @@ import Input from '../Input'
 import { useStore } from '../../store/UpdateStore';
 import { RxCross2 } from 'react-icons/rx';
 import { CiSearch } from 'react-icons/ci';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const OrderItemBalanceModal = ({ location, onClose }) => {
     const { getOrders, ordersPlaced } = useStore();
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getOrders(location);
+        const timeout = setTimeout(() => setLoading(true), 200);
+        getOrders(location).finally(() => {
+            clearTimeout(timeout);
+            setLoading(false);
+        })
     }, [getOrders])
 
     const filteredOrders = ordersPlaced.filter(order =>
@@ -26,7 +32,7 @@ const OrderItemBalanceModal = ({ location, onClose }) => {
                 <div className='flex items-center justify-center gap-2 mt-10'>
                     <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by Vendor or Order Item' />
                 </div>
-                <div className="overflow-x-auto mt-10 rounded-lg">
+                {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr>
@@ -61,7 +67,7 @@ const OrderItemBalanceModal = ({ location, onClose }) => {
                             )}
                         </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
         </div>
     )

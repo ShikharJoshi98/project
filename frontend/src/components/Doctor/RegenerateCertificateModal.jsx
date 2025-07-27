@@ -10,7 +10,7 @@ import { RxCross2 } from 'react-icons/rx';
 
 const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
     const { user } = useAuthStore();
-    const { patients, getPatientDetails } = recStore();
+    const { getAllPatients,allPatients } = recStore();
     const [formValues, setFormValues] = useState({
         diagnoseOne: '',
         diagnoseTwo: '',
@@ -23,8 +23,8 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
     })
 
     useEffect(() => {
-        getPatientDetails(user?.role, user?.branch);
-    }, [getPatientDetails]);    
+        getAllPatients();
+    }, [getAllPatients]);    
 
     const convertToInputDate = (ddmmyyyy) => {
         if (!ddmmyyyy) return '';
@@ -53,7 +53,7 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
         }));
     };
 
-    const patient = patients.filter((patient) => patient?._id === certificate?.patient?._id);
+    const patient = allPatients.filter((patient) => patient?._id === certificate?.patient?._id);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -115,7 +115,7 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
                         <h1>Duration : </h1>
                         <Input icon={CiCalendar} onChange={handleInputChange} value={formValues.duration} name="duration" type='text' placeholder='Number of Months' />
                     </div>
-                    <button className='py-2 px-6 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer'>Submit</button>
+                    <button className='py-2 px-6 mt-5 rounded-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer text-base'>Submit</button>
                 </form>
             </div>
         </div>

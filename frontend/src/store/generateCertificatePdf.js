@@ -11,9 +11,6 @@ const convertDateFormat = (dateString) => {
     return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
 };
 
-
-
-
 const disease = (str) => {
     const [name, disease, date] = str.split(' / ');
     return disease;
@@ -53,7 +50,7 @@ function numberToWords(num) {
     if (thousands > 0) {
         result += belowThousand(thousands) + " thousand";
         if (remainder > 0) {
-            result += remainder < 100 ? " and " : ", ";
+            result += remainder < 100 ? " and " :" ";
         }
     }
 
@@ -64,13 +61,9 @@ function numberToWords(num) {
     return result;
 }
 
-const dieases = (disease) => {
-
-}
-
 export const generateBillInvoicePdf = (patient, today, data) => {
     const doc = new jsPDF();
-    patient.casePaperNo = patient.casePaperNo.split('-');
+    patient.casePaperNo = String(patient?.casePaperNo).split('-');
     doc.addImage(img, 'JPEG', 0, 0, 210, 297);
     doc.setFontSize(12);
     doc.text('D-' + patient.casePaperNo[1], 52, 67);

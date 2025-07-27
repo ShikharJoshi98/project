@@ -99,8 +99,8 @@ const AddStaffModal = ({ setSubmit, onClose }) => {
                             <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                 <MdOutlineBloodtype className='size-4 text-blue-500' />
                             </div>
-                            <select name="bloodGroup" required id="Blood Type" onChange={handleInputChange} value={formValues.bloodGroup} className='py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                <option value="o+ve" >O+ve</option>
+                            <select name="bloodGroup" id="Blood Type" onChange={handleInputChange} value={formValues.bloodGroup} className='py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
+                                <option value="o+ve">O+ve</option>
                                 <option value="a+">A+</option>
                                 <option value="b+">B+</option>
                                 <option value="ab+">AB+</option>
@@ -114,7 +114,7 @@ const AddStaffModal = ({ setSubmit, onClose }) => {
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Address</h1>
-                        <textarea placeholder='Add Address' onChange={handleInputChange} value={formValues.address} name="address" className='w-full  h-10  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
+                        <textarea placeholder='Add Address' required onChange={handleInputChange} value={formValues.address} name="address" className='w-full  h-10  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
             duration-200'></textarea>
                     </div>
                     <div className='flex flex-col gap-2 '>

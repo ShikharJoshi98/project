@@ -76,18 +76,18 @@ const HomeoBhagwat = () => {
     }
 
     return (
-        <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen p-8 w-full'>
             <ToastContainer />
-            <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg'>
-                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Homeo Bhagwat Gita</h1>
-                <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4'>{todayDate}</h1>
+            <div className='bg-[#e9ecef] p-5 rounded-lg'>
+                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Homeo Bhagwat Gita</h1>
+                <h1 className=' text-blue-500 font-semibold mb-3 text-lg mt-4'>{todayDate}</h1>
                 <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
-                <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base md:text-lg'>
-                    <button onClick={() => setHomeoBhagwatSection('medicine')} className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${homeoBhagwatSection === 'medicine' ? 'bg-blue-500 text-white' : 'bg-blue-200 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>MEDICINE NAME</button>
-                    <button onClick={() => setHomeoBhagwatSection('disease')} className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${homeoBhagwatSection === 'disease' ? 'bg-blue-500 text-white' : 'bg-blue-200 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>DISEASE NAME</button>
-                    <button onClick={() => setHomeoBhagwatSection('redline')} className={`cursor-pointer border-1 hover:scale-102 transition-all duration-300 ${homeoBhagwatSection === 'redline' ? 'bg-blue-500 text-white' : 'bg-blue-200 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>RED LINE SYMPTOMS</button>
+                <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-stone-800 font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[10px] sm:text-base'>
+                    <button onClick={() => setHomeoBhagwatSection('medicine')} className={`cursor-pointer border-1 hover:scale-98 transition-all duration-300 ${homeoBhagwatSection === 'medicine' ? 'bg-blue-500 text-white' : 'bg-blue-200 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>MEDICINE NAME</button>
+                    <button onClick={() => setHomeoBhagwatSection('disease')} className={`cursor-pointer border-1 hover:scale-98 transition-all duration-300 ${homeoBhagwatSection === 'disease' ? 'bg-blue-500 text-white' : 'bg-blue-200 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>DISEASE NAME</button>
+                    <button onClick={() => setHomeoBhagwatSection('redline')} className={`cursor-pointer border-1 hover:scale-98 transition-all duration-300 ${homeoBhagwatSection === 'redline' ? 'bg-blue-500 text-white' : 'bg-blue-200 text-black'} p-2 hover:bg-blue-600 hover:text-white rounded-lg`}>RED LINE SYMPTOMS</button>
                 </div>
-                <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 min-w-full border rounded-xl text-zinc-600 text-sm shadow-lg">
+                <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-8 bg-white/80 h-auto p-8 min-w-full rounded-xl text-zinc-600 text-sm shadow-lg">
                     <div className="flex flex-col gap-4 m-auto">
                         <div className="flex flex-col gap-2">
                             <h1 className='text-black '>{homeoBhagwatSection === 'medicine' ? 'Medicine Name' : homeoBhagwatSection === 'disease' ? 'Disease Name' : 'Redline Symptoms'}</h1>
@@ -103,14 +103,14 @@ const HomeoBhagwat = () => {
                     </div>
                 </form>
                 <div>
-                    <h1 className='text-3xl mb-3 text-blue-600 font-semibold'>Search</h1>
+                    <h1 className='text-xl mb-3 text-blue-600 font-semibold'>Search</h1>
                     <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} type="text" name="name" placeholder='Enter Medicine Name or description' />
                     <div className='w-full flex justify-center sm:justify-end '>
-                        <button onClick={() => { generateTablePDF(Homeo.filter((item) => item?.section === homeoBhagwatSection)) }} className='bg-blue-500  p-2 text-white rounded-md cursor-pointer sm:text-xl mt-5 flex items-center gap-4'>Generate Pdf<FaRegFilePdf size={25} /></button>
+                        <button onClick={() => { generateTablePDF(Homeo.filter((item) => item?.section === homeoBhagwatSection)) }} className='bg-blue-500  p-2 text-white rounded-md cursor-pointer mt-5 flex items-center gap-4'>Generate Pdf<FaRegFilePdf size={25} /></button>
                     </div>
                 </div>
-                <div className="overflow-x-auto p-4 mt-3">
-                    <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
+                <div className="overflow-x-auto mt-3">
+                    <table className="min-w-full bg-white border border-gray-300 shadow-md">
                         <thead >
                             <tr className=" bg-blue-500 text-white text-lg">
                                 <th className="py-2 px-4 border">Serial No.</th>

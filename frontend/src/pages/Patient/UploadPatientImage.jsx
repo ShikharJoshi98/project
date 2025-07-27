@@ -23,9 +23,9 @@ const UploadPatientImage = () => {
     }
 
     return (       
-            <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden'>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen p-8 w-full'>
                 <ToastContainer/>
-                <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
+                <div className='bg-[#e9ecef] w-auto p-5 mx-10 rounded-lg'>
                     <h1 className='p-4 text-center mb-10 font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Upload Case Images</h1>
                     <form onSubmit={handleSubmit} className='max-w-[40vw] mx-auto'>
                         <Input icon={CiImageOn} type="file" name="caseImage" onChange={(e) => setImage(e.target.files[0])} placeholder='Upload Image' />

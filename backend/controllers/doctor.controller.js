@@ -77,10 +77,10 @@ export const updateTaskStatus = async (req, res) => {
 export const leaveDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(id)
+        
         const leaves = await LeaveApplication.find().sort({ createdAt: -1 });
         const userLeaves = await LeaveApplication.find({ username: id }).sort({ createdAt: -1 });
-        console.log(userLeaves);
+        
         res.json({
             success: true,
             leaves,
@@ -232,20 +232,120 @@ export const createNewAppointment = async (req, res) => {
     }
 }
 
+export const getIncompleteAppointments = async (req, res) => {
+    try {
+        const todayDate = updateDate();
+
+        const appointments = await Appointment.find({
+            date: todayDate,
+            complete_appointment_flag: false
+        });
+
+        const counts = {
+            domGeneral: 0,
+            mulGeneral: 0,
+            domRepeat: 0,
+            mulRepeat: 0,
+            domCourier: 0,
+            mulCourier: 0,
+        };
+
+        appointments.forEach((appointment) => {
+            const { branch, appointmentType } = appointment;
+
+            if (branch === 'Dombivali') {
+                if (appointmentType === 'general') counts.domGeneral++;
+                else if (appointmentType === 'repeat') counts.domRepeat++;
+                else if (appointmentType === 'courier') counts.domCourier++;
+            } else if (branch === 'Mulund') {
+                if (appointmentType === 'general') counts.mulGeneral++;
+                else if (appointmentType === 'repeat') counts.mulRepeat++;
+                else if (appointmentType === 'courier') counts.mulCourier++;
+            }
+        });
+
+        res.json({
+            ...counts,
+            success: true
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 export const getAppointments = async (req, res) => {
     try {
-        const Appointments = await Appointment.find().populate('PatientCase').populate('Doctor');
+        const { branch, appointmentSection, doctor } = req.params;
+        const todayDate = updateDate();
+
+        const Appointments = await Appointment.find({
+            date: todayDate,
+            branch,
+            appointmentType: appointmentSection,
+            Doctor: doctor
+        })
+        .populate('PatientCase')
+        .populate('Doctor');
+
+        const counts = {
+            newAppointmentLength: 0,
+            followUpAppointmentLength: 0,
+            medicineIssuedLength: 0,
+            medicineNotIssuedLength: 0
+        };
+
+        Appointments.forEach((appointment) => {
+            const {
+                new_appointment_flag,
+                medicine_issued_flag,
+                followUp_appointment_flag,
+                complete_appointment_flag
+            } = appointment;
+
+            if (
+                new_appointment_flag === true &&
+                medicine_issued_flag === false &&
+                followUp_appointment_flag === false &&
+                complete_appointment_flag === false
+            ) {
+                counts.newAppointmentLength++;
+            } else if (
+                new_appointment_flag === false &&
+                medicine_issued_flag === false &&
+                followUp_appointment_flag === true &&
+                complete_appointment_flag === false
+            ) {
+                counts.followUpAppointmentLength++;
+            } else if (
+                complete_appointment_flag === true &&
+                medicine_issued_flag === true &&
+                new_appointment_flag === false
+            ) {
+                counts.medicineIssuedLength++;
+            } else if (
+                complete_appointment_flag === true &&
+                medicine_issued_flag === false
+            ) {
+                counts.medicineNotIssuedLength++;
+            }
+        });
+
         res.json({
             Appointments,
+            ...counts,
             success: true
         });
     } catch (error) {
-        res.json({
+        res.status(500).json({
             success: false,
-            message:error.message
-        })
+            message: error.message
+        });
     }
-}
+};
 
 export const updateAppointment = async (req, res) => {
     try {
@@ -525,7 +625,7 @@ export const addHealthRecord = async (req, res) => {
     try {
         const { id } = req.params;
         const { weight, bloodPressure, date } = req.body;
-
+        
         const patient = await Patient.findById(id);
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
@@ -570,7 +670,7 @@ export const uploadFollowUpImage = async (req, res) => {
         const patient = await Patient.findById(id);
 
         if (!patient) {
-            console.log('no patient');
+            
             return res.status(404).json({ message: "Patient not found" });
         }
 
@@ -1171,7 +1271,7 @@ export const addPresentComplaintScribble = async (req, res) => {
     try {
         const id = req.params.id;
         const image = req.body.savedImage;
-        console.log("hit");
+        
         const date = new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
@@ -2098,7 +2198,7 @@ export const deleteThermalReaction = async (req, res) => {
     try {
         const { id, idx } = req.params;
         const thermalReactionData = await ThermalReactionPatient.findOne({ patient: id });
-        console.log(thermalReactionData);
+        
         if (idx !== -1) {
             thermalReactionData.diseases.splice(idx, 1);
             await thermalReactionData.save();
@@ -2117,7 +2217,7 @@ export const deleteThermalReaction = async (req, res) => {
 
 export const addMiasmPatient = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
+    
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",

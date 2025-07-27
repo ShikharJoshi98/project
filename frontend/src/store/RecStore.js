@@ -6,7 +6,9 @@ axios.defaults.withCredentials = true;
 
 export const recStore = create((set) => ({
     patients: [],//
+    allPatients:[],
     appointments: [],
+    allBranchPatients:[],
     pendingAppointmentLength: null,
     completeAppointmentLength: null,
     patient: null,
@@ -27,9 +29,18 @@ export const recStore = create((set) => ({
             });
             set({ patients: response.data.patients });
             set({ patientLength: response.data.patientLength });
+            set({ allBranchPatients: response.data.allBranchPatients });
         } catch (error) {
             console.error(error.message);
         }
+    },
+    getAllPatients: async () => {
+      try {
+          const response = await axios.get(`${REC_API_URL}/getAllPatients`);
+          set({ allPatients: response.data.patients });
+      } catch (error) {
+          console.log(error.message);
+      }  
     },
     getPatient: async (id) => {
         try {

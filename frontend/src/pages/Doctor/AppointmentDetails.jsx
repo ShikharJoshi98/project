@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { recStore } from '../../store/RecStore'
 import HealthAssessment from '../../components/Doctor/HealthAssessment'
@@ -6,24 +6,24 @@ import PreviousPrescriptions from '../../components/Doctor/PreviousPrescriptions
 import TodayPrescriptions from '../../components/Doctor/TodayPrescription'
 import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
 import FollowUp from '../../components/Doctor/FollowUp'
-import { Pen } from 'lucide-react'
+import { FaPen } from "react-icons/fa";
 
 const AppointmentDetails = () => {
     const { patient, getPatient } = recStore();
-    const location = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
+
     useEffect(() => {
-        getPatient(location.id);
+        getPatient(id);
     }, [getPatient])
-
+  
     return (
-
-        <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-            <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
-                <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-10 text-[#337ab7]'>
+        <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full p-8">
+            <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
+                <h1 className='text-xl sm:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>
                     PATIENT DETAILS
                 </h1>
-                {patient?.First_Appointment_Flag && <button onClick={() => navigate(`/new-case-details/${patient?._id}`)} className='bg-blue-500 text-white text-lg py-2 px-10 rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 font-semibold my-10 mx-auto flex items-center gap-5'>New Case <Pen /></button>}
+                {patient?.First_Appointment_Flag && <button onClick={() => navigate(`/new-case-details/${patient?._id}`)} className='bg-blue-500 text-white py-2 px-10 rounded-lg cursor-pointer font-semibold my-10 mx-auto flex items-center gap-5'>New Case <FaPen /></button>}
                 <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                     <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
                         {
@@ -66,7 +66,7 @@ const AppointmentDetails = () => {
                     <PreviousPrescriptions />
                 </div>
                 <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
-                <div className='mt-12 '>
+                <div className='mt-12'>
                     <PrescribeMedicine />
                 </div>
                 <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />

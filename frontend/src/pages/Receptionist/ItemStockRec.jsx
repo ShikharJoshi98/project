@@ -63,8 +63,8 @@ const ItemStockRec = () => {
 
     return (
         <>
-            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full'>
-                <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg '>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 p-8 to-sky-700 min-h-screen overflow-hidden w-full'>
+                <div className='bg-[#e9ecef] w-auto p-5 rounded-lg '>
                     <h1 className='text-center font-semibold text-[#337ab7] text-lg sm:text-xl md:text-4xl'>Items Stock {user?.branch}</h1>
                     <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold gap-2 sm:gap-10 justify-center items-center md:gap-20 text-[6px] sm:text-[8px] md:text-base'>
                         <button onClick={() => setItemModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>ADD ITEMS/UNIT LIST</button>

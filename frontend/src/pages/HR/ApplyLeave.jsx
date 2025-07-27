@@ -65,23 +65,23 @@ const ApplyLeave = () => {
     }
 
     return (
-        <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
-            <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg '>
-                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Leave Reports</h1>
-                <div className='flex md:flex-row flex-col md:items-start items-center gap-2 mt-10 w-full'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8  min-h-screen overflow-hidden w-full'>
+            <div className='bg-[#e9ecef]  w-auto p-5 rounded-lg '>
+                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Leave Reports</h1>
+                <div className='flex md:flex-row flex-col md:items-start items-center gap-5 mt-10 w-full'>
                     <form onSubmit={handleSubmit} className='md:w-1/3 w-full space-y-5'>
                         <h1 className='text-lg text-center font-semibold text-blue-600 mb-4'>Apply Leave</h1>
                         <div className='flex flex-col gap-2'>
-                            <h1>Start Date :</h1>
-                            <Input icon={CiCalendar} name="startDate" value={formValues.startDate} onChange={handleInputChange} type='Date' />
+                            <p>Start Date :</p>
+                            <Input icon={CiCalendar} required name="startDate" value={formValues.startDate} onChange={handleInputChange} type='Date' />
                         </div>
                         <div className='flex flex-col gap-2'>
-                            <h1>End Date :</h1>
-                            <Input icon={CiCalendar} name="endDate" value={formValues.endDate} onChange={handleInputChange} type='Date' />
+                            <p>End Date :</p>
+                            <Input icon={CiCalendar} required name="endDate" value={formValues.endDate} onChange={handleInputChange} type='Date' />
                         </div>
                         <div className='mb-3 '>
-                            <h1 className="text-black mb-2 text-lg font-semibold">Reason :</h1>
-                            <textarea placeholder='Enter Reason' name="reason" value={formValues.reason} onChange={handleInputChange} className='w-full bg-white h-56  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition duration-200'></textarea>
+                            <h1 className="text-black mb-2 font-semibold">Reason :</h1>
+                            <textarea placeholder='Enter Reason' required name="reason" value={formValues.reason} onChange={handleInputChange} className='w-full bg-white h-56  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition duration-200'></textarea>
                         </div>
                         <button type="submit" className="bg-blue-500 w-full transition-all duration-300 cursor-pointer hover:bg-blue-600 py-2 rounded-lg mt-3 text-white">Apply Leave</button>
                     </form>
@@ -123,7 +123,7 @@ const ApplyLeave = () => {
                                 <tbody>
                                     {
                                         userLeaves.map((leave, index) => (
-                                            <tr key={index} className="hover:bg-blue-300 text-lg font-medium bg-blue-200 transition-all ">
+                                            <tr key={index} className="hover:bg-blue-300 font-medium bg-blue-200 transition-all ">
                                                 <td className='py-2 text-center'>{index + 1}</td>
                                                 <td className='px-1 py-2 text-center'>{leave?.reason}</td>
                                                 <td className='px-1 py-2 text-center'>{leave?.startDate}</td>

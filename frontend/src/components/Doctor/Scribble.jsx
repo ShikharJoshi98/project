@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { Eraser, Pen, Redo, Trash, Undo } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ReactSketchCanvas } from 'react-sketch-canvas'
 import { DOC_API_URL } from '../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import { LuEraser, LuPen, LuRedo, LuTrash, LuUndo } from 'react-icons/lu';
 
 const Scribble = ({ complaint }) => {
     const canvasRef = useRef(null);
@@ -49,6 +49,7 @@ const Scribble = ({ complaint }) => {
                 break;
         }
     };
+    console.log(id)
     const handleSave = async () => {
         switch (complaint) {
             case 'Mental Causative Factor':
@@ -98,7 +99,7 @@ const Scribble = ({ complaint }) => {
                 </div>
                 <div className="flex flex-col items-center justify-start gap-4 p-2">
                     <button title="Pen" onClick={() => handleToolChange("pen")} disabled={!eraseMode} className={`p-3 rounded-lg border-2 bg-gray-200 shadow-md transition ${eraseMode? "text-black border-blue-400": "text-gray-400 border-gray-300"}`}>
-                        <Pen size={16} />
+                        <LuPen size={16} />
                     </button>
                     <div className="flex flex-col items-center gap-1">
                         <span className="text-sm text-center">Stroke</span>
@@ -123,7 +124,7 @@ const Scribble = ({ complaint }) => {
                             : "text-gray-400 border-gray-300"
                             }`}
                     >
-                        <Eraser size={16} />
+                        <LuEraser size={16} />
                     </button>
 
                     <hr className="w-8 border-blue-400 border-t-2 my-4" />
@@ -133,7 +134,7 @@ const Scribble = ({ complaint }) => {
                         onClick={() => handleCanvasAction("undo")}
                         className="p-3 rounded-lg border-2 border-blue-400 bg-gray-200 shadow-md"
                     >
-                        <Undo size={16} />
+                        <LuUndo size={16} />
                     </button>
 
                     <button
@@ -141,7 +142,7 @@ const Scribble = ({ complaint }) => {
                         onClick={() => handleCanvasAction("redo")}
                         className="p-3 rounded-lg border-2 border-blue-400 bg-gray-200 shadow-md"
                     >
-                        <Redo size={16} />
+                        <LuRedo size={16} />
                     </button>
 
                     <button
@@ -149,7 +150,7 @@ const Scribble = ({ complaint }) => {
                         onClick={() => handleCanvasAction("clear")}
                         className="p-3 rounded-lg border-2 border-blue-400 bg-gray-200 shadow-md"
                     >
-                        <Trash size={16} />
+                        <LuTrash size={16} />
                     </button>
 
                 </div>

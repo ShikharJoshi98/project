@@ -21,7 +21,6 @@ const Investigation = () => {
   const [submit, setSubmit] = useState(false);
   const mapRef = useRef(new Map());
 
-
   useEffect(() => {
     getInvestigationAdvised(investigationType);
     getTestInfo(id, investigationType);
@@ -52,7 +51,8 @@ const Investigation = () => {
 
   const deleteTest = async (test, id) => {
     try {
-      await axios.delete(`${DOC_API_URL}/delete-test/${investigationType}/${id}/${test}`);
+      const encodedTest = encodeURIComponent(test);
+      await axios.delete(`${DOC_API_URL}/delete-test/${investigationType}/${id}/${encodedTest}`);
       const map = mapRef.current;
       if (map.has(investigationType)) {
         const updatedTests = map.get(investigationType).filter(t => t !== test);
@@ -71,15 +71,16 @@ const Investigation = () => {
 
   return (
 
-    <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-      <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
+    <div className="bg-gradient-to-br from-blue-300 via-blue-400 p-8 to-sky-700 min-h-screen w-full overflow-hidden">
+      <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
         <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
-        <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>{investigationType}</h1>
+        <h1 className='text-xl sm:text-4xl text-center font-semibold mt-5 text-[#337ab7]'>{investigationType}</h1>
+        <p className='text-red-500 mt-10 font-semibold '>Note : Please do not refresh the page before generating the PDF. If the page is refreshed, previously added investigations will be lost and must be re-added manually.</p>
         <ul className='flex items-center justify-center flex-wrap gap-1 w-full my-15 font-semibold'>
           {
             testArray.map((test, index) => (
               <>
-                <li key={index} onClick={() => { setInvestigationType(test.title); setSelectedInvestigationOptions([]);}} style={{ color: `${test.color}` }} className='cursor-pointer'>{test.title}</li>
+                <li key={index} onClick={() => { setInvestigationType(test.title); setSelectedInvestigationOptions([]); }} style={{ color: `${test.color}` }} className='cursor-pointer'>{test.title}</li>
                 <li>|</li>
               </>
             ))

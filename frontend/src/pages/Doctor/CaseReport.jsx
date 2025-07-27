@@ -17,12 +17,12 @@ const CaseReport = () => {
         getPatient(location.id); getPresentComplaintData(location.id); getChiefComplaints(location.id); getPastHistoryData(location.id); getPersonalHistory(location.id); getFamilyMedicalData(location.id); getMentalCausative(location.id);
         getMentalCausativeScribble(location.id); getMentalPersonality(location.id); getMentalPersonalityScribble(location.id); getBriefMindSymptomScribble(location.id); getThermalReaction(location.id); getMiasm(location.id);
     }, [getPatient, getPresentComplaintData, getChiefComplaints, getPersonalHistory, getFamilyMedicalData, getMentalCausative, getMentalCausativeScribble, getMentalPersonality, getMentalPersonalityScribble, getBriefMindSymptomScribble, getThermalReaction, getMiasm])
-
+    
     return (
-        <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-            <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
+        <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 min-h-screen w-full">
+            <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
                 <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
-                <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>Patient Details</h1>
+                <h1 className='text-xl sm:text-4xl text-center font-semibold mt-5 text-[#337ab7]'>Patient Details</h1>
                 <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                     <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
                         <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
@@ -51,20 +51,20 @@ const CaseReport = () => {
                     </div>
                 </div>
             </div>
-            <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
-                <h1 onClick={() => navigate(`/new-case-details/${location.id}`)} className='text-lg flex items-center gap-3 py-1 px-3 bg-blue-500 rounded-md text-white w-fit cursor-pointer ml-10'><FaAngleDoubleLeft /> New Case</h1>
-                <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold mt-5 text-[#337ab7]'>New Case - Final Report</h1>
+            <div className="bg-[#e9ecef] w-auto p-5 mt-5 rounded-lg">
+                <h1 onClick={() => navigate(`/new-case-details/${location.id}`)} className='text-lg flex items-center gap-3 py-1 px-3 bg-blue-500 rounded-md text-white w-fit cursor-pointer'><FaAngleDoubleLeft /> New Case</h1>
+                <h1 className='text-xl sm:text-4xl text-center font-semibold mt-5 text-[#337ab7]'>New Case - Final Report</h1>
                 <div className='flex items-center justify-between my-5'>
-                    <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl '>{today}</h1>
-                    <button onClick={() => generateTablePDF(patient[0], PresentComplaintData, chiefComplaints, PastHistoryData,personalHistory, FamilyMedicalData, MentalCausativeData[0]?.diseases, mentalCausativeScribble, MentalPersonalityData[0]?.diseases, mentalPersonalityScribble, briefMindSymptomScribble, ThermalReactionData[0]?.diseases, MiasmData[0]?.diseases)} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
+                    <h1 className=' text-blue-500 font-semibold mb-3 text-lg'>{today}</h1>
+                    <button onClick={() => generateTablePDF(patient, PresentComplaintData, chiefComplaints, PastHistoryData,personalHistory, FamilyMedicalData, MentalCausativeData[0]?.diseases, mentalCausativeScribble, MentalPersonalityData[0]?.diseases, mentalPersonalityScribble, briefMindSymptomScribble, ThermalReactionData[0]?.diseases, MiasmData[0]?.diseases)} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
                 </div>
                 <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                 <div className='mt-12'>
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Health Assessment</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Health Assessment</h1>
                     <div className='p-2  overflow-x-auto w-full mt-5'>
-                        <table className="border-collapse  w-full border-2 border-gray-500 ">
+                        <table className="border-collapse w-full border-2 border-gray-500 ">
                             <thead>
-                                <tr className="bg-blue-500 text-lg text-white">
+                                <tr className="bg-blue-500 text-white">
                                     <th className="border border-gray-500 p-2">SNo.</th>
                                     <th className="border border-gray-500 p-2">Assesment Date</th>
                                     <th className="border border-gray-500 p-2">Blood Pressure</th>
@@ -73,7 +73,7 @@ const CaseReport = () => {
                             </thead>
                             <tbody>
                                 {patient?.healthRecords.map((healthRecord, index) => (
-                                    <tr key={index} className="bg-blue-200 text-lg">
+                                    <tr key={index} className="bg-blue-200">
                                         <td className="border border-gray-300 px-4 py-2 text-center">{index + 1}</td>
                                         <td className="border border-gray-300 px-4 py-2 text-center">{healthRecord?.date}</td>
                                         <td className="border border-gray-300 px-4 py-2 text-center">
@@ -88,10 +88,10 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className='mt-12'>
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Present Complaints</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Present Complaints</h1>
                     <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
-                            <thead className="bg-[#337ab7]  text-white">
+                            <thead className="bg-[#337ab7] text-white">
                                 <tr >
                                     <th className="px-1 py-4 ">Date</th>
                                     <th className="px-2 py-4 ">Complain</th>
@@ -100,7 +100,7 @@ const CaseReport = () => {
                             </thead>
                             <tbody>
                                 {PresentComplaintData.map((complaint, index) => (
-                                    <tr key={index} className="bg-blue-200 text-lg">
+                                    <tr key={index} className="bg-blue-200">
                                         <td className='py-2 px-1 text-center'>{complaint?.created_at}</td>
                                         <td className='py-2 px-2 text-center'>{complaint?.complaintName}</td>
                                         <td className='py-2 px-2 text-center'>{complaint?.duration} {complaint?.durationSuffix}</td>
@@ -111,13 +111,13 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Cheif Complaints</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Cheif Complaints</h1>
                     {chiefComplaints.map((complaint, index) => (
                         <img src={complaint?.image} key={index} className='mt-5' />
                     ))}
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Past History</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Past History</h1>
                     <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7]  text-white">
@@ -131,7 +131,7 @@ const CaseReport = () => {
                             </thead>
                             <tbody>
                                 {PastHistoryData.map((data, index) => (
-                                    <tr key={index} className="bg-blue-200 text-lg">
+                                    <tr key={index} className="bg-blue-200">
                                         <td className='py-2 px-1 text-center'>{data?.created_at}</td>
                                         <td className='py-2 px-2 text-center'>{data?.complaintName}</td>
                                         <td className='py-2 px-2 text-center'>{data?.lastDiagnosed} {data?.lastSuffix}</td>
@@ -144,7 +144,7 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Personal History</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Personal History</h1>
                     <div>
                         {personalHistory.map((complaint, index) => (
                             <img src={complaint?.image} key={index} className='mt-5' />
@@ -152,7 +152,7 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Family Medical History</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Family Medical History</h1>
                     <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7]  text-white">
@@ -166,7 +166,7 @@ const CaseReport = () => {
                             </thead>
                             <tbody>
                                 {FamilyMedicalData.map((data, index) => (
-                                    <tr key={index} className="bg-blue-200 text-lg">
+                                    <tr key={index} className="bg-blue-200">
                                         <td className='py-2 px-1 text-center'>{data?.relation}</td>
                                         <td className='py-2 px-2 text-center'>{data?.age}</td>
                                         <td className='py-2 px-2 text-center'>{data?.diseases.join(',')}</td>
@@ -180,7 +180,7 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Mental Causative Factors</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Mental Causative Factors</h1>
                     <div className='flex flex-col gap-3 items-center mt-5'>
                         {MentalCausativeData[0]?.diseases.map((disease, index) => (
                             <div className='text-xl flex items-center gap-8' key={index}>
@@ -196,10 +196,10 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Mental Personality Character</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Mental Personality Character</h1>
                     <div className='flex flex-col gap-3 items-center mt-5'>
                         {MentalPersonalityData[0]?.diseases.map((disease, index) => (
-                            <div className='text-xl flex items-center gap-8' key={index}>
+                            <div className='flex items-center gap-8' key={index}>
                                 <p>{index + 1}. {disease}</p>
                             </div>
                         ))}
@@ -211,7 +211,7 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Brief Mind Symptom</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Brief Mind Symptom</h1>
                     <div>
                         {briefMindSymptomScribble.map((complaint, index) => (
                             <img src={complaint?.image} key={index} className='mt-5' />
@@ -219,17 +219,17 @@ const CaseReport = () => {
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Thermal Reaction</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Thermal Reaction</h1>
                     <div className='flex flex-col items-center mt-3 gap-2'>
                         {ThermalReactionData[0]?.diseases.map((data, index) => (
-                            <div className='text-xl flex items-center gap-8' key={index}>
+                            <div className='flex items-center gap-8' key={index}>
                                 <p>{index + 1}. {data}</p>
                             </div>
                         ))}
                     </div>
                 </div>
                 <div className="mt-12">
-                    <h1 className='text-blue-500 font-semibold text-2xl'>Miasm</h1>
+                    <h1 className='text-blue-500 font-semibold text-xl'>Miasm</h1>
                     <div className='flex flex-col items-center mt-3 gap-2'>
                         <div className='flex flex-col items-center mt-3 gap-2'>
                             {MiasmData[0]?.diseases.map((data, index) => (

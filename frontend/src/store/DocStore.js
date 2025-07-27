@@ -9,7 +9,17 @@ export const docStore = create((set) => ({
     tasks: [],
     task: null,
     leaves: [],
-    userLeaves:[],
+    userLeaves: [],
+    domGeneral: null,
+    mulGeneral: null,
+    domRepeat: null,
+    mulRepeat: null,
+    domCourier: null,
+    mulCourier: null,
+    newAppointmentLength: null,
+    followUpAppointmentLength: null,
+    medicineIssuedLength: null,
+    medicineNotIssuedLength: null,
     appointments: [],//
     Homeo: [],
     appointment: null,
@@ -194,10 +204,27 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAppDetails: async (branch) => {//
+    getAppointmentCount: async () => {
+        try {
+            const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`);
+            set({ domGeneral: response.data.domGeneral })
+            set({ mulGeneral: response.data.mulGeneral });
+            set({ domRepeat: response.data.domRepeat });
+            set({ mulRepeat: response.data.mulRepeat });
+            set({ domCourier: response.data.domCourier });
+            set({ mulCourier: response.data.mulCourier });
+        } catch (error) {
+            console.log(error.message);
+        }
+    }, 
+    getAppDetails: async (appointmentSection,branch,user) => {//
       try {
-          const response = await axios.get(`${DOC_API_URL}/getAppointments`);
-          set({appointments:response.data.Appointments})
+          const response = await axios.get(`${DOC_API_URL}/getAppointments/${branch}/${appointmentSection}/${user}`);
+          set({ appointments: response.data.Appointments });
+          set({ newAppointmentLength: response.data.newAppointmentLength });
+          set({ followUpAppointmentLength: response.data.followUpAppointmentLength });
+          set({ medicineIssuedLength: response.data.medicineIssuedLength });
+          set({ medicineNotIssuedLength: response.data.medicineNotIssuedLength });
       } catch (error) {
           console.error(error.message);
       }  

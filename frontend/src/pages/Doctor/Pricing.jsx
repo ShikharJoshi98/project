@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { CiBoxes, CiMoneyBill } from 'react-icons/ci'
+import { CiMoneyBill } from 'react-icons/ci'
 import Input from '../../components/Input'
-import { Box } from 'lucide-react'
 import { DOC_API_URL, docStore } from '../../store/DocStore'
 import axios from 'axios'
 import { FaBox } from 'react-icons/fa'
@@ -47,7 +46,6 @@ const Pricing = () => {
             [name]: value,
         }));
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await axios.patch(`${DOC_API_URL}/updatePayment/${payment[0]?._id}`, formValues);
@@ -57,10 +55,10 @@ const Pricing = () => {
     }
 
     return (
-        <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full p-8'>
             <ToastContainer/>
-            <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
-                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Doctor's Fees</h1>
+            <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
+                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Doctor's Fees</h1>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8  rounded-xl text-zinc-800   text-sm flex flex-col gap-5' >
                     <div className='flex flex-col gap-2'>
                         <h1>New Case* : </h1>
@@ -98,7 +96,7 @@ const Pricing = () => {
                         <h1>Online :</h1>
                         <Input icon={FaBox} type='text' onChange={handleInputChange} name="Courier" value={formValues.Courier} placeholder='Rs' />
                     </div>
-                    <button className='py-2 px-4 mt-5 rounded-lg text-lg bg-blue-500 text-white font-semibold block mx-auto cursor-pointer'>Update Prices</button>
+                    <button className='py-2 px-4 mt-5 rounded-lg text-base bg-blue-500 text-white font-semibold block mx-auto cursor-pointer'>Update Prices</button>
                 </form>
             </div>
         </div>

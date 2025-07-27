@@ -28,8 +28,8 @@ const NewCaseDetails = () => {
     const testArray = [{ title: 'Present Complaints', color: 'green' }, { title: 'Chief Complaints', color: 'blue' }, { title: 'Past History', color: 'brown' }, { title: 'Personal History', color: 'orange' }, { title: 'Family History', color: 'blue' }, { title: 'Mental Causative Factor', color: 'black' }, { title: 'Mental Personality Character', color: 'purple' }, { title: 'Brief Mind Symptoms', color: 'green' }, { title: 'Thermal Reaction', color: 'brown' }, { title: 'Miasm', color: 'indigo' }];
 
     return (
-        <div className="bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
-            <div className='text-stone-800 w-fit text-sm sm:text-xl flex flex-wrap items-center gap-5 font-semibold m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
+        <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 min-h-screen w-full">
+            <div className='text-stone-800 w-fit text-sm sm:text-base flex flex-wrap items-center gap-5 font-semibold bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
                 <h1>{patient?.fullname} </h1>
                 <p className='text-blue-400'>|</p>
                 <div className='flex items-center gap-2'>
@@ -42,12 +42,12 @@ const NewCaseDetails = () => {
                     <h1>{patient?.casePaperNo}</h1>
                 </div>
             </div>
-            <div className="bg-[#e9ecef] w-auto  p-5 mx-10 my-6 rounded-lg">
+            <div className="bg-[#e9ecef] w-auto p-5 mt-10 rounded-lg">
                 <div className='flex items-center justify-between'>
                     <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer'><FaAngleDoubleLeft /></h1>
-                    <button onClick={() => setHealthAssessmentModalIsOpen(true)} className='p-2 bg-green-500 text-lg text-white rounded-lg cursor-pointer'>Health Assessment</button>
+                    <button onClick={() => setHealthAssessmentModalIsOpen(true)} className='p-2 bg-green-500 text-white rounded-lg cursor-pointer'>Health Assessment</button>
                 </div>
-                <h1 className='text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]'>{complaint}</h1>
+                <h1 className='text-xl sm:text-4xl text-center font-semibold my-10 text-[#337ab7]'>{complaint}</h1>
                 <ul className='flex items-center justify-center flex-wrap gap-1 w-full my-15 font-semibold'>
                     {
                         testArray.map((test, index) => (

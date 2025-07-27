@@ -29,7 +29,7 @@ const RecNavbar = () => {
         navigate('/login');
     }
     return (
-        <div className='bg-[#404858]   w-full px-14 md:px-20 py-5 sticky top-0 z-50 flex items-center justify-between'>
+        <div className='bg-[#404858] w-full px-14 md:px-20 py-5 sticky top-0 z-50 flex items-center justify-between'>
             <div className='text-white cursor-pointer font-semibold text-sm md:text-xl flex items-center gap-2 '>
                 <CiHospital1 size={28} />
                 <h1>Wings Classical Homeopathy</h1>

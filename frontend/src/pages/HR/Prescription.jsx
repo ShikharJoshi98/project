@@ -10,45 +10,44 @@ import { useStore } from '../../store/UpdateStore';
 
 const Prescription = () => {
     const { id } = useParams();
-    const { patients, getPatientDetails } = recStore();
-    const { getAppointmentDetails, appointments } = useStore();
+    const {  patient, getPatient } = recStore();
+    const { medSection, getAppointmentDetails, appointments } = useStore();
     const { user } = useAuthStore();
-    const { prescriptionSubmit, fetchPrescription, getBillInfo, billInfo, prescription, otherPrescriptions, getOtherPrescription, balanceDue, getBalanceDue, appointmentSection, getAppdetails } = docStore();
+    const { prescriptionSubmit, fetchPrescription, getBillInfo, billInfo, prescription, otherPrescriptions, getOtherPrescription, balanceDue, getBalanceDue, appointmentSection } = docStore();
     const navigate = useNavigate();
     const todayDate = updateDate();
+    
     useEffect(() => {
         fetchPrescription(id);
         getOtherPrescription(id);
         getBalanceDue(id);
         getBillInfo(id);
-        getPatientDetails(user?.role, user?.branch);
-        getAppointmentDetails(user?.branch, appointmentSection);
-    }, [fetchPrescription, prescriptionSubmit, getBillInfo, getOtherPrescription, getAppointmentDetails, getPatientDetails]);
-
+        getPatient(id);
+        getAppointmentDetails(user?.branch, medSection);
+    }, [fetchPrescription, prescriptionSubmit, getBillInfo, getOtherPrescription, getAppointmentDetails, getPatient]);
     const appointment = appointments.filter((app) => app?.PatientCase?._id === id);
-    const patient = patients.filter((patient) => patient?._id === id);
-    
+     
     return (
         <div>
             <HRnavbar />
-            <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
-                <div className='text-stone-800 w-fit text-sm sm:text-xl flex flex-wrap items-center gap-5 font-semibold m-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
-                    <h1>{patient[0]?.fullname} </h1>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen p-8  w-full overflow-hidden'>
+                <div className='text-stone-800 w-fit text-sm sm:text-xl flex flex-wrap items-center gap-5 font-semibold bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
+                    <h1>{patient?.fullname} </h1>
                     <p className='text-blue-400'>|</p>
                     <div className='flex items-center gap-2'>
                         <h1>Contact No. -</h1>
-                        <h1>{patient[0]?.phone}</h1>
+                        <h1>{patient?.phone}</h1>
                     </div>
                     <p className='text-blue-400'>|</p>
                     <div className='flex items-center gap-2'>
                         <h1>Case Paper No. -</h1>
-                        <h1>{patient[0]?.casePaperNo}</h1>
+                        <h1>{patient?.casePaperNo}</h1>
                     </div>
                 </div>
-                <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
+                <div className='bg-[#e9ecef] w-auto p-5 mt-10 rounded-lg'>
                     <h1 onClick={() => navigate('/dashboard-HR/HR-medicine')} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
-                    <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Prescription Today</h1>
-                    <h1 className="text-blue-500 font-semibold mb-3 text-lg md:text-2xl mt-4">{todayDate}</h1>
+                    <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Prescription Today</h1>
+                    <h1 className="text-blue-500 font-semibold mb-3 text-lg mt-4">{todayDate}</h1>
                     <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] whitespace-nowrap text-white">
@@ -85,7 +84,7 @@ const Prescription = () => {
                             </tbody>
                         </table>
                     </div>
-                    {otherPrescriptions.length > 0 && <div><h1 className='p-4 text-center mt-5 font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Other Presciptions</h1>
+                    {otherPrescriptions.length > 0 && <div><h1 className='p-4 text-center mt-5 font-semibold text-[#337ab7] text-xl sm:text-4xl'>Other Presciptions</h1>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md">
                                 <thead className="bg-[#337ab7] whitespace-nowrap text-white">
@@ -112,7 +111,7 @@ const Prescription = () => {
                     }
                     {
                         appointment[0]?.medicine_issued_flag === false &&
-                        <button onClick={() => { navigate(`/medicine-payment/${id}`) }} className='bg-red-500 text-white text-2xl hover:scale-99 transition hover:bg-red-600 cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-5'>Pay Now</button>
+                        <button onClick={() => { navigate(`/medicine-payment/${id}`) }} className='bg-red-500 text-white text-lg hover:scale-99 transition hover:bg-red-600 cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-8'>Pay Now</button>
                     }
                 </div>
             </div>

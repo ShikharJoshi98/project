@@ -1,8 +1,8 @@
-import { Search } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import Input from "../Input";
 import { docStore } from "../../store/DocStore";
 import { useParams } from "react-router-dom";
+import { CiSearch } from "react-icons/ci";
 
 const PreviousPrescriptions = () => {
   const location = useParams();
@@ -24,17 +24,17 @@ const PreviousPrescriptions = () => {
 
   return (
     <div>
-      <h1 className="text-xl sm:text-3xl md:text-5xl text-center font-semibold my-10 text-[#337ab7]">
+      <h1 className="text-xl sm:text-4xl text-center font-semibold my-10 text-[#337ab7]">
         PREVIOUS PRESCRIPTIONS
       </h1>
-      <h1 className="text-2xl mb-3 text-blue-600 font-semibold">
+      <h1 className="mb-3 text-blue-600 font-semibold">
         Medicine (Search Here)
       </h1>
-      <Input onChange={(e) => setSearchTerm(e.target.value)} icon={Search} type="text" name="name" placeholder="Enter Medicine Name" />
+      <Input onChange={(e) => setSearchTerm(e.target.value)} icon={CiSearch} type="text" name="name" placeholder="Enter Medicine Name" />
       <div className="overflow-x-auto  mt-3">
         <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
           <thead>
-            <tr className="text-lg bg-blue-500 text-white">
+            <tr className="bg-blue-500 text-white">
               <th className="py-2 px-4 border">Date</th>
               <th className="py-2 px-4 border">Diagnose</th>
               <th className="py-2 px-4 border">Medicine</th>

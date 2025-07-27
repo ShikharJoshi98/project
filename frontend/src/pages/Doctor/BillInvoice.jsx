@@ -9,11 +9,9 @@ import axios from 'axios';
 import { generateBillInvoicePdf } from '../../store/generateCertificatePdf';
 import { updateDate } from '../../store/todayDate';
 import SearchSelect from '../../components/SearchSelect';
-import { useAuthStore } from '../../store/authStore';
 
 const BillInvoice = () => {
-    const { patients, getPatientDetails } = recStore();
-    const {user} = useAuthStore()
+    const { getAllPatients,allPatients } = recStore();
     const { getPrescriptions, prescriptionsArray } = docStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [selectedDiagnosis, setSelecetedDiagnosis] = useState(null);
@@ -30,9 +28,9 @@ const BillInvoice = () => {
     const todayDate = updateDate();
 
     useEffect(() => {
-        getPatientDetails(user?.role, user?.branch);
+        getAllPatients();
         getPrescriptions();
-    }, [getPatientDetails]);
+    }, [getAllPatients]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -60,13 +58,14 @@ const BillInvoice = () => {
             alert("Fill the details to go next.");
         }
     };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         formValues.patient = selectedPatient;
         formValues.selectedDiagnosis = selectedDiagnosis.label;
         await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
-        const patient = patients.filter((patient) => patient?._id === formValues.patient);
+        const patient = allPatients.filter((patient) => patient?._id === formValues.patient);
+        
         generateBillInvoicePdf(patient[0], todayDate, formValues);
         setFormValues({
             patient: '',
@@ -89,7 +88,7 @@ const BillInvoice = () => {
                     {billStatus === 'first' && <div><div className='flex flex-col gap-2'>
                         <h1>Patient Case Paper Number : </h1>
                         <div className='relative w-full'>
-                            <SearchSelect options={patients} setSelectedPatient={setSelectedPatient} />
+                            <SearchSelect options={allPatients} setSelectedPatient={setSelectedPatient} />
                         </div>
                     </div>
                         <div className='flex flex-col gap-2'>

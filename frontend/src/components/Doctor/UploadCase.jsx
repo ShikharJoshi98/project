@@ -4,20 +4,20 @@ import { recStore } from '../../store/RecStore';
 import Input from '../Input';
 import { docStore } from '../../store/DocStore';
 import SearchSelect from '../SearchSelect';
-import { useAuthStore } from '../../store/authStore';
 import { RxCross2 } from 'react-icons/rx';
 import { CiImageOn } from 'react-icons/ci';
 import { toast, ToastContainer } from 'react-toastify';
+import { useParams } from "react-router-dom";
 
 const UploadCase = ({ onClose }) => {
   const { patients, getPatientDetails } = recStore();
-  const { user } = useAuthStore();
+  const { branch } = useParams();
   const { uploadCase } = docStore();
   const [image, setImage] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   useEffect(() => {
-    getPatientDetails();
+    getPatientDetails(1,"",branch);
   }, [getPatientDetails]);  
 
   const handleSubmit = async (e) => {
@@ -38,12 +38,12 @@ const UploadCase = ({ onClose }) => {
       <div className="bg-[#e9ecef] max-h-[90vh] max-w-[80vw] overflow-y-hidden flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg">
         <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white text-black hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
         <div className="bg-[#e9ecef] w-full sm:w-auto sm:mx-10 rounded-lg">
-          <h1 className="text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl">Upload New Case Paper Images</h1>
+          <h1 className="text-center font-semibold text-[#337ab7] text-xl sm:text-4xl">Upload New Case Paper Images</h1>
           <form onSubmit={handleSubmit} className="mx-auto relative z-10 my-12 bg-white/80 h-auto p-8 md:max-w-[500px] w-full sm:max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg">
             <div className="flex flex-col gap-2">
               <h1>Patient Case Paper Number</h1>
               <div className="relative w-full">
-                <SearchSelect options={patients} branch={user?.branch} setSelectedPatient={setSelectedPatient} />
+                <SearchSelect options={patients} setSelectedPatient={setSelectedPatient} />
               </div>
             </div>
             <div className="flex flex-col mt-5 gap-2">

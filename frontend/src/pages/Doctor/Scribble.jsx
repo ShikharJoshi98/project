@@ -15,7 +15,7 @@ const Scribble = () => {
     const [eraseMode, setEraseMode] = useState(false);
     const [strokeWidth, setStrokeWidth] = useState(4);
     const { pathname } = useLocation();
-    console.log(id);
+    
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [pathname]);
@@ -86,7 +86,7 @@ const Scribble = () => {
     };
 
     return ReactDOM.createPortal(
-        <div className="bg-opacity-50 px-5 py-10 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden">
+        <div className="px-5 py-10 bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full">
             <ToastContainer/>
             <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl text-white cursor-pointer mb-5 ml-10'><FaAngleDoubleLeft /></h1>
             <div className="bg-[rgb(248,249,250)] rounded-xl mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[95vw] ">
@@ -116,7 +116,7 @@ const Scribble = () => {
                     <button title="Clear" onClick={() => handleCanvasAction("clear")} className="p-3 rounded-lg border-2 border-blue-400 bg-gray-200 shadow-md"><CiTrash size={24} /></button>
                 </div>
             </div>
-            <button onClick={() => handleCanvasAction("save")} className="bg-green-400 block mx-auto mt-2 text-white text-2xl py-2 px-5 rounded-lg">Save</button>
+            <button onClick={() => handleCanvasAction("save")} className="bg-green-400 block mx-auto mt-2 text-white text-lg py-2 px-5 rounded-lg">Save</button>
         </div>,
         document.getElementById("modal-root")
     );
