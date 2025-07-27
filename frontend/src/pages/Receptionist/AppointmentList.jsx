@@ -10,9 +10,9 @@ import { CiSearch } from 'react-icons/ci';
 import { LuLoaderCircle } from 'react-icons/lu';
 
 const AppointmentList = () => {
-    const { appointmentSubmit,appointments,getAppDetails } = docStore();
+    const { appointmentSubmit } = docStore();
     const { user } = useAuthStore();
-    const { setAppointmentSection, appointmentSection } = recStore();
+    const { setAppointmentSection, appointmentSection,getAppointments,appointments } = recStore();
     const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const currentDate = updateDate();
@@ -20,13 +20,13 @@ const AppointmentList = () => {
 
     useEffect(() => {
         const timeout = setTimeout(() => setLoading(true), 200);
-        getAppDetails().finally(() => {
+        getAppointments(user?.branch,appointmentSection).finally(() => {
             clearTimeout(timeout);
             setLoading(false);
         });
     }, [appointmentSection, appointmentSubmit]);
     
-    const appointmentList = useMemo(()=>{return  appointments.filter((appointment) => (appointment?.date === currentDate && appointment?.appointmentType === appointmentSection && appointment?.branch === user?.branch) && (appointment?.PatientCase?.fullname.toLowerCase().includes(searchTerm.toLowerCase())) )},[appointments, searchTerm, appointmentSection, currentDate]);
+    const appointmentList = appointments.filter((appointment) => (appointment?.PatientCase?.fullname.toLowerCase().includes(searchTerm.toLowerCase())) );
     
     return (
         <>

@@ -6,12 +6,15 @@ axios.defaults.withCredentials = true;
 
 export const recStore = create((set) => ({
     patients: [],//
-    allPatients:[],
+    allPatients: [],
     appointments: [],
-    allBranchPatients:[],
+    allBranchPatients: [],
     pendingAppointmentLength: null,
     completeAppointmentLength: null,
     patient: null,
+    generalAppointments: [],
+    repeatAppointments: [],
+    courierAppointments: [],
     patientLength: null,
     appointmentSection: "general",
     update: false,
@@ -35,12 +38,12 @@ export const recStore = create((set) => ({
         }
     },
     getAllPatients: async () => {
-      try {
-          const response = await axios.get(`${REC_API_URL}/getAllPatients`);
-          set({ allPatients: response.data.patients });
-      } catch (error) {
-          console.log(error.message);
-      }  
+        try {
+            const response = await axios.get(`${REC_API_URL}/getAllPatients`);
+            set({ allPatients: response.data.patients });
+        } catch (error) {
+            console.log(error.message);
+        }
     },
     getPatient: async (id) => {
         try {
@@ -53,9 +56,17 @@ export const recStore = create((set) => ({
     getAppointmentsRec: async (branch) => {
         try {
             const response = await axios.get(`${REC_API_URL}/getAppointments/${branch}`);
+            set({ generalAppointments: response.data.generalAppointments });
+            set({ repeatAppointments: response.data.repeatAppointments });
+            set({ courierAppointments: response.data.courierAppointments });
+        } catch (error) {
+            console.log(error.message);
+        }
+    },
+    getAppointments: async (branch,appointmentType) => {
+        try {
+            const response = await axios.get(`${REC_API_URL}/getRecAppointments/${branch}/${appointmentType}`);
             set({ appointments: response.data.appointments });
-            set({ completeAppointmentLength: response.data.completeAppointmentLength });
-            set({ pendingAppointmentLength: response.data.pendingAppointmentLength });
         } catch (error) {
             console.log(error.message);
         }

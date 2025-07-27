@@ -188,7 +188,7 @@ function App() {
           <Route path="task-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><TaskDetailsRec /></ProtectedRoute>} />//
           <Route path="apply-leave-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ApplyLeaveRec /></ProtectedRoute>} />//
           <Route path="courier-list-rec/:location" element={<ProtectedRoute allowedRoles={['receptionist']}><CourierListRec /></ProtectedRoute>} />
-          <Route path="appointment-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><AppointmentList /></ProtectedRoute>} />
+          <Route path="appointment-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><AppointmentList /></ProtectedRoute>} />//
 
           </Route>
 

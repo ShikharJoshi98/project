@@ -132,20 +132,66 @@ export const getPatient = async (req, res) => {
 export const getAppointmentsRec = async (req, res) => {//
     try {
         const { branch } = req.params;
-        const todayDate = updateDate();
-        const appointments = await Appointment.find({ date: todayDate, branch });
-        const pendingAppointmentLength = appointments?.filter((appointment) => appointment?.complete_appointment_flag === false).length;
-        const completeAppointmentLength = appointments?.filter((appointment) => appointment?.complete_appointment_flag === true && appointment?.medicine_issued_flag===true).length;
+        const date = updateDate();
+
+        const result = await Appointment.aggregate([
+            {
+                $match: {
+                    date,
+                    complete_appointment_flag: false,
+                    medicine_issued_flag: false,
+                    branch: branch,
+                    appointmentType: { $in: ['general', 'repeat', 'courier'] }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        branch: "$branch",
+                        appointmentType: "$appointmentType"
+                    },
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const counts = {
+            generalAppointments: 0,
+            repeatAppointments: 0,
+            courierAppointments: 0,
+        };
+      
+        result.forEach(({ _id, count }) => {
+            const key = `${_id.appointmentType}Appointments`;
+            counts[key] = count;
+        });
+
         res.json({
             success: true,
-            appointments,
-            pendingAppointmentLength,
-            completeAppointmentLength
+            ...counts
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+export const getAppDetails = async (req, res) => {
+    try {
+        const { branch,appointmentType } = req.params;
+        const date = updateDate();
+        const appointments = await Appointment.find({ branch, date,appointmentType }).populate('Doctor').populate('PatientCase');
+
+        res.json({
+            success: true,
+            appointments
         })
     } catch (error) {
         res.json({
             success: false,
-            message: error.message
+            message:error.message
         })
     }
 }
