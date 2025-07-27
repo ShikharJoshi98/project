@@ -9,6 +9,7 @@ export const recStore = create((set) => ({
     allPatients: [],
     appointments: [],
     allBranchPatients: [],
+    appointmentsLength:null,
     pendingAppointmentLength: null,
     completeAppointmentLength: null,
     patient: null,
@@ -67,6 +68,16 @@ export const recStore = create((set) => ({
         try {
             const response = await axios.get(`${REC_API_URL}/getRecAppointments/${branch}/${appointmentType}`);
             set({ appointments: response.data.appointments });
+        } catch (error) {
+            console.log(error.message);
+        }
+    },
+    getAppointmentLength: async (branch) => {
+        try {
+            const response = await axios.get(`${REC_API_URL}/getAppointmentsLength/${branch}`);
+            set({ appointmentsLength: response.data.appointmentsLength });
+            set({ pendingAppointmentLength: response.data.pendingAppointmentLength });
+            set({ completeAppointmentLength: response.data.completeAppointmentLength });
         } catch (error) {
             console.log(error.message);
         }

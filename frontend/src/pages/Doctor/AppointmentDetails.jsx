@@ -18,7 +18,7 @@ const AppointmentDetails = () => {
     }, [getPatient])
   
     return (
-        <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full p-8">
+        <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen overflow-hidden w-full p-8">
             <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
                 <h1 className='text-xl sm:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>
                     PATIENT DETAILS

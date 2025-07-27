@@ -12,12 +12,12 @@ const RecNavbar = () => {
     const menuRef = useRef(null);
     const [isMedicineHovered, setIsMedicineHovered] = useState(false);
     const navigate = useNavigate();
-    const { appointmentSubmit,appointments,getAppDetails } = docStore();
-    const { setAppointmentSection,generalAppointments,repeatAppointments,courierAppointments } = recStore();
+    const { appointmentSubmit } = docStore();
+    const { setAppointmentSection,generalAppointments,repeatAppointments,courierAppointments,getAppointmentsRec } = recStore();
 
     useEffect(() => {
-        getAppDetails();
-    }, [getAppDetails, appointmentSubmit]);   
+        getAppointmentsRec(user?.branch);
+    }, [getAppointmentsRec, appointmentSubmit]);   
    
     function handleLogout() {
         logout();

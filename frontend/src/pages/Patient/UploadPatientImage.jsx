@@ -23,7 +23,7 @@ const UploadPatientImage = () => {
     }
 
     return (       
-            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen p-8 w-full'>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen p-8 w-full'>
                 <ToastContainer/>
                 <div className='bg-[#e9ecef] w-auto p-5 mx-10 rounded-lg'>
                     <h1 className='p-4 text-center mb-10 font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Upload Case Images</h1>

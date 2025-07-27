@@ -86,7 +86,7 @@ const Scribble = () => {
     };
 
     return ReactDOM.createPortal(
-        <div className="px-5 py-10 bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full">
+        <div className="px-5 py-10 bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full">
             <ToastContainer/>
             <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl text-white cursor-pointer mb-5 ml-10'><FaAngleDoubleLeft /></h1>
             <div className="bg-[rgb(248,249,250)] rounded-xl mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[95vw] ">

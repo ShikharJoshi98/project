@@ -30,7 +30,7 @@ const AppointmentList_Doc = () => {
   }, [getAppDetails, appointmentSection, branch, appointmentSubmit]);
   
   return (
-    <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 min-h-screen w-full">
+    <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full">
       <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
         <h1 className='text-xl sm:text-2xl md:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>{
           `${appointmentSection.toUpperCase()} APPOINTMENT ${branch.toUpperCase()}`

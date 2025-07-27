@@ -29,7 +29,7 @@ const StaffManagment = () => {
     }
 
     return (
-        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 min-h-screen w-full'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden p-8 min-h-screen w-full'>
             <div className='bg-[#e9ecef] w-auto py-5 px-2 md:px-5 rounded-lg '>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Staff Managment</h1>
                 <button onClick={() => setAddStaffModalIsOpen(true)} className='py-2 px-5 place-self-center my-10 flex items-center gap-2 bg-blue-500 text-white text-sm font-semibold rounded-md cursor-pointer'>ADD EMPLOYEE <FaPlus /></button>

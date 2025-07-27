@@ -11,7 +11,7 @@ const PatientAppointment = () => {
     
     return (
         <div>
-            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full p-8'>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full p-8'>
                 <div className='text-stone-800 w-fit text-sm sm:text-lg flex flex-wrap items-center gap-5 font-semibold mx-10 bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
                     <h1>{user?.fullname} </h1>
                     <p className='text-blue-400'>|</p>

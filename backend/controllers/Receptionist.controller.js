@@ -69,7 +69,7 @@ export const updatePatient = async (req, res) => {
 export const getPatients = async (req, res) => {//
     try {
         const { branch } = req.params;
-        const { page=1 } = req.query;
+        const { page = 1 } = req.query;
         const { search = "" } = req.query;
         const pageNum = Number(page) || 1;
         const limitNum = 10;
@@ -114,7 +114,7 @@ export const getAllPatients = async (req, res) => {
 export const getPatient = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(id);
+
         const patient = await Patient.findById(id);
         console.log(patient)
         res.json({
@@ -160,7 +160,7 @@ export const getAppointmentsRec = async (req, res) => {//
             repeatAppointments: 0,
             courierAppointments: 0,
         };
-      
+
         result.forEach(({ _id, count }) => {
             const key = `${_id.appointmentType}Appointments`;
             counts[key] = count;
@@ -180,9 +180,10 @@ export const getAppointmentsRec = async (req, res) => {//
 
 export const getAppDetails = async (req, res) => {
     try {
-        const { branch,appointmentType } = req.params;
+        const { branch, appointmentType } = req.params;
+
         const date = updateDate();
-        const appointments = await Appointment.find({ branch, date,appointmentType }).populate('Doctor').populate('PatientCase');
+        const appointments = await Appointment.find({ branch, date, appointmentType }).populate('Doctor').populate('PatientCase');
 
         res.json({
             success: true,
@@ -191,7 +192,25 @@ export const getAppDetails = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
+        })
+    }
+}
+
+export const getAppointmentLength = async (req, res) => {
+    try {
+        const { branch } = req.params;
+        const todayDate = updateDate();
+        const appointmentsLength = await Appointment.countDocuments({ branch, date: todayDate });
+        const pendingAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, complete_appointment_flag: false, medicine_issued_flag: false });
+        const completeAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, complete_appointment_flag: true, medicine_issued_flag: true });
+        res.json({
+            appointmentsLength, pendingAppointmentLength, completeAppointmentLength
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
         })
     }
 }

@@ -36,7 +36,7 @@ const TodayCollection = () => {
     const collectionEmployee = collection.filter((item) => item?.paymentCollectedBy?._id === employee && item?.date === todayDate);
 
     return (
-        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen w-full p-8'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full p-8'>
             <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl md:text-4xl'>{collectionType.toUpperCase()} {(collectionType === 'repeat' || collectionType === 'courier') && 'MEDICINE'} {(location.location).toUpperCase()}</h1>
                 <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[6px] sm:text-[8px] md:text-sm'>

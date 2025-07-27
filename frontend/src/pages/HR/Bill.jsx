@@ -10,9 +10,9 @@ import { HR_API_URL, useStore } from '../../store/UpdateStore';
 
 const Bill = () => {
     const { getPatient, patient } = recStore();
-    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue, appointmentSection } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue } = docStore();
     const { user } = useAuthStore();
-    const { getAppointmentDetails, appointments } = useStore();
+    const { getAppointmentDetails, appointments,setMedSection, medSection, } = useStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id } = useParams();
     const navigate = useNavigate();
@@ -27,9 +27,10 @@ const Bill = () => {
         fetchPrescription(id);
         getBillInfo(id);
         getBalanceDue(id);
-        getAppointmentDetails(user?.branch, appointmentSection);
-    }, [getPatient, fetchPrescription, prescriptionSubmit, getAppointmentDetails,appointmentSection]);
+        getAppointmentDetails(user?.branch, medSection);
+    }, [getPatient, fetchPrescription, prescriptionSubmit, getAppointmentDetails,medSection]);
     const appointment = appointments.filter((appointment) => appointment?.PatientCase?._id === id && appointment?.date === todayDate);
+    console.log(appointment)
     const [email, setEmail] = useState('');
     useEffect(() => {
     if (patient?.email) {

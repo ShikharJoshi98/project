@@ -76,7 +76,7 @@ const HomeoBhagwat = () => {
     }
 
     return (
-        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen p-8 w-full'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen overflow-hidden p-8 w-full'>
             <ToastContainer />
             <div className='bg-[#e9ecef] p-5 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Homeo Bhagwat Gita</h1>

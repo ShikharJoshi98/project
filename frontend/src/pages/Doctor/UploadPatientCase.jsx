@@ -40,7 +40,7 @@ const UploadPatientCase = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full p-8">
+    <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen overflow-hidden w-full p-8">
       <ToastContainer />
       <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
         <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>

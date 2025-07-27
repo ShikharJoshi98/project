@@ -49,7 +49,7 @@ const UpdateProfile = () => {
     }
 
     return (
-        <div className='bg-gradient-to-br from-blue-300 via-blue-400 p-5 to-sky-700 min-h-screen w-full'>            
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 p-5 to-sky-700 overflow-hidden min-h-screen w-full'>            
             <form onSubmit={handleSubmit} className='z-10 my-8 mx-auto bg-white p-8 sm:max-w-[50vw] w-full border rounded-xl text-zinc-800 text-sm shadow-lg'>
                 <ToastContainer />
                 <h1 className='text-3xl font-semibold mb-5 text-center'>Update Profile Details</h1>

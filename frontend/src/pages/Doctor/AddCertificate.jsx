@@ -64,7 +64,7 @@ const AddCertificate = () => {
 
     return (
 
-        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full p-8'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen  w-full p-8'>
             <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Certificates</h1>
                 <div className='flex items-center justify-between mt-10'>

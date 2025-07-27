@@ -56,7 +56,7 @@ const ItemStock = () => {
 
     return (
         <>
-            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen w-full p-8'>
+            <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen overflow-hidden w-full p-8'>
                 <div className='bg-[#e9ecef]  w-auto p-5 rounded-lg '>
                     <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Items Stock {user?.branch}</h1>
                     <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-white font-semibold  gap-2 sm:gap-10 justify-center items-center md:gap-20 text-[6px] sm:text-[8px] md:text-sm'>

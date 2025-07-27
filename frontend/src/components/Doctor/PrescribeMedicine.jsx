@@ -67,6 +67,7 @@ const PrescribeMedicine = () => {
                     currentDate
                 }
             );
+            togglePrescriptionSubmit();
             setFormData({
                 medicine: '',
                 potency: '',
@@ -75,7 +76,7 @@ const PrescribeMedicine = () => {
                 duration: '',
                 note: ''
             });
-            togglePrescriptionSubmit();
+            
             setSelectedDiagnosisOptions([]);
         } catch (error) {
             console.log(error);

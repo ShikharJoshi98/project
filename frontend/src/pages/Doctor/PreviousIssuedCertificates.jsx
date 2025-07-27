@@ -22,7 +22,7 @@ const PreviousIssuedCertificates = () => {
     }, [getCertificates, submit]);
 
     return (
-        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full p-8'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full p-8'>
             <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
                 <h1 className='p-4 mb-10 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Previous Issued Certificates</h1>
                     <Input onChange={(e) => setSearchTerm(e.target.value)} icon={CiSearch} placeholder="Enter Patient's Name/Case Paper no./Mobile Number here" />

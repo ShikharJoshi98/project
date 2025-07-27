@@ -20,7 +20,7 @@ const HRDashboard = () => {
   }, [getDetails]);
   
   return (
-    <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 min-h-screen w-full'>
+    <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full'>
       <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
         <h1 className='text-stone-800 w-fit text:lg sm:text-2xl font-semibold bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Welcome to the HR Admin Panel</h1>
         <h1 className='text-stone-800 flex text-lg sm:text-2xl items-center gap-2 w-fit font-semibold bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span><LuMapPin /></span>{user?.branch}</h1>

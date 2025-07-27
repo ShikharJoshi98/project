@@ -52,7 +52,7 @@ const BalanceList = () => {
                                             <td className='px-1 text-center py-2'>{item?.patient?.fullname}</td>
                                             <td className='px-1 text-center py-2'>{item?.patient?.casePaperNo}</td>
                                             <td className='px-1 text-center py-2'>{item?.patient?.phone}</td>
-                                            <td className='px-1 text-center py-2'>{item?.appointmentType === 'general' ? 'General' : item?.appointmentType === 'repeat' ? 'Repeat Medicine' : 'Courier Medicine'}</td>
+                                            <td className='px-1 text-center py-2'>{item?.appointmentType === 'general' ? 'General' : item?.appointmentType === 'repeat' ? 'Repeat Medicine' : item?.appointmentType === 'courier'?'Courier Medicine':''}</td>
                                             <td className='px-1 text-center py-2'>{item?.date}</td>
                                             <td className='px-1 text-center py-2'>{item?.dueBalance}</td>
                                         </tr>

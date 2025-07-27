@@ -11,13 +11,13 @@ import { recStore } from '../../store/RecStore';
 const ReceptionistDashboard = () => {
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const { user } = useAuthStore();
-  const { appointmentSubmit } = docStore();
-  const { getAppointmentsRec, appointments,completeAppointmentLength,pendingAppointmentLength } = recStore();
+  const { appointmentSubmit,appointmentSection } = docStore();
+  const { getAppointmentLength,appointmentsLength,completeAppointmentLength,pendingAppointmentLength } = recStore();
 
   useEffect(() => {
-    getAppointmentsRec(user?.branch);
-  }, [getAppointmentsRec, appointmentSubmit])
-
+    getAppointmentLength(user?.branch);
+  }, [getAppointmentLength, appointmentSubmit])
+  
   return (
     <>
       <div className='bg-gradient-to-br from-blue-300 flex flex-col gap-10 via-blue-400 to-sky-700 min-h-screen w-full p-8 overflow-hidden'>
@@ -34,7 +34,7 @@ const ReceptionistDashboard = () => {
               <span className='text-zinc-800 mb-3 flex'>Total Appointments</span>
               <hr className='h-0.5 border-none mb-4 bg-white' />
               <h1 className='flex font-semibold  items-center gap-10 sm:gap-36 md:gap-10'><span><FaUserDoctor />
-              </span>{appointments.length}</h1>
+              </span>{appointmentsLength}</h1>
             </div>
             <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300  py-5 px-8  rounded-lg bg-[#ffc36d] '>
               <span className='text-zinc-800  mb-3 flex'>Pending Appointments</span>

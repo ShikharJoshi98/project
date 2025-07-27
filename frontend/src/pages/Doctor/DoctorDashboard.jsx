@@ -11,7 +11,7 @@ const DoctorDashboard = () => {
   const todayDate = updateDate();
 
   return (
-    <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-10 min-h-screen w-full'>
+    <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-10 overflow-hidden min-h-screen w-full'>
       <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
         <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold bg-[#dae5f4] p-3 rounded-lg'>Welcome {user?.fullname}</h1>
       </div>

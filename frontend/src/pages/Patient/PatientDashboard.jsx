@@ -4,7 +4,7 @@ const PatientDashboard = () => {
   const { user } = useAuthStore();
 
   return (
-    <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 w-full p-8 h-full min-h-screen'>
+    <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 w-full p-8 h-full overflow-hidden min-h-screen'>
       <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
         <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-3xl p-5 rounded-lg'>Welcome {user?.fullname} !</h1>
         <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>

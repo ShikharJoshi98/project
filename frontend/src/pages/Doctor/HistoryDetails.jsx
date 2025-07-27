@@ -23,7 +23,7 @@ const HistoryDetails = () => {
   }, [getHistoryDetails,getPresentComplaint,submit]);  
  
   return (
-    <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full">
+    <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full">
       <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
         <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
         <h1 className='text-xl sm:text-4xl text-center font-semibold mt-5 text-[#337ab7]'>HISTORY DETAILS</h1>

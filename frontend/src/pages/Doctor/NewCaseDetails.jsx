@@ -25,10 +25,10 @@ const NewCaseDetails = () => {
         getPatient(location.id);
     }, [getPatient]);
 
-    const testArray = [{ title: 'Present Complaints', color: 'green' }, { title: 'Chief Complaints', color: 'blue' }, { title: 'Past History', color: 'brown' }, { title: 'Personal History', color: 'orange' }, { title: 'Family History', color: 'blue' }, { title: 'Mental Causative Factor', color: 'black' }, { title: 'Mental Personality Character', color: 'purple' }, { title: 'Brief Mind Symptoms', color: 'green' }, { title: 'Thermal Reaction', color: 'brown' }, { title: 'Miasm', color: 'indigo' }];
+    const testArray = [{ title: 'Present Complaints', color: 'green' }, { title: 'Chief Complaints', color: 'blue' }, { title: 'Past History', color: 'brown' }, { title: 'Personal History', color: 'orange' }, { title: 'Family Medical History', color: 'blue' }, { title: 'Mental Causative Factor', color: 'black' }, { title: 'Mental Personality Character', color: 'purple' }, { title: 'Brief Mind Symptoms', color: 'green' }, { title: 'Thermal Reaction', color: 'brown' }, { title: 'Miasm', color: 'indigo' }];
 
     return (
-        <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 min-h-screen w-full">
+        <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full">
             <div className='text-stone-800 w-fit text-sm sm:text-base flex flex-wrap items-center gap-5 font-semibold bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
                 <h1>{patient?.fullname} </h1>
                 <p className='text-blue-400'>|</p>
@@ -62,7 +62,7 @@ const NewCaseDetails = () => {
                 {complaint === 'Chief Complaints' && <ChiefComplaints complaint={complaint} />}
                 {complaint === 'Past History' && <PastHistory complaint={complaint} />}
                 {complaint === 'Personal History' && <PersonalHistory complaint={complaint} />}
-                {complaint === 'Family History' && <FamilyMedical complaint={complaint} />}
+                {complaint === 'Family Medical History' && <FamilyMedical complaint={complaint} />}
                 {complaint === 'Mental Causative Factor' && <MentalCausative complaint={complaint} />}
                 {complaint === 'Mental Personality Character' && <MentalPersonality complaint={complaint} />}
                 {complaint === 'Brief Mind Symptoms' && <BriefMindSymptom complaint={complaint} />}

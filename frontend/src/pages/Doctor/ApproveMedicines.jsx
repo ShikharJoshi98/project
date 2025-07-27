@@ -70,7 +70,7 @@ const ApproveMedicines = () => {
 
   return (
     <>
-      <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
+      <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen w-full overflow-hidden '>
         <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
           <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Medicine Stock {location.location}</h1>
           <div className='sm:flex grid grid-cols-1 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9'>

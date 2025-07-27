@@ -1686,7 +1686,7 @@ export const addNewCaseMaster = async (req, res) => {
             case "Past History":
                 await PastHistoryMaster.create({ name: name.trim() })
                 break;
-            case "Family Medical":
+            case "Family Medical History":
                 await FamilyMedicalMaster.create({ name: name.trim() })
                 break;
             case "Mental Causative Factor":
@@ -1731,7 +1731,7 @@ export const getCaseMaster = async (req, res) => {
             case 'PastHistory':
                 caseData = await PastHistoryMaster.find();
                 break;
-            case 'FamilyMedical':
+            case 'FamilyMedicalHistory':
                 caseData = await FamilyMedicalMaster.find();
                 break;
             case 'MentalCausativeFactor':
@@ -1775,7 +1775,7 @@ export const deleteCaseMaster = async (req, res) => {
             case 'PastHistory':
                 await PastHistoryMaster.findByIdAndDelete(id);
                 break;
-            case 'FamilyMedical':
+            case 'FamilyMedicalHistory':
                 await FamilyMedicalMaster.findByIdAndDelete(id);
                 break;
             case 'MentalCausativeFactor':
