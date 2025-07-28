@@ -12,8 +12,8 @@ const Home = () => {
   const images = ["/image-2.jpeg", "/image-3.jpeg", "/image-4.jpeg", "/image-5.jpeg", "/image-8 (1).jpeg", "/image-8 (3).jpeg"];
 
   return (
-    <div className='bg-gradient-to-br p-10 from-blue-400 via-[#4a9acc] to-blue-900'>      
-      <video autoPlay muted loop src="/wings.mp4" className=' max-w-[326px] mt-4 md:max-w-[760px] md:w-[90vw] lg:max-w-[900px] mx-auto shadow-gray-700 shadow-lg rounded-lg'></video>
+    <div className='bg-gradient-to-br p-10 from-blue-400 via-[#4a9acc] to-blue-900 overflow-hidden'>      
+      <video autoPlay muted loop src="/wings.mp4" className=' max-w-[90vw] mt-4 md:max-w-[760px] md:w-[90vw] lg:max-w-[900px] mx-auto shadow-gray-700 shadow-lg rounded-lg'></video>
       <div className='flex flex-col p-6 items-center gap-7 max-w-[326px] md:max-w-[760px] lg:max-w-[900px] mt-20 bg-white mx-auto shadow-gray-700 shadow-lg rounded-lg'>
         <h1 className='text-xl md:text-3xl font-semibold text-slate-800'>FOR APPOINTMENTS</h1>
         <hr className='bg-[#4a9acc] h-1 border-none rounded-sm w-28'/>

@@ -101,7 +101,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 }
 
 function App() {
-  const { isCheckingAuth, checkAuth, user, isAuthenticated } = useAuthStore();
+  const { isCheckingAuth, checkAuth} = useAuthStore();
   useEffect(() => { checkAuth() }, [checkAuth]);
   if (isCheckingAuth) return <LoadingSpinner />;
 
@@ -109,15 +109,15 @@ function App() {
     <div >
       <Router>
         <Routes>
-          <Route path="/" element={<HomeLayout />}>//
-            <Route index element={<Home />} />//
-            <Route path="login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />//
-            <Route path="register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />//
-            <Route path="forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />//
-            <Route path="reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />//
+          <Route path="/" element={<HomeLayout />}>//--
+            <Route index element={<Home />} />//--
+            <Route path="login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />//--
+            <Route path="register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />//--
+            <Route path="forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />//--
+            <Route path="reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />//--
           </Route>
 
-          <Route path="/access-denied" element={<AccessDenied />} />//
+          <Route path="/access-denied" element={<AccessDenied />} />//--
 
           <Route path="/dashboard-PATIENT" element={<PatientLayout />}>//
             <Route index element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />//

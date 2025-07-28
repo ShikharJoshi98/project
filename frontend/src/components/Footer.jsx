@@ -4,9 +4,11 @@ import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 const Footer = () => {
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
+    
     return (
         <div className='bg-[#343a40]'>
             <div className='flex flex-col px-20 py-10 sm:grid lg:grid-cols-[1.1fr_1fr_1fr_1fr] gap-14 text-sm '>

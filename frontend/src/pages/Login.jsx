@@ -21,13 +21,13 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen  bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden'>
+    <div className='min-h-screen bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden'>
       <div >
-        <form onSubmit={handleSubmit} className='mx-auto relative z-10 mt-4 mb-2 h-auto bg-white p-5 md:max-w-[430px] max-w-[80vw] border rounded-xl text-zinc-600 text-sm shadow-lg ' >
-          <h1 className='text-3xl font-semibold mb-5 text-center'><span className=' text-blue-400'>{role}</span> LOGIN</h1>
+        <form onSubmit={handleSubmit} className='mx-auto relative z-10 mt-4 mb-2 h-auto bg-white p-5 md:max-w-[430px] max-w-[80vw] border rounded-xl text-zinc-600 text-sm shadow-lg'>
+          <h1 className='text-3xl font-semibold mb-5 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'>{role}</span> LOGIN</h1>
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-8 w-28 mx-auto' />
-          <div className='md:flex items-center text-zinc-900 md:max-w-[380px] hidden   mb-8 text-sm  md:text-base  justify-center'>
-            <button type='button' onClick={() => { setRole('PATIENT'); }} className={`cursor-pointer  rounded-l-full border-l-1 border-l-zinc-500  border-1 border-r-zinc-500 py-1 px-3
+          <div className='md:flex items-center text-zinc-900 md:max-w-[380px] hidden mb-8 text-sm md:text-base justify-center'>
+            <button type='button' onClick={() => { setRole('PATIENT'); }} className={`cursor-pointer rounded-l-full border-l-1 border-l-zinc-500 border-1 border-r-zinc-500 py-1 px-3
               ${role === 'PATIENT' ? "bg-blue-500  scale-105 text-white" : "hover:bg-blue-500 hover:scale-105 hover:text-white"}
               `}>PATIENT</button>
             <button type='button' onClick={() => { setRole('DOCTOR'); }} className={`cursor-pointer  border-l-1 border-l-zinc-500  border-1 border-r-zinc-500 py-1 px-3

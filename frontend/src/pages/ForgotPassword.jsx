@@ -20,15 +20,15 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className='min-h-screen  bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700   relative overflow-hidden' >
+    <div className='min-h-screen bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden' >
       {!isSubmitted ? (<form onSubmit={handleSubmit} className='mx-auto relative z-10 my-7 h-auto bg-white p-5 md:max-w-[430px] max-w-[80vw] border rounded-xl text-zinc-600 text-sm shadow-lg ' >
-        <h1 className='text-3xl  font-semibold mb-5 text-center'><span className='text-blue-400'> FORGOT</span> PASSWORD</h1>
-        <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-8 w-28 mx-auto ' />
+        <h1 className='text-3xl  font-semibold mb-5 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'>FORGOT</span> PASSWORD</h1>
+        <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-8 w-28 mx-auto' />
         <div className='flex items-center flex-col gap-6'>
           <p className='text-center'>Enter your username and email address and we'll send you a link to reset your password.</p>
           <Input icon={CiUser} type='text' required placeholder='Username*' value={username} onChange={(e) => setUsername(e.target.value)} />
           <Input icon={CiMail} type='email' required placeholder='Email*' value={email} onChange={(e) => setEmail(e.target.value)} />
-          <button className='mx-auto font-semibold mt-2 cursor-pointer bg-blue-400 text-lg hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white  w-52 p-2 rounded-full' type='submit'>
+          <button className='mx-auto font-semibold mt-2 cursor-pointer bg-blue-400 text-lg hover:text-gray-200 hover:bg-blue-600 text-white w-52 p-2 rounded-full' type='submit'>
             {isLoading ? <LuLoaderCircle className='size-6 animate-spin mx-auto' /> : "Send Reset Link"}
           </button>
           <p onClick={() => navigate('/login')} className=' group mt-1 cursor-pointer text-blue-500 hover:text-blue-700 hover:underline flex items-center gap-1 '> <RxDoubleArrowLeft/>Back to Login</p>
