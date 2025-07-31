@@ -33,7 +33,7 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                 <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
                 <h1 className="text-blue-500 text-2xl md:text-4xl mb-10 text-center font-semibold">Order History {location}</h1>
                 <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by Vendor' />
-                {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
+                {loading?<LuLoaderCircle className='animate-spin size-10 mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >

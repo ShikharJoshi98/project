@@ -8,29 +8,45 @@ import { RxCross2 } from 'react-icons/rx';
 import { CiImageOn } from 'react-icons/ci';
 import { toast, ToastContainer } from 'react-toastify';
 import { useParams } from "react-router-dom";
+import { LuLoaderCircle } from "react-icons/lu";
 
 const UploadCase = ({ onClose }) => {
-  const { patients, getPatientDetails } = recStore();
+  const { allBranchPatients, getAllPatients } = recStore();
   const { branch } = useParams();
   const { uploadCase } = docStore();
   const [image, setImage] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [patientLoading, setPatientLoading] = useState(false);
 
   useEffect(() => {
-    getPatientDetails(1,"",branch);
-  }, [getPatientDetails]);  
-
-  const handleSubmit = async (e) => {
-    try {
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append("caseImage", image);
-      await uploadCase(formData, selectedPatient);
-      toast('Case Image Uploaded');
-    } catch (error) {
-      toast("Failed to upload image.");
+    const timeout = setTimeout(() => setPatientLoading(true), 200);
+    getAllPatients(branch).finally(() => {
+      clearTimeout(timeout);
+      setPatientLoading(false);
+    });
+  }, [getAllPatients]);  
+ 
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!image) {
+        toast.error("Please select an image first");
+        return;
     }
-  }
+
+    try {
+        setLoading(true);
+        const formData = new FormData();
+        formData.append("caseImage", image);
+        await uploadCase(formData, selectedPatient);
+        toast.success("Image Uploaded");
+        setImage(null);
+    } catch (error) {
+        toast.error("Failed to upload image.");
+    } finally {
+        setLoading(false); 
+    }
+}
 
   return ReactDOM.createPortal(
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
@@ -43,7 +59,7 @@ const UploadCase = ({ onClose }) => {
             <div className="flex flex-col gap-2">
               <h1>Patient Case Paper Number</h1>
               <div className="relative w-full">
-                <SearchSelect options={patients} setSelectedPatient={setSelectedPatient} />
+                <SearchSelect options={allBranchPatients} loading={patientLoading} setSelectedPatient={setSelectedPatient} />
               </div>
             </div>
             <div className="flex flex-col mt-5 gap-2">
@@ -51,7 +67,7 @@ const UploadCase = ({ onClose }) => {
               <Input icon={CiImageOn} type="file" name="caseImage" onChange={(e) => setImage(e.target.files[0])} required />
             </div>
             <div className="w-full flex items-center justify-center">
-              <button className="cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">Upload</button>
+              <button className="cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{loading?<LuLoaderCircle className='mx-auto animate-spin'/>:"Upload"}</button>
             </div>
           </form>
         </div>

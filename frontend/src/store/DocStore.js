@@ -10,26 +10,26 @@ export const docStore = create((set) => ({
     task: null,
     leaves: [],
     userLeaves: [],
-    domGeneral: null,
-    mulGeneral: null,
-    domRepeat: null,
-    mulRepeat: null,
-    domCourier: null,
-    mulCourier: null,
-    newAppointmentLength: null,
-    followUpAppointmentLength: null,
-    medicineIssuedLength: null,
-    medicineNotIssuedLength: null,
+    domGeneral: null,//
+    mulGeneral: null,//
+    domRepeat: null,//
+    mulRepeat: null,//
+    domCourier: null,//
+    mulCourier: null,//
+    newAppointmentLength: null,//
+    followUpAppointmentLength: null,//
+    medicineIssuedLength: null,//
+    medicineNotIssuedLength: null,//
     appointments: [],//
     Homeo: [],
     appointment: null,
-    caseImages: [],
+    caseImages: [],//
     prescription: [],
     diagnosisImages: [],
     historyDetails:[],
     allPrescriptions: [],
     list: [],
-    payment: [],
+    payment: [],//
     PresentComplaintData: [],    
     briefMindSymptomScribble: [],
     PastHistoryData: [],
@@ -176,7 +176,7 @@ export const docStore = create((set) => ({
 
         }
     },
-    uploadCase: async (formData, id) => {
+    uploadCase: async (formData, id) => {//
         try {
             const response = await axios.post(`${DOC_API_URL}/upload-case-image/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
@@ -204,7 +204,7 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAppointmentCount: async () => {
+    getAppointmentCount: async () => {//
         try {
             const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`);
             set({ domGeneral: response.data.domGeneral })
@@ -329,7 +329,7 @@ export const docStore = create((set) => ({
         const response = await axios.get(`${DOC_API_URL}/briefMindSymptomScribble/${id}`);
         set({ briefMindSymptomScribble: response.data.briefMindSymptomData })
     },
-    getPayment: async () => {
+    getPayment: async () => {//
         const response = await axios.get(`${DOC_API_URL}/getPayment`);
         set({ payment: response.data.paymentData })
     },

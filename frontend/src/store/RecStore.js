@@ -8,20 +8,20 @@ export const recStore = create((set) => ({
     patients: [],//
     allPatients: [],
     appointments: [],
-    allBranchPatients: [],
+    allBranchPatients: [],//
     appointmentsLength:null,
     pendingAppointmentLength: null,
     completeAppointmentLength: null,
-    patient: null,
+    patient: null,//
     generalAppointments: [],
     repeatAppointments: [],
     courierAppointments: [],
     patientLength: null,
     appointmentSection: "general",
-    update: false,
+    update: false,//
     stockToggle: false,
     toggleStockUpdate: () => set((state) => ({ stockToggle: !state.stockToggle })),
-    setUpdate: (updateStatus) => set({ update: updateStatus }),
+    setUpdate: (updateStatus) => set({ update: updateStatus }),//
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     getPatientDetails: async (page, search, branch) => {//
         try {
@@ -33,20 +33,20 @@ export const recStore = create((set) => ({
             });
             set({ patients: response.data.patients });
             set({ patientLength: response.data.patientLength });
-            set({ allBranchPatients: response.data.allBranchPatients });
         } catch (error) {
             console.error(error.message);
         }
     },
-    getAllPatients: async () => {
+    getAllPatients: async (branch) => {
         try {
-            const response = await axios.get(`${REC_API_URL}/getAllPatients`);
+            const response = await axios.get(`${REC_API_URL}/getAllPatients/${branch}`);
             set({ allPatients: response.data.patients });
+            set({ allBranchPatients: response.data.allBranchPatients });
         } catch (error) {
             console.log(error.message);
         }
     },
-    getPatient: async (id) => {
+    getPatient: async (id) => {//
         try {
             const response = await axios.get(`${REC_API_URL}/getPatient/${id}`);
             set({ patient: response.data.patient })

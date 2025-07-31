@@ -32,9 +32,7 @@ const AppointmentList_Doc = () => {
   return (
     <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full">
       <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
-        <h1 className='text-xl sm:text-2xl md:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>{
-          `${appointmentSection.toUpperCase()} APPOINTMENT ${branch.toUpperCase()}`
-        }</h1>
+        <h1 className='text-xl sm:text-2xl md:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>{`${appointmentSection.toUpperCase()} APPOINTMENT ${branch.toUpperCase()}`}</h1>
         <h1 className="text-blue-500 font-semibold mb-3 text-lg mt-4">{currentDate}</h1>
         <hr className="h-[0.5px] px-5 border-none bg-blue-500" />
         <div className='sm:flex grid grid-cols-2 mt-5 sm:flex-row text-white font-semibold  gap-2 sm:gap-9  items-center justify-center md:gap-9 text-[8px] sm:text-base'>

@@ -52,8 +52,7 @@ export const useAuthStore = create((set) =>( {
             set({ error: null, isCheckingAuth: false, isAuthenticated: false });
         }
 
-    },
-    
+    },    
     forgotPassword: async (email) => {
 		set({ isLoading: true, error: null });
 		try {

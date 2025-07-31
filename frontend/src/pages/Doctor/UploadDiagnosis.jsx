@@ -15,6 +15,8 @@ const UploadDiagnosis = () => {
     const [image, setImage] = useState(null);
     const [isSubmit, setSubmit] = useState(false);
     const [loading, setLoading] = useState(false);
+      const [uploadLoading, setUploadLoading] = useState(false);
+
     useEffect(() => {
         const timeout = setTimeout(() => {
             setLoading(true);
@@ -25,21 +27,44 @@ const UploadDiagnosis = () => {
         });
     }, [isSubmit])
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    async function handleSubmit(e) {
+    e.preventDefault();
+    if (!image) {
+        toast.error("Please select an image first");
+        return;
+    }
+    try {
+        setUploadLoading(true);
         const formData = new FormData();
         formData.append("diagnosisImage", image);
-        try {
-            await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${location.id}`, formData, {
+        await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${location.id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             })
-            setSubmit((prev) => !prev);
-            toast('Added Image');
-        } catch (error) {
-            console.error(error.message);
-            toast("Failed to upload image.");
-        }
+        toast.success("Image Uploaded");
+        setImage(null);
+    } catch (error) {
+        toast.error("Failed to upload image.");
+    } finally {
+      setUploadLoading(false); 
+      setSubmit(prev => !prev);
     }
+  }
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     const formData = new FormData();
+    //     formData.append("diagnosisImage", image);
+    //     try {
+    //         await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${location.id}`, formData, {
+    //             headers: { "Content-Type": "multipart/form-data" }
+    //         })
+    //         setSubmit((prev) => !prev);
+    //         toast('Added Image');
+    //     } catch (error) {
+    //         console.error(error.message);
+    //         toast("Failed to upload image.");
+    //     }
+    // }
 
     const deleteImage = async (id)=> {
         try {
@@ -61,7 +86,7 @@ const UploadDiagnosis = () => {
                         <h1>Select Image</h1>
                         <Input icon={CiImageOn} type="file" name="diagnoseImage" onChange={(e) => setImage(e.target.files[0])} required />
                         <div className="w-full flex items-center justify-center">
-                            <button className="cursor-pointer bg-blue-400 font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">Upload</button>
+                            <button className="cursor-pointer bg-blue-400 font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{uploadLoading?<LuLoaderCircle className='mx-auto animate-spin'/>:"Upload"}</button>
                         </div>
                     </div>
                 </form>

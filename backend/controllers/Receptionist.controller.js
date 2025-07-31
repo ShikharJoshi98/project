@@ -88,20 +88,22 @@ export const getPatients = async (req, res) => {//
 
         const patientLength = await Patient.countDocuments(baseQuery);
         const patients = await Patient.find(baseQuery).skip(skipPage).limit(limitNum);
-        const allBranchPatients = await Patient.find({ branch });
         res.json({
-            success: true, patients, patientLength, allBranchPatients
+            success: true, patients, patientLength
         })
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
 }
 
-export const getAllPatients = async (req, res) => {
+export const getAllPatients = async (req, res) => {//
     try {
+        const { branch } = req.params;
         const patients = await Patient.find();
+        const allBranchPatients = await Patient.find({ branch });
         res.json({
-            patients
+            patients,
+            allBranchPatients
         })
     } catch (error) {
         res.json({
@@ -116,7 +118,6 @@ export const getPatient = async (req, res) => {
         const { id } = req.params;
 
         const patient = await Patient.findById(id);
-        console.log(patient)
         res.json({
             patient,
             success: true

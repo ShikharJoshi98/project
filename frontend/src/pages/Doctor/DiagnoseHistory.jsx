@@ -31,8 +31,8 @@ const DiagnoseHistory = () => {
             <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl mb-10 sm:text-4xl'>Diagnose History</h1>
                 <Input onChange={(e) => setSearchTerm(e.target.value)} icon={MdMedicalInformation} placeholder='Search for Disease or Medicine here ..' />
-                <button onClick={() => generateDiagnoseHistory(filteredPrescriptions)} className='py-2 px-4 bg-green-500 flex items-center gap-5 my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
-                {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
+                <button onClick={() => generateDiagnoseHistory(filteredPrescriptions)} className='py-2 px-4 bg-green-500 cursor-pointer flex items-center gap-5 my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
+                {loading?<LuLoaderCircle className='animate-spin size-10 mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >

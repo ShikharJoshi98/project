@@ -2,7 +2,7 @@ import { useAuthStore } from '../../store/authStore';
 
 const PatientDashboard = () => {
   const { user } = useAuthStore();
-
+   
   return (
     <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 w-full p-8 h-full overflow-hidden min-h-screen'>
       <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>

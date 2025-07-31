@@ -11,7 +11,7 @@ import { updateDate } from '../../store/todayDate';
 import SearchSelect from '../../components/SearchSelect';
 
 const BillInvoice = () => {
-    const { getAllPatients,allPatients } = recStore();
+    const { getAllPatients, allPatients } = recStore();
     const { getPrescriptions, prescriptionsArray } = docStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [selectedDiagnosis, setSelecetedDiagnosis] = useState(null);
@@ -58,14 +58,14 @@ const BillInvoice = () => {
             alert("Fill the details to go next.");
         }
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         formValues.patient = selectedPatient;
         formValues.selectedDiagnosis = selectedDiagnosis.label;
         await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
         const patient = allPatients.filter((patient) => patient?._id === formValues.patient);
-        
+
         generateBillInvoicePdf(patient[0], todayDate, formValues);
         setFormValues({
             patient: '',
@@ -80,9 +80,9 @@ const BillInvoice = () => {
     }
 
     return (
-        <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden'>
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden'>
             <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
-                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>Bill Invoice</h1>
+                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Bill Invoice</h1>
                 <p className='text-red-500 mt-10 font-semibold '>Add Diagnoses and Medicines for Patient's For whom Invoice is to be generated.</p>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8  rounded-xl text-zinc-600   text-sm flex flex-col gap-5' >
                     {billStatus === 'first' && <div><div className='flex flex-col gap-2'>
@@ -104,8 +104,10 @@ const BillInvoice = () => {
                             <h1>Medicine Name : </h1>
                             <Input icon={AiFillMedicineBox} onChange={handleInputChange} value={formValues.medicineName} name="medicineName" type='text' required placeholder='Please Mention Name of the Medicine if any' />
                         </div>
-                        <button type='button' onClick={() => nextSection()} className='py-2 px-4 sm:mr-20 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto sm:place-self-end cursor-pointer'>Next</button>
-                        <p className='text-green-500 font-semibold '>Click on Next, after Completing the Submission of above details</p>
+                        <div className='flex flex-col mt-10 items-center'>
+                            <p className='text-green-500 font-semibold '>Click on Next, after Completing the Submission of above details</p>
+                            <button type='button' onClick={() => nextSection()} className='py-2 px-4 mt-5 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer'>Next</button>
+                        </div>
                     </div>}
                     {billStatus === 'second' && <div><div className='flex flex-col gap-2'>
                         <h1>From (Medicine Start Date)</h1>

@@ -13,7 +13,7 @@ const DoctorDashboard = () => {
   return (
     <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-10 overflow-hidden min-h-screen w-full'>
       <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
-        <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold bg-[#dae5f4] p-3 rounded-lg'>Welcome {user?.fullname}</h1>
+        <h1 className='text-stone-800 w-fit text:lg sm:text-2xl font-semibold bg-[#dae5f4] p-3 rounded-lg'>Welcome {user?.fullname}</h1>
       </div>
       <div className='bg-[#e9ecef] w-auto p-5 my-6 rounded-lg '>
         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Dashboard</h1>

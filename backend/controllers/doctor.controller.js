@@ -118,64 +118,7 @@ export const updateleave = async (req, res) => {
 }
 
 //appointments
-export const createAppointment = async (req, res) => {
-
-    try {
-        const { date, time, PatientCase, Doctor, appointmentType } = req.body;
-        const dateConverter = (date) => {
-            const [y, m, d] = date.split('-');
-            const newDate = String(d + '-' + m + '-' + y);
-            return newDate;
-        }
-        const convertedDate = dateConverter(date);
-        const appointmentExist = await Appointment.findOne({
-            PatientCase,
-            date: convertedDate,
-        })
-        if (appointmentExist) {
-            return res.json({
-                message: "Appointment exist"
-            })
-        }
-        const previousAppointmentExist = await Appointment.findOne({
-            PatientCase,
-            new_appointment_flag: false
-        })
-        let newAppointment;
-        if (previousAppointmentExist) {
-            newAppointment = new Appointment({
-                date: convertedDate,
-                time,
-                PatientCase,
-                Doctor,
-                appointmentType
-            })
-        }
-        else {
-            newAppointment = new Appointment({
-                date: convertedDate,
-                time,
-                PatientCase,
-                Doctor,
-                appointmentType,
-                new_appointment_flag: true
-            })
-        }
-        await newAppointment.save();
-
-        res.json({
-            success: true,
-            newAppointment
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            message: "Error in creating new Appointment"
-        })
-    }
-}
-
-export const createNewAppointment = async (req, res) => {
+export const createNewAppointment = async (req, res) => {//
     try {
         const { date, time, PatientCase, Doctor, appointmentType } = req.body;
         const patient = await Patient.findById(PatientCase);
@@ -277,7 +220,7 @@ export const getIncompleteAppointments = async (req, res) => {
     }
 };
 
-export const getAppointments = async (req, res) => {
+export const getAppointments = async (req, res) => {//
     try {
         const { branch, appointmentSection, doctor } = req.params;
         const todayDate = updateDate();
@@ -378,27 +321,6 @@ export const updateAppointment = async (req, res) => {
     }
 
 }
-// export const getAllAppointments = async (req, res) => {
-//     try {
-//         const date = new Date().toLocaleDateString("en-CA", {
-//             timeZone: "Asia/Kolkata",
-//         });
-//         const appointments = await AppointmentDoctor.find({
-//             AppointmentType: "general",
-//             AppointmentDate: date
-//         }).populate('PatientCase');
-//         res.json({
-//             success: true,
-//             appointments
-//         })
-//     } catch (error) {
-//         console.log(error.message);
-//         res.json({
-//             success: false,
-//             error: error.message
-//         })
-//     }
-// }
 
 export const HomeoBhagwat = async (req, res) => {
     try {
@@ -474,7 +396,6 @@ export const uploadCaseImage = async (req, res) => {
 
         const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
-        // Store the Base64 image in the database
         patient.caseImages.push({ imageUrl: base64Image });
         await patient.save();
 
@@ -544,7 +465,7 @@ export const getDiagnosisImages = async (req, res) => {
     }
 };
 
-export const deleteHomeoBhagwatcol = async (req, res) => {
+export const deleteHomeoBhagwatcol = async (req, res) => {//
     try {
         const { id } = req.params;
         const homeo = await Homeo.findByIdAndDelete(id);
@@ -556,26 +477,8 @@ export const deleteHomeoBhagwatcol = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
-// export const getPatientAppDetails = async (req, res) => {
-//     try {
-//         const { appointmentType } = req.params;
-//         const date = new Date().toLocaleDateString("en-CA", {
-//             timeZone: "Asia/Kolkata",
-//         });
 
-//         let appointment = await AppointmentDoctor.find({ AppointmentType: appointmentType, AppointmentDate: date }).populate('PatientCase').populate('Doctor');
-
-//         appointment = appointment.reverse();
-//         return res.json(appointment);
-//     } catch (error) {
-//         console.log("Error in test API", error.message);
-//         return res.json({
-//             message: error.message
-//         });
-//     }
-// }
-
-export const deleteCaseImages = async (req, res) => {
+export const deleteCaseImages = async (req, res) => {//
     const { patientId, imageId } = req.params;
 
     try {
@@ -598,6 +501,7 @@ export const deleteCaseImages = async (req, res) => {
         res.status(500).json({ error: "Failed to delete image" });
     }
 };
+
 export const deleteDiagnosisImages = async (req, res) => {
     const { patientId, imageId } = req.params;
     try {

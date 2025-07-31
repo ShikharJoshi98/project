@@ -9,6 +9,6 @@ Recrouter.get('/getPatient/:id', getPatient);
 Recrouter.put('/update-patient/:id', updatePatient);
 Recrouter.get('/getAppointments/:branch', getAppointmentsRec)//
 Recrouter.get('/getRecAppointments/:branch/:appointmentType',getAppDetails)
-Recrouter.get('/getAllPatients', getAllPatients);
+Recrouter.get('/getAllPatients/:branch', getAllPatients);//
 Recrouter.get('/getAppointmentsLength/:branch',getAppointmentLength)
 export default Recrouter;

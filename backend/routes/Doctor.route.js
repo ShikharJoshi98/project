@@ -23,21 +23,20 @@ Docrouter.get('/leave-details/:id', leaveDetails);
 Docrouter.put('/leave-status/:id', updateleave);
 
 //appointment
-// Docrouter.post('/appointment', createAppointment);
 Docrouter.post('/new-appointment', createNewAppointment);
 Docrouter.get('/get-incomplete-appointments', getIncompleteAppointments);
 Docrouter.get('/getAppointments/:branch/:appointmentSection/:doctor',getAppointments)//
 Docrouter.patch('/update-apppointment/:id', updateAppointment);
 
 //homeo-bhagwat
-Docrouter.post('/homeo-book', HomeoBhagwat);
-Docrouter.get('/get-homeo-book', getHomeoBhagwat);
-Docrouter.put('/update-homeo-book/:id', updateHomeoBhagwat);
-Docrouter.post('/upload-case-image/:id', upload.single("caseImage"), uploadCaseImage);
+Docrouter.post('/homeo-book', HomeoBhagwat);//
+Docrouter.get('/get-homeo-book', getHomeoBhagwat);//
+Docrouter.put('/update-homeo-book/:id', updateHomeoBhagwat);//
+Docrouter.post('/upload-case-image/:id', upload.single("caseImage"), uploadCaseImage);//
 Docrouter.post('/upload-diagnosis-image/:id', upload.single("diagnosisImage"), uploadDiagnosisImage);
-Docrouter.get("/case-images/:id", getPatientImages);
+Docrouter.get("/case-images/:id", getPatientImages);//
 Docrouter.get("/diagnosis-images/:id", getDiagnosisImages);
-Docrouter.delete('/homeo-delete/:id', deleteHomeoBhagwatcol);
+Docrouter.delete('/homeo-delete/:id', deleteHomeoBhagwatcol);//
 
 //patient-appointment-details
 Docrouter.delete('/patient/:patientId/case-images/:imageId', deleteCaseImages);
@@ -142,9 +141,9 @@ Docrouter.delete('/deleteThermalReaction/:id/:idx', deleteThermalReaction);
 Docrouter.delete('/deleteMiasm/:id/:idx', deleteMiasm);
 
 //payment
-Docrouter.post('/addPayment', addPaymentModel);
-Docrouter.get('/getPayment', getPayments);
-Docrouter.patch('/updatePayment/:id', updatePayment);
+Docrouter.post('/addPayment', addPaymentModel);//
+Docrouter.get('/getPayment', getPayments);//
+Docrouter.patch('/updatePayment/:id', updatePayment);//
 Docrouter.get('/getBillPayment/:id', getBill);
 Docrouter.post('/addBillPayment/:id', addPayment);
 Docrouter.get('/getTotalBillPayment/:id', getPaymentBill);

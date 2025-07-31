@@ -8,7 +8,6 @@ import axios from 'axios';
 import { useStore } from '../../store/UpdateStore';
 import { useParams } from 'react-router-dom';
 import { updateDate } from '../../store/todayDate';
-import { useAuthStore } from '../../store/authStore';
 import SearchSelect from '../SearchSelect';
 import { RxCross2 } from "react-icons/rx";
 import { toast, ToastContainer } from 'react-toastify';
@@ -16,9 +15,8 @@ import { CiCalendar, CiClock1 } from 'react-icons/ci';
 
 const AppointmentModal = ({ onClose }) => {
   const { appointmentSubmit, toggleAppointmentSubmit } = docStore();
-  const { allBranchPatients, getPatientDetails } = recStore();
+  const { allBranchPatients, getAllPatients } = recStore();
   const { branch } = useParams();
-  const { user } = useAuthStore();
   const { getDetails, employees } = useStore();
   const doctors = employees.filter(emp => emp?.role === 'doctor');
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -31,11 +29,16 @@ const AppointmentModal = ({ onClose }) => {
     Doctor: "",
     appointmentType: 'general'
   });
+  const [loading, setLoading] = useState(false);
   
   useEffect(() => {
-    getPatientDetails(undefined,"",branch||user?.branch);
+    const timeout = setTimeout(() => setLoading(true), 200);
+    getAllPatients(branch).finally(() => {
+      clearTimeout(timeout);
+      setLoading(false);
+    });
     getDetails();
-  }, [getPatientDetails, getDetails])
+  }, [getAllPatients, getDetails])
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,7 +105,7 @@ const AppointmentModal = ({ onClose }) => {
               </div>
               <div className="flex flex-col gap-2">
                 <h1>Patient Case Paper Number</h1>
-                <SearchSelect options={allBranchPatients} setSelectedPatient={setSelectedPatient} />
+                <SearchSelect options={allBranchPatients} loading={loading} setSelectedPatient={setSelectedPatient} />
               </div>
               <div className="flex flex-col gap-2">
                 <h1>Doctor</h1>

@@ -5,6 +5,7 @@ import { patientStore } from '../../store/patientStore';
 const PatientAppointment = () => {
     const { user } = useAuthStore();
     const { nextAppointment, lastTwoAppointments, getPatientAppointments } = patientStore();
+    
     useEffect(() => {
         getPatientAppointments(user?._id);
     }, [getPatientAppointments])

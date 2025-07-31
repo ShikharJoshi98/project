@@ -18,9 +18,11 @@ const AddCertificate = () => {
     const [detailsAddedModal, setDetailsAddedModal] = useState(false);
     const [certificateDetails, setCertificateDetails] = useState(null);
     const [isFormSubmitted, setFormSubmitted] = useState(false);
+
     useEffect(() => {
         getAllPatients();
     }, [getAllPatients]);
+
     const [formValues, setFormValues] = useState({
         selectedPatient: '',
         diagnoseOne: '',
@@ -40,9 +42,7 @@ const AddCertificate = () => {
             [name]: value,
         }));
     };
-
     const patient = allPatients.filter((patient) => patient?._id === certificateDetails?.selectedPatient);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -63,7 +63,6 @@ const AddCertificate = () => {
     }
 
     return (
-
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen  w-full p-8'>
             <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Certificates</h1>

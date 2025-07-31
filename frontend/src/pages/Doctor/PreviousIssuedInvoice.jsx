@@ -9,14 +9,14 @@ import { LuLoaderCircle } from 'react-icons/lu'
 const PreviousIssuedInvoice = () => {
     const { billInvoices, getBillInvoices } = docStore();
     const [searchTerm, setSearchTerm] = useState('');
-        const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const timeout = setTimeout(() => setLoading(true), 200);
         getBillInvoices().finally(() => {
             clearTimeout(timeout);
             setLoading(false);
-        });;
+        });
     }, [getBillInvoices]);
 
     return (

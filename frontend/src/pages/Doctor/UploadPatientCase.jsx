@@ -12,7 +12,9 @@ const UploadPatientCase = () => {
   const location = useParams();
   const [isSubmit, setSubmit] = useState(false);
   const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -22,23 +24,29 @@ const UploadPatientCase = () => {
       clearTimeout(timeout);
       setLoading(false);
     });
-  }, [isSubmit])
-  const [image, setImage] = useState(null);
+  }, [getCaseImages,isSubmit])  
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("caseImage", image);
+    if (!image) {
+        toast.error("Please select an image first");
+        return;
+    }
     try {
-      await uploadCase(formData, location.id);
-      setSubmit((prev) => !prev);
-      toast("Added image.");
+        setUploadLoading(true);
+        const formData = new FormData();
+        formData.append("caseImage", image);
+        await uploadCase(formData, location.id);
+        toast.success("Image Uploaded");
+        setImage(null);
     } catch (error) {
-      console.error("Upload error:", error);
-      toast("Failed to upload image.");
+        toast.error("Failed to upload image.");
+    } finally {
+      setUploadLoading(false); 
+      setSubmit(prev => !prev);
     }
   }
-
+  
   return (
     <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen overflow-hidden w-full p-8">
       <ToastContainer />
@@ -50,13 +58,13 @@ const UploadPatientCase = () => {
             <h1 >Select Case Paper Image</h1>
             <Input icon={CiImageOn} type="file" name="caseImage" onChange={(e) => setImage(e.target.files[0])} required />
             <div className="w-full flex items-center justify-center">
-              <button className="cursor-pointer bg-blue-400 font-semibold hover:text-gray-200 hover:bg-blue-600 text-white mt-7 w-52 p-2 rounded-full" type="submit">Upload</button>
+              <button className="cursor-pointer bg-blue-400 font-semibold hover:text-gray-200 hover:bg-blue-600 text-white mt-7 w-52 p-2 rounded-full" type="submit">{uploadLoading?<LuLoaderCircle className='mx-auto animate-spin'/>:"Upload"}</button>
             </div>
           </div>
         </form>
         <div className='flex items-center gap-20 flex-wrap mt-10'>
           {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:caseImages.map((image, idx) => (
-            <div className='flex flex-col items-center gap-2'>
+            <div key={idx} className='flex flex-col items-center gap-2'>
               <img src={image?.imageUrl} className='size-64' alt="" key={idx} />
               <div title='delete' onClick={async () => { await deleteCaseImage(location.id, image?._id); setSubmit((prev) => !prev) }} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash size={25} /></div>
             </div>
