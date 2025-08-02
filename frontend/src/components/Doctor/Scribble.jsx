@@ -92,17 +92,17 @@ const Scribble = ({ complaint }) => {
     }
     return (
         <div className="bg-[rgb(248,249,250)] rounded-xl">
-            <ToastContainer/>
+            <ToastContainer />
             <div className='mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[85vw]'>
                 <div id="canvas-wrapper" style={{ touchAction: "none", pointerEvents: "auto" }} className="flex-1">
-                    <ReactSketchCanvas ref={canvasRef} width="100%" height="1073px" strokeColor="black" canvasColor="white" strokeWidth={strokeWidth} eraserWidth={20} className="!rounded-md !border-2 !border-blue-400"/>
+                    <ReactSketchCanvas ref={canvasRef} width="100%" height="1073px" strokeColor="black" canvasColor="white" strokeWidth={strokeWidth} eraserWidth={20} className="!rounded-md !border-2 !border-blue-400" />
                 </div>
                 <div className="flex flex-col items-center justify-start gap-4 p-2">
-                    <button title="Pen" onClick={() => handleToolChange("pen")} disabled={!eraseMode} className={`p-3 rounded-lg border-2 bg-gray-200 shadow-md transition ${eraseMode? "text-black border-blue-400": "text-gray-400 border-gray-300"}`}>
+                    <button title="Pen" onClick={() => handleToolChange("pen")} disabled={!eraseMode} className={`p-3 rounded-lg border-2 bg-gray-200 shadow-md transition ${eraseMode ? "text-black border-blue-400" : "text-gray-400 border-gray-300"}`}>
                         <LuPen size={16} />
                     </button>
                     <div className="flex flex-col items-center gap-1">
-                        <span className="text-sm text-center">Stroke</span>
+                        {/* <span className="text-sm text-center">Stroke</span> */}
                         <input
                             type="range"
                             min="1"

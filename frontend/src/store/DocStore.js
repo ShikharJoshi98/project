@@ -44,6 +44,7 @@ export const docStore = create((set) => ({
     consultationCharges: [],
     investigationAdvised: [],
     testInfo: [],
+    selectedTest:[],
     prescriptionsArray:[],
     chiefComplaints: [],
     personalHistory: [],
@@ -308,6 +309,10 @@ export const docStore = create((set) => ({
     getTestInfo: async (id, investigationType) => {
         const response = await axios.get(`${DOC_API_URL}/get-test/${id}/${investigationType}`);
         set({ testInfo: response.data.investigationInfo })
+    },
+    getSelectedTest: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getSelectedTest/${id}`);
+        set({ selectedTest: response.data.testData })
     },
     getChiefComplaints: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/chiefComplaints/${id}`);

@@ -22,7 +22,7 @@ const PastHistory = ({ complaint }) => {
         durationSuffix: "",
         remark: "",
     });
-    
+
     useEffect(() => { getCaseData('Present Complaints'); getPastHistoryData(id) },
         [getCaseData, getPastHistoryData, submit]);
 
@@ -50,7 +50,7 @@ const PastHistory = ({ complaint }) => {
             });
         } catch (error) {
             console.error(error.message);
-        }        
+        }
     }
 
     const deletePastHistory = async (id) => {
@@ -66,7 +66,7 @@ const PastHistory = ({ complaint }) => {
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold mb-9'>Add {complaint}</h1>
-                    <button type='button' onClick={()=>{setpastHistoryInput(""); setFormValues({ patient: "",lastDiagnosed: "",lastSuffix: "",duration: "",durationSuffix: "",remark: "",})}} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg mt-3 text-white">Clear Form</button>
+                    <button type='button' onClick={() => { setpastHistoryInput(""); setFormValues({ patient: "", lastDiagnosed: "", lastSuffix: "", duration: "", durationSuffix: "", remark: "", }) }} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg mt-3 text-white">Clear Form</button>
                     <div className='flex flex-col gap-2 '>
                         <h1>Complaint*</h1>
                         <Input icon={CiMedicalClipboard} onChange={(e) => { setpastHistoryInput(e.target.value); handleInputChange(e) }} type="text" placeholder="Enter Complaint" value={pastHistoryInput} required />
@@ -123,10 +123,10 @@ const PastHistory = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
                         {list?.map((investigation, index) => (
-                            <>
+                            <div key={index}>
                                 <h1 onClick={() => setpastHistoryInput(investigation?.name)} className='text-xl cursor-pointer p-1' key={index}>{investigation?.name}</h1>
                                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
-                            </>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -154,7 +154,7 @@ const PastHistory = ({ complaint }) => {
                                     <td className='py-2 px-2 text-center'>{data?.lastDiagnosed} {data?.lastSuffix}</td>
                                     <td className='py-2 px-2 text-center'>{data?.duration} {data?.durationSuffix}</td>
                                     <td className='py-2 px-2 text-center'>{data?.remark}</td>
-                                    <td onClick={()=>deletePastHistory(data?._id)} className='py-2 px-1 place-items-center'><CiTrash/></td>
+                                    <td onClick={() => deletePastHistory(data?._id)} className='py-2 px-1 place-items-center'><CiTrash /></td>
                                 </tr>
                             ))}
                     </tbody>

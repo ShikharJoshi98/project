@@ -30,6 +30,7 @@ const PrescribeMedicine = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isOtherPrescriptionModal, setOtherPrescriptionModal] = useState(false);
     const currentDate = updateDate();
+
     useEffect(() => {
         getPastPrescription(location.id);
         getPresentComplaintData(location.id);
@@ -76,7 +77,7 @@ const PrescribeMedicine = () => {
                 duration: '',
                 note: ''
             });
-            
+
             setSelectedDiagnosisOptions([]);
         } catch (error) {
             console.log(error);

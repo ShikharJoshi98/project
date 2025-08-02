@@ -26,7 +26,7 @@ const FamilyMedical = ({ complaint }) => {
 
     useEffect(() => { getCaseData(complaint); getFamilyMedicalData(id) },
         [getCaseData, getFamilyMedicalData, submit]);
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -73,7 +73,7 @@ const FamilyMedical = ({ complaint }) => {
                                 <FaUsers className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="relation" value={formValues.relation} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled selected className='font-normal ' >Please Select the Relation</option>
+                                <option value="" disabled className='font-normal' >Please Select the Relation</option>
                                 <option value="Paternal Grand Father">Paternal Grand Father</option>
                                 <option value="Paternal Grand Mother">Paternal Grand Mother</option>
                                 <option value="Maternal Grand Father">Maternal Grand Father</option>

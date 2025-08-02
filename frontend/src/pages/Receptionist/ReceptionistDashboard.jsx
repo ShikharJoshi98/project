@@ -11,24 +11,24 @@ import { recStore } from '../../store/RecStore';
 const ReceptionistDashboard = () => {
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const { user } = useAuthStore();
-  const { appointmentSubmit,appointmentSection } = docStore();
-  const { getAppointmentLength,appointmentsLength,completeAppointmentLength,pendingAppointmentLength } = recStore();
+  const { appointmentSubmit } = docStore();
+  const { getAppointmentLength, appointmentsLength, completeAppointmentLength, pendingAppointmentLength } = recStore();
 
   useEffect(() => {
     getAppointmentLength(user?.branch);
   }, [getAppointmentLength, appointmentSubmit])
-  
+
   return (
     <>
       <div className='bg-gradient-to-br from-blue-300 flex flex-col gap-10 via-blue-400 to-sky-700 min-h-screen w-full p-8 overflow-hidden'>
         <div className='flex md:flex-row h-fit flex-col items-center justify-between'>
           <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-2xl bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Receptionist Admin Panel</h1>
-          <h1 className='text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-2xl bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span><LuMapPin/></span>{user?.branch}</h1>
+          <h1 className='text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-2xl bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span><LuMapPin /></span>{user?.branch}</h1>
         </div>
-          <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer text-lg place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold hover:scale-99 transition-all duration-300 shadow-gray-600 shadow-md bg-blue-500 px-4 py-2 hover:bg-blue-700 rounded-lg'>Create Appointment<TbPencilPlus/></button>
+        <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer text-lg place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold hover:scale-99 transition-all duration-300 shadow-gray-600 shadow-md bg-blue-500 px-4 py-2 hover:bg-blue-700 rounded-lg'>Create Appointment<TbPencilPlus /></button>
         <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
           <h1 className='w-fit mx-auto font-semibold text-[#337ab7] text-lg sm:text-xl md:text-4xl'>Dashboard</h1>
-          <hr className='h-[0.5px] px-5 border-none bg-blue-500 my-10'/>
+          <hr className='h-[0.5px] px-5 border-none bg-blue-500 my-10' />
           <div className='flex flex-col items-center gap-10 md:flex-row mt-12 justify-evenly'>
             <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300 py-5 px-8 rounded-lg bg-green-300 '>
               <span className='text-zinc-800 mb-3 flex'>Total Appointments</span>

@@ -1,6 +1,6 @@
 import Scribble from '../Scribble';
 
-const PersonalHistory = ({complaint}) => {
+const PersonalHistory = ({ complaint }) => {
     const historyArray = ["Desire", "Aversion", "Appetite", "Thirst", "Stool", "Urine", "Sleep", "Dreams", "Menstrual History", "Obstetric History", "Sexual History"];
 
     return (
@@ -9,7 +9,7 @@ const PersonalHistory = ({complaint}) => {
             <div className='flex flex-col items-center'>
                 {
                     historyArray.map((history, index) => (
-                        <div className='bg-blue-200 border-b w-full'>
+                        <div key={index} className='bg-blue-200 border-b w-full'>
                             <p className='font-semibold py-3 text-center '>{index + 1}. {history}</p>
                         </div>
                     ))
@@ -17,7 +17,7 @@ const PersonalHistory = ({complaint}) => {
                 }
             </div>
             <h1 className='text-lg sm:text-xl md:text-3xl text-center font-semibold my-10 text-[#337ab7]'>Add {complaint}</h1>
-             <Scribble complaint={complaint}/>
+            <Scribble complaint={complaint} />
         </div>
     )
 }

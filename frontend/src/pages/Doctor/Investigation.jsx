@@ -48,7 +48,7 @@ const Investigation = () => {
   const handleGeneratePdf = () => {
     investigationPdf(mapRef.current);
   };
-
+  console.log(testInfo);
   const deleteTest = async (test, id) => {
     try {
       const encodedTest = encodeURIComponent(test);
@@ -70,7 +70,6 @@ const Investigation = () => {
   const investigationArray = investigationAdvised.map((investigation) => investigation?.inputData);
 
   return (
-
     <div className="bg-gradient-to-br from-blue-300 via-blue-400 p-8 to-sky-700 min-h-screen w-full overflow-hidden">
       <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
         <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
@@ -121,7 +120,8 @@ const Investigation = () => {
             </div>
           </div>
         </div>
-        <button onClick={() => handleGeneratePdf()} className="bg-blue-500 flex items-center justify-center gap-5 mx-auto  transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-7 py-4 rounded-lg mt-8 text-white">Generate Pdf <FaFilePdf /></button>
+        <button onClick={() => navigate(`/generate-investigation-pdf/${id}`)} className="bg-blue-500 flex items-center justify-center gap-5 mx-auto  transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-7 py-4 rounded-lg mt-8 text-white">Generate Pdf <FaFilePdf /></button>
+        {/* <button onClick={() => handleGeneratePdf()} className="bg-blue-500 flex items-center justify-center gap-5 mx-auto  transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-7 py-4 rounded-lg mt-8 text-white">Generate Pdf <FaFilePdf /></button> */}
       </div>
       {isAddInvestigationModalOpen && <InvestigationModal type={investigationType} submit setSubmit={setSubmit} onClose={() => setAddInvestigationModalIsOpen(false)} />}
     </div>

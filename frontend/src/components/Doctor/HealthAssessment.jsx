@@ -29,7 +29,7 @@ const HealthAssessment = () => {
   }, []);
   useEffect(() => {
     getPatient(location.id);
-  }, [isSubmit,getPatient,location.id]);
+  }, [isSubmit, getPatient, location.id]);
   async function handleSubmit(e) {
     e.preventDefault();
     await axios.post(`${DOC_API_URL}/add-health-records/${location.id}`, { weight, bloodPressure: bp, date: currentDate });
@@ -40,7 +40,6 @@ const HealthAssessment = () => {
     await axios.delete(`${DOC_API_URL}/patient/${location.id}/health-record/${rowid}`);
     setSubmit((prev) => !prev);
   }
-  // console.log(patient)
   return (
     <div>
       <h1 className='text-xl sm:text-4xl text-center font-semibold my-10 text-[#337ab7]'>
@@ -85,7 +84,7 @@ const HealthAssessment = () => {
           <tbody>
             {patient?.healthRecords.map((healthRecord, recordIdx) => (
               <tr key={recordIdx} className="bg-blue-200 text-lg">
-                <td className="border border-gray-300 px-4 py-2 text-center">{recordIdx+1}</td>
+                <td className="border border-gray-300 px-4 py-2 text-center">{recordIdx + 1}</td>
                 <td className="border border-gray-300 px-4 py-2 text-center">{healthRecord?.date}</td>
                 <td className="border border-gray-300 px-4 py-2 text-center">
                   {healthRecord?.bloodPressure} mmHg                  </td>

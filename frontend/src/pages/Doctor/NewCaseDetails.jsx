@@ -51,10 +51,10 @@ const NewCaseDetails = () => {
                 <ul className='flex items-center justify-center flex-wrap gap-1 w-full my-15 font-semibold'>
                     {
                         testArray.map((test, index) => (
-                            <>
-                                <li key={index} onClick={() => { setComplaint(test.title); }} style={{ color: `${test.color}` }} className='cursor-pointer'>{test.title}</li>
+                            <div key={index} className='flex items-center gap-2' >
+                                <li onClick={() => { setComplaint(test.title); }} style={{ color: `${test.color}` }} className='cursor-pointer'>{test?.title}</li>
                                 <li>|</li>
-                            </>
+                            </div>
                         ))
                     }
                 </ul>

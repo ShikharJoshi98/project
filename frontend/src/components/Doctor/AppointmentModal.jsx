@@ -6,16 +6,18 @@ import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { recStore } from '../../store/RecStore';
 import axios from 'axios';
 import { useStore } from '../../store/UpdateStore';
-import { useParams } from 'react-router-dom';
 import { updateDate } from '../../store/todayDate';
 import SearchSelect from '../SearchSelect';
 import { RxCross2 } from "react-icons/rx";
 import { toast, ToastContainer } from 'react-toastify';
 import { CiCalendar, CiClock1 } from 'react-icons/ci';
+import { useAuthStore } from '../../store/authStore';
+import { useParams } from 'react-router-dom';
 
 const AppointmentModal = ({ onClose }) => {
   const { appointmentSubmit, toggleAppointmentSubmit } = docStore();
   const { allBranchPatients, getAllPatients } = recStore();
+  const { user } = useAuthStore();
   const { branch } = useParams();
   const { getDetails, employees } = useStore();
   const doctors = employees.filter(emp => emp?.role === 'doctor');
@@ -30,16 +32,25 @@ const AppointmentModal = ({ onClose }) => {
     appointmentType: 'general'
   });
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(true), 200);
-    getAllPatients(branch).finally(() => {
-      clearTimeout(timeout);
-      setLoading(false);
-    });
+    if (user?.role !== 'doctor') {
+      getAllPatients(user?.branch).finally(() => {
+        clearTimeout(timeout);
+        setLoading(false);
+      });
+    }
+    else {
+      getAllPatients(branch).finally(() => {
+        clearTimeout(timeout);
+        setLoading(false);
+      })
+    }
     getDetails();
   }, [getAllPatients, getDetails])
-  
+  console.log(user?.role)
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedPatient === null) {

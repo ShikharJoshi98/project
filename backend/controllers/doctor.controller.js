@@ -956,7 +956,7 @@ export const addOtherPrescriptionPrice = async (req, res) => {
 
 export const getOtherPrescriptionPrice = async (req, res) => {
     try {
-        const prices = await otherPrescriptionPrice.find();
+        const prices = await otherPrescriptionPrice.find().sort({price:1});
         res.json({
             prices,
             success: true
@@ -1046,7 +1046,7 @@ export const getHistoryDetails = async (req, res) => {
             combineObject[item?.date].followUps.push({ followUp: item?.follow_string, id: item?._id });
         });
 
-        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date));
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date)).reverse();
         res.json({ success: true, combinedArray });
     } catch (error) {
         res.json({
@@ -1086,7 +1086,7 @@ export const getPresentComplaintHistory = async (req, res) => {
             combineObject[item?.date].scribble.push({ scribble: item?.follow_string, id: item?._id });
         });
 
-        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date));
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date)).reverse();
         res.json({ success: true, combinedArray });
     } catch (error) {
         res.js
@@ -1399,6 +1399,36 @@ export const getInvestigationAdvised = async (req, res) => {
         });
     }
 }
+
+export const getSelectedTest = async (req, res) => {
+    try {
+        const { id } = req.params; 
+         console.log("hit")
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const testData = await testTable.findOne({
+            patient: id,
+            createdAt: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        });
+
+        res.json({
+            success: true,
+            testData
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
 export const deleteInvestigationAdvised = async (req, res) => {
     try {
@@ -2496,7 +2526,7 @@ export const addConsultationPrice = async (req, res) => {
 
 export const getConsultationPrice = async (req, res) => {
     try {
-        const prices = await consultationChargesPrice.find();
+        const prices = await consultationChargesPrice.find().sort({price:1});
         res.json({
             prices,
             success: true

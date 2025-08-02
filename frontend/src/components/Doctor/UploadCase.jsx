@@ -9,10 +9,12 @@ import { CiImageOn } from 'react-icons/ci';
 import { toast, ToastContainer } from 'react-toastify';
 import { useParams } from "react-router-dom";
 import { LuLoaderCircle } from "react-icons/lu";
+import { useAuthStore } from "../../store/authStore";
 
 const UploadCase = ({ onClose }) => {
   const { allBranchPatients, getAllPatients } = recStore();
   const { branch } = useParams();
+  const { user } = useAuthStore();
   const { uploadCase } = docStore();
   const [image, setImage] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -21,32 +23,41 @@ const UploadCase = ({ onClose }) => {
 
   useEffect(() => {
     const timeout = setTimeout(() => setPatientLoading(true), 200);
-    getAllPatients(branch).finally(() => {
-      clearTimeout(timeout);
-      setPatientLoading(false);
-    });
-  }, [getAllPatients]);  
- 
+    if (user?.role === 'doctor') {
+      getAllPatients(branch).finally(() => {
+        clearTimeout(timeout);
+        setPatientLoading(false);
+      });
+    }
+    else {
+      getAllPatients(user?.branch).finally(() => {
+        clearTimeout(timeout);
+        setPatientLoading(false);
+      });
+    }
+
+  }, [getAllPatients]);
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!image) {
-        toast.error("Please select an image first");
-        return;
+      toast.error("Please select an image first");
+      return;
     }
 
     try {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append("caseImage", image);
-        await uploadCase(formData, selectedPatient);
-        toast.success("Image Uploaded");
-        setImage(null);
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("caseImage", image);
+      await uploadCase(formData, selectedPatient);
+      toast.success("Image Uploaded");
+      setImage(null);
     } catch (error) {
-        toast.error("Failed to upload image.");
+      toast.error("Failed to upload image.");
     } finally {
-        setLoading(false); 
+      setLoading(false);
     }
-}
+  }
 
   return ReactDOM.createPortal(
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
@@ -67,7 +78,7 @@ const UploadCase = ({ onClose }) => {
               <Input icon={CiImageOn} type="file" name="caseImage" onChange={(e) => setImage(e.target.files[0])} required />
             </div>
             <div className="w-full flex items-center justify-center">
-              <button className="cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{loading?<LuLoaderCircle className='mx-auto animate-spin'/>:"Upload"}</button>
+              <button className="cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{loading ? <LuLoaderCircle className='mx-auto animate-spin' /> : "Upload"}</button>
             </div>
           </form>
         </div>
