@@ -8,7 +8,7 @@ import { useAuthStore } from '../../store/authStore';
 import { HR_API_URL, useStore } from '../../store/UpdateStore';
 
 const PayBalance = () => {
-    const {  patient, getPatient } = recStore();
+  const { patient, getPatient } = recStore();
   const { getBalanceDue, balanceDue } = docStore();
   const { branchCourierPayment, getCourierPayment } = useStore();
   const [paymentMode, setPaymentMode] = useState('cash');
@@ -17,20 +17,20 @@ const PayBalance = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const { id } = useParams();
-
+  console.log(patient)
   useEffect(() => {
     getPatient(id);
     getBalanceDue(id);
     getCourierPayment(user?.branch);
   }, [getPatient, getBalanceDue])
-  
-  const courier = branchCourierPayment.filter((courier) => courier?.patient?._id === patient[0]?._id)
-  
+
+  const courier = branchCourierPayment.filter((courier) => courier?.patient?._id === patient?._id)
+
   const pay = async () => {
     try {
       await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, { billPaid: amountPaid, transactionDetails, modeOfPayment: paymentMode, paymentCollectedBy: user?._id, totalBill: balanceDue?.dueBalance, balance_paid_flag: true });
       if (balanceDue?.appointmentType === 'courier') {
-        await axios.patch(`${HR_API_URL}/updateCourierStatus/${courier[0]?._id}/${patient[0]?._id}`);
+        await axios.patch(`${HR_API_URL}/updateCourierStatus/${courier[0]?._id}/${patient?._id}`);
       }
       navigate('/dashboard-HR/HR-balance');
     } catch (error) {

@@ -139,7 +139,7 @@ export const createNewAppointment = async (req, res) => {//
         }
         const pastAppointment = await Appointment.find({ PatientCase: PatientCase.toString() });
         let newAppointment;
-
+       
         if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length - 1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
                 date: convertedDate,
@@ -2613,6 +2613,8 @@ export const getBill = async (req, res) => {
         updateDate();
         let medicineCharges = 0;
         let consultation = 0;
+        let newCaseCharge = 0;
+        let onlineAmount = 0;
         const prescription = await Prescription.find({ patient: id, prescription_date: formattedDate });
         const Fees = await fees.findOne();
         const appointment = await Appointment.findOne({ PatientCase: id, date: formattedDate });
@@ -2627,7 +2629,10 @@ export const getBill = async (req, res) => {
         }
 
         if (appointment.new_appointment_flag === true) {
-            medicineCharges += Fees.newCase;
+            newCaseCharge += Fees.newCase;
+        }
+        if (appointment.appointmentType === 'courier') {
+            onlineAmount += Fees.Courier;
         }
         if (prescription) {
             if (prescription[0].duration === '7 Days') {
@@ -2654,8 +2659,10 @@ export const getBill = async (req, res) => {
         }
         res.json({
             medicineCharges,
+            newCaseCharge,
             consultation,
             otherPrescriptionPrice,
+            onlineAmount,
             success: true
         })
     } catch (error) {

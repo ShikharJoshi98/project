@@ -24,8 +24,8 @@ const PrescribeMedicine = () => {
     const [submit, setsubmit] = useState(false);
     const [searchMedicine, setSearchMedicine] = useState("");
     const { getCaseData, list, getPastPrescription, allPrescriptions, getPresentComplaintData, togglePrescriptionSubmit, PresentComplaintData } = docStore();
-    const { patients } = recStore();
-    const patient = patients.filter((cand => (cand._id) === location.id));
+    const { patient } = recStore();
+    // const patient = patients.filter((cand => (cand._id) === location.id));
     const searchMedicineRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
     const [isOtherPrescriptionModal, setOtherPrescriptionModal] = useState(false);
@@ -111,7 +111,7 @@ const PrescribeMedicine = () => {
                         {searchMedicine && isOpen && <div className='bg-gray-300 shadow-2xl p-2 flex flex-col gap-2 w-full absolute top-20.5 z-10 border-l border-b border-r border-blue-400 rounded-md'>
                             {
                                 filteredPrescription.map((pres, index) => (
-                                    <SearchMedicine pres={pres} index={index} patientName={patient[0].fullname} />
+                                    <SearchMedicine pres={pres} index={index} patientName={patient?.fullname} />
                                 ))
                             }
                         </div>}
