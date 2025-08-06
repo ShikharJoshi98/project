@@ -49,7 +49,6 @@ const AppointmentModal = ({ onClose }) => {
     }
     getDetails();
   }, [getAllPatients, getDetails])
-  console.log(user?.role)
 
   const handleSubmit = async (e) => {
     e.preventDefault();

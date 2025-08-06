@@ -6,7 +6,7 @@ import { CiImageOn, CiTrash } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import { LuLoaderCircle } from "react-icons/lu";
 
-const UploadBillModal = ({ onClose, setBillImagesLength=()=>{},orderId }) => {
+const UploadBillModal = ({ onClose, setBillImagesLength = () => { }, orderId }) => {
   const [image, setImage] = useState(null);
   const [submit, setSubmit] = useState(false);
   const { getBillImages, billImages } = useStore();
@@ -18,13 +18,13 @@ const UploadBillModal = ({ onClose, setBillImagesLength=()=>{},orderId }) => {
       setLoading(false);
     });
   }, [getBillImages, submit]);
-  
+
   useEffect(() => {
-  if (billImages) {
-    setBillImagesLength(billImages.length);
-  }
-}, [billImages, setBillImagesLength]);
-  
+    if (billImages) {
+      setBillImagesLength(billImages.length);
+    }
+  }, [billImages, setBillImagesLength]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -68,10 +68,10 @@ const UploadBillModal = ({ onClose, setBillImagesLength=()=>{},orderId }) => {
           </form>
           <h1 className="text-blue-500 text-xl md:text-2xl my-10 text-center font-semibold">Bill Images</h1>
           {
-            loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:billImages?.map((image, index) => (
-              <div className="flex justify-between px-2">
-                <img src={image?.imageUrl} alt="Bill Image" key={index} className="w-[90%] mb-5" />
-                <div title='delete' onClick={()=>deleteBill(image?._id)}  className='text-white max-w-[10%] w-fit h-fit  bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash /></div>
+            loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : billImages?.map((image, index) => (
+              <div key={index} className="flex justify-between px-2">
+                <img src={image?.imageUrl} alt="Bill Image" className="w-[90%] mb-5" />
+                <div title='delete' onClick={() => deleteBill(image?._id)} className='text-white max-w-[10%] w-fit h-fit  bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash /></div>
               </div>
             ))
           }

@@ -112,7 +112,7 @@ const MedicineStockRec = () => {
                             <tbody>
                                 {
                                     filteredMedicalStock?.map((medicine, index) => (
-                                        <tr className={`${medicine?.docApproval_flag === false ? 'bg-red-200' : 'bg-blue-200'}`}>
+                                        <tr key={index} className={`${medicine?.docApproval_flag === false ? 'bg-red-200' : 'bg-blue-200'}`}>
                                             <td className="px-1 py-2 text-center">{index + 1}</td>
                                             <td className="px-1 py-2 text-center ">{medicine?.medicineName}</td>
                                             <td className="px-1 py-2 text-center ">{medicine?.potency}</td>

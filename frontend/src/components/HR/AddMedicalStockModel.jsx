@@ -8,7 +8,7 @@ const AddMedicalStockModel = ({ onClose }) => {
   const { user } = useAuthStore();
   const [medicine, setmedicine] = useState();
   const [potency, setpotency] = useState();
-  const [quantity, setquantity] = useState();
+  const [quantity, setquantity] = useState(0);
   useEffect(() => {
     getMedicine();
   }, [getMedicine]);
@@ -19,7 +19,7 @@ const AddMedicalStockModel = ({ onClose }) => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
+
     await addMedicineStock(medicine, potency, quantity, user?.branch);
     alert("Added Medicine stock");
     setmedicine('');
@@ -74,7 +74,7 @@ const AddMedicalStockModel = ({ onClose }) => {
             </div>
             <div className='mb-3'>
               <h1 className="text-black mb-2 text-lg font-semibold">Receive quantity:</h1>
-              <input type='number' defaultValue={0} onChange={(e) => setquantity(e.target.value)} value={quantity}
+              <input type='number' onChange={(e) => setquantity(e.target.value)} value={quantity}
                 className='w-full  h-10  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
             duration-200'
               />

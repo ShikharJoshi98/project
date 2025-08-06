@@ -17,7 +17,6 @@ const ApproveMedicines = () => {
   const [submit, setSubmit] = useState(false);
   const { getMedicine, medicines, potencys, getPotency, getMedicalStock, medicalStock, medicalStockToggle } = useStore();
   const [loading, setLoading] = useState(false);
-  const [id, setId] = useState('');
 
   useEffect(() => {
     getMedicine();
@@ -45,8 +44,7 @@ const ApproveMedicines = () => {
     const formattedDate = date.toLocaleString("en-US", options);
     return formattedDate;
   }
-  const orderApprove = medicalOrderId.filter((order) => order?.medicine === id);
-  console.log(orderApprove)
+
   const ApproveMedicalStock = async (id, orderFlag) => {
     try {
       await axios.patch(`${DOC_API_URL}/approveMedicalStock/${id}`,
@@ -122,7 +120,7 @@ const ApproveMedicines = () => {
                       <td className="px-1 py-2 text-center">{index + 1}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.medicineName}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.potency}</td>
-                      <td onClick={() => setId(medicine?._id)} className="px-1 py-2 text-center ">{medicine?.quantity}</td>
+                      <td className="px-1 py-2 text-center ">{medicine?.quantity}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.reorder_level}</td>
                       <td className="px-1 py-2 text-center ">{timeStamp(medicine?.last_updated)}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.issue_quantity}</td>

@@ -92,7 +92,7 @@ const ItemStockRec = () => {
                             <tbody className='text-black'>
                                 {
                                     itemsList?.map((item, index) => (
-                                        <tr className={`${item.docApproval_flag === false ? 'bg-red-200' : 'bg-blue-200'}`}>
+                                        <tr key={index} className={`${item.docApproval_flag === false ? 'bg-red-200' : 'bg-blue-200'}`}>
                                             <td className="px-1 py-2 text-center">{index + 1}</td>
                                             <td className="px-1 py-2 text-center ">{item?.itemName}</td>
                                             <td className="px-1 py-2 text-center ">{item?.docApproval_flag === false ? <span>{item?.quantity} {item?.unit}</span> : <span onClick={() => { setissueModal(true); setItemSelect(item) }} className='bg-white px-2 py-0.5 rounded-md'>{item?.quantity} {item?.unit}</span>}</td>

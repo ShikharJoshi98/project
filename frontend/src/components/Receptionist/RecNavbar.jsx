@@ -66,7 +66,7 @@ const RecNavbar = () => {
                     </div>
                     <li onClick={handleLogout} className="text-gray-200 hover:text-white cursor-pointer">Logout</li>
                 </ul>
-                <button onClick={() => setOpen(prev => !prev)} class="lg:hidden cursor-pointer hover:text-gray-200 text-white font-semibold text-xl">☰</button>
+                <button onClick={() => setOpen(prev => !prev)} className="lg:hidden cursor-pointer hover:text-gray-200 text-white font-semibold text-xl">☰</button>
                 {isOpen && <div ref={menuRef} className='absolute border-white flex flex-col items-center border-1 rounded-md w-40 z-10 bg-[#404858] p-4 text-white right-5'>
                     <p onClick={() => { navigate('/dashboard-RECEPTIONIST'); setOpen(false) }} className='hover:text-gray-300 cursor-pointer'>Dashboard</p>
                     <p onClick={() => { navigate('/dashboard-RECEPTIONIST/register-patient'); setOpen(false) }} className='pt-4 hover:text-gray-300 cursor-pointer'>Register Patient</p>
