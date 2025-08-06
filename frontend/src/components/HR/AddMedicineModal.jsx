@@ -19,16 +19,17 @@ const AddMedicineModal = ({ onClose }) => {
   );
   useEffect(() => {
     getMedicine();
-  }, [getMedicine,submit]);
+  }, [getMedicine, submit]);
 
   useEffect(() => {
     getPotency();
-  }, [getPotency,submit]);
+  }, [getPotency, submit]);
 
   async function addMedicine(e) {
     e.preventDefault();
     try {
       await AddMedicine(NewMedicine);
+      setmedicine("");
       alert("Medicine added");
       setSubmit(prev => !prev);
     } catch (error) {
@@ -40,6 +41,7 @@ const AddMedicineModal = ({ onClose }) => {
     e.preventDefault();
     try {
       await AddPotency(NewPotency);
+      setpotency("");
       alert("Potency added");
       setSubmit(prev => !prev);
     } catch (error) {
@@ -55,14 +57,14 @@ const AddMedicineModal = ({ onClose }) => {
           <div className="bg-white p-5 rounded-lg w-full">
             <form onSubmit={addMedicine}>
               <h1 className="text-black mb-3 text-lg font-semibold">Medicine Name</h1>
-              <Input onChange={(e) => setmedicine(e.target.value)} icon={FaPlus} type="text" placeholder="Mention Medicine Name"/>
+              <Input onChange={(e) => setmedicine(e.target.value)} value={NewMedicine} icon={FaPlus} type="text" placeholder="Mention Medicine Name" />
               <button type="submit" className="bg-blue-500 w-full transition-all duration-300 cursor-pointer hover:bg-blue-600 py-2 rounded-lg mt-3 text-white">Add</button>
             </form>
           </div>
           <div className="bg-white p-5 rounded-lg w-full">
             <form onSubmit={addpotency}>
               <h1 className="text-black mb-3 text-lg font-semibold">Potency Name</h1>
-              <Input onChange={(e) => setpotency(e.target.value)} icon={FaPlus} type="text" placeholder="Mention Potency Name"/>
+              <Input onChange={(e) => setpotency(e.target.value)} value={NewPotency} icon={FaPlus} type="text" placeholder="Mention Potency Name" />
               <button type="submit" className="bg-blue-500 w-full transition-all duration-300 cursor-pointer hover:bg-blue-600 py-2 rounded-lg mt-3 text-white">Add</button>
             </form>
           </div>

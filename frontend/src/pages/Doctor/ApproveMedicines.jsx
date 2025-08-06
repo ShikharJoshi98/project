@@ -17,6 +17,7 @@ const ApproveMedicines = () => {
   const [submit, setSubmit] = useState(false);
   const { getMedicine, medicines, potencys, getPotency, getMedicalStock, medicalStock, medicalStockToggle } = useStore();
   const [loading, setLoading] = useState(false);
+  const [id, setId] = useState('');
 
   useEffect(() => {
     getMedicine();
@@ -44,6 +45,8 @@ const ApproveMedicines = () => {
     const formattedDate = date.toLocaleString("en-US", options);
     return formattedDate;
   }
+  const orderApprove = medicalOrderId.filter((order) => order?.medicine === id);
+  console.log(orderApprove)
   const ApproveMedicalStock = async (id, orderFlag) => {
     try {
       await axios.patch(`${DOC_API_URL}/approveMedicalStock/${id}`,
@@ -54,7 +57,7 @@ const ApproveMedicines = () => {
       )
       if (orderFlag === true) {
         const orderApprove = medicalOrderId.filter((order) => order?.medicine === id);
-        await axios.patch(`${HR_API_URL}/updateMedicalReceivedOrder/${orderApprove[0]?.order}/${orderApprove[0]?.medicineId}`, {
+        const response = await axios.patch(`${HR_API_URL}/updateMedicalReceivedOrder/${orderApprove[0]?.order}/${orderApprove[0]?.medicineId}`, {
           doctor_Approval_Flag: true
         });
       }
@@ -96,7 +99,7 @@ const ApproveMedicines = () => {
               ))}
             </select>
           </div>
-          {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
+          {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
               <thead className="bg-[#337ab7] text-white">
                 <tr >
@@ -119,13 +122,13 @@ const ApproveMedicines = () => {
                       <td className="px-1 py-2 text-center">{index + 1}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.medicineName}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.potency}</td>
-                      <td className="px-1 py-2 text-center ">{medicine?.quantity}</td>
+                      <td onClick={() => setId(medicine?._id)} className="px-1 py-2 text-center ">{medicine?.quantity}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.reorder_level}</td>
                       <td className="px-1 py-2 text-center ">{timeStamp(medicine?.last_updated)}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.issue_quantity}</td>
                       <td className="px-1 py-2 text-center ">{medicine?.approval_flag_receive === true ? medicine?.receive_quantity : medicine?.approval_flag_new === true ? medicine?.receive_quantity : 0}</td>
                       <td className="px-1 py-2 text-center "> {medicine?.docApproval_flag === false ? <button onClick={() => ApproveMedicalStock(medicine?._id, medicine?.approval_flag_receive)} className='px-2 rounded-md py-0.5 cursor-pointer bg-green-500 text-white'>Click to Approve</button> : <span className='border-2 px-2 rounded-md py-0.5 text-blue-500'>APPROVED</span>}</td>
-                      <td className="px-1 py-2 text-center ">{medicine?.approval_flag_receive === true ? "ITEM RECEIVED(ORDER)" : medicine?.approval_flag_issue === true ? "ITEM ISSUED" : medicine?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
+                      <td className="px-1 py-2 text-center ">{medicine?.approval_flag_receive === true ? "ITEM RECEIVED(ORDER)" : medicine?.approval_flag_receive === true ? "ITEM ISSUED" : medicine?.approval_flag_new ? "NEW ITEM" : "NEW ITEM ADDED"}</td>
                     </tr>
                   ))}
               </tbody>

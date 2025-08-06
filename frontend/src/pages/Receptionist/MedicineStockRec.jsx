@@ -43,7 +43,6 @@ const MedicineStockRec = () => {
             minute: "numeric",
             hour12: true
         };
-
         const formattedDate = date.toLocaleString("en-US", options);
         return formattedDate;
     }
@@ -94,7 +93,7 @@ const MedicineStockRec = () => {
                             ))}
                         </select>
                     </div>
-                    {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:<div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] text-sm text-white">
                                 <tr >

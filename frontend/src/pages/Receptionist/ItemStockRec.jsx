@@ -42,11 +42,10 @@ const ItemStockRec = () => {
             minute: "numeric",
             hour12: true
         };
-
         const formattedDate = date.toLocaleString("en-US", options);
         return formattedDate;
     }
-    console.log(itemStock);
+
     useEffect(() => {
         try {
             const timeout = setTimeout(() => setLoading(true), 200);
@@ -67,15 +66,15 @@ const ItemStockRec = () => {
                 <div className='bg-[#e9ecef] w-auto p-5 rounded-lg '>
                     <h1 className='text-center font-semibold text-[#337ab7] text-lg sm:text-xl md:text-4xl'>Items Stock {user?.branch}</h1>
                     <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold gap-2 sm:gap-10 justify-center items-center md:gap-20 text-[6px] sm:text-[8px] md:text-base'>
-                        <button onClick={() => setItemModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>ADD ITEMS/UNIT LIST</button>
-                        <button onClick={() => setVendorModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>VENDORS</button>
-                        <button onClick={() => setAddStockModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>ADD STOCK</button>
-                        <button onClick={() => setOrderModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>PLACE ORDER</button>
+                        <button onClick={() => setItemModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>Add Items/Unit List</button>
+                        <button onClick={() => setVendorModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>Vendors</button>
+                        <button onClick={() => setAddStockModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>Add Stock</button>
+                        <button onClick={() => setOrderModalIsOpen(true)} className='cursor-pointer bg-blue-500 py-1 px-2 hover:bg-blue-600 rounded-lg'>Place Order</button>
                     </div>
                     <div className='mt-10'>
                         <Input onChange={(e) => setSearchTerm(e.target.value)} icon={CiSearch} placeholder='Search for Items Here' />
                     </div>
-                    {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:<div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] text-sm text-white">
                                 <tr >

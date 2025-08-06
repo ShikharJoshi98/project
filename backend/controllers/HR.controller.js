@@ -8,7 +8,6 @@ import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import { billPayment, courierPayment } from "../models/PaymentModel.js";
 import { Appointment } from "../models/AppointmentModel.js";
 import { updateDate } from "../utils/todayDate.js";
-import mongoose from "mongoose";
 
 export const details = async (req, res) => {
     try {
@@ -932,7 +931,7 @@ export const updateMedicalReceivedOrder = async (req, res) => {
         const order = await medicalOrder.findById(orderId);
 
         const medicine = order?.formRows.filter((order) => order?._id.toString() === medicineId);
-
+       
         if (receivedQuantity != undefined) {
             medicine[0].receivedQuantity = receivedQuantity;
             await MedicalStock.findByIdAndUpdate(medicine[0]?.medicineId,
@@ -953,6 +952,7 @@ export const updateMedicalReceivedOrder = async (req, res) => {
             medicine[0].received_date = received_date
         }
         await order.save();
+        const medicalOrderIdDelete = await MedicalOrderId.findOneAndDelete({ order: orderId });
 
         res.json({
             medicines: medicine[0]
