@@ -1,4 +1,4 @@
-import { useEffect} from 'react'
+import { useEffect } from 'react'
 import { FaUserDoctor, FaUsers } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { useStore } from '../../store/UpdateStore';
@@ -10,15 +10,16 @@ import { LuMapPin } from 'react-icons/lu';
 const HRDashboard = () => {
   const { getDetails, employees } = useStore();
   const { user } = useAuthStore();
-  const { getPatientDetails, patients } = recStore();
+  const { getAllPatients, allBranchPatients } = recStore();
   const doctors = employees.filter(emp => emp?.role === 'doctor');
   const todayDate = updateDate();
 
   useEffect(() => {
     getDetails();
-    getPatientDetails(1,"",user?.branch);
-  }, [getDetails]);
-  
+    getAllPatients(user?.branch);
+  }, [getDetails, getAllPatients]);
+  console.log(allBranchPatients);
+
   return (
     <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full'>
       <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
@@ -38,7 +39,7 @@ const HRDashboard = () => {
           <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300  py-5 px-8  rounded-lg bg-[#ffc36d] '>
             <span className='text-zinc-800 mb-3 flex'>Total Patients</span>
             <hr className='h-0.5 border-none mb-4 bg-white' />
-            <h1 className='flex font-semibold items-center gap-8 sm:gap-36 md:gap-10'><span><FaUsers /></span>{patients.length}</h1>
+            <h1 className='flex font-semibold items-center gap-8 sm:gap-36 md:gap-10'><span><FaUsers /></span>{allBranchPatients.length}</h1>
           </div>
           <div className='w-full md:w-auto hover:scale-102 hover:shadow-md hover:shadow-gray-600 transition-all duration-300 py-5 px-8 rounded-lg bg-[#55abff] '>
             <span className='text-zinc-800  mb-3 flex'>On Duty Doctors</span>

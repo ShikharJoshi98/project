@@ -21,13 +21,8 @@ const CourierListRec = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            setLoading(true);
-        }, 200);
-        getCourierPayment(location.location).finally(() => {
-            clearTimeout(timeout);
-            setLoading(false);
-        });
+
+        getCourierPayment(location.location)
     }, [getCourierPayment, submit]);
     const handleFilter = () => {
         if (!startDate || !endDate) return;
@@ -71,7 +66,7 @@ const CourierListRec = () => {
                     </div>
                     <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl text-center my-4'>Courier Details</h1>
                     <div className="overflow-x-auto mt-10 rounded-lg">
-                        {loading ? <LucideLoaderCircle className='animate-spin mx-auto mt-10' /> : <table className="min-w-full border border-gray-300 bg-white shadow-md ">
+                        {<table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] text-sm text-white">
                                 <tr>
                                     <th className="px-1 py-4 ">Patient Name</th>
