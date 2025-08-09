@@ -1,8 +1,9 @@
 import express from "express";
-import { getPatientAppointment } from "../controllers/patient.controller.js";
+import { getPatientAppointment, updatePatientAppointment } from "../controllers/patient.controller.js";
 
 const PatientRouter = express.Router();
 
-PatientRouter.get('/getAppointments/:id',getPatientAppointment)
+PatientRouter.get('/getAppointments/:id', getPatientAppointment);
+PatientRouter.patch('/updatePatientAppointment/:id', updatePatientAppointment);
 
 export default PatientRouter

@@ -1,4 +1,5 @@
 import { Appointment } from "../models/AppointmentModel.js";
+import Patient from "../models/PatientModel.js";
 
 export const getPatientAppointment = async (req, res) => {
     try {
@@ -41,3 +42,22 @@ export const getPatientAppointment = async (req, res) => {
         });
     }
 };
+
+
+export const updatePatientAppointment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const patient = await Patient.findByIdAndUpdate(id, {
+            First_Appointment_Flag: false
+        });
+        return res.json({
+            success: true,
+            message: "Successfully updated the first case flag"
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
