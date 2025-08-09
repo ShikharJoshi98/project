@@ -74,7 +74,6 @@ const Investigation = () => {
       <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
         <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
         <h1 className='text-xl sm:text-4xl text-center font-semibold mt-5 text-[#337ab7]'>{investigationType}</h1>
-        <p className='text-red-500 mt-10 font-semibold '>Note : Please do not refresh the page before generating the PDF. If the page is refreshed, previously added investigations will be lost and must be re-added manually.</p>
         <ul className='flex items-center justify-center flex-wrap gap-1 w-full my-15 font-semibold'>
           {
             testArray.map((test, index) => (

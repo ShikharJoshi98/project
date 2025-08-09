@@ -7,6 +7,7 @@ import axios from 'axios';
 import { updateDate } from '../../store/todayDate';
 import { useAuthStore } from '../../store/authStore';
 import { HR_API_URL, useStore } from '../../store/UpdateStore';
+import { REC_API_URL } from '../../store/patientStore';
 
 const Bill = () => {
     const { getPatient, patient } = recStore();
@@ -79,6 +80,7 @@ const Bill = () => {
             })
             await axios.patch(`${DOC_API_URL}/update-prescription`, { prescription_date: todayDate });
             await axios.patch(`${DOC_API_URL}/updateOtherPrescription/${id}`);
+            await axios.patch(`${REC_API_URL}//updatePatientAppointment/${id}`);
             navigate(`/prescription-HR/${id}`);
         } catch (error) {
             console.log(error.message);

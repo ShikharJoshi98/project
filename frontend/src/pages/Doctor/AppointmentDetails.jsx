@@ -10,13 +10,13 @@ import { FaPen } from "react-icons/fa";
 
 const AppointmentDetails = () => {
     const { patient, getPatient } = recStore();
-    const {id} = useParams();
+    const { id } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         getPatient(id);
     }, [getPatient])
-  
+
     return (
         <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen overflow-hidden w-full p-8">
             <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">

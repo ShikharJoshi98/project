@@ -49,7 +49,7 @@ const GenerateInvestigationPdf = () => {
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
                                 <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Investigation Advised</th>
+                                <th className="bg-blue-500 text-white text-sm ">Ultra-Sonography</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
@@ -67,7 +67,7 @@ const GenerateInvestigationPdf = () => {
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
                                 <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Investigation Advised</th>
+                                <th className="bg-blue-500 text-white text-sm ">Doppler studies</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
@@ -85,7 +85,7 @@ const GenerateInvestigationPdf = () => {
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
                                 <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Investigation Advised</th>
+                                <th className="bg-blue-500 text-white text-sm ">Obsetrics(Pregnancy)</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
@@ -103,7 +103,7 @@ const GenerateInvestigationPdf = () => {
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
                                 <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Investigation Advised</th>
+                                <th className="bg-blue-500 text-white text-sm ">Sonography</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
@@ -121,7 +121,7 @@ const GenerateInvestigationPdf = () => {
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
                                 <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Investigation Advised</th>
+                                <th className="bg-blue-500 text-white text-sm">16 Slice C.T Scan</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
@@ -139,7 +139,7 @@ const GenerateInvestigationPdf = () => {
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
                                 <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Investigation Advised</th>
+                                <th className="bg-blue-500 text-white text-sm">1.5 MRI Scan</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
