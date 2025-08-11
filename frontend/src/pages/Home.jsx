@@ -12,15 +12,15 @@ const Home = () => {
   const images = ["/image-2.jpeg", "/image-3.jpeg", "/image-4.jpeg", "/image-5.jpeg", "/image-8 (1).jpeg", "/image-8 (3).jpeg"];
 
   return (
-    <div className='bg-gradient-to-br p-10 from-blue-400 via-[#4a9acc] to-blue-900 overflow-hidden'>      
+    <div className='bg-gradient-to-br p-10 from-blue-400 via-[#4a9acc] to-blue-900 overflow-hidden'>
       <video autoPlay muted loop src="/wings.mp4" className=' max-w-[90vw] mt-4 md:max-w-[760px] md:w-[90vw] lg:max-w-[900px] mx-auto shadow-gray-700 shadow-lg rounded-lg'></video>
       <div className='flex flex-col p-6 items-center gap-7 max-w-[326px] md:max-w-[760px] lg:max-w-[900px] mt-20 bg-white mx-auto shadow-gray-700 shadow-lg rounded-lg'>
         <h1 className='text-xl md:text-3xl font-semibold text-slate-800'>FOR APPOINTMENTS</h1>
-        <hr className='bg-[#4a9acc] h-1 border-none rounded-sm w-28'/>
+        <hr className='bg-[#4a9acc] h-1 border-none rounded-sm w-28' />
         <h1 className='text-xl font-semibold mt-6 text-slate-800'>"Call Us"</h1>
         <div className='md:flex-row flex md:items-stretch flex-col gap-4 items-center'>
-          {contactCard.map((detail) => (
-            <div className='max-w-[210px] md:max-w-[300px] rounded-xl hover:shadow-gray-600 hover:shadow-2xs hover:scale-[102%] transition-all duration-300 flex flex-col items-center gap-4 p-10 h-auto bg-[#c0c0c0]'>
+          {contactCard.map((detail, index) => (
+            <div key={index} className='max-w-[210px] md:max-w-[300px] rounded-xl hover:shadow-gray-600 hover:shadow-2xs hover:scale-[102%] transition-all duration-300 flex flex-col items-center gap-4 p-10 h-auto bg-[#c0c0c0]'>
               <div className='w-auto px-5 h-auto py-3 border-white border-2 rounded-md text-center bg-[#afdbf5] '>
                 <h1 className='text-lg font-bold text-zinc-900'>{detail.location}</h1>
               </div>
@@ -93,7 +93,7 @@ const Home = () => {
               </div>
             </SwiperSlide>))}
         </Swiper>
-      </div>      
+      </div>
     </div>
   )
 }
