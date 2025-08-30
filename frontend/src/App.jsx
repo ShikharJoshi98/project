@@ -68,6 +68,7 @@ import AppointmentLayout from "./components/Layouts/AppointmentLayout";
 import HRLayout from "./components/Layouts/HRLayout";
 import ReceptionistLayout from "./components/Layouts/ReceptionistLayout";
 import GenerateInvestigationPdf from "./pages/Doctor/GenerateInvestigationPdf";
+import SampleDrawingCanvas from "./pages/SampleDrawingCanvas";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -119,6 +120,7 @@ function App() {
           </Route>
 
           <Route path="/access-denied" element={<AccessDenied />} />//--
+          <Route path="/drawing-canvas" element={<SampleDrawingCanvas />}></Route>
 
           <Route path="/dashboard-PATIENT" element={<PatientLayout />}>//--
             <Route index element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />//--
