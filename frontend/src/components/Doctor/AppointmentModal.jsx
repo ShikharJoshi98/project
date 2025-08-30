@@ -48,7 +48,7 @@ const AppointmentModal = ({ onClose }) => {
       })
     }
     getDetails();
-  }, [getPatientDetails, getDetails])
+  }, [getAllPatients, getDetails])
 
 
   const handleSubmit = async (e) => {
