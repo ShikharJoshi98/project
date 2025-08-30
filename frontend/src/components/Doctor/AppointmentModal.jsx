@@ -50,7 +50,6 @@ const AppointmentModal = ({ onClose }) => {
     getDetails();
   }, [getPatientDetails, getDetails])
 
-  console.log(formValues.date)
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -14,7 +14,6 @@ const DocSidebar = () => {
   const [collectionDropdown, setCollectionDropdown] = useState(false);
   const navigate = useNavigate();
   const path = useLocation();
-
   
   return (
     <div >
