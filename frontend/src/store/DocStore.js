@@ -9,22 +9,28 @@ export const docStore = create((set) => ({
     tasks: [],
     task: null,
     leaves: [],
-    userLeaves:[],
-    appointments: [],
-    allAppointments: [],
+    userLeaves: [],
+    domGeneral: null,//
+    mulGeneral: null,//
+    domRepeat: null,//
+    mulRepeat: null,//
+    domCourier: null,//
+    mulCourier: null,//
+    newAppointmentLength: null,//
+    followUpAppointmentLength: null,//
+    medicineIssuedLength: null,//
+    medicineNotIssuedLength: null,//
+    appointments: [],//
     Homeo: [],
     appointment: null,
-    caseImages: [],
+    caseImages: [],//
     prescription: [],
     diagnosisImages: [],
-    followUpImages: [],
-    writeUp: [],
+    historyDetails:[],
     allPrescriptions: [],
     list: [],
-    payment: [],
-    PresentComplaintData: [],
-    PresentComplaintScribble: [],
-    PresentComplaintWriteUp: [],
+    payment: [],//
+    PresentComplaintData: [],    
     briefMindSymptomScribble: [],
     PastHistoryData: [],
     FamilyMedicalData: [],
@@ -38,6 +44,7 @@ export const docStore = create((set) => ({
     consultationCharges: [],
     investigationAdvised: [],
     testInfo: [],
+    selectedTest:[],
     prescriptionsArray:[],
     chiefComplaints: [],
     personalHistory: [],
@@ -75,7 +82,6 @@ export const docStore = create((set) => ({
     DeleteTask: async (id) => {
         try {
             await axios.delete(`${DOC_API_URL}/delete-task/${id}`);
-
         } catch (error) {
             console.log(error.message);
         }
@@ -171,7 +177,7 @@ export const docStore = create((set) => ({
 
         }
     },
-    uploadCase: async (formData, id) => {
+    uploadCase: async (formData, id) => {//
         try {
             const response = await axios.post(`${DOC_API_URL}/upload-case-image/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
@@ -199,39 +205,33 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    deleteHomeo: async (id) => {
+    getAppointmentCount: async () => {//
         try {
-            const response = await axios.delete(`${DOC_API_URL}/homeo-delete/${id}`)
-
+            const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`);
+            set({ domGeneral: response.data.domGeneral })
+            set({ mulGeneral: response.data.mulGeneral });
+            set({ domRepeat: response.data.domRepeat });
+            set({ mulRepeat: response.data.mulRepeat });
+            set({ domCourier: response.data.domCourier });
+            set({ mulCourier: response.data.mulCourier });
         } catch (error) {
             console.log(error.message);
         }
-    },
-    getAllAppointments: async () => {
-        try {
-            const response = await axios.get(`${DOC_API_URL}/get-appointments`);
-            set({ allAppointments: response.data.appointments })
-
-        } catch (error) {
-            console.log(error.message);
-        }
-    },
-    getAppdetails: async (appointmentType) => {
-        let response = await axios.get(`${DOC_API_URL}/allAppointments`);
-
-        set({ appointments: response.data.Appointments });
+    }, 
+    getAppDetails: async (appointmentSection,branch,user) => {//
+      try {
+          const response = await axios.get(`${DOC_API_URL}/getAppointments/${branch}/${appointmentSection}/${user}`);
+          set({ appointments: response.data.Appointments });
+          set({ newAppointmentLength: response.data.newAppointmentLength });
+          set({ followUpAppointmentLength: response.data.followUpAppointmentLength });
+          set({ medicineIssuedLength: response.data.medicineIssuedLength });
+          set({ medicineNotIssuedLength: response.data.medicineNotIssuedLength });
+      } catch (error) {
+          console.error(error.message);
+      }  
     },
     deleteCaseImage: async (patientId, imageId) => {
         let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);
-
-    },
-    getFollowUpImages: async (id) => {
-        try {
-            const response = await axios.get(`${DOC_API_URL}/get-follow-up-patient/${id}`)
-            set({ followUpImages: response.data.followUpImages });
-        } catch (error) {
-            console.log(error.message);
-        }
     },
     fetchPrescription: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/get-today-prescription/${id}`);
@@ -242,9 +242,13 @@ export const docStore = create((set) => ({
         const response = await axios.get(`${DOC_API_URL}/get-all-prescription/${id}`);
         set({ allPrescriptions: response.data.presToday });
     },
-    getWriteUp: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}/get-write-up-patient/${id}`);
-        set({ writeUp: response.data.writeUpData });
+    getHistoryDetails: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getHistoryDetails/${id}`);
+        set({historyDetails:response.data.combinedArray})
+    },
+    getPresentComplaint: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getPresentComplaint/${id}`);
+        set({PresentComplaintData:response.data.combinedArray})
     },
     getCaseData: async (complaint) => {
         const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(/\s+/g, "")}`);
@@ -306,6 +310,10 @@ export const docStore = create((set) => ({
         const response = await axios.get(`${DOC_API_URL}/get-test/${id}/${investigationType}`);
         set({ testInfo: response.data.investigationInfo })
     },
+    getSelectedTest: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getSelectedTest/${id}`);
+        set({ selectedTest: response.data.testData })
+    },
     getChiefComplaints: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/chiefComplaints/${id}`);
         set({ chiefComplaints: response.data.chiefComplaint })
@@ -326,7 +334,7 @@ export const docStore = create((set) => ({
         const response = await axios.get(`${DOC_API_URL}/briefMindSymptomScribble/${id}`);
         set({ briefMindSymptomScribble: response.data.briefMindSymptomData })
     },
-    getPayment: async () => {
+    getPayment: async () => {//
         const response = await axios.get(`${DOC_API_URL}/getPayment`);
         set({ payment: response.data.paymentData })
     },

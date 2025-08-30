@@ -1,7 +1,8 @@
-import { Trash2, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from '../../store/UpdateStore'
 import { docStore } from '../../store/DocStore';
+import { CiTrash } from 'react-icons/ci';
+import { RxCross2 } from 'react-icons/rx';
 
 const AssignTaskModal = ({ onClose }) => {
   const { getDetails, employees } = useStore();
@@ -10,10 +11,12 @@ const AssignTaskModal = ({ onClose }) => {
   const [Task, settask] = useState();
   const [isSubmit, setIsSubmit] = useState(false);
   const [username, setusername] = useState();
+
   useEffect(() => {
     getDetails();
     getTasks();
   }, [isSubmit]);
+
   async function handleSubmit(e) {
     try {
       e.preventDefault();
@@ -32,6 +35,7 @@ const AssignTaskModal = ({ onClose }) => {
     docStore.setState({ tasks: updatedTasks });
 
   }
+
   return (
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
       <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
@@ -39,7 +43,7 @@ const AssignTaskModal = ({ onClose }) => {
           onClick={onClose}
           className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
-          <X size={24} />
+          <RxCross2 size={24} />
         </button>
         <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
           Assign Task
@@ -100,7 +104,7 @@ const AssignTaskModal = ({ onClose }) => {
                     <td className="border border-gray-300 px-1 py-2 text-center">{task?.username}</td>
                     <td className="border border-gray-300 px-1 py-2 text-center">{new Date(task?.AssignedOn).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</td>
                     <td className={`px-1 py-2 text-center ${task?.status === 'INCOMPLETE' ? "text-red-600" : "text-green-600"}`}>{task?.status}</td>
-                    <td className="border border-gray-300 px-1 py-2 text-center"><button onClick={() => Delete(task?._id)} type='button' className='cursor-pointer text-red-500  hover:text-red-700'><Trash2 /></button></td>
+                    <td className="border border-gray-300 px-1 py-2 text-center"><button onClick={() => Delete(task?._id)} type='button' className='cursor-pointer text-red-500  hover:text-red-700'><CiTrash /></button></td>
                   </tr>
                 ))}
               </tbody>
@@ -108,7 +112,6 @@ const AssignTaskModal = ({ onClose }) => {
           </div>
         </div>
       </div>
-
     </div>
   )
 }

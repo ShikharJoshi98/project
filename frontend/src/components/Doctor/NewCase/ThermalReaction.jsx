@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MultiSelectDropdown from '../MultiSelectInput';
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Trash } from 'lucide-react';
+import { CiTrash } from 'react-icons/ci';
 
 const ThermalReaction = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
@@ -13,8 +13,9 @@ const ThermalReaction = ({ complaint }) => {
     const { getCaseData, list, ThermalReactionData, getThermalReaction } = docStore();
     const [submit, setSubmit] = useState(false)
     const { id } = useParams();
+    
     useEffect(() => { getCaseData(complaint), getThermalReaction(id) },
-        [getCaseData, getThermalReaction,submit]);
+        [getCaseData, getThermalReaction, submit]);
 
     const listType = list.map((data) => data?.name);
 
@@ -26,14 +27,16 @@ const ThermalReaction = ({ complaint }) => {
         setSubmit(prev => !prev);
         setSelectedInvestigationOptions([]);
     }
+
     const deleteData = async (id, index) => {
         try {
-          await axios.delete(`${DOC_API_URL}/deleteThermalReaction/${id}/${index}`);
-          setSubmit(prev => !prev);
+            await axios.delete(`${DOC_API_URL}/deleteThermalReaction/${id}/${index}`);
+            setSubmit(prev => !prev);
         } catch (error) {
-          console.log(error.message);
+            console.error(error.message);
         }
-      }
+    }
+
     return (
         <div>
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
@@ -67,7 +70,7 @@ const ThermalReaction = ({ complaint }) => {
                     {ThermalReactionData[0]?.diseases.map((data, index) => (
                         <div className='text-xl flex items-center gap-8' key={index}>
                             <p>{index + 1}. {data}</p>
-                            <Trash onClick={() => deleteData(ThermalReactionData[0]?.patient, index)} className='cursor-pointer' />
+                            <CiTrash onClick={() => deleteData(ThermalReactionData[0]?.patient, index)} className='cursor-pointer' />
                         </div>
                     ))}
                 </div>

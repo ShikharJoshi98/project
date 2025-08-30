@@ -1,5 +1,4 @@
-import { Plus, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HR_API_URL, useStore } from "../../store/UpdateStore";
 import axios from "axios";
 import MultiSelectInput from "../Doctor/MultiSelectInput";
@@ -8,6 +7,9 @@ import UploadBillModal from "./UploadBillModal";
 import { recStore } from "../../store/RecStore";
 import { updateDate } from "../../store/todayDate";
 import { docStore } from "../../store/DocStore";
+import { RxCross2 } from "react-icons/rx";
+import { FaPlus } from "react-icons/fa";
+import { LuLoaderCircle } from "react-icons/lu";
 
 const OrderModal = ({ onClose }) => {
   const { getItems, items, getUnits, getVendors, vendors, getOrders, ordersPlaced, billImagesLength } = useStore();
@@ -21,6 +23,7 @@ const OrderModal = ({ onClose }) => {
   const [billModal, setBillModal] = useState(false);
   const { toggleStockUpdate } = recStore();
   const todayDate = updateDate();
+  const [loading, setLoading] = useState(false);
   const getFutureDate = (daysToAdd = 7) => {
     const date = new Date();
     date.setDate(date.getDate() + daysToAdd);
@@ -35,8 +38,14 @@ const OrderModal = ({ onClose }) => {
     getItems();
     getVendors();
     getUnits();
-    getOrders(user?.branch)
-  }, [getItems, getVendors, getUnits, getOrders,billImagesLength, submit]);
+    const timeout = setTimeout(() => {
+      setLoading(true);
+    }, 200);
+    getOrders(user?.branch).finally(() => {
+      clearTimeout(timeout);
+      setLoading(false);
+    })
+  }, [getItems, getVendors, getUnits, getOrders, billImagesLength, submit]);
 
   const vendorArray = vendors.map((vendor) => vendor?.vendorname);
   useEffect(() => {
@@ -46,11 +55,9 @@ const OrderModal = ({ onClose }) => {
       console.log("Error in fetch API hr getItemStock", error.message);
     }
   }, []);
-
   useEffect(() => {
     if (itemStock.length > 0) {
       const lowQuantityItems = itemStock.filter(item => item.quantity <= item.reorder_level && item?.is_order_placed === false);
-    
       const initialFormRows = lowQuantityItems.map(item => ({
         itemName: item.itemName,
         vendor: [],
@@ -116,7 +123,7 @@ const OrderModal = ({ onClose }) => {
       order_Delivered_Flag: true,
       received_date: todayDate
     });
-    await axios.post(`${HR_API_URL}/addOrderId`, { orderID: OrderId,itemID:ItemId,item:item });
+    await axios.post(`${HR_API_URL}/addOrderId`, { orderID: OrderId, itemID: ItemId, item: item });
     await axios.patch(`${HR_API_URL}/update-stock/${item?._id}`, { is_order_placed: false });
     toggleStockUpdate();
     setSubmit(prev => !prev);
@@ -129,10 +136,9 @@ const OrderModal = ({ onClose }) => {
           onClick={onClose}
           className="place-self-end cursor-pointer transition-all mb-8 duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
-          <X size={24} />
+          <RxCross2 size={24} />
         </button>
         <div className="overflow-y-auto">
-
           <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
             Place Order
           </h1>
@@ -200,7 +206,7 @@ const OrderModal = ({ onClose }) => {
           <h1 className="text-blue-500 text-2xl md:text-3xl mt-10 mb-6 text-center font-semibold">
             Order Details
           </h1>
-          <div className="overflow-x-auto">
+          {loading ? <LuLoaderCircle className="animate-spin mx-auto mt-10" /> : <div className="overflow-x-auto">
             <table className=" min-w-[1200px] mx-auto bg-white border border-gray-300 shadow-md rounded-lg">
               <thead>
                 <tr className=" bg-blue-500 text-white text-sm">
@@ -223,7 +229,7 @@ const OrderModal = ({ onClose }) => {
                         </td>
                       )}
                       <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border">{billImagesLength > 0 ? <button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">View</button> : <button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <Plus /></button>}</td>
+                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <FaPlus /></button></td>
                       }
                       {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border ">
                         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg">
@@ -247,7 +253,7 @@ const OrderModal = ({ onClose }) => {
                           </tbody>
                         </table>
                       </td>}
-                      <td onClick={() => { setOrder(order?._id);  console.log(order?._id)}} className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
+                      <td onClick={() => { setOrder(order?._id); console.log(order?._id) }} className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
                       <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag === true ? 'Delivered' : 'Pending'}</span></td>
                       <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.doctor_Approval_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'} rounded-md py-1 px-2`}>{row?.doctor_Approval_Flag === true ? 'Approved' : 'Pending'}</span></td>
                     </tr>
@@ -255,7 +261,7 @@ const OrderModal = ({ onClose }) => {
                 )}
               </tbody>
             </table>
-          </div>
+          </div>}
         </div>
       </div>
       {billModal && <UploadBillModal onClose={() => setBillModal(false)} orderId={orderId} />}

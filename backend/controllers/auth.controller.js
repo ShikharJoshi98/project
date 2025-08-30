@@ -16,7 +16,7 @@ export const register = async (req, res) => {
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         const newUser = new Patient({
-            fullname,casePaperNo:`${isBranch}-NEW`, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
+            fullname, casePaperNo: `${isBranch}-NEW`, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
         })
         await newUser.save();
         generateTokenAndSetCookie(res, newUser._id);

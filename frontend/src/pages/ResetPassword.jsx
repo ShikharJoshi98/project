@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import Input from '../components/Input';
@@ -30,11 +30,11 @@ const ResetPassword = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden'>
+		<div className='min-h-screen bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden'>
 			<div className='p-8'>
-				<form onSubmit={handleSubmit} className='mx-auto flex items-center gap-5 flex-col relative z-10 my-20 h-auto bg-white p-5 md:max-w-[430px] max-w-72 border rounded-xl text-zinc-600 text-sm shadow-lg '>
+				<form onSubmit={handleSubmit} className='mx-auto flex items-center gap-5 flex-col my-20 h-auto bg-white p-5 md:max-w-[430px] max-w-[80vw] border rounded-xl text-zinc-600 text-sm shadow-lg '>
 					<ToastContainer />
-					<h1 className='text-3xl  font-semibold mb-5 text-center'><span className='text-blue-400'> RESET</span> PASSWORD</h1>
+					<h1 className='text-3xl  font-semibold mb-3 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'> RESET</span> PASSWORD</h1>
 					<Input icon={CiLock} type='password' placeholder='New Password' value={password} onChange={(e) => setPassword(e.target.value)} required />
 					<Input icon={CiLock} type='password' placeholder='Confirm New Password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
 					{error && <p className='text-red-500 text-sm mb-4'>{error}</p>}

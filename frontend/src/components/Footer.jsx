@@ -4,9 +4,11 @@ import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 const Footer = () => {
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
+    
     return (
         <div className='bg-[#343a40]'>
             <div className='flex flex-col px-20 py-10 sm:grid lg:grid-cols-[1.1fr_1fr_1fr_1fr] gap-14 text-sm '>
@@ -25,7 +27,6 @@ const Footer = () => {
                     <h2 className='text-white font-semibold  mb-4'>SERVICES</h2>
                     <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
                     <p className='w-full text-[#c2c4c2]'>All Types Of Chronic Diseases.</p>
-
                 </div>
                 <div>
                     <h2 className='text-white font-semibold  mb-4'>DOMBIVALI Branch-1</h2>
@@ -50,7 +51,7 @@ const Footer = () => {
                         Time : <br />
                         2.30 pm to 5 pm. <br />
                         Sunday- 10.30 am to 4.30 pm. <br />
-                        <p className='text-yellow-500'>Thursday -Closed</p>
+                        <span className='text-yellow-500'>Thursday -Closed</span>
                         Tel : <br />
                         022 - 25628989 <br />
                         Mobile : <br />

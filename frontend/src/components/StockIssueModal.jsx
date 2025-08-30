@@ -1,10 +1,11 @@
-import { Package, X } from "lucide-react"
 import Input from "./Input"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import axios from "axios";
 import { HR_API_URL, useStore } from "../store/UpdateStore";
 import { recStore } from "../store/RecStore";
 import { DOC_API_URL } from "../store/DocStore";
+import { GoPackage } from "react-icons/go";
+import { RxCross2 } from "react-icons/rx";
 
 const StockIssueModal = ({ item, onClose }) => {
     const [issue, setIssue] = useState(0);
@@ -67,7 +68,7 @@ return (
                 onClick={onClose}
                 className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
             >
-                <X size={24} />
+                <RxCross2 size={24} />
             </button>
             <h1 className="text-blue-500 text-2xl md:text-3xl mb-10 text-center font-semibold">
                 ISSUE {item?.itemName}
@@ -75,7 +76,7 @@ return (
             <form onSubmit={handleSumbit} className="mx-auto">
                 <div className='flex flex-col gap-2 '>
                     <h1>Issue quantity:</h1>
-                    <Input icon={Package} value={issue} onChange={(e) => setIssue(e.target.value)} type='number' required />
+                    <Input icon={GoPackage} value={issue} onChange={(e) => setIssue(e.target.value)} type='number' required />
                 </div>
                 <button className='cursor-pointer block mx-auto bg-blue-400 text-lg  font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full'>Issue</button>
             </form>

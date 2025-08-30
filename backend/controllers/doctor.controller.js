@@ -11,6 +11,7 @@ import { billPayment, fees } from "../models/PaymentModel.js";
 import { ItemStock } from "../models/ItemModel.js";
 import { MedicalStock } from "../models/MedicineModel.js";
 import { BillInvoice, Certificate } from "../models/CertificateModel.js";
+import { updateDate } from "../utils/todayDate.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -76,10 +77,10 @@ export const updateTaskStatus = async (req, res) => {
 export const leaveDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(id)
+        
         const leaves = await LeaveApplication.find().sort({ createdAt: -1 });
         const userLeaves = await LeaveApplication.find({ username: id }).sort({ createdAt: -1 });
-        console.log(userLeaves);
+        
         res.json({
             success: true,
             leaves,
@@ -115,89 +116,12 @@ export const updateleave = async (req, res) => {
         })
     }
 }
-// export const AppointmentDoc = async (req, res) => {
-//     try {
-//         let { AppointmentDate, Time, PatientCase, Doctor, AppointmentType } = req.body;
-//         console.log("appointment hit");
-//         const newAppointment = new AppointmentDoctor({
-//             AppointmentDate, Time, PatientCase, Doctor, AppointmentType
-//         })
-//         await newAppointment.save();
-//         res.json({
-//             success: true,
-//             newAppointment
-//         })
-//     } catch (error) {
-//         res.json({
-//             success: false,
-//             message: error.message
-//         })
-//     }
-// }
 
 //appointments
-export const createAppointment = async (req, res) => {
-
-    try {
-        const { date, time, PatientCase, Doctor, appointmentType } = req.body;
-        const dateConverter = (date) => {
-            const [y, m, d] = date.split('-');
-            const newDate = String(d + '-' + m + '-' + y);
-            return newDate;
-        }
-        const convertedDate = dateConverter(date);
-        const appointmentExist = await Appointment.findOne({
-            PatientCase,
-            date: convertedDate,
-        })
-        if (appointmentExist) {
-            return res.json({
-                message: "Appointment exist"
-            })
-        }
-        const previousAppointmentExist = await Appointment.findOne({
-            PatientCase,
-            new_appointment_flag: false
-        })
-        let newAppointment;
-        if (previousAppointmentExist) {
-            newAppointment = new Appointment({
-                date: convertedDate,
-                time,
-                PatientCase,
-                Doctor,
-                appointmentType
-            })
-        }
-        else {
-            newAppointment = new Appointment({
-                date: convertedDate,
-                time,
-                PatientCase,
-                Doctor,
-                appointmentType,
-                new_appointment_flag: true
-            })
-        }
-        await newAppointment.save();
-
-        res.json({
-            success: true,
-            newAppointment
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            message: "Error in creating new Appointment"
-        })
-    }
-}
-
-export const createNewAppointment = async (req, res) => {
+export const createNewAppointment = async (req, res) => {//
     try {
         const { date, time, PatientCase, Doctor, appointmentType } = req.body;
         const patient = await Patient.findById(PatientCase);
-        console.log(date);
         const dateConverter = (date) => {
             const [y, m, d] = date.split('-');
             const newDate = String(d + '-' + m + '-' + y);
@@ -205,7 +129,7 @@ export const createNewAppointment = async (req, res) => {
         }
         const convertedDate = dateConverter(date);
         const appointmentExist = await Appointment.findOne({
-            PatientCase:PatientCase.toString(),
+            PatientCase: PatientCase.toString(),
             date: convertedDate,
         })
         if (appointmentExist) {
@@ -213,17 +137,17 @@ export const createNewAppointment = async (req, res) => {
                 message: "Appointment exist"
             })
         }
-        const pastAppointment = await Appointment.find({ PatientCase:PatientCase.toString() });
+        const pastAppointment = await Appointment.find({ PatientCase: PatientCase.toString() });
         let newAppointment;
-        
-        if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length-1].new_appointment_flag === false) {
+       
+        if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length - 1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
                 date: convertedDate,
                 time,
-                PatientCase:PatientCase.toString(),
+                PatientCase: PatientCase.toString(),
                 Doctor,
                 appointmentType,
-                branch:patient.branch,
+                branch: patient.branch,
                 new_appointment_flag: false,
                 followUp_appointment_flag: true
             })
@@ -232,13 +156,13 @@ export const createNewAppointment = async (req, res) => {
             newAppointment = await Appointment.create({
                 date: convertedDate,
                 time,
-                PatientCase:PatientCase.toString(),
+                PatientCase: PatientCase.toString(),
                 Doctor,
-                appointmentType,    
-                branch:patient.branch,
+                appointmentType,
+                branch: patient.branch,
             })
         }
-        
+
         res.json({
             newAppointment
         })
@@ -251,20 +175,120 @@ export const createNewAppointment = async (req, res) => {
     }
 }
 
-export const getAllAppointments = async (req, res) => {
+export const getIncompleteAppointments = async (req, res) => {
     try {
-        const Appointments = await Appointment.find({}).populate('PatientCase').populate('Doctor');
-        return res.json({
-            Appointments,
+        const todayDate = updateDate();
+
+        const appointments = await Appointment.find({
+            date: todayDate,
+            complete_appointment_flag: false
+        });
+
+        const counts = {
+            domGeneral: 0,
+            mulGeneral: 0,
+            domRepeat: 0,
+            mulRepeat: 0,
+            domCourier: 0,
+            mulCourier: 0,
+        };
+
+        appointments.forEach((appointment) => {
+            const { branch, appointmentType } = appointment;
+
+            if (branch === 'Dombivali') {
+                if (appointmentType === 'general') counts.domGeneral++;
+                else if (appointmentType === 'repeat') counts.domRepeat++;
+                else if (appointmentType === 'courier') counts.domCourier++;
+            } else if (branch === 'Mulund') {
+                if (appointmentType === 'general') counts.mulGeneral++;
+                else if (appointmentType === 'repeat') counts.mulRepeat++;
+                else if (appointmentType === 'courier') counts.mulCourier++;
+            }
+        });
+
+        res.json({
+            ...counts,
             success: true
-        })
+        });
+
     } catch (error) {
-        return res.json({
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+export const getAppointments = async (req, res) => {//
+    try {
+        const { branch, appointmentSection, doctor } = req.params;
+        const todayDate = updateDate();
+
+        const Appointments = await Appointment.find({
+            date: todayDate,
+            branch,
+            appointmentType: appointmentSection,
+            Doctor: doctor
+        })
+        .populate('PatientCase')
+        .populate('Doctor');
+
+        const counts = {
+            newAppointmentLength: 0,
+            followUpAppointmentLength: 0,
+            medicineIssuedLength: 0,
+            medicineNotIssuedLength: 0
+        };
+
+        Appointments.forEach((appointment) => {
+            const {
+                new_appointment_flag,
+                medicine_issued_flag,
+                followUp_appointment_flag,
+                complete_appointment_flag
+            } = appointment;
+
+            if (
+                new_appointment_flag === true &&
+                medicine_issued_flag === false &&
+                followUp_appointment_flag === false &&
+                complete_appointment_flag === false
+            ) {
+                counts.newAppointmentLength++;
+            } else if (
+                new_appointment_flag === false &&
+                medicine_issued_flag === false &&
+                followUp_appointment_flag === true &&
+                complete_appointment_flag === false
+            ) {
+                counts.followUpAppointmentLength++;
+            } else if (
+                complete_appointment_flag === true &&
+                medicine_issued_flag === true &&
+                new_appointment_flag === false
+            ) {
+                counts.medicineIssuedLength++;
+            } else if (
+                complete_appointment_flag === true &&
+                medicine_issued_flag === false
+            ) {
+                counts.medicineNotIssuedLength++;
+            }
+        });
+
+        res.json({
+            Appointments,
+            ...counts,
+            success: true
+        });
+    } catch (error) {
+        res.status(500).json({
             success: false,
             message: error.message
-        })
+        });
     }
-}
+};
 
 export const updateAppointment = async (req, res) => {
     try {
@@ -297,30 +321,8 @@ export const updateAppointment = async (req, res) => {
     }
 
 }
-// export const getAllAppointments = async (req, res) => {
-//     try {
-//         const date = new Date().toLocaleDateString("en-CA", {
-//             timeZone: "Asia/Kolkata",
-//         });
-//         const appointments = await AppointmentDoctor.find({
-//             AppointmentType: "general",
-//             AppointmentDate: date
-//         }).populate('PatientCase');
-//         res.json({
-//             success: true,
-//             appointments
-//         })
-//     } catch (error) {
-//         console.log(error.message);
-//         res.json({
-//             success: false,
-//             error: error.message
-//         })
-//     }
-// }
 
 export const HomeoBhagwat = async (req, res) => {
-
     try {
         const { name, description, section } = req.body;
         const newInfo = new Homeo({
@@ -340,6 +342,7 @@ export const HomeoBhagwat = async (req, res) => {
         })
     }
 }
+
 export const getHomeoBhagwat = async (req, res) => {
 
     try {
@@ -393,7 +396,6 @@ export const uploadCaseImage = async (req, res) => {
 
         const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
-        // Store the Base64 image in the database
         patient.caseImages.push({ imageUrl: base64Image });
         await patient.save();
 
@@ -463,7 +465,7 @@ export const getDiagnosisImages = async (req, res) => {
     }
 };
 
-export const deleteHomeoBhagwatcol = async (req, res) => {
+export const deleteHomeoBhagwatcol = async (req, res) => {//
     try {
         const { id } = req.params;
         const homeo = await Homeo.findByIdAndDelete(id);
@@ -475,26 +477,8 @@ export const deleteHomeoBhagwatcol = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
-// export const getPatientAppDetails = async (req, res) => {
-//     try {
-//         const { appointmentType } = req.params;
-//         const date = new Date().toLocaleDateString("en-CA", {
-//             timeZone: "Asia/Kolkata",
-//         });
 
-//         let appointment = await AppointmentDoctor.find({ AppointmentType: appointmentType, AppointmentDate: date }).populate('PatientCase').populate('Doctor');
-
-//         appointment = appointment.reverse();
-//         return res.json(appointment);
-//     } catch (error) {
-//         console.log("Error in test API", error.message);
-//         return res.json({
-//             message: error.message
-//         });
-//     }
-// }
-
-export const deleteCaseImages = async (req, res) => {
+export const deleteCaseImages = async (req, res) => {//
     const { patientId, imageId } = req.params;
 
     try {
@@ -517,6 +501,7 @@ export const deleteCaseImages = async (req, res) => {
         res.status(500).json({ error: "Failed to delete image" });
     }
 };
+
 export const deleteDiagnosisImages = async (req, res) => {
     const { patientId, imageId } = req.params;
     try {
@@ -544,7 +529,7 @@ export const addHealthRecord = async (req, res) => {
     try {
         const { id } = req.params;
         const { weight, bloodPressure, date } = req.body;
-
+        
         const patient = await Patient.findById(id);
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
@@ -589,7 +574,7 @@ export const uploadFollowUpImage = async (req, res) => {
         const patient = await Patient.findById(id);
 
         if (!patient) {
-            console.log('no patient');
+            
             return res.status(404).json({ message: "Patient not found" });
         }
 
@@ -971,7 +956,7 @@ export const addOtherPrescriptionPrice = async (req, res) => {
 
 export const getOtherPrescriptionPrice = async (req, res) => {
     try {
-        const prices = await otherPrescriptionPrice.find();
+        const prices = await otherPrescriptionPrice.find().sort({price:1});
         res.json({
             prices,
             success: true
@@ -1030,25 +1015,84 @@ export const addFollowUpPatient = async (req, res) => {
     }
 }
 
-export const getFollowUpPatient = async (req, res) => {
+export const getHistoryDetails = async (req, res) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
 
-        const followUpImages = await FollowUpPatient.find({
-            patient: id
-        })
+        const followUpImages = await FollowUpPatient.find({ patient: id }).sort({ date: -1 });
+        const writeUp = await WriteUpPatient.find({ patient: id }).sort({ date: -1 });
 
-        return res.json({
-            followUpImages
-        })
+        let combineObject = {};
 
+        writeUp?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    followUps: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].writeUps.push({ writeUp: item?.writeUp_value, id: item?._id });
+        });
+
+        followUpImages?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    followUps: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].followUps.push({ followUp: item?.follow_string, id: item?._id });
+        });
+
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date)).reverse();
+        res.json({ success: true, combinedArray });
     } catch (error) {
-        console.log("Error in getFollowUpPatient controller", error.message);
-        return res.json({
+        res.json({
+            success: false,
             message: error.message
         });
     }
+};
+
+export const getPresentComplaintHistory = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const scribble = await PresentComplaintScribble.find({ patient: id }).sort({ date: -1 });
+        const writeUp = await PresentComplaintWriteUp.find({ patient: id }).sort({ date: -1 });
+        let combineObject = {};
+
+        writeUp?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    scribble: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].writeUps.push({ writeUp: item?.writeUp_value, id: item?._id });
+        });
+
+        scribble?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    scribble: [],
+                    writeUps: []
+                };
+            }
+            combineObject[item?.date].scribble.push({ scribble: item?.follow_string, id: item?._id });
+        });
+
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date)).reverse();
+        res.json({ success: true, combinedArray });
+    } catch (error) {
+        res.js
+    }
 }
+
 
 //FOLLOW-UP WRITE PAD
 export const addWriteUpPatient = async (req, res) => {
@@ -1080,26 +1124,6 @@ export const addWriteUpPatient = async (req, res) => {
     }
 }
 
-export const getWriteUpPatient = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const writeUpData = await WriteUpPatient.find({
-            patient: id
-        })
-
-        return res.json({
-            writeUpData
-        });
-
-    } catch (error) {
-        console.log("Error in getWriteUpPatient controller", error.message);
-        return res.json({
-            message: error.message
-        });
-    }
-}
-
 export const getWriteUpUpdate = async (req, res) => {
     try {
         const { id } = req.params;
@@ -1121,7 +1145,6 @@ export const getWriteUpUpdate = async (req, res) => {
 export const deleteWriteUp = async (req, res) => {
     try {
         const { patientId, imageId } = req.params;
-
         if (!mongoose.Types.ObjectId.isValid(imageId)) {
             return res.status(400).json({ message: "Invalid Image ID" });
         }
@@ -1152,7 +1175,7 @@ export const addPresentComplaintScribble = async (req, res) => {
     try {
         const id = req.params.id;
         const image = req.body.savedImage;
-        console.log("hit");
+        
         const date = new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
@@ -1377,6 +1400,36 @@ export const getInvestigationAdvised = async (req, res) => {
     }
 }
 
+export const getSelectedTest = async (req, res) => {
+    try {
+        const { id } = req.params; 
+         console.log("hit")
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const testData = await testTable.findOne({
+            patient: id,
+            createdAt: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        });
+
+        res.json({
+            success: true,
+            testData
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 export const deleteInvestigationAdvised = async (req, res) => {
     try {
         const { id, type } = req.params;
@@ -1567,7 +1620,7 @@ export const addNewCaseMaster = async (req, res) => {
             case "Past History":
                 await PastHistoryMaster.create({ name: name.trim() })
                 break;
-            case "Family Medical":
+            case "Family Medical History":
                 await FamilyMedicalMaster.create({ name: name.trim() })
                 break;
             case "Mental Causative Factor":
@@ -1612,7 +1665,7 @@ export const getCaseMaster = async (req, res) => {
             case 'PastHistory':
                 caseData = await PastHistoryMaster.find();
                 break;
-            case 'FamilyMedical':
+            case 'FamilyMedicalHistory':
                 caseData = await FamilyMedicalMaster.find();
                 break;
             case 'MentalCausativeFactor':
@@ -1656,7 +1709,7 @@ export const deleteCaseMaster = async (req, res) => {
             case 'PastHistory':
                 await PastHistoryMaster.findByIdAndDelete(id);
                 break;
-            case 'FamilyMedical':
+            case 'FamilyMedicalHistory':
                 await FamilyMedicalMaster.findByIdAndDelete(id);
                 break;
             case 'MentalCausativeFactor':
@@ -2079,7 +2132,7 @@ export const deleteThermalReaction = async (req, res) => {
     try {
         const { id, idx } = req.params;
         const thermalReactionData = await ThermalReactionPatient.findOne({ patient: id });
-        console.log(thermalReactionData);
+        
         if (idx !== -1) {
             thermalReactionData.diseases.splice(idx, 1);
             await thermalReactionData.save();
@@ -2098,7 +2151,7 @@ export const deleteThermalReaction = async (req, res) => {
 
 export const addMiasmPatient = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
+    
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -2473,7 +2526,7 @@ export const addConsultationPrice = async (req, res) => {
 
 export const getConsultationPrice = async (req, res) => {
     try {
-        const prices = await consultationChargesPrice.find();
+        const prices = await consultationChargesPrice.find().sort({price:1});
         res.json({
             prices,
             success: true
@@ -2560,6 +2613,8 @@ export const getBill = async (req, res) => {
         updateDate();
         let medicineCharges = 0;
         let consultation = 0;
+        let newCaseCharge = 0;
+        let onlineAmount = 0;
         const prescription = await Prescription.find({ patient: id, prescription_date: formattedDate });
         const Fees = await fees.findOne();
         const appointment = await Appointment.findOne({ PatientCase: id, date: formattedDate });
@@ -2574,7 +2629,10 @@ export const getBill = async (req, res) => {
         }
 
         if (appointment.new_appointment_flag === true) {
-            medicineCharges += Fees.newCase;
+            newCaseCharge += Fees.newCase;
+        }
+        if (appointment.appointmentType === 'courier') {
+            onlineAmount += Fees.Courier;
         }
         if (prescription) {
             if (prescription[0].duration === '7 Days') {
@@ -2601,8 +2659,10 @@ export const getBill = async (req, res) => {
         }
         res.json({
             medicineCharges,
+            newCaseCharge,
             consultation,
             otherPrescriptionPrice,
+            onlineAmount,
             success: true
         })
     } catch (error) {
@@ -2873,12 +2933,12 @@ export const editCertificate = async (req, res) => {
         );
         res.json({
             message: "Updated Successfully",
-            success:true
+            success: true
         })
     } catch (error) {
         res.json({
             message: error.message,
-            success:false
+            success: false
         })
     }
 }

@@ -1,18 +1,24 @@
-import { Search, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Input from '../Input'
 import { useStore } from '../../store/UpdateStore'
 import BillModal from './BillModal'
+import { RxCross2 } from 'react-icons/rx'
+import { CiSearch } from 'react-icons/ci'
+import { LuLoaderCircle } from 'react-icons/lu'
 
 const OrderItemHistoryModal = ({ location, onClose }) => {
-
     const { getOrders, ordersPlaced } = useStore();
     const [billModal, setBillModal] = useState(false);
     const [orderId, setOrderId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-
+    const [loading, setLoading] = useState(false);
+    
     useEffect(() => {
-        getOrders(location);
+        const timeout = setTimeout(() => setLoading(true), 200);
+        getOrders(location).finally(() => {
+            clearTimeout(timeout);
+            setLoading(false);
+        });
     }, [getOrders]);
 
     const filteredOrders = ordersPlaced.filter(order =>
@@ -23,11 +29,11 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
 
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
-            <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
-                <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><X size={24} /></button>
+            <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] overflow-y-auto flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
+                <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
                 <h1 className="text-blue-500 text-2xl md:text-4xl mb-10 text-center font-semibold">Order History {location}</h1>
-                <Input icon={Search} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by Vendor' />
-                <div className="overflow-x-auto mt-10 rounded-lg">
+                <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by Vendor' />
+                {loading?<LuLoaderCircle className='animate-spin size-10 mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >
@@ -66,7 +72,7 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                             )}
                         </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
             {billModal && <BillModal onClose={() => setBillModal(false)} orderId={orderId} />}
         </div>

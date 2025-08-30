@@ -1,14 +1,14 @@
-import { Mail, Phone, User, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from '../../store/UpdateStore';
 import { useAuthStore } from '../../store/authStore';
+import { RxCross1 } from 'react-icons/rx';
 
 const AddMedicalStockModel = ({ onClose }) => {
   const { getMedicine, medicines, potencys, getPotency, addMedicineStock, medicalStockToggleSubmit } = useStore();
   const { user } = useAuthStore();
   const [medicine, setmedicine] = useState();
   const [potency, setpotency] = useState();
-  const [quantity, setquantity] = useState();
+  const [quantity, setquantity] = useState(0);
   useEffect(() => {
     getMedicine();
   }, [getMedicine]);
@@ -19,7 +19,7 @@ const AddMedicalStockModel = ({ onClose }) => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
+
     await addMedicineStock(medicine, potency, quantity, user?.branch);
     alert("Added Medicine stock");
     setmedicine('');
@@ -34,7 +34,7 @@ const AddMedicalStockModel = ({ onClose }) => {
           onClick={onClose}
           className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
         >
-          <X size={24} />
+          <RxCross1 size={24} />
         </button>
         <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
           Add Medicine to Stock
@@ -74,7 +74,7 @@ const AddMedicalStockModel = ({ onClose }) => {
             </div>
             <div className='mb-3'>
               <h1 className="text-black mb-2 text-lg font-semibold">Receive quantity:</h1>
-              <input type='number' defaultValue={0} onChange={(e) => setquantity(e.target.value)} value={quantity}
+              <input type='number' onChange={(e) => setquantity(e.target.value)} value={quantity}
                 className='w-full  h-10  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition
             duration-200'
               />

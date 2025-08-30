@@ -11,9 +11,6 @@ const convertDateFormat = (dateString) => {
     return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
 };
 
-
-
-
 const disease = (str) => {
     const [name, disease, date] = str.split(' / ');
     return disease;
@@ -53,7 +50,7 @@ function numberToWords(num) {
     if (thousands > 0) {
         result += belowThousand(thousands) + " thousand";
         if (remainder > 0) {
-            result += remainder < 100 ? " and " : ", ";
+            result += remainder < 100 ? " and " :" ";
         }
     }
 
@@ -64,13 +61,9 @@ function numberToWords(num) {
     return result;
 }
 
-const dieases = (disease) => {
-
-}
-
 export const generateBillInvoicePdf = (patient, today, data) => {
     const doc = new jsPDF();
-    patient.casePaperNo = patient.casePaperNo.split('-');
+    patient.casePaperNo = String(patient?.casePaperNo).split('-');
     doc.addImage(img, 'JPEG', 0, 0, 210, 297);
     doc.setFontSize(12);
     doc.text('D-' + patient.casePaperNo[1], 52, 67);
@@ -127,7 +120,7 @@ export const generateMedicalCertificate = (details, patient, user) => {
 
     doc.setFontSize(14);
     doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} age ${patient.age ? patient.age : '0'} years had suffered from ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`} on ${convertDateFormat(details.date)}. So he/she was advised to take bed rest from ${convertDateFormat(details.restFrom)} to ${convertDateFormat(details.restTill)} . He/She  is fit  to resume his/her  duty/school  from ${convertDateFormat(details.resumeDate)} onwards accordingly.`, 68, 105, {
-        maxWidth: 120,
+        maxWidth: 135,
     });
 
     doc.setFontSize(15);
@@ -164,9 +157,8 @@ export const generateTravellingCertificate = (details, patient, user) => {
     doc.line(x, y + 2, x + textWidth, y + 2);
 
     doc.setFontSize(14);
-    doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname}
- age ${patient.age ? patient.age : '0'} years  is  under  Homeopathy  treatment  for ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`}.He/She had been given medicine for ${details.duration} months/days according to his/her disease concerned.`, 68, 105, {
-        maxWidth: 120,
+    doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} age ${patient.age ? patient.age : '0'} years  is  under  Homeopathy  treatment  for ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`}.He/She had been given medicine for ${details.duration} months/days according to his/her disease concerned.`, 68, 105, {
+        maxWidth: 135,
     });
 
     doc.setFontSize(15);
@@ -203,7 +195,7 @@ export const generateFitnessCertificate = (details, patient, user) => {
 
     doc.setFontSize(14);
     doc.text(`This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is physically and mentally fit to do his/her activity properly.`, 68, 105, {
-        maxWidth: 120,
+        maxWidth: 135,
     });
 
     doc.setFontSize(15);
@@ -239,9 +231,8 @@ export const generateUnfitCertificate = (details, patient, user) => {
     doc.line(x, y + 2, x + textWidth, y + 2);
 
     doc.setFontSize(14);
-    doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname}
-  is suffering from ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`} on ${convertDateFormat(details.date)}. He/She is advised to take rest accordingly.`, 68, 105, {
-        maxWidth: 120,
+    doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is suffering from ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`} on ${convertDateFormat(details.date)}. He/She is advised to take rest accordingly.`, 68, 105, {
+        maxWidth: 135,
     });
 
     doc.setFontSize(15);

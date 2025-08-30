@@ -1,49 +1,51 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const img = '/report.png';
+const img = '/header_pdf.jpg';
+
 const today = new Date();
 const dd = String(today.getDate()).padStart(2, '0');
 const mm = String(today.getMonth() + 1).padStart(2, '0');
 const yyyy = today.getFullYear();
 const formattedDate = `${dd}/${mm}/${yyyy}`;
 
-export const investigationPdf = (allInvestigationData = []) => {
+export const investigationPdf = (obj) => {
   const doc = new jsPDF();
   doc.setFontSize(14);
   doc.text('Date: ' + formattedDate, 160, 65);
   doc.addImage(img, "JPEG", 0, 0, 210, 55);
-
+  console.log(obj)
   let y = 75;
 
-  allInvestigationData.forEach(section => {
-    const testList = section.tests?.investigationInfo || [];
+  const sections = [
+    { title: 'Investigation Advised', data: obj?.investigationAdvised },
+    { title: 'Ultra Sonography', data: obj?.ultra_sonography },
+    { title: 'Doppler Studies', data: obj?.dopplerStudies },
+    { title: 'Obstetrics', data: obj?.obsetrics },
+    { title: 'Sonography', data: obj?.sonography },
+    { title: 'CT Scan', data: obj?.ctScan },
+    { title: 'MRI Scan', data: obj?.mriScan },
+  ];
 
-    // ❌ Skip section if no tests
-    if (!testList || testList.length === 0) return;
+  sections.forEach(section => {
+    if (Array.isArray(section?.data) && section?.data.length > 0) {
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text(section.title, 10, y);
+      y += 8;
 
-    if (y + 20 > doc.internal.pageSize.height) {
-      doc.addPage();
-      y = 20;
-    }
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(13);
-    doc.text(section.title, 14, y);
-    y += 6;
-
-    testList.forEach(test => {
-      if (y + 10 > doc.internal.pageSize.height) {
-        doc.addPage();
-        y = 20;
-      }
-      doc.setFont("helvetica", "normal");
       doc.setFontSize(12);
-      doc.text(`• ${test}`, 18, y);
-      y += 6;
-    });
+      section?.data.forEach(test => {
+        doc.text(`- ${test}`, 15, y);
+        y += 7;
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+      });
 
-    y += 8;
+      y += 10;
+    }
   });
 
   const pdfBlob = doc.output("blob");

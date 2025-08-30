@@ -1,5 +1,7 @@
 import bcryptjs from "bcryptjs";
 import Patient from "../models/PatientModel.js";
+import { Appointment } from "../models/AppointmentModel.js";
+import { updateDate } from "../utils/todayDate.js";
 
 export const register = async (req, res) => {
     try {
@@ -64,20 +66,152 @@ export const updatePatient = async (req, res) => {
     }
 }
 
-export const getPatients = async (req, res) => {
+export const getPatients = async (req, res) => {//
     try {
-        const patients = await Patient.find();
-        if (patients) {
-            res.json({
-                success: true, patients
-            })
+        const { branch } = req.params;
+        const { page = 1 } = req.query;
+        const { search = "" } = req.query;
+        const pageNum = Number(page) || 1;
+        const limitNum = 10;
+        const skipPage = (pageNum - 1) * limitNum;
+
+        const baseQuery = {
+            branch: branch
+        };
+        if (search) {
+            baseQuery.$or = [
+                { fullname: { $regex: search, $options: "i" } },
+                { casePaperNo: { $regex: search, $options: "i" } },
+                { phone: { $regex: search, $options: "i" } }
+            ];
         }
-        else {
-            res.json({
-                success: false, message: "No Data"
-            })
-        }
+
+        const patientLength = await Patient.countDocuments(baseQuery);
+        const patients = await Patient.find(baseQuery).skip(skipPage).limit(limitNum);
+        res.json({
+            success: true, patients, patientLength
+        })
     } catch (error) {
         res.json({ success: false, message: error.message });
+    }
+}
+
+export const getAllPatients = async (req, res) => {//
+    try {
+        const { branch } = req.params;
+        const patients = await Patient.find();
+        const allBranchPatients = await Patient.find({ branch });
+        res.json({
+            patients,
+            allBranchPatients
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const patient = await Patient.findById(id);
+        res.json({
+            patient,
+            success: true
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getAppointmentsRec = async (req, res) => {//
+    try {
+        const { branch } = req.params;
+        const date = updateDate();
+
+        const result = await Appointment.aggregate([
+            {
+                $match: {
+                    date,
+                    complete_appointment_flag: false,
+                    medicine_issued_flag: false,
+                    branch: branch,
+                    appointmentType: { $in: ['general', 'repeat', 'courier'] }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        branch: "$branch",
+                        appointmentType: "$appointmentType"
+                    },
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const counts = {
+            generalAppointments: 0,
+            repeatAppointments: 0,
+            courierAppointments: 0,
+        };
+
+        result.forEach(({ _id, count }) => {
+            const key = `${_id.appointmentType}Appointments`;
+            counts[key] = count;
+        });
+
+        res.json({
+            success: true,
+            ...counts
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+export const getAppDetails = async (req, res) => {
+    try {
+        const { branch, appointmentType } = req.params;
+
+        const date = updateDate();
+        const appointments = await Appointment.find({ branch, date, appointmentType }).populate('Doctor').populate('PatientCase');
+
+        res.json({
+            success: true,
+            appointments
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getAppointmentLength = async (req, res) => {
+    try {
+        const { branch } = req.params;
+        const todayDate = updateDate();
+        const appointmentsLength = await Appointment.countDocuments({ branch, date: todayDate });
+        const pendingAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, complete_appointment_flag: false, medicine_issued_flag: false });
+        const completeAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, complete_appointment_flag: true, medicine_issued_flag: true });
+        res.json({
+            appointmentsLength, pendingAppointmentLength, completeAppointmentLength
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
     }
 }

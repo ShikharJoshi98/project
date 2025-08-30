@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MultiSelectDropdown from '../MultiSelectInput'
 import { MdAssignmentAdd } from 'react-icons/md';
 import AddComplaintModal from './AddComplaintModal';
@@ -6,7 +6,7 @@ import ScribbleModal from './ScribbleModal';
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import { useParams } from 'react-router-dom';
-import { Trash } from 'lucide-react';
+import { CiTrash } from 'react-icons/ci';
 
 const MentalCausative = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
@@ -16,8 +16,10 @@ const MentalCausative = ({ complaint }) => {
     const { id } = useParams();
     const [submit, setSubmit] = useState(false);
     const listArray = list.map((data) => data?.name);
+
     useEffect(() => { getCaseData(complaint); getMentalCausative(id) },
-        [getCaseData,submit]);
+        [getCaseData, submit]);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         await axios.post(`${DOC_API_URL}/add-mental-causative-patient/${id}`, {
@@ -26,6 +28,7 @@ const MentalCausative = ({ complaint }) => {
         setSubmit(prev => !prev);
         setSelectedInvestigationOptions([]);
     }
+
     const deleteData = async (id, index) => {
         try {
             await axios.delete(`${DOC_API_URL}/deleteMentalCausative/${id}/${index}`);
@@ -34,6 +37,7 @@ const MentalCausative = ({ complaint }) => {
             console.log(error.message);
         }
     }
+
     return (
         <div>
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
@@ -68,7 +72,7 @@ const MentalCausative = ({ complaint }) => {
                         MentalCausativeData[0]?.diseases.map((disease, index) => (
                             <div className='text-xl flex items-center gap-8' key={index}>
                                 <p>{index + 1}. {disease}</p>
-                                <Trash onClick={() => deleteData(MentalCausativeData[0]?.patient, index)} className='cursor-pointer' />
+                                <CiTrash onClick={() => deleteData(MentalCausativeData[0]?.patient, index)} className='cursor-pointer' />
                             </div>
                         ))
                     }
@@ -76,8 +80,6 @@ const MentalCausative = ({ complaint }) => {
             </div>
             {isComplaintModalOpen && <AddComplaintModal onClose={() => setComplaintModalIsOpen(false)} complaint={complaint} />}
             {isScribbleModal && <ScribbleModal onClose={() => setScribbleModal(false)} complaint={complaint} />}
-
-
         </div>
     )
 }

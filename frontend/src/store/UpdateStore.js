@@ -23,6 +23,10 @@ export const useStore = create((set) => ({
   medicalitems: [],
   potencys: [],
   Potency: null,
+  generalAppointments: [],
+  repeatAppointments: [],
+  courierAppointments: [],
+  appointments:[],
   collection: [],
   branchCollection: [],
   courierPayment: [],
@@ -43,7 +47,6 @@ export const useStore = create((set) => ({
     }
   },
   update: async (id, updatedData) => {
-
     try {
       const response = await axios.put(`${HR_API_URL}/update/${id}`, updatedData);
       set((state) => ({
@@ -57,12 +60,9 @@ export const useStore = create((set) => ({
       throw error;
     }
   },
-
   getItems: async () => {
-
     try {
       const response = await axios.get(`${HR_API_URL}/get-items`);
-
       set({ items: response.data.items });
     } catch (error) {
       console.log(error.message);
@@ -71,18 +71,32 @@ export const useStore = create((set) => ({
   AddItem: async (newitem) => {
     try {
       const response = await axios.post(`${HR_API_URL}/add-item`, { item: newitem });
-
       set({ Item: response.data.newItem })
-      console.log(Item);
     } catch (error) {
       console.log(error.message);
     }
-  }
-  ,
+  },
+  getAppointment: async (branch) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/getHrAppointments/${branch}`);
+      set({ generalAppointments: response.data.generalAppointments });
+      set({ repeatAppointments: response.data.repeatAppointments });
+      set({ courierAppointments: response.data.courierAppointments });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getAppointmentDetails: async (branch, appointmentType) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/appDetails/${branch}/${appointmentType}`);
+      set({appointments:response.data.appointments})
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   getUnits: async () => {
     try {
       const response = await axios.get(`${HR_API_URL}/get-units`);
-
       set({ units: response.data.units });
     } catch (error) {
       console.log(error.message);
@@ -90,8 +104,7 @@ export const useStore = create((set) => ({
   },
   AddUnit: async (unit) => {
     try {
-      const response = await axios.post(`${HR_API_URL}/add-unit`, { unit });
-      console.log(response.data.newUnit);
+      const response = await axios.post(`${HR_API_URL}/add-unit`, { unit });      
       set({ Unit: response.data.newUnit })
     } catch (error) {
       console.log(error.message);
@@ -107,9 +120,7 @@ export const useStore = create((set) => ({
   },
   editVendor: async (id, vendorname, contact, email, address) => {
     try {
-
       const response = await axios.put(`${HR_API_URL}/edit-vendor`, { id, vendorname, contact, email, address });
-      console.log(response);
       set((state) => ({
         vendors: state.vendors.map((vendor) =>
           vendor._id === id ? response.data : vendor
@@ -124,7 +135,6 @@ export const useStore = create((set) => ({
   addVendor: async (vendorname, contact, email, address) => {
     try {
       const response = await axios.post(`${HR_API_URL}/add-item-vendor`, { vendorname, contact, email, address });
-      console.log(response.data.newVendor);
       set({ vendor: response.data.newVendor })
     } catch (error) {
       console.log(error.message);
@@ -133,7 +143,6 @@ export const useStore = create((set) => ({
   addItemStock: async (itemName, unit, quantity,branch) => {
     try {
       const response = await axios.post(`${HR_API_URL}/add-item-stock`, { itemName, unit, quantity,branch });
-      console.log(response.data.newStock);
       set({ stock: response.data.newStock });
     } catch (error) {
       console.log(error.message);
@@ -149,9 +158,7 @@ export const useStore = create((set) => ({
   },
   placeOrder: async (items) => {
     try {
-      console.log(items);
       const response = await axios.post(`${HR_API_URL}/place-item-order`, { items });
-      console.log(response.data.newOrder)
       set({ order: response.data.newOrder })
     } catch (error) {
       console.log(error.message);
@@ -189,7 +196,6 @@ export const useStore = create((set) => ({
   AddPotency: async (potency) => {
     try {
       const response = await axios.post(`${HR_API_URL}/add-potency`, { potency });
-      console.log(response.data.newPotency);
       set({ Potency: response.data.newPotency })
     } catch (error) {
       console.log(error.message);
@@ -206,7 +212,6 @@ export const useStore = create((set) => ({
   editMedicalVendor: async (id, vendorname, contact, email, address) => {
     try {
       const response = await axios.put(`${HR_API_URL}/edit-medical-vendor`, { id, vendorname, contact, email, address });
-      console.log(response);
       set((state) => ({
         vendors: state.vendors.map((vendor) =>
           vendor._id === id ? response.data : vendor
@@ -246,7 +251,6 @@ export const useStore = create((set) => ({
   placeOrder: async (medicine) => {
     try {
       const response = await axios.post(`${HR_API_URL}/place-medical-order`, { medicine });
-      console.log(response.data.newOrder)
       set({ order: response.data.newOrder })
     } catch (error) {
       console.log(error.message);
@@ -275,13 +279,6 @@ export const useStore = create((set) => ({
       set({ billImagesLength: response.data.length });
     } catch (error) {
       console.log(error.message);
-    }
-  },
-  getTasks: async () => {
-    try {
-      const response = await axios.get(`${HR_API_URL}/place-medical-order`)
-    } catch (error) {
-
     }
   },
   getCollection: async (branch) => {

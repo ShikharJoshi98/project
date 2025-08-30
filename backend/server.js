@@ -7,13 +7,14 @@ import cookieParser from "cookie-parser";
 import HRrouter from "./routes/HR.route.js";
 import Docrouter from "./routes/Doctor.route.js";
 import Recrouter from "./routes/Receptionist.route.js";
+import PatientRouter from "./routes/patient.route.js";
 dotenv.config();
 const app = express();
 connectDB();
 
 //middlewares
-app.use(express.json());
-app.use(cors({origin: "https://project-frontend-vert.vercel.app", 
+app.use(express.json({ limit: '50mb' }));
+app.use(cors({origin: "http://localhost:5173", 
     credentials: true,}));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -21,6 +22,7 @@ app.use('/api/auth', router);
 app.use('/api/hr', HRrouter);
 app.use('/api/doctor', Docrouter);
 app.use('/api/receptionist', Recrouter);
+app.use('/api/patient', PatientRouter);
 
 
 //api endpoints
