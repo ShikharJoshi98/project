@@ -13,6 +13,7 @@ const Home = () => {
 
   return (
     <div className='bg-gradient-to-br p-10 from-blue-400 via-[#4a9acc] to-blue-900 overflow-hidden'>
+      <button onClick={() => navigate('/drawing-canvas')}>Go to canvas</button>
       <video autoPlay muted loop src="/wings.mp4" className=' max-w-[90vw] mt-4 md:max-w-[760px] md:w-[90vw] lg:max-w-[900px] mx-auto shadow-gray-700 shadow-lg rounded-lg'></video>
       <div className='flex flex-col p-6 items-center gap-7 max-w-[326px] md:max-w-[760px] lg:max-w-[900px] mt-20 bg-white mx-auto shadow-gray-700 shadow-lg rounded-lg'>
         <h1 className='text-xl md:text-3xl font-semibold text-slate-800'>FOR APPOINTMENTS</h1>
