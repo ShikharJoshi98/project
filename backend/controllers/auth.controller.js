@@ -142,30 +142,45 @@ export const resetPassword = async (req, res) => {
 }
 
 export const checkAuth = async (req, res) => {
-    try {
-        if (!req.role || !req.userId) {
-            return res.status(401).json({ success: false, message: "Unauthorized - missing role or user ID" });
-        }
-        let user;
-        if (req.role === 'patient') {
-            user = await Patient.findById(req.userId).select("-password");
-            if (user) {
-                res.status(200).json({ success: true, user });
-            }
-        } else {
-            user = await Employee.findById(req.userId).select("-password");
+  try {
+    const { role, userId } = req;
 
-            if (req.role === user.role) {
-                res.status(200).json({ success: true, user });
-            }
-            else {
-                return res.status(400).json({ success: false, message: "Not found" });
-            }
-        }
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        })
+    if (!role || !userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized - missing role or user ID",
+      });
     }
-}
+
+    let user;
+
+    if (role === "patient") {
+      user = await Patient.findById(userId).select("-password").lean();
+    } else {
+      user = await Employee.findById(userId).select("-password").lean();
+
+      if (user && user.role !== role) {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden - role mismatch",
+        });
+      }
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
