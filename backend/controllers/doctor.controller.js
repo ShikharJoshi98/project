@@ -2541,32 +2541,6 @@ export const getConsultationPrice = async (req, res) => {
 
 //payment
 
-export const addPaymentModel = async (req, res) => {
-    try {
-        const { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier } = req.body;
-        await fees.create({
-            newCase,
-            sevenDays,
-            fifteenDays,
-            twentyOneDays,
-            thirtyDays,
-            fortyFiveDays,
-            twoMonths,
-            threeMonths,
-            Courier
-        });
-        res.json({
-            success: true,
-            message: 'Payment Model Added'
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
 export const getPayments = async (req, res) => {
     try {
         const paymentData = await fees.find();
@@ -2585,8 +2559,12 @@ export const getPayments = async (req, res) => {
 export const updatePayment = async (req, res) => {
     try {
         const { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier } = req.body;
-        const { id } = req.params;
-        await fees.findByIdAndUpdate(id, { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier });
+        const filter = {};
+         const updatedPayment = await fees.findOneAndUpdate(
+            filter,
+            { $set: { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier } },
+            { upsert: true, new: true }
+        );
         res.json({
             success: true,
             message: "Edited Payment Successfully"
@@ -2634,29 +2612,36 @@ export const getBill = async (req, res) => {
         if (appointment.appointmentType === 'courier') {
             onlineAmount += Fees.Courier;
         }
+        let duration = Number(prescription[0]?.duration);
+        prescription.map((pres, _) => {
+            if (Number(pres.duration) > duration) {
+                duration = Number(pres?.duration);
+            }
+        });
         if (prescription) {
-            if (prescription[0].duration === '7 Days') {
+            if (duration === 7) {
                 medicineCharges += Fees.sevenDays
             }
-            else if (prescription[0].duration === '15 Days') {
+            else if (duration === 15) {
                 medicineCharges += Fees.fifteenDays
             }
-            else if (prescription[0].duration === '21 Days') {
+            else if (duration === 21) {
                 medicineCharges += Fees.twentyOneDays
             }
-            else if (prescription[0].duration === '30 Days') {
+            else if (duration === 30) {
                 medicineCharges += Fees.thirtyDays
             }
-            else if (prescription[0].duration === '45 Days') {
+            else if (duration === 45) {
                 medicineCharges += Fees.fortyFiveDays
             }
-            else if (prescription[0].duration === '2 Months') {
+            else if (duration === 60) {
                 medicineCharges += Fees.twoMonths
             }
-            else if (prescription[0].duration === '3 Months') {
+            else if (duration === 90) {
                 medicineCharges += Fees.threeMonths
             }
         }
+        
         res.json({
             medicineCharges,
             newCaseCharge,

@@ -116,7 +116,6 @@ export const getAllPatients = async (req, res) => {//
 export const getPatient = async (req, res) => {
     try {
         const { id } = req.params;
-
         const patient = await Patient.findById(id);
         res.json({
             patient,
