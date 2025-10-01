@@ -253,7 +253,7 @@ export const docStore = create((set) => ({
     getCaseData: async (complaint) => {
         const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(/\s+/g, "")}`);
         set({
-            list: response.data.caseData.sort((a, b) =>
+            list: response.data.caseData?.sort((a, b) =>
                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             )
         });

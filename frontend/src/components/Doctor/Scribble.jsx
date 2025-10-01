@@ -49,7 +49,6 @@ const Scribble = ({ complaint }) => {
                 break;
         }
     };
-    console.log(id)
     const handleSave = async () => {
         switch (complaint) {
             case 'Mental Causative Factor':

@@ -1,32 +1,16 @@
-import { useEffect, useRef, useState } from "react"
-import * as fabric from "fabric";
+import { Excalidraw } from "@excalidraw/excalidraw";
+import "@excalidraw/excalidraw/index.css";
 
 const SampleDrawingCanvas = () => {
-    const canvasRef = useRef();
-    const [canvas, setCanvas] = useState(null);
-
-    useEffect(() => {
-        const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-            height: 500,
-            width: 500,
-            isDrawingMode: true
-        });
-
-        fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
-        fabricCanvas.freeDrawingBrush.color = "#000000";
-        fabricCanvas.freeDrawingBrush.width = 5;
-        setCanvas(fabricCanvas);
-        return () => {
-            fabricCanvas.dispose();
-        }
-    }, []);
-
     return (
-        <div className="flex flex-col items-center gap-10">
-            <button onClick={() => canvas.clear()}>Clear Canvas</button>
-            <canvas ref={canvasRef} className="border-2"></canvas>
+        <div className="h-screen flex flex-col">
+            <h1 className="text-center text-xl font-bold p-2">Example</h1>
+            <div className="flex-1">
+                <Excalidraw />
+            </div>
         </div>
-    )
-}
+    );
+};
 
-export default SampleDrawingCanvas
+export default SampleDrawingCanvas;
+

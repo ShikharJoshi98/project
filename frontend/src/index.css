@@ -5,3 +5,10 @@
     font-family: Outfit;
 }
 
+#canvas-wrapper, canvas {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: none;
+}
+

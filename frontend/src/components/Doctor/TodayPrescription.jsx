@@ -14,7 +14,7 @@ const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day
 
 const TodayPrescriptions = () => {
     const location = useParams();
-    const { prescriptionSubmit, fetchPrescription, prescription, togglePrescriptionSubmit, getPresentComplaintData, PresentComplaintData } = docStore();
+    const { prescriptionSubmit, fetchPrescription, prescription, togglePrescriptionSubmit, getPresentComplaintData, list } = docStore();
     const [deleteFlag, setDeleteFlag] = useState(false);
     const [updateFlag, setUpdateFlag] = useState(false);
     const [editingRow, setEditingRow] = useState(null);
@@ -33,20 +33,20 @@ const TodayPrescriptions = () => {
                     complete_appointment_flag: true,
                     date: todayDate
                 })
-                
+
             }
             else {
                 await axios.patch(`${DOC_API_URL}/update-apppointment/${location.id}`, {
                     complete_appointment_flag: false,
                     date: todayDate
                 })
-                
+
             }
         }
         completeAppointment();
-    }, [prescription,prescriptionSubmit])
+    }, [prescription, prescriptionSubmit])
 
-    const PresentComplaintDataArray = PresentComplaintData.map(complaint => complaint?.complaintName);
+    const PresentComplaintDataArray = list.map(complaint => complaint?.name);
 
     const handleEdit = (index, value) => {
         setEditingRow(index);
@@ -178,16 +178,16 @@ const TodayPrescriptions = () => {
                                     {editingRow === index ? (
                                         <select name="duration" value={editedData.duration}
                                             onChange={(e) => handleChange(e, "duration")} id="">
-                                            <option value="7 Days">7 Days</option>
-                                            <option value="15 Days">15 Days</option>
-                                            <option value="21 Days">21 Days</option>
-                                            <option value="30 Days">30 Days</option>
-                                            <option value="45 Days">45 Days</option>
-                                            <option value="60 Days">2 Months</option>
-                                            <option value="90 Days">3 Months</option>
+                                            <option value="7">7 Days</option>
+                                            <option value="15">15 Days</option>
+                                            <option value="21">21 Days</option>
+                                            <option value="30">30 Days</option>
+                                            <option value="45">45 Days</option>
+                                            <option value="60">2 Months</option>
+                                            <option value="90">3 Months</option>
                                         </select>
                                     ) : (
-                                        value.duration === '60 Days' ? '2 Months' : value.duration === '90 Days' ? '3 months' : value.duration
+                                        value.duration === '60' ? '2 Months' : value.duration === '90' ? '3 months' : `${value.duration} Days`
                                     )}
                                 </td>
                                 <td className="py-4 px-2 border text-center">

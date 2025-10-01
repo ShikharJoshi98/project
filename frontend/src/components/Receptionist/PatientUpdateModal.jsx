@@ -6,28 +6,50 @@ import { REC_API_URL, recStore } from '../../store/RecStore';
 import axios from 'axios';
 
 const PatientUpdateModal = ({ patientId, onClose }) => {
-    const { getPatientDetails, patients, setUpdate } = recStore();
+    const { setUpdate, getPatient, patient } = recStore();
+    const [formValues, setFormValues] = useState(
+        {
+            imageData: "",
+            username: "",
+            casePaperNo: "",
+            fullname: "",
+            age: "",
+            phone: "",
+            Altphone: "",
+            email: "",
+            address: "",
+            qualification: "",
+            occupation: "",
+            dietaryPreference: "",
+            gender: "",
+            maritalStatus: "",
+        })
     useEffect(() => {
-        getPatientDetails();
-    }, [getPatientDetails]);
-    const patientInfo = patients.filter((patient) => patient?._id === patientId);
+        if (patientId) {
+            getPatient(patientId);
+        }
+    }, [getPatient, patientId]);
+    useEffect(() => {
+        if (patient) {
+            setFormValues({
+                imageData: patient?.imageData || "",
+                username: patient?.username || "",
+                casePaperNo: patient?.casePaperNo || "",
+                fullname: patient?.fullname || "",
+                age: patient?.age || "",
+                phone: patient?.phone || "",
+                Altphone: patient?.Altphone || "",
+                email: patient?.email || "",
+                address: patient?.address || "",
+                qualification: patient?.qualification || "",
+                occupation: patient?.occupation || "",
+                dietaryPreference: patient?.dietaryPreference || "",
+                gender: patient?.gender || "",
+                maritalStatus: patient?.maritalStatus || "",
+            });
+        }
+    }, [patient]);
 
-    const [formValues, setFormValues] = useState({
-        imageData: patientInfo[0]?.imageData || null,
-        username: patientInfo[0]?.username || "",
-        casePaperNo: patientInfo[0]?.casePaperNo || "",
-        fullname: patientInfo[0]?.fullname || "",
-        age: patientInfo[0]?.age || "",
-        phone: patientInfo[0]?.phone || "",
-        Altphone: patientInfo[0]?.Altphone || "",
-        email: patientInfo[0]?.email || "",
-        address: patientInfo[0]?.address || "",
-        qualification: patientInfo[0]?.qualification || "",
-        occupation: patientInfo[0]?.occupation || "",
-        dietaryPreference: patientInfo[0]?.dietaryPreference || "",
-        gender: patientInfo[0]?.gender || "",
-        maritalStatus: patientInfo[0]?.maritalStatus || "",
-    })
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -41,7 +63,7 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
         e.preventDefault();
         try {
             const response = await axios.put(`${REC_API_URL}/update-patient/${patientId}`, formValues);
-            setUpdate((prev) => !prev)
+            setUpdate();
             onClose();
         } catch (error) {
             alert("Unable to update patient details")

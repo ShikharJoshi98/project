@@ -5,7 +5,7 @@ const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [active, setActive] = useState(false);
   const selectedRef = useRef(null);
-  const filteredOptionArray = Options.filter((options) => options.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredOptionArray = Options?.filter((options) => options.toLowerCase().includes(searchTerm.toLowerCase()));
   const setOptions = (value) => {
     if (selectedOptions?.includes(value)) {
       const selectedOptionsArray = selectedOptions?.filter((options) => options != value);
@@ -60,12 +60,12 @@ const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions }) => {
 
       {active && <div className='absolute left-0 right-0 z-10 px-5 py-2 max-h-36 overflow-y-auto flex flex-col gap-2 bg-white rounded-md border border-gray-400'>
         <input type="text" onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search' className='my-1 p-2 border-1 border-gray-300 rounded-lg focus:outline-none' />
-        {filteredOptionArray?.map((option, index) => (
+        {filteredOptionArray.length > 0 ? filteredOptionArray?.map((option, index) => (
           <div className='flex items-center gap-4' key={index}>
             <input checked={selectedOptions?.includes(option)}
               onChange={() => setOptions(option)} type="checkbox" id={option} /><label htmlFor={option}>{option}</label>
           </div>
-        ))
+        )) : <p>Disease Not Found !</p>
         }
       </div>}
     </div>

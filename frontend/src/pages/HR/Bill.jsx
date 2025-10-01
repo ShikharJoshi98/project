@@ -13,6 +13,7 @@ const Bill = () => {
     const { getPatient, patient } = recStore();
     const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue } = docStore();
     const { user } = useAuthStore();
+    console.log(billInfo);
     const { getAppointmentDetails, appointments, setMedSection, medSection, } = useStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id } = useParams();
@@ -31,7 +32,6 @@ const Bill = () => {
         getAppointmentDetails(user?.branch, medSection);
     }, [getPatient, fetchPrescription, prescriptionSubmit, getAppointmentDetails, medSection]);
     const appointment = appointments.filter((appointment) => appointment?.PatientCase?._id === id && appointment?.date === todayDate);
-
     const [email, setEmail] = useState('');
     useEffect(() => {
         if (patient?.email) {

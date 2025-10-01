@@ -82,7 +82,7 @@ const PastHistory = ({ complaint }) => {
                                 <BiCalendar className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="lastSuffix" value={formValues.lastSuffix} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled selected className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
+                                <option value="" disabled className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
                                 <option value="Days">Days Back</option>
                                 <option value="Week Back">Week Back</option>
                                 <option value="Months Back">Months Back</option>
@@ -102,7 +102,7 @@ const PastHistory = ({ complaint }) => {
                                 <BiCalendar className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="durationSuffix" value={formValues.durationSuffix} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled selected className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
+                                <option value="" disabled className='font-normal ' >Please Select Days / Weeks / Months / Years</option>
                                 <option value="Days">Days</option>
                                 <option value="Weeks">Week</option>
                                 <option value="Months">Months</option>

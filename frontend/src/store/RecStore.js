@@ -21,7 +21,7 @@ export const recStore = create((set) => ({
     update: false,//
     stockToggle: false,
     toggleStockUpdate: () => set((state) => ({ stockToggle: !state.stockToggle })),
-    setUpdate: (updateStatus) => set({ update: updateStatus }),//
+    setUpdate: () => set((state)=>({ update: !state.update })),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     getPatientDetails: async (page, search, branch) => {//
         try {

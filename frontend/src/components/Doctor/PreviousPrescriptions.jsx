@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../Input";
 import { docStore } from "../../store/DocStore";
 import { useParams } from "react-router-dom";
@@ -6,13 +6,13 @@ import { CiSearch } from "react-icons/ci";
 
 const PreviousPrescriptions = () => {
   const location = useParams();
-  const { getPastPrescription, allPrescriptions,prescriptionSubmit } = docStore();
+  const { getPastPrescription, allPrescriptions, prescriptionSubmit } = docStore();
   const [searchTerm, setSearchTerm] = useState("");
   const filteredPrescription = allPrescriptions.filter((medicine) => medicine.medicine.toLowerCase().includes(searchTerm.toLowerCase()));
 
   useEffect(() => {
     getPastPrescription(location.id);
-  }, [location.id,prescriptionSubmit]); 
+  }, [location.id, prescriptionSubmit]);
 
   const groupedPrescriptions = filteredPrescription.reduce((acc, prescription) => {
     if (!acc[prescription.prescription_date]) {
@@ -54,13 +54,13 @@ const PreviousPrescriptions = () => {
                       {date}
                     </td>
                   )}
-                  <td className="py-2 px-4 border">{prescription.diagnosis.join(", ")}</td>
-                  <td className="py-2 px-4 border">{prescription.medicine}</td>
-                  <td className="py-2 px-4 border">{prescription.potency}</td>
-                  <td className="py-2 px-4 border">{prescription.start_date}</td>
-                  <td className="py-2 px-4 border">{prescription.dose}</td>
-                  <td className="py-2 px-4 border">{prescription.duration}</td>
-                  <td className="py-2 px-4 border">{prescription.note || "-"}</td>
+                  <td className="py-2 px-4 border">{prescription?.diagnosis.join(", ")}</td>
+                  <td className="py-2 px-4 border">{prescription?.medicine}</td>
+                  <td className="py-2 px-4 border">{prescription?.potency}</td>
+                  <td className="py-2 px-4 border">{prescription?.start_date}</td>
+                  <td className="py-2 px-4 border">{prescription?.dose}</td>
+                  <td className="py-2 px-4 border">{prescription?.duration === '60' ? '2 Months' : prescription?.duration === '90' ? '3 Months' : `${prescription?.duration} days`}</td>
+                  <td className="py-2 px-4 border">{prescription?.note || "-"}</td>
                 </tr>
               ))
             )}

@@ -6,6 +6,7 @@ import axios from 'axios';
 import { DOC_API_URL } from '../../store/DocStore';
 import { FaPlus } from 'react-icons/fa';
 import { CiTrash } from 'react-icons/ci';
+import ConfirmDeleteModal from '../../components/confirmDeleteModal';
 
 const StaffManagment = () => {
     const doccolumns = ['fullname', 'phone', 'email', 'gender', 'age', 'username'];
@@ -13,15 +14,17 @@ const StaffManagment = () => {
     const [isAddStaffModalOpen, setAddStaffModalIsOpen] = useState(false);
     const [submit, setSubmit] = useState(false);
     const { getDetails, employees } = useStore();
+    const [isDeleteModal, setDeleteModal] = useState(false);
+    const [empId, setEmpId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         getDetails();
     }, [getDetails, submit]);
-    
+
     async function deleteCol(id) {
         try {
-            const response = await axios.delete(`${DOC_API_URL}/delete-employee/${id}`)
+            const response = await axios.delete(`${DOC_API_URL}/delete-employee/${id}`);
             setSubmit(prev => !prev);
         } catch (error) {
             console.log(error.message);
@@ -49,7 +52,7 @@ const StaffManagment = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {employees.filter((emp)=>emp?.role==='doctor').map((emp, idx) => (
+                            {employees.filter((emp) => emp?.role === 'doctor').map((emp, idx) => (
                                 <tr key={idx} className="hover:bg-blue-300 bg-blue-200 transition-all">
                                     {doccolumns.map((col) => (
                                         <td key={col} className={`border text-center border-gray-300 px-1 py-4 `}>
@@ -60,7 +63,7 @@ const StaffManagment = () => {
                                     <td className="px-1 py-4  text-center">
                                         <button onClick={() => navigate(`/dashboard-DOCTOR/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                     </td>
-                                    <td onClick={() => { deleteCol(emp._id); setSubmit(prev => !prev) }} className="font-semibold cursor-pointer text-lg text-red-500"><CiTrash className='mx-auto'/></td>
+                                    <td onClick={() => { setDeleteModal(true); setEmpId(emp?._id) }} className="font-semibold cursor-pointer text-lg text-red-500"><CiTrash className='mx-auto' /></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -83,7 +86,7 @@ const StaffManagment = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {employees.filter((emp)=>emp?.role ==='receptionist').map((emp, idx) => (
+                            {employees.filter((emp) => emp?.role === 'receptionist').map((emp, idx) => (
                                 <tr key={idx} className="hover:bg-blue-300 bg-blue-200 transition-all">
                                     {columns.map((col) => (
                                         <td key={col} className={`border border-gray-300 px-1 py-4 `}>
@@ -94,7 +97,7 @@ const StaffManagment = () => {
                                     <td className="px-1 py-4 text-center">
                                         <button onClick={() => navigate(`/dashboard-DOCTOR/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                     </td>
-                                    <td onClick={() => { deleteCol(emp._id); setSubmit(prev => !prev) }} className="font-semibold cursor-pointer text-red-500 text-lg"><CiTrash className='mx-auto'/></td>
+                                    <td onClick={() => { setDeleteModal(true); setEmpId(emp?._id) }} className="font-semibold cursor-pointer text-red-500 text-lg"><CiTrash className='mx-auto' /></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -117,7 +120,7 @@ const StaffManagment = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {employees.filter((emp)=>emp?.role === 'hr').map((emp, idx) => (
+                            {employees.filter((emp) => emp?.role === 'hr').map((emp, idx) => (
                                 <tr key={idx} className="hover:bg-blue-300 bg-blue-200 transition-all">
                                     {columns.map((col) => (
                                         <td key={col} className={`border border-gray-300 px-1 py-4 text-center `}>
@@ -126,7 +129,7 @@ const StaffManagment = () => {
                                     <td className="px-1 py-4  text-center">
                                         <button onClick={() => navigate(`/dashboard-DOCTOR/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                     </td>
-                                    <td onClick={() => { deleteCol(emp._id); setSubmit(prev => !prev) }} className="font-semibold cursor-pointer text-red-500 text-lg"><CiTrash className='mx-auto'/></td>
+                                    <td onClick={() => { setDeleteModal(true); setEmpId(emp?._id) }} className="font-semibold cursor-pointer text-red-500 text-lg"><CiTrash className='mx-auto' /></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -134,6 +137,7 @@ const StaffManagment = () => {
                 </div>
             </div>
             {isAddStaffModalOpen && <AddStaffModal setSubmit={setSubmit} onClose={() => setAddStaffModalIsOpen(false)} />}
+            {isDeleteModal && <ConfirmDeleteModal onClose={() => setDeleteModal(false)} message="Do you want remove the employee?" onConfirm={() => deleteCol(empId)} />}
         </div>
     )
 }

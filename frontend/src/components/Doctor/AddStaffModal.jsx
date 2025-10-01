@@ -45,6 +45,22 @@ const AddStaffModal = ({ setSubmit, onClose }) => {
         } else {
             toast("Employee registered");
         }
+        setFormValues({
+            fullname: "",
+            username: "",
+            email: "",
+            phone: "",
+            age: "",
+            gender: "",
+            bloodGroup: "",
+            address: "",
+            department: "",
+            Salary: "",
+            attendance: 0,
+            password: "",
+            branch: "",
+            role: ""
+        })
         setSubmit(prev => !prev);
     }
 
@@ -86,7 +102,7 @@ const AddStaffModal = ({ setSubmit, onClose }) => {
                                 <CiUser className="size-4 text-blue-500" />
                             </div>
                             <select name="gender" required id="Gender" onChange={handleInputChange} value={formValues.gender} className='py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                                <option value="" disabled selected className='font-normal' >Select Gender</option>
+                                <option value="" disabled className='font-normal' >Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Transgender">Transgender</option>

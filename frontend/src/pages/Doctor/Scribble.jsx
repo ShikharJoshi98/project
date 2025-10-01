@@ -90,7 +90,14 @@ const Scribble = () => {
             <ToastContainer />
             <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl text-white cursor-pointer mb-5 ml-10'><FaAngleDoubleLeft /></h1>
             <div className="bg-[rgb(248,249,250)] rounded-xl mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[95vw] ">
-                <div id="canvas-wrapper" style={{ touchAction: "none", pointerEvents: "auto" }} className="flex-1">
+                <div id="canvas-wrapper"
+                    style={{
+                        touchAction: "none",
+                        pointerEvents: "auto",
+                        WebkitUserSelect: "none",
+                        userSelect: "none",
+                        WebkitTouchCallout: "none",
+                    }} className="flex-1">
                     <ReactSketchCanvas
                         ref={canvasRef}
                         width="100%"

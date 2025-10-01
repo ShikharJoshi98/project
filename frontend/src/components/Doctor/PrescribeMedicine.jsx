@@ -12,6 +12,7 @@ import { FaCalendarAlt, FaPlus } from 'react-icons/fa';
 import { CiClock1, CiPill, CiPillsBottle1 } from 'react-icons/ci';
 import { LuTestTube } from 'react-icons/lu';
 import { updateDate } from '../../store/todayDate';
+import AddComplaintModal from './NewCase/AddComplaintModal';
 
 const potencyArray = ['Q', '3X', '6X', '6', '30', '200', '1M', '10M', '0/1', '0/2', '0/3'];
 const dateArray = ['Today', '2nd Day', '3rd Day', '4th Day', '5th Day', '6th Day', '7th Day', '10th Day', '15th Day', '20th Day', '25th Day', '30th Day', '45th Day', '60th Day', '75th Day', '3rd Month', '4th Month', '5th Month'];
@@ -23,9 +24,9 @@ const PrescribeMedicine = () => {
     const location = useParams();
     const [submit, setsubmit] = useState(false);
     const [searchMedicine, setSearchMedicine] = useState("");
-    const { getCaseData, list, getPastPrescription, allPrescriptions, getPresentComplaintData, togglePrescriptionSubmit, PresentComplaintData } = docStore();
+    const { getCaseData, list, getPastPrescription, allPrescriptions, getPresentComplaintData, togglePrescriptionSubmit } = docStore();
+    const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
     const { patient } = recStore();
-    // const patient = patients.filter((cand => (cand._id) === location.id));
     const searchMedicineRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
     const [isOtherPrescriptionModal, setOtherPrescriptionModal] = useState(false);
@@ -37,7 +38,7 @@ const PrescribeMedicine = () => {
         getCaseData('Present Complaints');
     }, [getPresentComplaintData, getPastPrescription, getCaseData, submit]);
 
-    const PresentComplaintDataArray = list.map(item => item?.name);
+    const PresentComplaintDataArray = list?.map(item => item?.name);
     const [formData, setFormData] = useState({
         medicine: '',
         potency: '',
@@ -77,7 +78,6 @@ const PrescribeMedicine = () => {
                 duration: '',
                 note: ''
             });
-
             setSelectedDiagnosisOptions([]);
         } catch (error) {
             console.log(error);
@@ -100,7 +100,7 @@ const PrescribeMedicine = () => {
                         <div className='flex sm:flex-row flex-col  items-center justify-between mb-2 pr-5'>
                             <h1 className='text-black font-semibold '>Diagnosis:</h1>
                             <div className='relative'>
-                                <button onClick={() => setDiagnosisOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <FaPlus /></button>
+                                <button onClick={() => setComplaintModalIsOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <FaPlus /></button>
                             </div>
                         </div>
                         <MultiSelectInput Options={PresentComplaintDataArray} setSelectedOptions={setSelectedDiagnosisOptions} selectedOptions={selectedDiagnosisOptions} />
@@ -123,7 +123,7 @@ const PrescribeMedicine = () => {
                                 <LuTestTube className="size-4 text-blue-500" />
                             </div>
                             <select name="potency" required className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full' value={formData.potency} onChange={handleChange}>
-                                <option value="">Select Potency</option>
+                                <option disabled value="">Select Potency</option>
                                 {potencyArray.map((potency, index) => <option key={index} value={potency}>{potency}</option>)}
                             </select>
                         </div>
@@ -146,7 +146,7 @@ const PrescribeMedicine = () => {
                                 <CiPillsBottle1 className="size-4 text-blue-500" />
                             </div>
                             <select name="dose" required className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full' value={formData.dose} onChange={handleChange}>
-                                <option value="">Select Dose</option>
+                                <option disabled value="">Select Dose</option>
                                 {doseArray.map((dose, index) => <option key={index} value={dose}>{dose}</option>)}
                             </select>
                         </div>
@@ -158,14 +158,14 @@ const PrescribeMedicine = () => {
                                 <CiClock1 className="size-4 text-blue-500" />
                             </div>
                             <select name="duration" required className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full' value={formData.duration} onChange={handleChange}>
-                                <option value="">Select Duration</option>
-                                <option value="7 Days">7 Days</option>
-                                <option value="15 Days">15 Days</option>
-                                <option value="21 Days">21 Days</option>
-                                <option value="30 Days">30 Days</option>
-                                <option value="45 Days">45 Days</option>
-                                <option value="60 Days">2 Months</option>
-                                <option value="90 Days">3 Months</option>
+                                <option disabled value="">Select Duration</option>
+                                <option value="7">7 Days</option>
+                                <option value="15">15 Days</option>
+                                <option value="21">21 Days</option>
+                                <option value="30">30 Days</option>
+                                <option value="45">45 Days</option>
+                                <option value="60">2 Months</option>
+                                <option value="90">3 Months</option>
                             </select>
                         </div>
                     </div>
@@ -180,6 +180,7 @@ const PrescribeMedicine = () => {
             </form>
             {isDiagnosisOpen && <DiagnosisModal setsubmit={setsubmit} onClose={() => setDiagnosisOpen(false)} />}
             {isOtherPrescriptionModal && <OtherPrescriptionModal onClose={() => setOtherPrescriptionModal(false)} />}
+            {isComplaintModalOpen && <AddComplaintModal onClose={() => setComplaintModalIsOpen(false)} complaint={"Present Complaints"} />}
         </div>
     );
 };

@@ -10,13 +10,13 @@ import { useStore } from '../../store/UpdateStore';
 
 const Prescription = () => {
     const { id } = useParams();
-    const {  patient, getPatient } = recStore();
+    const { patient, getPatient } = recStore();
     const { medSection, getAppointmentDetails, appointments } = useStore();
     const { user } = useAuthStore();
     const { prescriptionSubmit, fetchPrescription, getBillInfo, billInfo, prescription, otherPrescriptions, getOtherPrescription, balanceDue, getBalanceDue, appointmentSection } = docStore();
     const navigate = useNavigate();
     const todayDate = updateDate();
-    
+
     useEffect(() => {
         fetchPrescription(id);
         getOtherPrescription(id);
@@ -26,7 +26,7 @@ const Prescription = () => {
         getAppointmentDetails(user?.branch, medSection);
     }, [fetchPrescription, prescriptionSubmit, getBillInfo, getOtherPrescription, getAppointmentDetails, getPatient]);
     const appointment = appointments.filter((app) => app?.PatientCase?._id === id);
-     
+
     return (
         <div>
             <HRnavbar />
@@ -74,10 +74,10 @@ const Prescription = () => {
                                             <td className='py-2 px-1 text-center'>{pres?.start_date}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.dose}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.note}</td>
-                                            <td className='py-2 px-1 text-center'>{pres?.duration}</td>
+                                            <td className='py-2 px-1 text-center'>{pres?.duration === '60' ? '2 Months' : pres?.duration === '90' ? '3 Months' : (pres?.duration + ' Days')}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.next_visit}</td>
                                             <td className={`py-2 px-1 ${appointment[0]?.medicine_issued_flag === false ? 'text-red-500' : 'text-green-500'} text-center`}>{appointment[0]?.medicine_issued_flag === false ? 'Pending' : 'Medicine Issued'}</td>
-                                            <td className='py-2 px-1 text-center'>Rs {balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance}</td>
+                                            <td className='py-2 px-1 text-center'>{index === 0 && `Rs ${balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance}`}</td>
                                         </tr>
                                     ))
                                 }

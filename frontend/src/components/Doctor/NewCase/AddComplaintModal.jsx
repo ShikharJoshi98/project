@@ -29,8 +29,9 @@ const AddComplaintModal = ({ onClose, complaint }) => {
             console.log(error.message);
         }
     }
-    useEffect(() => { getCaseData(complaint); },
-        [getCaseData, submit]);
+    useEffect(() => {
+        getCaseData(complaint);
+    }, [getCaseData, submit]);
 
     return ReactDOM.createPortal(
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
@@ -52,7 +53,7 @@ const AddComplaintModal = ({ onClose, complaint }) => {
                         <h1 className='text-black text-xl font-semibold mb-4'>Recent List</h1>
 
                         <div className='flex flex-col h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
-                            {list.map((investigation, index) => (
+                            {list?.map((investigation, index) => (
                                 <div key={index} >
                                     <div className='flex items-center justify-between px-10'>
                                         <h1 className='text-xl cursor-pointer p-1'>{investigation?.name}</h1>
