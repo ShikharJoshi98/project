@@ -1,7 +1,7 @@
 import { RxCross2 } from "react-icons/rx";
 
 
-function ConfirmDeleteModal({ onClose, message, onConfirm }) {
+const ConfirmDeleteModal = ({ onClose, message, onConfirm }) => {
 
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">

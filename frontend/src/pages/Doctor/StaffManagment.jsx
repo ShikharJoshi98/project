@@ -6,7 +6,7 @@ import axios from 'axios';
 import { DOC_API_URL } from '../../store/DocStore';
 import { FaPlus } from 'react-icons/fa';
 import { CiTrash } from 'react-icons/ci';
-import ConfirmDeleteModal from '../../components/confirmDeleteModal';
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal"
 
 const StaffManagment = () => {
     const doccolumns = ['fullname', 'phone', 'email', 'gender', 'age', 'username'];
