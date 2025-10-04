@@ -7,22 +7,29 @@ import TodayPrescriptions from '../../components/Doctor/TodayPrescription'
 import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
 import FollowUp from '../../components/Doctor/FollowUp'
 import { FaPen } from "react-icons/fa";
+import { docStore } from '../../store/DocStore'
 
 const AppointmentDetails = () => {
+    const { getBalanceDue, balanceDue } = docStore();
     const { patient, getPatient } = recStore();
     const { id } = useParams();
     const navigate = useNavigate();
-
     useEffect(() => {
         getPatient(id);
     }, [getPatient])
-
+    useEffect(() => {
+        getBalanceDue(id);
+    }, [getBalanceDue])
     return (
         <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen overflow-hidden w-full p-8">
             <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
                 <h1 className='text-xl sm:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>
                     PATIENT DETAILS
                 </h1>
+                <span className='flex items-center gap-3 my-6 justify-center sm:text-xl text-base font-semibold'>
+                    <h2>Balance : </h2>
+                    <h2>{balanceDue?.dueBalance >= 0 ? `Rs ${balanceDue?.dueBalance} due` : `Rs ${balanceDue?.dueBalance} advance`}</h2>
+                </span>
                 {patient?.First_Appointment_Flag && <button onClick={() => navigate(`/new-case-details/${patient?._id}`)} className='bg-blue-500 text-white py-2 px-10 rounded-lg cursor-pointer font-semibold my-10 mx-auto flex items-center gap-5'>New Case <FaPen /></button>}
                 <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                     <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>

@@ -989,7 +989,6 @@ export const addFollowUpPatient = async (req, res) => {
     try {
         const id = req.params.id;
         const image = req.body.savedImage;
-
         const date = new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",

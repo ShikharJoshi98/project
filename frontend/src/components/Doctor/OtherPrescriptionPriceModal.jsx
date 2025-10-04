@@ -4,14 +4,14 @@ import { DOC_API_URL } from '../../store/DocStore';
 import { useState } from 'react';
 import Input from '../Input';
 
-const OtherPrescriptionPriceModal = ({ onClose, setSubmit }) => {
+const OtherPrescriptionPriceModal = ({ onClose, setPriceSubmit }) => {
     const [price, setPrice] = useState(0);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         try {
             axios.post(`${DOC_API_URL}/otherPrescriptionPrice`, { price });
-            setSubmit(prev => !prev);
+            setPriceSubmit(prev => !prev);
             onClose();
         } catch (error) {
             console.log(error.message);

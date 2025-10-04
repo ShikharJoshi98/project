@@ -30,8 +30,10 @@ const OtherPrescriptionModal = ({ onClose }) => {
 
     useEffect(() => {
         getOtherPrescription(id);
+    }, [getOtherPrescription, submit]);
+    useEffect(() => {
         getOtherPrescriptionPrices();
-    }, [getOtherPrescription, submit, priceSubmit]);
+    }, [priceSubmit, getOtherPrescriptionPrices])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -125,7 +127,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
                     <div className="flex gap-5"><div className="w-5 h-5 border-1 bg-yellow-200"></div><span>Medicine Issued</span></div>
                 </div>
             </div>
-            {priceModal && <OtherPrescriptionPriceModal setSubmit={setPriceSubmit} onClose={() => setPriceModal(false)} />}
+            {priceModal && <OtherPrescriptionPriceModal setPriceSubmit={setPriceSubmit} onClose={() => setPriceModal(false)} />}
         </div>,
         document.getElementById("modal-root")
     );

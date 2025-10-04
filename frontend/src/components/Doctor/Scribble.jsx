@@ -5,94 +5,90 @@ import { DOC_API_URL } from '../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { LuEraser, LuPen, LuRedo, LuTrash, LuUndo } from 'react-icons/lu';
+import { Excalidraw, exportToBlob } from "@excalidraw/excalidraw";
+import "@excalidraw/excalidraw/index.css";
 
 const Scribble = ({ complaint }) => {
-    const canvasRef = useRef(null);
     const { id } = useParams();
-    const [eraseMode, setEraseMode] = useState(false);
-    const [strokeWidth, setStrokeWidth] = useState(4);
-    useEffect(() => {
-        const wrapper = document.getElementById("canvas-wrapper");
-        const handlePointerDown = (e) => {
-            if (e.pointerType === "touch") {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        };
-        wrapper?.addEventListener("pointerdown", handlePointerDown, { passive: false });
+    const excalidrawAPI = useRef(null);
 
-        return () => {
-            wrapper?.removeEventListener("pointerdown", handlePointerDown);
-        };
-    }, []);
-
-    const handleToolChange = (mode) => {
-        setEraseMode(mode === "erase");
-        canvasRef.current?.eraseMode(mode === "erase");
-    };
-
-    const handleCanvasAction = (action) => {
-        switch (action) {
-            case "undo":
-                canvasRef.current?.undo();
-                break;
-            case "redo":
-                canvasRef.current?.redo();
-                break;
-            case "clear":
-                canvasRef.current?.clearCanvas();
-                break;
-            case "save":
-                handleSaveClick();
-                break;
-            default:
-                break;
-        }
-    };
     const handleSave = async () => {
-        switch (complaint) {
-            case 'Mental Causative Factor':
-                const mentalCausativeData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-mentalCausative-scribble/${id}`, { savedImage: mentalCausativeData });
-                canvasRef.current?.clearCanvas();
-                window.scrollTo(0, 0);
-                toast("Saved");
-                break;
-            case 'Chief Complaints':
-                const chiefComplaintData = await canvasRef.current.exportImage("png");
-                await axios.post(
-                    `${DOC_API_URL}/add-chiefComplaint-scribble/${id}`, { savedImage: chiefComplaintData });
-                canvasRef.current?.clearCanvas();
-                window.scrollTo(0, 0);
-                toast("Saved");
-                break;
-            case 'Personal History':
-                const personalHistoryData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-personalHistory-scribble/${id}`, { savedImage: personalHistoryData });
-                canvasRef.current?.clearCanvas();
-                window.scrollTo(0, 0);
-                toast("Saved");
-                break;
-            case 'Mental Personality Character':
-                const mentalPersonalityData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-mentalPersonality-scribble/${id}`, { savedImage: mentalPersonalityData });
-                canvasRef.current?.clearCanvas();
-                window.scrollTo(0, 0);
-                toast("Saved");
-                break;
-            case 'Brief Mind Symptoms':
-                const briefMindSymptomData = await canvasRef.current.exportImage("png");
-                await axios.post(`${DOC_API_URL}/add-briefMindSymptom-scribble/${id}`, { savedImage: briefMindSymptomData });
-                canvasRef.current?.clearCanvas();
-                window.scrollTo(0, 0);
-                toast("Saved");
-                break;
+        if (!excalidrawAPI.current) return;
+
+        const elements = excalidrawAPI.current.getSceneElements();
+        const appState = excalidrawAPI.current.getAppState();
+
+        const blob = await exportToBlob({
+            elements,
+            appState,
+            mimeType: "image/png",
+        });
+
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async () => {
+            const base64String = reader.result;
+            switch (complaint) {
+                case 'Mental Causative Factor':
+                    // const mentalCausativeData = await canvasRef.current.exportImage("png");
+                    await axios.post(`${DOC_API_URL}/add-mentalCausative-scribble/${id}`, { savedImage: base64String });
+                    // canvasRef.current?.clearCanvas();
+                    // window.scrollTo(0, 0);
+                    toast("Saved");
+                    break;
+                case 'Chief Complaints':
+                    // const chiefComplaintData = await canvasRef.current.exportImage("png");
+                    await axios.post(
+                        `${DOC_API_URL}/add-chiefComplaint-scribble/${id}`, { savedImage: base64String });
+                    // canvasRef.current?.clearCanvas();
+                    // window.scrollTo(0, 0);
+                    toast("Saved");
+                    break;
+                case 'Personal History':
+                    // const personalHistoryData = await canvasRef.current.exportImage("png");
+                    await axios.post(`${DOC_API_URL}/add-personalHistory-scribble/${id}`, { savedImage: base64String });
+                    // canvasRef.current?.clearCanvas();
+                    // window.scrollTo(0, 0);
+                    toast("Saved");
+                    break;
+                case 'Mental Personality Character':
+                    // const mentalPersonalityData = await canvasRef.current.exportImage("png");
+                    await axios.post(`${DOC_API_URL}/add-mentalPersonality-scribble/${id}`, { savedImage: base64String });
+                    // canvasRef.current?.clearCanvas();
+                    // window.scrollTo(0, 0);
+                    toast("Saved");
+                    break;
+                case 'Brief Mind Symptoms':
+                    // const briefMindSymptomData = await canvasRef.current.exportImage("png");
+                    await axios.post(`${DOC_API_URL}/add-briefMindSymptom-scribble/${id}`, { savedImage: base64String });
+                    // canvasRef.current?.clearCanvas();
+                    // window.scrollTo(0, 0);
+                    toast("Saved");
+                    break;
+            }
         }
     }
+
     return (
         <div className="bg-[rgb(248,249,250)] rounded-xl">
             <ToastContainer />
-            <div className='mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[85vw]'>
+            <div className="h-screen flex flex-col">
+                <ToastContainer />
+                <div className="flex-1 border">
+                    <Excalidraw
+                        excalidrawAPI={(api) => {
+                            excalidrawAPI.current = api;
+                        }}
+                    />
+                </div>
+                <button
+                    onClick={handleSave}
+                    className="m-2 p-2 bg-blue-500 text-white rounded"
+                >
+                    Save
+                </button>
+            </div>
+            {/* <div className='mx-auto shadow-lg p-2 flex gap-2 w-full max-w-[95vw] lg:max-w-[85vw]'>
                 <div id="canvas-wrapper" style={{ touchAction: "none", pointerEvents: "auto" }} className="flex-1">
                     <ReactSketchCanvas ref={canvasRef} width="100%" height="1073px" strokeColor="black" canvasColor="white" strokeWidth={strokeWidth} eraserWidth={20} className="!rounded-md !border-2 !border-blue-400" />
                 </div>
@@ -101,7 +97,6 @@ const Scribble = ({ complaint }) => {
                         <LuPen size={16} />
                     </button>
                     <div className="flex flex-col items-center gap-1">
-                        {/* <span className="text-sm text-center">Stroke</span> */}
                         <input
                             type="range"
                             min="1"
@@ -152,10 +147,10 @@ const Scribble = ({ complaint }) => {
                         <LuTrash size={16} />
                     </button>
 
-                </div>
-            </div>
-            <button onClick={() => handleSave()} className='bg-green-500 block mx-auto my-4 p-2 text-xl rounded-md text-white'>Save</button>
-        </div>
+                </div >
+            </div >
+    <button onClick={() => handleSave()} className='bg-green-500 block mx-auto my-4 p-2 text-xl rounded-md text-white'>Save</button> */}
+        </div >
     )
 }
 
