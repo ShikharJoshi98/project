@@ -50,8 +50,7 @@ const BillInvoice = () => {
     const nextSection = () => {
         if (
             selectedPatient &&
-            selectedDiagnosis?.value &&
-            formValues.medicineName.length > 0
+            selectedDiagnosis?.value
         ) {
             setBillStatus('second');
         } else {
@@ -102,7 +101,7 @@ const BillInvoice = () => {
                         </div>
                         <div className='flex flex-col gap-2'>
                             <h1>Medicine Name : </h1>
-                            <Input icon={AiFillMedicineBox} onChange={handleInputChange} value={formValues.medicineName} name="medicineName" type='text' required placeholder='Please Mention Name of the Medicine if any' />
+                            <Input icon={AiFillMedicineBox} onChange={handleInputChange} value={formValues.medicineName} name="medicineName" type='text' placeholder='Please Mention Name of the Medicine if any' />
                         </div>
                         <div className='flex flex-col mt-10 items-center'>
                             <p className='text-green-500 font-semibold '>Click on Next, after Completing the Submission of above details</p>

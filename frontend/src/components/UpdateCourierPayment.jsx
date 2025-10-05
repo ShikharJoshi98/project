@@ -20,10 +20,10 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
   useEffect(() => {
     getPatient(payment?.patient?._id);
   }, [getPatient]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(user?._id, amountPaid, transactionDetails);
       await axios.post(`${DOC_API_URL}/addBillPayment/${payment?.patient?._id}`, {
         billPaid: parseInt(amountPaid),
         modeOfPayment: 'online',
@@ -32,6 +32,13 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
         transactionDetails,
         totalBill: (payment?.dueBalance),
         balance_paid_flag: true
+      });
+      await axios.post(`${HR_API_URL}/courierPayment/${payment?.patient?._id}`, {
+        billPaid: parseInt(amountPaid),
+        totalBill: (payment?.dueBalance),
+        modeOfPayment: 'online',
+        transactionDetails,
+        paymentCollectedBy: user?._id,
       });
       await axios.patch(`${HR_API_URL}/updateCourierStatus/${payment?._id}/${payment?.patient?._id}`, {
         balance_paid_flag: true,
@@ -86,7 +93,7 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
             <p className="text-2xl p-3 font-semibold">Payment Date. : {payment?.receiveDate}</p>
             <p className="text-2xl p-3 font-semibold">Balance Amount : {payment?.dueBalance}</p>
             <p className="text-2xl p-3 font-semibold">Transaction ID : {payment?.transactionDetails}</p>
-            <p className="text-2xl p-3 font-semibold">Payment Collected By : {payment?.paymentCollectedBy?.fullname}</p>
+            <p className="text-2xl p-3 font-semibold">Payment Collected By : {payment?.paymentCollectedBy?.username}</p>
           </div>
         }
       </div>

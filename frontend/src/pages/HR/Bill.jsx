@@ -68,6 +68,7 @@ const Bill = () => {
                     transactionDetails,
                     paymentCollectedBy: user?._id,
                     address,
+                    modeOfPayment: 'online',
                     email
                 });
             }

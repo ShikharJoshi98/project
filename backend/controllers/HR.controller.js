@@ -69,9 +69,8 @@ export const update = async (req, res) => {
 
 export const LeaveApply = async (req, res) => {
     try {
-        let { startDate, endDate, reason, duration, username } = req.body;
+        let { startDate,halfDayDate, endDate, type, reason, duration, username } = req.body;
         const EmployeeExist = await Employee.findOne({ username });
-
         if (!EmployeeExist) {
             res.json({ success: false, message: "This employee does not exist" });
         }
@@ -82,15 +81,21 @@ export const LeaveApply = async (req, res) => {
 
         const parseDate = (dateStr) => {
             const [day, month, year] = dateStr.split('-').map(Number);
-            return new Date(year, month - 1, day); // month is 0-indexed
+            return new Date(year, month - 1, day);
         };
-
-        startDate = convertDateFormat(startDate);
-        endDate = convertDateFormat(endDate);
-        duration = Math.abs(parseDate(endDate) - parseDate(startDate)) / (1000 * 60 * 60 * 24);
+        if (halfDayDate) {
+            halfDayDate = convertDateFormat(halfDayDate);
+        }
+        if (startDate && endDate) {
+            startDate = convertDateFormat(startDate);
+            endDate = convertDateFormat(endDate);
+            duration = Math.abs(parseDate(endDate) - parseDate(startDate)) / (1000 * 60 * 60 * 24);
+        }
         const newLeave = new LeaveApplication({
             startDate,
             endDate,
+            halfDayDate,
+            type,
             reason,
             duration,
             username
@@ -137,7 +142,7 @@ export const getHrAppointments = async (req, res) => {
             repeatAppointments: 0,
             courierAppointments: 0,
         };
-      
+
         result.forEach(({ _id, count }) => {
             const key = `${_id.appointmentType}Appointments`;
             counts[key] = count;
@@ -157,9 +162,9 @@ export const getHrAppointments = async (req, res) => {
 
 export const getAppDetails = async (req, res) => {
     try {
-        const { branch,appointmentType } = req.params;
+        const { branch, appointmentType } = req.params;
         const date = updateDate();
-        const appointments = await Appointment.find({ branch, date, complete_appointment_flag: true,appointmentType }).populate('Doctor').populate('PatientCase');
+        const appointments = await Appointment.find({ branch, date, complete_appointment_flag: true, appointmentType }).populate('Doctor').populate('PatientCase');
 
         res.json({
             success: true,
@@ -168,7 +173,7 @@ export const getAppDetails = async (req, res) => {
     } catch (error) {
         res.json({
             success: false,
-            message:error.message
+            message: error.message
         })
     }
 }
@@ -931,7 +936,7 @@ export const updateMedicalReceivedOrder = async (req, res) => {
         const order = await medicalOrder.findById(orderId);
 
         const medicine = order?.formRows.filter((order) => order?._id.toString() === medicineId);
-       
+
         if (receivedQuantity != undefined) {
             medicine[0].receivedQuantity = receivedQuantity;
             await MedicalStock.findByIdAndUpdate(medicine[0]?.medicineId,
@@ -1014,17 +1019,22 @@ export const addCourierPayment = async (req, res) => {
 
         const balance = findBillDetails?.dueBalance;
 
-        const addPayment = await courierPayment.create({
-            dueBalance: balance,
-            totalBill,
-            billPaid,
-            transactionDetails,
-            paymentCollectedBy,
-            patient: id,
-            date: formattedDate,
-            address,
-            email
-        });
+        const payment = await courierPayment.updateOne(
+            { patient: id },
+            {
+                $set: {
+                    dueBalance: balance,
+                    date: formattedDate,
+                    transactionDetails,
+                    billPaid,
+                    totalBill,
+                    paymentCollectedBy,
+                    address,
+                    email
+                }
+            },
+            { upsert: true }
+        );
         res.json({
             success: true,
             message: "Add Courier Payment"

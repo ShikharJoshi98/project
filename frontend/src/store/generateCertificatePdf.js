@@ -68,15 +68,15 @@ export const generateBillInvoicePdf = (patient, today, data) => {
     doc.setFontSize(12);
     doc.text('D-' + patient.casePaperNo[1], 52, 67);
     doc.text(today, 162, 67);
-    doc.setFontSize(22);
+    doc.setFontSize(16);
     doc.text(patient.fullname, 25, 134);
     doc.setFontSize(12);
     doc.text('From:', 105, 134);
-    doc.setFontSize(15);
+    doc.setFontSize(13);
     doc.text(convertDateFormat(data.startDate), 107, 140);
     doc.setFontSize(12);
     doc.text('To:', 105, 147);
-    doc.setFontSize(15);
+    doc.setFontSize(13);
     doc.text(convertDateFormat(data.endDate), 107, 154);
     doc.setFontSize(14);
     doc.text('Consultation', 134, 140);
@@ -89,7 +89,45 @@ export const generateBillInvoicePdf = (patient, today, data) => {
     doc.setFontSize(16);
     doc.text(disease(data.selectedDiagnosis), 35, 185);
     doc.setFontSize(14);
-    doc.text(`Rx ${data.medicineName}`, 27, 215);
+    data?.medicineName && doc.text(`Rx ${data.medicineName}`, 27, 215);
+    doc.text(`Rs ${parseInt(data.medicineFee) + parseInt(data.consultingFee)}`, 165, 230);
+    doc.setFontSize(17);
+    doc.text(`${numberToWords(parseInt(data.medicineFee) + parseInt(data.consultingFee))} Only`, 75, 241);
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    window.open(pdfUrl, "_blank");
+}
+
+export const generatePreviousIssuedInvoice = (patient, today, data) => {
+    const doc = new jsPDF();
+    patient.casePaperNo = String(patient?.casePaperNo).split('-');
+    doc.addImage(img, 'JPEG', 0, 0, 210, 297);
+    doc.setFontSize(12);
+    doc.text('D-' + patient.casePaperNo[1], 52, 67);
+    doc.text(today, 162, 67);
+    doc.setFontSize(16);
+    doc.text(patient.fullname, 25, 134);
+    doc.setFontSize(12);
+    doc.text('From:', 105, 134);
+    doc.setFontSize(13);
+    doc.text(data.startDate, 107, 140);
+    doc.setFontSize(12);
+    doc.text('To:', 105, 147);
+    doc.setFontSize(13);
+    doc.text(data.endDate, 107, 154);
+    doc.setFontSize(14);
+    doc.text('Consultation', 134, 140);
+    doc.setFontSize(14);
+    doc.text('Medicine', 134, 154);
+    doc.setFontSize(14);
+    doc.text(`Rs ${data.consultingFee}`, 165, 140);
+    doc.setFontSize(14);
+    doc.text(`Rs ${data.medicineFee}`, 165, 154);
+    doc.setFontSize(16);
+    doc.text(disease(data.selectedDiagnosis), 35, 185);
+    doc.setFontSize(14);
+    data?.medicineName && doc.text(`Rx ${data.medicineName}`, 27, 215);
     doc.text(`Rs ${parseInt(data.medicineFee) + parseInt(data.consultingFee)}`, 165, 230);
     doc.setFontSize(17);
     doc.text(`${numberToWords(parseInt(data.medicineFee) + parseInt(data.consultingFee))} Only`, 75, 241);
@@ -100,150 +138,217 @@ export const generateBillInvoicePdf = (patient, today, data) => {
 }
 
 export const generateMedicalCertificate = (details, patient, user) => {
-    const doc = new jsPDF();
-    doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
-    doc.setFontSize(15);
-    doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
-    const title = 'MEDICAL CERTIFICATE';
-    doc.setFontSize(20);
+  const doc = new jsPDF();
+  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.setFontSize(15);
+  doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
-    // Define position
-    const x = 87;
-    const y = 90;
+  const title = 'MEDICAL CERTIFICATE';
+  doc.setFontSize(20);
 
-    doc.text(title, x, y);
+  // Define position
+  const x = 87;
+  const y = 90;
 
-    const textWidth = doc.getTextWidth(title);
+  doc.text(title, x, y);
 
-    doc.setLineWidth(0.5);
-    doc.line(x, y + 2, x + textWidth, y + 2);
+  const textWidth = doc.getTextWidth(title);
+  doc.setLineWidth(0.5);
+  doc.line(x, y + 2, x + textWidth, y + 2);
 
-    doc.setFontSize(14);
-    doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} age ${patient.age ? patient.age : '0'} years had suffered from ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`} on ${convertDateFormat(details.date)}. So he/she was advised to take bed rest from ${convertDateFormat(details.restFrom)} to ${convertDateFormat(details.restTill)} . He/She  is fit  to resume his/her  duty/school  from ${convertDateFormat(details.resumeDate)} onwards accordingly.`, 68, 105, {
-        maxWidth: 135,
-    });
+  // Create the certificate text
+  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} age ${
+    patient.age ? patient.age : '0'
+  } years had suffered from ${
+    details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree
+      ? `${details.diagnoseOne}, ${details.diagnoseTwo} and ${details.diagnoseThree}`
+      : details.diagnoseOne && details.diagnoseTwo
+      ? `${details.diagnoseOne} and ${details.diagnoseTwo}`
+      : `${details.diagnoseOne}`
+  } on ${convertDateFormat(details.date)}. So he/she was advised to take bed rest from ${convertDateFormat(
+    details.restFrom
+  )} to ${convertDateFormat(details.restTill)}. He/She is fit to resume his/her duty/school from ${convertDateFormat(
+    details.resumeDate
+  )} onwards accordingly.`;
 
-    doc.setFontSize(15);
-    doc.text(user?.fullname, 146, 185)
-    doc.setFontSize(13);
-    doc.text(' M.D. (Homeopathy)', 148, 193)
-    doc.setFontSize(13);
-    doc.text(' Ph.D.(Homeopathy)', 148, 199)
+  // Set up text rendering with line spacing
+  doc.setFontSize(14);
+  const lines = doc.splitTextToSize(paragraph, 135); // Wrap text
+  const lineHeight = 10; // Line spacing in mm (adjust this value)
+  let startY = 105; // Starting Y position
 
-    const pdfBlob = doc.output("blob");
-    const pdfUrl = URL.createObjectURL(pdfBlob);
+  lines.forEach((line, index) => {
+    doc.text(line, 68, startY + index * lineHeight);
+  });
 
-    window.open(pdfUrl, "_blank");
+  // Doctor info
+  doc.setFontSize(15);
+  doc.text(user?.fullname, 146, startY + lines.length * lineHeight + 30);
+  doc.setFontSize(13);
+  doc.text('M.D. (Homeopathy)', 148, startY + lines.length * lineHeight + 38);
+  doc.text('Ph.D. (Homeopathy)', 148, startY + lines.length * lineHeight + 44);
 
-}
+  const pdfBlob = doc.output('blob');
+  const pdfUrl = URL.createObjectURL(pdfBlob);
+  window.open(pdfUrl, '_blank');
+};
+
 
 export const generateTravellingCertificate = (details, patient, user) => {
-    const doc = new jsPDF();
-    doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
-    doc.setFontSize(15);
-    doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
-    const title = 'CERTIFICATE';
-    doc.setFontSize(20);
+  const doc = new jsPDF();
+  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.setFontSize(15);
+  doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
-    // Define position
-    const x = 87;
-    const y = 90;
+  const title = 'CERTIFICATE';
+  doc.setFontSize(20);
 
-    doc.text(title, x, y);
+  // Define position
+  const x = 87;
+  const y = 90;
 
-    const textWidth = doc.getTextWidth(title);
+  doc.text(title, x, y);
 
-    doc.setLineWidth(0.5);
-    doc.line(x, y + 2, x + textWidth, y + 2);
+  const textWidth = doc.getTextWidth(title);
+  doc.setLineWidth(0.5);
+  doc.line(x, y + 2, x + textWidth, y + 2);
 
-    doc.setFontSize(14);
-    doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} age ${patient.age ? patient.age : '0'} years  is  under  Homeopathy  treatment  for ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`}.He/She had been given medicine for ${details.duration} months/days according to his/her disease concerned.`, 68, 105, {
-        maxWidth: 135,
-    });
+  // Create the main paragraph
+  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient?.fullname} age ${
+    patient?.age ? patient?.age : '0'
+  } years is under Homeopathy treatment for ${
+    details?.diagnoseOne && details?.diagnoseTwo && details?.diagnoseThree
+      ? `${details?.diagnoseOne}, ${details?.diagnoseTwo} and ${details?.diagnoseThree}`
+      : details?.diagnoseOne && details?.diagnoseTwo
+      ? `${details?.diagnoseOne} and ${details?.diagnoseTwo}`
+      : `${details?.diagnoseOne}`
+  }. He/She had been given medicine for ${details?.duration} according to his/her disease concerned.`;
 
-    doc.setFontSize(15);
-    doc.text(user?.fullname, 146, 185)
-    doc.setFontSize(13);
-    doc.text(' M.D. (Homeopathy)', 148, 193)
-    doc.setFontSize(13);
-    doc.text(' Ph.D.(Homeopathy)', 148, 199)
+  // Set up text rendering with custom line spacing
+  doc.setFontSize(14);
+  const lines = doc.splitTextToSize(paragraph, 135); // Wrap text to fit width
+  const lineHeight = 10; // Line spacing (in mm)
+  let startY = 105; // Starting Y position
 
-    const pdfBlob = doc.output("blob");
-    const pdfUrl = URL.createObjectURL(pdfBlob);
+  // Draw each line with spacing
+  lines.forEach((line, index) => {
+    doc.text(line, 68, startY + index * lineHeight);
+  });
 
-    window.open(pdfUrl, "_blank");
-}
+  // Doctor info (position dynamically after text)
+  const finalY = startY + lines.length * lineHeight + 30;
+
+  doc.setFontSize(15);
+  doc.text(user?.fullname, 146, finalY);
+  doc.setFontSize(13);
+  doc.text('M.D. (Homeopathy)', 148, finalY + 8);
+  doc.text('Ph.D. (Homeopathy)', 148, finalY + 14);
+
+  // Generate PDF
+  const pdfBlob = doc.output('blob');
+  const pdfUrl = URL.createObjectURL(pdfBlob);
+  window.open(pdfUrl, '_blank');
+};
+
 
 export const generateFitnessCertificate = (details, patient, user) => {
-    const doc = new jsPDF();
-    doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
-    doc.setFontSize(15);
-    doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
-    const title = 'FITNESS CERTIFICATE';
-    doc.setFontSize(20);
+  const doc = new jsPDF();
+  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.setFontSize(15);
+  doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
-    // Define position
-    const x = 87;
-    const y = 90;
+  const title = 'FITNESS CERTIFICATE';
+  doc.setFontSize(20);
 
-    doc.text(title, x, y);
+  // Define position
+  const x = 87;
+  const y = 90;
 
-    const textWidth = doc.getTextWidth(title);
+  doc.text(title, x, y);
 
-    doc.setLineWidth(0.5);
-    doc.line(x, y + 2, x + textWidth, y + 2);
+  const textWidth = doc.getTextWidth(title);
+  doc.setLineWidth(0.5);
+  doc.line(x, y + 2, x + textWidth, y + 2);
 
-    doc.setFontSize(14);
-    doc.text(`This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is physically and mentally fit to do his/her activity properly.`, 68, 105, {
-        maxWidth: 135,
-    });
+  // Main paragraph
+  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is physically and mentally fit to do his/her activity properly.`;
 
-    doc.setFontSize(15);
-    doc.text(user?.fullname, 146, 185)
-    doc.setFontSize(13);
-    doc.text(' M.D. (Homeopathy)', 148, 193)
-    doc.setFontSize(13);
-    doc.text(' Ph.D.(Homeopathy)', 148, 199)
+  // Apply custom line spacing
+  doc.setFontSize(14);
+  const lines = doc.splitTextToSize(paragraph, 135); // Wrap text
+  const lineHeight = 10; // mm between lines
+  let startY = 105; // Starting Y position
 
-    const pdfBlob = doc.output("blob");
-    const pdfUrl = URL.createObjectURL(pdfBlob);
+  lines.forEach((line, index) => {
+    doc.text(line, 68, startY + index * lineHeight);
+  });
 
-    window.open(pdfUrl, "_blank");
-}
+  // Doctor info positioned after text
+  const finalY = startY + lines.length * lineHeight + 60;
+
+  doc.setFontSize(15);
+  doc.text(user?.fullname, 146, finalY);
+  doc.setFontSize(13);
+  doc.text('M.D. (Homeopathy)', 148, finalY + 8);
+  doc.text('Ph.D. (Homeopathy)', 148, finalY + 14);
+
+  // Generate PDF
+  const pdfBlob = doc.output('blob');
+  const pdfUrl = URL.createObjectURL(pdfBlob);
+  window.open(pdfUrl, '_blank');
+};
+
 
 export const generateUnfitCertificate = (details, patient, user) => {
-    const doc = new jsPDF();
-    doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
-    doc.setFontSize(15);
-    doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
-    const title = 'UNFIT CERTIFICATE';
-    doc.setFontSize(20);
+  const doc = new jsPDF();
+  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.setFontSize(15);
+  doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
-    // Define position
-    const x = 87;
-    const y = 90;
+  const title = 'UNFIT CERTIFICATE';
+  doc.setFontSize(20);
 
-    doc.text(title, x, y);
+  // Define position
+  const x = 87;
+  const y = 90;
 
-    const textWidth = doc.getTextWidth(title);
+  doc.text(title, x, y);
 
-    doc.setLineWidth(0.5);
-    doc.line(x, y + 2, x + textWidth, y + 2);
+  const textWidth = doc.getTextWidth(title);
+  doc.setLineWidth(0.5);
+  doc.line(x, y + 2, x + textWidth, y + 2);
 
-    doc.setFontSize(14);
-    doc.text(` This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is suffering from ${(details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree) ? `${details.diagnoseOne},${details.diagnoseTwo} and ${details.diagnoseThree}` : (details.diagnoseOne && details.diagnoseTwo) ? `${details.diagnoseOne} and ${details.diagnoseTwo}` : `${details.diagnoseOne}`} on ${convertDateFormat(details.date)}. He/She is advised to take rest accordingly.`, 68, 105, {
-        maxWidth: 135,
-    });
+  // Main paragraph
+  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is suffering from ${
+    details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree
+      ? `${details.diagnoseOne}, ${details.diagnoseTwo} and ${details.diagnoseThree}`
+      : details.diagnoseOne && details.diagnoseTwo
+      ? `${details.diagnoseOne} and ${details.diagnoseTwo}`
+      : `${details.diagnoseOne}`
+  } on ${convertDateFormat(details.date)}. He/She is advised to take rest accordingly.`;
 
-    doc.setFontSize(15);
-    doc.text(user?.fullname, 146, 185)
-    doc.setFontSize(13);
-    doc.text(' M.D. (Homeopathy)', 148, 193)
-    doc.setFontSize(13);
-    doc.text(' Ph.D.(Homeopathy)', 148, 199)
+  // Apply custom line spacing
+  doc.setFontSize(14);
+  const lines = doc.splitTextToSize(paragraph, 135); // Wrap text to fit within page
+  const lineHeight = 10; // Space between lines (mm)
+  let startY = 105; // Starting Y coordinate
 
-    const pdfBlob = doc.output("blob");
-    const pdfUrl = URL.createObjectURL(pdfBlob);
+  // Draw lines with custom spacing
+  lines.forEach((line, index) => {
+    doc.text(line, 68, startY + index * lineHeight);
+  });
 
-    window.open(pdfUrl, "_blank");
-}
+  // Doctor info (position dynamically after text)
+  const finalY = startY + lines.length * lineHeight + 50;
+
+  doc.setFontSize(15);
+  doc.text(user?.fullname, 146, finalY);
+  doc.setFontSize(13);
+  doc.text('M.D. (Homeopathy)', 148, finalY + 8);
+  doc.text('Ph.D. (Homeopathy)', 148, finalY + 14);
+
+  // Generate and open PDF
+  const pdfBlob = doc.output('blob');
+  const pdfUrl = URL.createObjectURL(pdfBlob);
+  window.open(pdfUrl, '_blank');
+};

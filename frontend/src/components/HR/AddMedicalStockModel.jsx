@@ -37,7 +37,7 @@ const AddMedicalStockModel = ({ onClose }) => {
           <RxCross1 size={24} />
         </button>
         <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">
-          Add Medicine to Stock
+          Add Old Medicine to Stock
         </h1>
         <div className="bg-white mx-auto  p-5 rounded-lg w-auto">
           <form onSubmit={handleSubmit} >

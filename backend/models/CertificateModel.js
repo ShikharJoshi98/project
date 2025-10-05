@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const billInvoiceSchema = new mongoose.Schema({
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
     selectedDiagnosis: { type: String, required: true },
-    medicineName: { type: String, required: true },
+    medicineName: { type: String },
     startDate: { type: String, required: true },
     endDate: { type: String, required: true },
     consultingFee: { type: String, required: true },

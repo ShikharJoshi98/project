@@ -7,10 +7,11 @@ import { generateFitnessCertificate, generateMedicalCertificate, generateTravell
 import axios from 'axios';
 import { DOC_API_URL } from '../../store/DocStore';
 import { RxCross2 } from 'react-icons/rx';
+import { FaCalendarAlt } from 'react-icons/fa';
 
 const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
     const { user } = useAuthStore();
-    const { getAllPatients,allPatients } = recStore();
+    const { getAllPatients, allPatients } = recStore();
     const [formValues, setFormValues] = useState({
         diagnoseOne: '',
         diagnoseTwo: '',
@@ -20,11 +21,11 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
         restTill: '',
         resumeDate: '',
         duration: ''
-    })
+    });
 
     useEffect(() => {
         getAllPatients();
-    }, [getAllPatients]);    
+    }, [getAllPatients]);
 
     const convertToInputDate = (ddmmyyyy) => {
         if (!ddmmyyyy) return '';
@@ -113,7 +114,7 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Duration : </h1>
-                        <Input icon={CiCalendar} onChange={handleInputChange} value={formValues.duration} name="duration" type='text' placeholder='Number of Months' />
+                        <Input icon={FaCalendarAlt} onChange={handleInputChange} value={formValues.duration} name="duration" type='text' placeholder='Enter duration' />
                     </div>
                     <button className='py-2 px-6 mt-5 rounded-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer text-base'>Submit</button>
                 </form>

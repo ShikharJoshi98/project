@@ -35,6 +35,7 @@ const courierPaymentSchema = new mongoose.Schema({
     dueBalance: { type: Number, default: 0 },
     totalBill: { type: Number },
     billPaid: { type: Number },
+    modeOfPayment:{type: String},
     transactionDetails: { type: String },
     appointment:{
         type: mongoose.Schema.Types.ObjectId,

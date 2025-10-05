@@ -2660,6 +2660,7 @@ export const getBill = async (req, res) => {
 export const addPayment = async (req, res) => {
     try {
         const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag } = req.body;
+        
         const { id } = req.params;
         let formattedDate;
         const updateDate = () => {
@@ -2672,7 +2673,7 @@ export const addPayment = async (req, res) => {
         updateDate();
 
         const newBalance = totalBill - billPaid;
-        await billPayment.updateOne(
+        const payment = await billPayment.updateOne(
             { patient: id },
             { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag } },
             { upsert: true }

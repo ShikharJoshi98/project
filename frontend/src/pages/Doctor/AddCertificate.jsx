@@ -13,11 +13,12 @@ import { IoIosRefresh } from 'react-icons/io'
 
 const AddCertificate = () => {
     const { user } = useAuthStore();
-    const { getAllPatients,allPatients } = recStore();
+    const { getAllPatients, allPatients } = recStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [detailsAddedModal, setDetailsAddedModal] = useState(false);
     const [certificateDetails, setCertificateDetails] = useState(null);
     const [isFormSubmitted, setFormSubmitted] = useState(false);
+    const [durationUnit, setDurationUnit] = useState('Days'); // default
 
     useEffect(() => {
         getAllPatients();
@@ -46,8 +47,14 @@ const AddCertificate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            formValues.selectedPatient = selectedPatient;
-            let response = await axios.post(`${DOC_API_URL}/postCertificate`, formValues);
+            const finalDuration = `${formValues.duration} ${durationUnit}`.trim();
+            const payload = {
+                ...formValues,
+                selectedPatient,
+                duration: finalDuration,
+            };
+
+            let response = await axios.post(`${DOC_API_URL}/postCertificate`, payload);
 
             if (response.data.message === 'certificate added') {
                 setDetailsAddedModal(true);
@@ -56,7 +63,7 @@ const AddCertificate = () => {
             else {
                 alert("Details not added");
             }
-            setCertificateDetails(formValues);
+            setCertificateDetails(payload);
         } catch (error) {
             console.log(error.message);
         }
@@ -111,7 +118,15 @@ const AddCertificate = () => {
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Duration : </h1>
-                        <Input icon={FaCalendarAlt} onChange={handleInputChange} value={formValues.duration} name="duration" type='text' placeholder='Number of Months' />
+                        <div className='flex items-center gap-4'>
+                            <Input icon={FaCalendarAlt} onChange={handleInputChange} value={formValues.duration} name="duration" type='text' placeholder='Enter duration' />
+                            <select onChange={(e) => setDurationUnit(e.target.value)} className='bg-white pr-3 py-2 h-10 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500'>
+                                <option value="Days">Days</option>
+                                <option value="Weeks">Weeks</option>
+                                <option value="Months">Months</option>
+                                <option value="Years">Year</option>
+                            </select>
+                        </div>
                     </div>
                     <button className='py-2 px-6 mt-5 rounded-lg bg-green-500 text-white text-base font-semibold block mx-auto cursor-pointer'>Submit</button>
                 </form>

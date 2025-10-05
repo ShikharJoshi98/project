@@ -14,6 +14,8 @@ const ApplyLeave = () => {
     const [formValues, setFormValues] = useState({
         startDate: "",
         endDate: "",
+        halfDayDate: "",
+        type: "",
         reason: "",
         username: user?.username || ""
     });
@@ -34,10 +36,20 @@ const ApplyLeave = () => {
     const approvedLeaves = userLeaves.filter(leave => leave.status === 'APPROVED');
 
     const leavesByMonth = approvedLeaves.reduce((acc, leave) => {
-        const date = leave.startDate.split('-');
-        const year = date[date.length - 1];
-        const month = months[date[date.length - 2]];
-        const duration = leave.duration + 1;
+        let date, year, month, duration;
+        if (leave?.type === 'Half Day') {
+            date = leave?.halfDayDate?.split('-');
+            year = date[date?.length - 1];
+            month = months[date[date?.length - 2]];
+            duration = "Half Day";
+        }
+        else {
+            date = leave?.startDate.split('-');
+            year = date[date.length - 1];
+            month = months[date[date.length - 2]];
+            duration = leave?.duration + 1;
+        }
+
         acc.push({
             month,
             year,
@@ -45,7 +57,7 @@ const ApplyLeave = () => {
         });
         return acc
     }, []);
-
+    console.log(approvedLeaves);
     const groupedLeaves = Object.values(leavesByMonth);
 
     const handleSubmit = async (e) => {
@@ -55,6 +67,7 @@ const ApplyLeave = () => {
             setSubmit(prev => !prev);
             setFormValues({
                 startDate: "",
+                type: "",
                 endDate: "",
                 reason: "",
                 username: user?.username || ""
@@ -68,17 +81,35 @@ const ApplyLeave = () => {
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8  min-h-screen overflow-hidden w-full'>
             <div className='bg-[#e9ecef]  w-auto p-5 rounded-lg '>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Leave Reports</h1>
-                <div className='flex md:flex-row flex-col md:items-start items-center gap-5 mt-10 w-full'>
+                <div className='flex md:flex-row flex-col md:items-start items-center mt-10 w-full'>
                     <form onSubmit={handleSubmit} className='md:w-1/3 w-full space-y-5'>
                         <h1 className='text-lg text-center font-semibold text-blue-600 mb-4'>Apply Leave</h1>
                         <div className='flex flex-col gap-2'>
-                            <p>Start Date :</p>
-                            <Input icon={CiCalendar} required name="startDate" value={formValues.startDate} onChange={handleInputChange} type='Date' />
+                            <p>Type of Leave :</p>
+                            <select value={formValues.type} name='type' onChange={handleInputChange} required className="py-2 pl-2 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
+                                <option value="" disabled defaultValue>Select type of leave</option>
+                                <option value="Full Day/Multiple Days">Full Day/Multiple Days</option>
+                                <option value="Half Day">Half Day</option>
+                            </select>
                         </div>
-                        <div className='flex flex-col gap-2'>
-                            <p>End Date :</p>
-                            <Input icon={CiCalendar} required name="endDate" value={formValues.endDate} onChange={handleInputChange} type='Date' />
-                        </div>
+                        {formValues.type === "Full Day/Multiple Days" &&
+                            <>
+                                <div className='flex flex-col gap-2'>
+                                    <p>Start Date :</p>
+                                    <Input icon={CiCalendar} required name="startDate" value={formValues.startDate} onChange={handleInputChange} type='Date' />
+                                </div>
+                                <div className='flex flex-col gap-2'>
+                                    <p>End Date :</p>
+                                    <Input icon={CiCalendar} required name="endDate" value={formValues.endDate} onChange={handleInputChange} type='Date' />
+                                </div>
+                            </>}
+                        {
+                            formValues.type === "Half Day" &&
+                            <div className='flex flex-col gap-2'>
+                                <p>Date :</p>
+                                <Input icon={CiCalendar} required name="halfDayDate" value={formValues.halfDayDate} onChange={handleInputChange} type='Date' />
+                            </div>
+                        }
                         <div className='mb-3 '>
                             <h1 className="text-black mb-2 font-semibold">Reason :</h1>
                             <textarea placeholder='Enter Reason' required name="reason" value={formValues.reason} onChange={handleInputChange} className='w-full bg-white h-56  pl-3 pr-3 py-2 font-normal  rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 placeholder-zinc-500 transition duration-200'></textarea>
@@ -116,6 +147,7 @@ const ApplyLeave = () => {
                                         <th className='px-2 py-2'>Reason</th>
                                         <th className='px-2 py-2'>Start Date</th>
                                         <th className='px-2 py-2'>End Date</th>
+                                        <th className='px-2 py-2'>Type</th>
                                         <th className='px-2 py-2'>Duration </th>
                                         <th className='px-2 py-2'>Approval Status</th>
                                     </tr>
@@ -126,9 +158,10 @@ const ApplyLeave = () => {
                                             <tr key={index} className="hover:bg-blue-300 font-medium bg-blue-200 transition-all ">
                                                 <td className='py-2 text-center'>{index + 1}</td>
                                                 <td className='px-1 py-2 text-center'>{leave?.reason}</td>
-                                                <td className='px-1 py-2 text-center'>{leave?.startDate}</td>
-                                                <td className='px-1 py-2 text-center'>{leave?.endDate}</td>
-                                                <td className='px-1 py-2 text-center'>{leave?.duration + 1}</td>
+                                                <td className='px-1 py-2 text-center'>{leave?.startDate === "" ? leave?.halfDayDate : leave?.startDate}</td>
+                                                <td className='px-1 py-2 text-center'>{leave?.endDate === "" ? leave?.halfDayDate : leave?.endDate}</td>
+                                                <td className='px-1 py-2 text-center'>{leave?.type}</td>
+                                                <td className='px-1 py-2 text-center'>{leave?.duration ? (leave?.duration + 1) : '-'}</td>
                                                 <td className={`px-1 py-2 ${leave?.status === 'PENDING' ? 'text-blue-600' : leave?.status === 'APPROVED' ? 'text-green-600' : 'text-red-600'} text-center`}>{leave?.status}</td>
                                             </tr>
                                         ))

@@ -6,7 +6,7 @@ const ApproveLeaveModal = ({ onClose }) => {
     const { leaves, LeaveDetails, updateLeave } = docStore();
     useEffect(() => {
         LeaveDetails();
-    }, LeaveDetails)
+    }, [LeaveDetails])
     function parseDateString(dateStr) {
         const [day, month, year] = dateStr.split('-');
         return new Date(`${year}-${month}-${day}`);
@@ -31,10 +31,10 @@ const ApproveLeaveModal = ({ onClose }) => {
             console.log(error.message);
         }
     }
-    
+
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
-            <div className="bg-[#e9ecef] max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
+            <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
                 <button
                     onClick={onClose}
                     className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
@@ -53,6 +53,7 @@ const ApproveLeaveModal = ({ onClose }) => {
                                 <th className='px-4 py-2 border border-gray-500'>Reason</th>
                                 <th className='px-4 py-2 border border-gray-500'>Start Date</th>
                                 <th className='px-4 py-2 border border-gray-500'>End Date</th>
+                                <th className='px-4 py-2 border border-gray-500'>Type</th>
                                 <th className='px-4 py-2 border border-gray-500'>Duration</th>
                                 <th className='px-4 py-2 border border-gray-500'>Approval Status</th>
                             </tr>
@@ -64,9 +65,10 @@ const ApproveLeaveModal = ({ onClose }) => {
                                         <td className="border border-gray-300 px-4 py-2 text-center">{idx + 1}</td>
                                         <td className="border border-gray-300 px-4 py-2 text-center">{leave?.username}</td>
                                         <td className="border border-gray-300 px-4 py-2 text-center">{leave?.reason}</td>
-                                        <td className="border border-gray-300 px-4 py-2 text-center">{leave?.startDate}</td>
-                                        <td className="border border-gray-300 px-4 py-2 text-center">{leave?.endDate}</td>
-                                        <td className="border border-gray-300 px-4 py-2 text-center">{getDateDifference(leave?.startDate, leave?.endDate)}</td>
+                                        <td className="border border-gray-300 px-4 py-2 text-center">{leave?.startDate === "" ? leave?.halfDayDate : leave?.startDate}</td>
+                                        <td className="border border-gray-300 px-4 py-2 text-center">{leave?.endDate === "" ? leave?.halfDayDate : leave?.endDate}</td>
+                                        <td className="border border-gray-300 px-4 py-2 text-center">{leave?.type}</td>
+                                        <td className="border border-gray-300 px-4 py-2 text-center">{getDateDifference(leave?.startDate, leave?.endDate) === 'Invalid Date' ? '-' : getDateDifference(leave?.startDate, leave?.endDate)}</td>
                                         {leave?.status === 'PENDING' ?
                                             <td className="border border-gray-300 px-4 py-2 text-center"><div className='flex items-center gap-2'><button onClick={() => handleClick(leave?._id, 'APPROVED')} className='bg-green-500 p-1 text-white rounded-lg cursor-pointer hover:bg-green-700'>Approve</button><button onClick={() => handleClick(leave?._id, 'NOT APPROVED')} className='bg-red-500 p-1 text-white rounded-lg cursor-pointer hover:bg-red-700'>Reject</button></div></td>
                                             :
