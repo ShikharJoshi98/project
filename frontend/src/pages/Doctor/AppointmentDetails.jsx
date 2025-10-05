@@ -28,13 +28,13 @@ const AppointmentDetails = () => {
                 </h1>
                 <span className='flex items-center gap-3 my-6 justify-center sm:text-xl text-base font-semibold'>
                     <h2>Balance : </h2>
-                    <h2>{balanceDue?.dueBalance >= 0 ? `Rs ${balanceDue?.dueBalance} due` : `Rs ${balanceDue?.dueBalance} advance`}</h2>
+                    <h2>{balanceDue?.dueBalance ? balanceDue?.dueBalance >= 0 ? `Rs ${balanceDue?.dueBalance} due` : `Rs ${balanceDue?.dueBalance} advance` : 'No Balance'}</h2>
                 </span>
                 {patient?.First_Appointment_Flag && <button onClick={() => navigate(`/new-case-details/${patient?._id}`)} className='bg-blue-500 text-white py-2 px-10 rounded-lg cursor-pointer font-semibold my-10 mx-auto flex items-center gap-5'>New Case <FaPen /></button>}
                 <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                     <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
                         {
-                            patient?.gender === 'Female' ? <img src="/user_female.webp" alt="user_image" className='size-20 md:size-28' /> : <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
+                            patient?.gender === 'Female' ? <img src={patient?.imageData ? patient?.imageData : "/user_female.webp"} alt="user_image" className='size-20 md:size-28' /> : <img src={patient?.imageData ? patient?.imageData : "/user.png"} alt="user_image" className='size-20 md:size-28' />
                         }
                         <h1 className='text-lg md:text-xl  font-semibold'>{patient?.fullname}</h1>
                         <h1 className='text-sm md:text-base '>{patient?.casePaperNo}</h1>

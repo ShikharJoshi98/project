@@ -15,7 +15,7 @@ const UploadDiagnosis = () => {
     const [image, setImage] = useState(null);
     const [isSubmit, setSubmit] = useState(false);
     const [loading, setLoading] = useState(false);
-      const [uploadLoading, setUploadLoading] = useState(false);
+    const [uploadLoading, setUploadLoading] = useState(false);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -28,45 +28,29 @@ const UploadDiagnosis = () => {
     }, [isSubmit])
 
     async function handleSubmit(e) {
-    e.preventDefault();
-    if (!image) {
-        toast.error("Please select an image first");
-        return;
-    }
-    try {
-        setUploadLoading(true);
-        const formData = new FormData();
-        formData.append("diagnosisImage", image);
-        await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${location.id}`, formData, {
+        e.preventDefault();
+        if (!image) {
+            toast.error("Please select an image first");
+            return;
+        }
+        try {
+            setUploadLoading(true);
+            const formData = new FormData();
+            formData.append("diagnosisImage", image);
+            await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${location.id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             })
-        toast.success("Image Uploaded");
-        setImage(null);
-    } catch (error) {
-        toast.error("Failed to upload image.");
-    } finally {
-      setUploadLoading(false); 
-      setSubmit(prev => !prev);
+            toast.success("Image Uploaded");
+            setImage(null);
+        } catch (error) {
+            toast.error("Failed to upload image.");
+        } finally {
+            setUploadLoading(false);
+            setSubmit(prev => !prev);
+        }
     }
-  }
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     const formData = new FormData();
-    //     formData.append("diagnosisImage", image);
-    //     try {
-    //         await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${location.id}`, formData, {
-    //             headers: { "Content-Type": "multipart/form-data" }
-    //         })
-    //         setSubmit((prev) => !prev);
-    //         toast('Added Image');
-    //     } catch (error) {
-    //         console.error(error.message);
-    //         toast("Failed to upload image.");
-    //     }
-    // }
-
-    const deleteImage = async (id)=> {
+    const deleteImage = async (id) => {
         try {
             let response = await axios.delete(`${DOC_API_URL}/patient/${location.id}/diagnosis-images/${id}`);
             setSubmit((prev) => !prev);
@@ -77,22 +61,22 @@ const UploadDiagnosis = () => {
 
     return (
         <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full p-8">
-            <ToastContainer/>
+            <ToastContainer />
             <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
                 <h1 onClick={() => navigate(`/appointment-details/${location.id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
-                <h1 className='text-xl sm:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>DIAGNOSIS IMAGES</h1>
+                <h1 className='text-xl sm:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>REPORT IMAGES</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="flex flex-col mt-10 gap-2">
                         <h1>Select Image</h1>
                         <Input icon={CiImageOn} type="file" name="diagnoseImage" onChange={(e) => setImage(e.target.files[0])} required />
                         <div className="w-full flex items-center justify-center">
-                            <button className="cursor-pointer bg-blue-400 font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{uploadLoading?<LuLoaderCircle className='mx-auto animate-spin'/>:"Upload"}</button>
+                            <button className="cursor-pointer bg-blue-400 font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{uploadLoading ? <LuLoaderCircle className='mx-auto animate-spin' /> : "Upload"}</button>
                         </div>
                     </div>
                 </form>
                 <div className='flex items-center gap-20 flex-wrap mt-10'>
                     {
-                        loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:diagnosisImages.map((image, idx) => (
+                        loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : diagnosisImages.map((image, idx) => (
                             <div className='flex flex-col items-center gap-2'>
                                 <img src={image?.imageUrl} className='size-64' alt="" key={idx} />
                                 <div title='delete' onClick={async () => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash size={25} /></div>

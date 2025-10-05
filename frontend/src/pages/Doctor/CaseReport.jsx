@@ -12,12 +12,12 @@ const CaseReport = () => {
     const location = useParams();
     const navigate = useNavigate();
     const today = updateDate();
-    
+
     useEffect(() => {
         getPatient(location.id); getPresentComplaintData(location.id); getChiefComplaints(location.id); getPastHistoryData(location.id); getPersonalHistory(location.id); getFamilyMedicalData(location.id); getMentalCausative(location.id);
         getMentalCausativeScribble(location.id); getMentalPersonality(location.id); getMentalPersonalityScribble(location.id); getBriefMindSymptomScribble(location.id); getThermalReaction(location.id); getMiasm(location.id);
     }, [getPatient, getPresentComplaintData, getChiefComplaints, getPersonalHistory, getFamilyMedicalData, getMentalCausative, getMentalCausativeScribble, getMentalPersonality, getMentalPersonalityScribble, getBriefMindSymptomScribble, getThermalReaction, getMiasm])
-    
+
     return (
         <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full">
             <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
@@ -25,7 +25,9 @@ const CaseReport = () => {
                 <h1 className='text-xl sm:text-4xl text-center font-semibold mt-5 text-[#337ab7]'>Patient Details</h1>
                 <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                     <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
-                        <img src="/user.png" alt="user_image" className='size-20 md:size-28' />
+                        {
+                            patient?.gender === 'Female' ? <img src={patient?.imageData ? patient?.imageData : "/user_female.webp"} alt="user_image" className='size-20 md:size-28' /> : <img src={patient?.imageData ? patient?.imageData : "/user.png"} alt="user_image" className='size-20 md:size-28' />
+                        }
                         <h1 className='text-lg md:text-xl  font-semibold'>{patient?.fullname}</h1>
                         <h1 className='text-sm md:text-base '>{patient?.casePaperNo}</h1>
                     </div>
@@ -56,7 +58,7 @@ const CaseReport = () => {
                 <h1 className='text-xl sm:text-4xl text-center font-semibold mt-5 text-[#337ab7]'>New Case - Final Report</h1>
                 <div className='flex items-center justify-between my-5'>
                     <h1 className=' text-blue-500 font-semibold mb-3 text-lg'>{today}</h1>
-                    <button onClick={() => generateTablePDF(patient, PresentComplaintData, chiefComplaints, PastHistoryData,personalHistory, FamilyMedicalData, MentalCausativeData[0]?.diseases, mentalCausativeScribble, MentalPersonalityData[0]?.diseases, mentalPersonalityScribble, briefMindSymptomScribble, ThermalReactionData[0]?.diseases, MiasmData[0]?.diseases)} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
+                    <button onClick={() => generateTablePDF(patient, PresentComplaintData, chiefComplaints, PastHistoryData, personalHistory, FamilyMedicalData, MentalCausativeData[0]?.diseases, mentalCausativeScribble, MentalPersonalityData[0]?.diseases, mentalPersonalityScribble, briefMindSymptomScribble, ThermalReactionData[0]?.diseases, MiasmData[0]?.diseases)} className='bg-green-500 text-white p-2 rounded-lg cursor-pointer font-semibold'>Generate PDF</button>
                 </div>
                 <hr className='h-[0.5px] px-5 border-none bg-blue-500' />
                 <div className='mt-12'>

@@ -14,6 +14,7 @@ const UpdateProfile = () => {
     const { user } = useAuthStore();
     const { setUpdate } = recStore();
     const [formValues, setFormValues] = useState({
+        imageData: user?.imageData,
         username: user?.username || "",
         casePaperNo: user?.casePaperNo || "",
         fullname: user?.fullname || "",
@@ -30,11 +31,25 @@ const UpdateProfile = () => {
     })
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormValues((prevValues) => ({
-            ...prevValues,
-            [name]: value,
-        }));
+        const { name, value, files } = e.target;
+        if (name === "imageData" && files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormValues((prev) => ({
+                    ...prev,
+                    [name]: reader.result,
+                }));
+            };
+
+            reader.readAsDataURL(file);
+        }
+        else {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                [name]: value,
+            }));
+        }
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,12 +64,20 @@ const UpdateProfile = () => {
     }
 
     return (
-        <div className='bg-gradient-to-br from-blue-300 via-blue-400 p-5 to-sky-700 overflow-hidden min-h-screen w-full'>            
+        <div className='bg-gradient-to-br from-blue-300 via-blue-400 p-5 to-sky-700 overflow-hidden min-h-screen w-full'>
             <form onSubmit={handleSubmit} className='z-10 my-8 mx-auto bg-white p-8 sm:max-w-[50vw] w-full border rounded-xl text-zinc-800 text-sm shadow-lg'>
                 <ToastContainer />
                 <h1 className='text-3xl font-semibold mb-5 text-center'>Update Profile Details</h1>
                 <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
                 <div className='flex flex-col gap-4 m-auto'>
+                    <div className='flex flex-col gap-2'>
+                        <h1>Profile Picture</h1>
+                        <Input icon={CiUser} key={formValues.imageData} name="imageData" onChange={handleInputChange} type="file" />
+                        {
+                            formValues.imageData &&
+                            <img src={formValues.imageData} className="h-20 w-20 object-contain border border-gray-300 rounded-md" />
+                        }
+                    </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Username</h1>
                         <Input icon={CiUser} type='text' onChange={handleInputChange} name="username" value={formValues.username} placeholder='Full Name' />
@@ -78,7 +101,7 @@ const UpdateProfile = () => {
                                 <CiUser className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="gender" value={formValues.gender} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled selected className='font-normal' >Select Gender</option>
+                                <option value="" disabled className='font-normal' >Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                             </select>
@@ -115,7 +138,7 @@ const UpdateProfile = () => {
                                 <FaCarrot className="size-4 text-blue-500" />
                             </div>
                             <select name="dietaryPreference" onChange={handleInputChange} value={formValues.dietaryPreference} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled selected className='font-normal' >Select Dietary Preference</option>
+                                <option value="" disabled className='font-normal' >Select Dietary Preference</option>
                                 <option value="Vegetarian">Vegetarian</option>
                                 <option value="Non Vegetarian">Non Vegetarian</option>
                                 <option value="Egg">Egg</option>
@@ -129,7 +152,7 @@ const UpdateProfile = () => {
                                 <ImManWoman className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="maritalStatus" value={formValues.maritalStatus} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled selected className='font-normal' >Select Marital Status</option>
+                                <option value="" disabled className='font-normal' >Select Marital Status</option>
                                 <option value="Single">Single</option>
                                 <option value="Married">Married</option>
                                 <option value="Divorced">Divorced</option>

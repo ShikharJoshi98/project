@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Input from '../Input'
 import { REC_API_URL, recStore } from '../../store/RecStore';
 import axios from 'axios';
+import { CiUser } from 'react-icons/ci';
 
 const PatientUpdateModal = ({ patientId, onClose }) => {
     const { setUpdate, getPatient, patient } = recStore();
@@ -52,11 +53,25 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
 
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormValues((prevValues) => ({
-            ...prevValues,
-            [name]: value,
-        }));
+        const { name, value, files } = e.target;
+        if (name === "imageData" && files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormValues((prev) => ({
+                    ...prev,
+                    [name]: reader.result,
+                }));
+            };
+
+            reader.readAsDataURL(file);
+        }
+        else {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                [name]: value,
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -78,6 +93,14 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
                     <h1 className='text-3xl font-semibold mb-5 text-center'>Update Patient Details</h1>
                     <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
                     <div className='flex flex-col gap-4 m-auto '>
+                        <div className='flex flex-col gap-2'>
+                            <h1>Profile Picture</h1>
+                            <Input icon={CiUser} key={formValues.imageData} name="imageData" onChange={handleInputChange} type="file" />
+                            {
+                                formValues.imageData &&
+                                <img src={formValues.imageData} className="h-20 w-20 object-contain border border-gray-300 rounded-md" />
+                            }
+                        </div>
                         <div className='flex flex-col gap-2 '>
                             <h1>Username</h1>
                             <Input icon={User} type='text' onChange={handleInputChange} name="username" value={formValues.username} placeholder='Username' />
