@@ -19,7 +19,6 @@ const ApproveItems = () => {
     const [submit, setSubmit] = useState(false);
     const { orderId, getOrderId } = docStore();
     const [loading, setLoading] = useState(false);
-
     const getItemStock = async () => {
         const response = await axios.get(`${HR_API_URL}/get-item-stock/${location.location}`);
         setItemStock(response.data.itemStock);
@@ -37,14 +36,10 @@ const ApproveItems = () => {
         const formattedDate = date.toLocaleString("en-US", options);
         return formattedDate;
     }
+
     const ApproveStock = async (id, orderFlag) => {
         try {
-            await axios.patch(`${DOC_API_URL}/approveStock/${id}`,
-                {
-                    docApproval_flag: true,
-                    approval_flag_new: false
-                }
-            )
+
             if (orderFlag === true) {
                 const orderApprove = orderId.filter((order) => order?.item === id);
 
@@ -52,6 +47,26 @@ const ApproveItems = () => {
                     doctor_Approval_Flag: true
                 });
             }
+            await axios.patch(`${DOC_API_URL}/approveStock/${id}`,
+                {
+                    docApproval_flag: true,
+                    approval_flag_new: false
+                }
+            )
+            setSubmit(prev => !prev);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    const approveAllStock = async () => {
+        try {
+            await axios.patch(`${DOC_API_URL}/approveAllStock`,
+                {
+                    docApproval_flag: true,
+                    approval_flag_new: false
+                }
+            );
             setSubmit(prev => !prev);
         } catch (error) {
             console.log(error.message);
@@ -72,7 +87,7 @@ const ApproveItems = () => {
     }, [submit]);
 
     const itemStockList = itemStock.filter((item) => item?.itemName.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+
     return (
         <>
             <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen overflow-hidden w-full'>
@@ -84,7 +99,10 @@ const ApproveItems = () => {
                     </div>
                     <h1 className='font-semibold mt-10'>Item : </h1>
                     <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search for Items here' />
-                    {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
+                    <div className='flex justify-end'>
+                        <button onClick={() => approveAllStock()} className='bg-blue-500 py-1 px-3 rounded-md text-white mt-10 mb-3 cursor-pointer font-semibold' >Approve all Stock</button>
+                    </div>
+                    {loading ? <LuLoaderCircle className='animate-spin mx-auto' /> : <div className="overflow-x-auto rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] text-sm text-white">
                                 <tr >

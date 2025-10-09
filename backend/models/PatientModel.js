@@ -58,7 +58,7 @@ const PatientSchema = new mongoose.Schema({
     referredBy: { type: String},
     password: { type: String, required:true },
     branch: { type: String, required: true },
-    
+    patientCard: { type:String },
    
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

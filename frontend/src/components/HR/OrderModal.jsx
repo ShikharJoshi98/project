@@ -118,6 +118,7 @@ const OrderModal = ({ onClose }) => {
     }
   }
   const receiveOrder = async (OrderId, ItemId, item) => {
+
     await axios.patch(`${HR_API_URL}/updateReceivedOrder/${OrderId}/${ItemId}`, {
       receivedQuantity,
       order_Delivered_Flag: true,

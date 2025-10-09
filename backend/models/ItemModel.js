@@ -11,6 +11,7 @@ const unitSchema = new mongoose.Schema({
 const StockSchema = new mongoose.Schema({
     itemName: { type: String, required: true },
     unit: { type: String, required: true },
+    orderId: {type:String},
     quantity: { type: Number, required: true },
     branch: { type: String, required: true },
     docApproval_flag: { type: Boolean, default: false },
@@ -42,7 +43,7 @@ const orderSchema = new mongoose.Schema({
         }
     ],
     orderDate: { type: String },
-    
+    order_payment_flag: { type:Boolean , default:false },
     Bill: [
         {
             imageUrl: { type: String }
@@ -56,9 +57,22 @@ const orderIdSchema = new mongoose.Schema({
     item:{ type: mongoose.Schema.Types.ObjectId, ref: 'ItemStock' },
 })
 
+const orderPaymentDetails = new mongoose.Schema({
+    order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+    transactionDetails: { type: String },
+    chequeNo: { type: String },
+    date: { type: String },
+    billNo: { type: String },
+    totalBill: { type: String },
+    amountPaid: { type: String },
+    modeOfPayment: { type: String },
+    details_added_flag:{type:Boolean,default:false}
+})
+
 export const Order = mongoose.model('Order', orderSchema);
 export const ItemStock = mongoose.model('ItemStock', StockSchema);
 export const Item = mongoose.model('Item', itemSchema);
 export const Unit = mongoose.model('Unit', unitSchema);
 export const OrderId = mongoose.model('OrderId', orderIdSchema);
+export const OrderPaymentDetails = mongoose.model('OrderPaymentDetails', orderPaymentDetails);
 

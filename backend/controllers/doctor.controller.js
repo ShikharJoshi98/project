@@ -8,10 +8,13 @@ import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
 import { billPayment, fees } from "../models/PaymentModel.js";
-import { ItemStock } from "../models/ItemModel.js";
-import { MedicalStock } from "../models/MedicineModel.js";
+import { ItemStock, Order, OrderPaymentDetails } from "../models/ItemModel.js";
+import { medicalOrder, MedicalStock, OrderMedicalPaymentDetails } from "../models/MedicineModel.js";
 import { BillInvoice, Certificate } from "../models/CertificateModel.js";
 import { updateDate } from "../utils/todayDate.js";
+import { receiveOrderHelper } from "./HR.controller.js";
+import { ItemVendor } from "../models/VendorModel.js";
+import sendWhatsAppMessage, { sendPaymentEmail } from "../utils/sendPaymentDetails.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -77,10 +80,10 @@ export const updateTaskStatus = async (req, res) => {
 export const leaveDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         const leaves = await LeaveApplication.find().sort({ createdAt: -1 });
         const userLeaves = await LeaveApplication.find({ username: id }).sort({ createdAt: -1 });
-        
+
         res.json({
             success: true,
             leaves,
@@ -139,7 +142,7 @@ export const createNewAppointment = async (req, res) => {//
         }
         const pastAppointment = await Appointment.find({ PatientCase: PatientCase.toString() });
         let newAppointment;
-       
+
         if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length - 1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
                 date: convertedDate,
@@ -231,8 +234,8 @@ export const getAppointments = async (req, res) => {//
             appointmentType: appointmentSection,
             Doctor: doctor
         })
-        .populate('PatientCase')
-        .populate('Doctor');
+            .populate('PatientCase')
+            .populate('Doctor');
 
         const counts = {
             newAppointmentLength: 0,
@@ -529,7 +532,7 @@ export const addHealthRecord = async (req, res) => {
     try {
         const { id } = req.params;
         const { weight, bloodPressure, date } = req.body;
-        
+
         const patient = await Patient.findById(id);
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
@@ -574,7 +577,7 @@ export const uploadFollowUpImage = async (req, res) => {
         const patient = await Patient.findById(id);
 
         if (!patient) {
-            
+
             return res.status(404).json({ message: "Patient not found" });
         }
 
@@ -956,7 +959,7 @@ export const addOtherPrescriptionPrice = async (req, res) => {
 
 export const getOtherPrescriptionPrice = async (req, res) => {
     try {
-        const prices = await otherPrescriptionPrice.find().sort({price:1});
+        const prices = await otherPrescriptionPrice.find().sort({ price: 1 });
         res.json({
             prices,
             success: true
@@ -1174,7 +1177,7 @@ export const addPresentComplaintScribble = async (req, res) => {
     try {
         const id = req.params.id;
         const image = req.body.savedImage;
-        
+
         const date = new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
@@ -1401,8 +1404,8 @@ export const getInvestigationAdvised = async (req, res) => {
 
 export const getSelectedTest = async (req, res) => {
     try {
-        const { id } = req.params; 
-         console.log("hit")
+        const { id } = req.params;
+        console.log("hit")
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
 
@@ -2131,7 +2134,7 @@ export const deleteThermalReaction = async (req, res) => {
     try {
         const { id, idx } = req.params;
         const thermalReactionData = await ThermalReactionPatient.findOne({ patient: id });
-        
+
         if (idx !== -1) {
             thermalReactionData.diseases.splice(idx, 1);
             await thermalReactionData.save();
@@ -2150,7 +2153,7 @@ export const deleteThermalReaction = async (req, res) => {
 
 export const addMiasmPatient = async (req, res) => {
     const { id } = req.params;
-    
+
     const date = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "2-digit",
@@ -2525,7 +2528,7 @@ export const addConsultationPrice = async (req, res) => {
 
 export const getConsultationPrice = async (req, res) => {
     try {
-        const prices = await consultationChargesPrice.find().sort({price:1});
+        const prices = await consultationChargesPrice.find().sort({ price: 1 });
         res.json({
             prices,
             success: true
@@ -2559,7 +2562,7 @@ export const updatePayment = async (req, res) => {
     try {
         const { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier } = req.body;
         const filter = {};
-         const updatedPayment = await fees.findOneAndUpdate(
+        const updatedPayment = await fees.findOneAndUpdate(
             filter,
             { $set: { newCase, sevenDays, fifteenDays, twentyOneDays, thirtyDays, fortyFiveDays, twoMonths, threeMonths, Courier } },
             { upsert: true, new: true }
@@ -2640,7 +2643,7 @@ export const getBill = async (req, res) => {
                 medicineCharges += Fees.threeMonths
             }
         }
-        
+
         res.json({
             medicineCharges,
             newCaseCharge,
@@ -2660,7 +2663,7 @@ export const getBill = async (req, res) => {
 export const addPayment = async (req, res) => {
     try {
         const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag } = req.body;
-        
+
         const { id } = req.params;
         let formattedDate;
         const updateDate = () => {
@@ -2741,10 +2744,9 @@ export const getPaymentBill = async (req, res) => {
 
 //stock
 
-export const approveStock = async (req, res) => {
+const updateStockApproval = async (id, flags) => {
     try {
-        const { id } = req.params;
-        const { docApproval_flag, approval_flag_new, approval_flag_issue, approval_flag_receive } = req.body;
+        const { docApproval_flag, approval_flag_new, approval_flag_issue, approval_flag_receive } = flags;
         const updated = {};
         if (docApproval_flag !== undefined) {
             updated.docApproval_flag = docApproval_flag;
@@ -2758,9 +2760,17 @@ export const approveStock = async (req, res) => {
         if (approval_flag_receive !== undefined) {
             updated.approval_flag_receive = approval_flag_receive;
         }
-        const stock = await ItemStock.findByIdAndUpdate(id,
+        return await ItemStock.findByIdAndUpdate(id,
             updated
         )
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export const approveStock = async (req, res) => {
+    try {
+        const stock = await updateStockApproval(req.params.id, req.body);
         res.json({
             message: 'Approved by Doctor',
             success: true
@@ -2773,10 +2783,32 @@ export const approveStock = async (req, res) => {
     }
 }
 
-export const approveMedicalStock = async (req, res) => {
+export const approveAllStock = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { docApproval_flag, approval_flag_new, approval_flag_issue, approval_flag_receive } = req.body;
+        const items = await ItemStock.find();
+        await Promise.all(items.map(async (item, _) => {
+            await updateStockApproval(item?.id, req.body);
+        }));
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Approved All",
+            });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                success: false,
+                message: error.message
+            });
+    }
+}
+
+const updateMedicalStockApproval = async (id, flags) => {
+    try {
+
+        const { docApproval_flag, approval_flag_new, approval_flag_issue, approval_flag_receive } = flags;
         const updated = {};
         if (docApproval_flag !== undefined) {
             updated.docApproval_flag = docApproval_flag;
@@ -2790,9 +2822,17 @@ export const approveMedicalStock = async (req, res) => {
         if (approval_flag_receive !== undefined) {
             updated.approval_flag_receive = approval_flag_receive;
         }
-        const stock = await MedicalStock.findByIdAndUpdate(id,
+        return await MedicalStock.findByIdAndUpdate(id,
             updated
         )
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export const approveMedicalStock = async (req, res) => {
+    try {
+        const stock = await updateMedicalStockApproval(req.params.id, req.body);
         res.json({
             message: 'Approved by Doctor',
             success: true
@@ -2802,6 +2842,160 @@ export const approveMedicalStock = async (req, res) => {
             message: error.message,
             success: false
         })
+    }
+}
+
+export const approveAllMedicalStock = async (req, res) => {
+    try {
+        const medicines = await MedicalStock.find();
+        await Promise.all(medicines.map(async (medicine, _) => {
+            await updateMedicalStockApproval(medicine?.id, req.body);
+        }));
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Approved All",
+            });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                success: false,
+                message: error.message
+            });
+    }
+}
+
+//orderPaymentDetails
+
+export const addOrderPaymentDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { transactionDetails, chequeNo, date, billNo, totalBill, amountPaid, modeOfPayment } = req.body;
+
+        const paymentDetails = await OrderPaymentDetails.create({
+            order: id,
+            transactionDetails,
+            chequeNo,
+            date,
+            billNo,
+            totalBill,
+            amountPaid,
+            modeOfPayment,
+            details_added_flag: true
+        });
+
+        const order = await Order.findById(id);
+        if (order) {
+            order.order_payment_flag = true;
+        }
+        await order.save();
+        const vendors = order?.formRows.map((row, _) => {
+            return row?.vendor[0];
+        });
+        vendors.map(async (vendor, _) => {
+            const vendorPerson = await ItemVendor.findOne({ vendorname: vendor });
+            sendPaymentEmail(vendorPerson?.email, req.body);
+            sendWhatsAppMessage(req.body,vendorPerson?.contact);
+        })
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: 'Added Payment Details'
+            });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                success: false,
+                message: error.message
+            });
+    }
+}
+
+export const getOrderPaymentDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const details = await OrderPaymentDetails.findOne({
+            order: id
+        }).populate('order');
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Fetched details successfully",
+                details
+            });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                success: false,
+                message: error.message
+            });
+    }
+}
+
+export const addMedicalOrderPaymentDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { transactionDetails, chequeNo, date, billNo, totalBill, amountPaid, modeOfPayment } = req.body;
+
+        const paymentDetails = await OrderMedicalPaymentDetails.create({
+            order: id,
+            transactionDetails,
+            chequeNo,
+            date,
+            billNo,
+            totalBill,
+            amountPaid,
+            modeOfPayment,
+            details_added_flag: true
+        });
+
+        const order = await medicalOrder.findById(id);
+        if (order) {
+            order.order_payment_flag = true;
+        }
+        await order.save();
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: 'Added Payment Details'
+            });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                success: false,
+                message: error.message
+            });
+    }
+}
+
+export const getMedicalOrderPaymentDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const details = await OrderMedicalPaymentDetails.findOne({
+            order: id
+        });
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Fetched details successfully",
+                details
+            });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                success: false,
+                message: error.message
+            });
     }
 }
 
@@ -2809,9 +3003,9 @@ export const approveMedicalStock = async (req, res) => {
 
 export const addBillInvoice = async (req, res) => {
     try {
-        let { patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee } = req.body;
+        let { title, patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee } = req.body;
         let formattedDate = '';
-
+        console.log(title);
         const updateDate = () => {
             const today = new Date();
             const day = String(today.getDate()).padStart(2, '0');
@@ -2827,7 +3021,7 @@ export const addBillInvoice = async (req, res) => {
         startDate = convertDateFormat(startDate);
         endDate = convertDateFormat(endDate);
         await BillInvoice.create({
-            patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee, date: formattedDate
+            title, patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee, date: formattedDate
         });
         res.json({
             success: true,

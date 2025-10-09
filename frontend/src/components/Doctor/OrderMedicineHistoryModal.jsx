@@ -5,29 +5,32 @@ import BillModal from './BillModal';
 import { LuLoaderCircle } from 'react-icons/lu';
 import { CiSearch } from 'react-icons/ci';
 import { RxCross2 } from 'react-icons/rx';
+import OrderPaymentModal from './OrderPaymentModal';
 
 const OrderMedicineHistoryModal = ({ location, onClose }) => {
     const { getMedicalOrders, medicalOrders } = useStore();
     const [billModal, setBillModal] = useState(false);
     const [orderId, setOrderId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [orderPaymentModal, setOrderPaymentModal] = useState(false);
+    const [submit, setSubmit] = useState(false);
 
     useEffect(() => {
-       const timeout = setTimeout(() => {
-      setLoading(true);
-    }, 200);
-           getMedicalOrders(location).finally(() => {
-      clearTimeout(timeout);
-      setLoading(false);
-    });;
-       }, [getMedicalOrders]);
-   
-       const filteredOrders = medicalOrders.filter(order =>
-           order.formRows.some(row =>
-               row.vendor.some(v => v.toLowerCase().includes(searchTerm))
-           )
-       );
+        const timeout = setTimeout(() => {
+            setLoading(true);
+        }, 200);
+        getMedicalOrders(location).finally(() => {
+            clearTimeout(timeout);
+            setLoading(false);
+        });;
+    }, [getMedicalOrders, submit]);
+
+    const filteredOrders = medicalOrders.filter(order =>
+        order.formRows.some(row =>
+            row.vendor.some(v => v.toLowerCase().includes(searchTerm))
+        )
+    );
 
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
@@ -35,7 +38,7 @@ const OrderMedicineHistoryModal = ({ location, onClose }) => {
                 <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
                 <h1 className="text-blue-500 text-2xl md:text-4xl mb-10 text-center font-semibold">Order History {location}</h1>
                 <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search by Vendor' />
-                {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
+                {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >
@@ -46,6 +49,7 @@ const OrderMedicineHistoryModal = ({ location, onClose }) => {
                                 <th className="px-2 py-4 ">Expected Delivery Date</th>
                                 <th className="px-2 py-4 ">Order Status</th>
                                 <th className="px-2 py-4 ">Doctor's Approval</th>
+                                <th className="px-2 py-4 ">Add Payment Details</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,6 +73,7 @@ const OrderMedicineHistoryModal = ({ location, onClose }) => {
                                         <td className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
                                         <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag === true ? 'Delivered' : 'Pending'}</span></td>
                                         <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.doctor_Approval_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.doctor_Approval_Flag === true ? 'Approved' : 'Pending'}</span></td>
+                                        <td className="py-2 px-1 border text-center"><button onClick={() => { setOrderPaymentModal(true); setOrderId(order?._id) }} className='bg-blue-500 text-white py-1 px-3 rounded-md font-semibold cursor-pointer'>{order?.order_payment_flag === true ? 'View Details' : 'Add Payment Details'}</button></td>
                                     </tr>
                                 ))
                             )}
@@ -77,6 +82,7 @@ const OrderMedicineHistoryModal = ({ location, onClose }) => {
                 </div>}
             </div>
             {billModal && <BillModal onClose={() => setBillModal(false)} orderId={orderId} />}
+            {orderPaymentModal && <OrderPaymentModal setSubmit={setSubmit} type='medicine' onClose={() => setOrderPaymentModal(false)} orderId={orderId} />}
         </div>
     )
 }

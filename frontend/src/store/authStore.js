@@ -12,10 +12,10 @@ export const useAuthStore = create((set) =>( {
     isLoading: false,
     isCheckingAuth: true,
     message:null,
-    register: async (fullname, phone, Altphone, email, username, password, branch) => {
+    register: async (patientCard,fullname, phone, Altphone, email, username, password, branch) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await axios.post(`${API_URL}/register`, { fullname, phone, Altphone, email, username, password, branch });
+            const response = await axios.post(`${API_URL}/register`, { patientCard, fullname, phone, Altphone, email, username, password, branch });
             set({ user: response.data.User, isAuthenticated: true, isLoading: false });
         } catch (error) {
             set({ error: error.response.data.message || "Error signing up", isLoading: false });

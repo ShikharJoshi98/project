@@ -61,7 +61,7 @@ function numberToWords(num) {
     return result;
 }
 
-export const generateBillInvoicePdf = (patient, today, data) => {
+export const generateBillInvoicePdf = (patient,title, today, data) => {
     const doc = new jsPDF();
     patient.casePaperNo = String(patient?.casePaperNo).split('-');
     doc.addImage(img, 'JPEG', 0, 0, 210, 297);
@@ -69,7 +69,7 @@ export const generateBillInvoicePdf = (patient, today, data) => {
     doc.text('D-' + patient.casePaperNo[1], 52, 67);
     doc.text(today, 162, 67);
     doc.setFontSize(16);
-    doc.text(patient.fullname, 25, 134);
+    doc.text(`${title} ${patient.fullname}`, 25, 134);
     doc.setFontSize(12);
     doc.text('From:', 105, 134);
     doc.setFontSize(13);
@@ -92,14 +92,14 @@ export const generateBillInvoicePdf = (patient, today, data) => {
     data?.medicineName && doc.text(`Rx ${data.medicineName}`, 27, 215);
     doc.text(`Rs ${parseInt(data.medicineFee) + parseInt(data.consultingFee)}`, 165, 230);
     doc.setFontSize(17);
-    doc.text(`${numberToWords(parseInt(data.medicineFee) + parseInt(data.consultingFee))} Only`, 75, 241);
+    doc.text(`${numberToWords(parseInt(data.medicineFee) + parseInt(data.consultingFee))} Only`, 75, 241).splitTextToSize(135);
     const pdfBlob = doc.output("blob");
     const pdfUrl = URL.createObjectURL(pdfBlob);
 
     window.open(pdfUrl, "_blank");
 }
 
-export const generatePreviousIssuedInvoice = (patient, today, data) => {
+export const generatePreviousIssuedInvoice = (patient,title="", today, data) => {
     const doc = new jsPDF();
     patient.casePaperNo = String(patient?.casePaperNo).split('-');
     doc.addImage(img, 'JPEG', 0, 0, 210, 297);
@@ -107,7 +107,7 @@ export const generatePreviousIssuedInvoice = (patient, today, data) => {
     doc.text('D-' + patient.casePaperNo[1], 52, 67);
     doc.text(today, 162, 67);
     doc.setFontSize(16);
-    doc.text(patient.fullname, 25, 134);
+    doc.text(`${title} ${patient.fullname}`, 25, 134);
     doc.setFontSize(12);
     doc.text('From:', 105, 134);
     doc.setFontSize(13);
@@ -129,8 +129,12 @@ export const generatePreviousIssuedInvoice = (patient, today, data) => {
     doc.setFontSize(14);
     data?.medicineName && doc.text(`Rx ${data.medicineName}`, 27, 215);
     doc.text(`Rs ${parseInt(data.medicineFee) + parseInt(data.consultingFee)}`, 165, 230);
-    doc.setFontSize(17);
-    doc.text(`${numberToWords(parseInt(data.medicineFee) + parseInt(data.consultingFee))} Only`, 75, 241);
+    const totalAmount = parseInt(data.medicineFee) + parseInt(data.consultingFee);
+const amountWords = `${numberToWords(totalAmount)} Only`;
+const splitText = doc.splitTextToSize(amountWords, 110);
+
+doc.setFontSize(16);
+doc.text(splitText, 75, 241);
     const pdfBlob = doc.output("blob");
     const pdfUrl = URL.createObjectURL(pdfBlob);
 
@@ -271,7 +275,9 @@ export const generateFitnessCertificate = (details, patient, user) => {
   doc.line(x, y + 2, x + textWidth, y + 2);
 
   // Main paragraph
-  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is physically and mentally fit to do his/her activity properly.`;
+  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} age ${
+    patient.age ? patient.age : '0'
+  } is physically and mentally fit to do his/her activity properly.`;
 
   // Apply custom line spacing
   doc.setFontSize(14);
@@ -319,7 +325,9 @@ export const generateUnfitCertificate = (details, patient, user) => {
   doc.line(x, y + 2, x + textWidth, y + 2);
 
   // Main paragraph
-  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} is suffering from ${
+  const paragraph = `This is to certify that Mr/Mrs/Miss/Master ${patient.fullname} ${
+    patient.age ? patient.age : '0'
+  } is suffering from ${
     details.diagnoseOne && details.diagnoseTwo && details.diagnoseThree
       ? `${details.diagnoseOne}, ${details.diagnoseTwo} and ${details.diagnoseThree}`
       : details.diagnoseOne && details.diagnoseTwo

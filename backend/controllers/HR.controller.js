@@ -309,6 +309,18 @@ export const add_item_stock = async (req, res) => {
         if (!itemexists || !unitexists) {
             return res.json({ success: false, message: "Stock does not have these" });
         }
+        const stockExists = await ItemStock.findOne({
+            itemName
+        });
+        if (stockExists) {
+            return res
+                .status(200)
+                .json({
+                    success: false,
+                    message: "Item already added"
+                });
+        }        
+        
         const newStock = new ItemStock({
             itemName,
             unit,
@@ -404,6 +416,7 @@ export const updateItemStock = async (req, res) => {
 
 export const addOrderId = async (req, res) => {
     try {
+        
         const { orderID, itemID, item } = req.body;
         await OrderId.create({ order: orderID, itemId: itemID, item: item });
         res.json({
@@ -480,11 +493,12 @@ export const get_Item_Order = async (req, res) => {
     }
 }
 
-export const updateReceivedOrder = async (req, res) => {
+export const receiveOrderHelper = async (itemId,orderId,data) => {
     try {
-        const { itemId, orderId } = req.params;
-        const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag, received_date } = req.body;
+        const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag, received_date } = data;
+       
         const order = await Order.findById(orderId);
+        
         const item = order?.formRows.filter((order) => order?._id.toString() === itemId);
 
         if (receivedQuantity != undefined) {
@@ -510,9 +524,20 @@ export const updateReceivedOrder = async (req, res) => {
         await order.save();
 
         const orderIdDelete = await OrderId.findOneAndDelete({ order: orderId });
+        return item[0];
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export const updateReceivedOrder = async (req, res) => {
+    try {
+        const { itemId, orderId } = req.params;
+       
+        const item = await receiveOrderHelper(itemId, orderId, req.body);
 
         res.json({
-            items: item[0]
+            items: item
         });
     } catch (error) {
         res.json({

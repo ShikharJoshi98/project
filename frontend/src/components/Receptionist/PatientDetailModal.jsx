@@ -2,9 +2,10 @@ import Input from '../Input';
 import { LuCheck, LuLock } from 'react-icons/lu';
 import { RxCross2 } from 'react-icons/rx';
 import { FaUser } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const PatientDetailModal = ({ username, password, onClose }) => {
-
+    const navigate = useNavigate();
     const copyToClipboard = async (text) => {
         try {
             await navigator.clipboard.writeText(text);
@@ -18,19 +19,20 @@ const PatientDetailModal = ({ username, password, onClose }) => {
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] lg:max-w-[50vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
                 <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
-                <h1 className="text-blue-500 text-2xl flex items-center justify-center gap-3 md:text-3xl mb-6 text-center font-semibold">Patient Registered <div className='bg-blue-500 text-white rounded-full flex items-center justify-center p-1'><LuCheck/></div></h1>
+                <h1 className="text-blue-500 text-2xl flex items-center justify-center gap-3 md:text-3xl mb-6 text-center font-semibold">Patient Registered <div className='bg-blue-500 text-white rounded-full flex items-center justify-center p-1'><LuCheck /></div></h1>
                 <div className='flex flex-col gap-5'>
                     <div className='flex gap-5 items-center'>
                         <p>Username</p>
                         <Input icon={FaUser} defaultValue={username} disabled />
-                        <div title='Copy' onClick={()=>copyToClipboard(username)} className='bg-blue-500 p-2 rounded-md text-white cursor-pointer'>Copy</div>
+                        <div title='Copy' onClick={() => copyToClipboard(username)} className='bg-blue-500 p-2 rounded-md text-white cursor-pointer'>Copy</div>
                     </div>
                     <div className='flex gap-5 items-center'>
                         <p>Password</p>
                         <Input icon={LuLock} defaultValue={password} disabled />
-                        <div title='Copy' onClick={()=>copyToClipboard(password)} className='bg-blue-500 p-2 rounded-md text-white cursor-pointer'>Copy</div>
+                        <div title='Copy' onClick={() => copyToClipboard(password)} className='bg-blue-500 p-2 rounded-md text-white cursor-pointer'>Copy</div>
                     </div>
                 </div>
+                <button onClick={() => navigate('/login')} className='bg-blue-500 mx-auto mt-10 font-semibold text-white text-xl rounded-md py-2 px-6 cursor-pointer'>Go to Login</button>
             </div>
         </div>
     )

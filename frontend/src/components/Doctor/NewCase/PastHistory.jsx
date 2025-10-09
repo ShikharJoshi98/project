@@ -93,7 +93,7 @@ const PastHistory = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1>Duration*</h1>
-                        <Input icon={CiCalendar} onChange={handleInputChange} name="duration" value={formValues.duration} type="text" placeholder="Enter Number for Duration" required />
+                        <Input icon={CiCalendar} onChange={handleInputChange} name="duration" value={formValues.duration} type="text" placeholder="Enter Number for Duration" />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Duration Suffix* </h1>

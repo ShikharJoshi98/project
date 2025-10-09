@@ -18,11 +18,19 @@ const AddItemStockModal = ({ onClose }) => {
   }, [getUnits]);
   async function handleSubmit(e) {
     e.preventDefault();
-    await addItemStock(item, unit, quantity, user?.branch);
-    setitem('');
-    setunit('');
-    setquantity(0);
-    alert("Added stock");
+    const result = await addItemStock(item, unit, quantity, user?.branch);
+
+    if (result?.success) {
+      setitem('');
+      setunit('');
+      setquantity(0);
+      alert(result.message);
+    } else {
+      setitem('');
+      setunit('');
+      setquantity(0);
+      alert(result?.message);
+    }
   }
   return (
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">

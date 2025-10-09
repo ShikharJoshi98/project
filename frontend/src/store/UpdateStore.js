@@ -10,7 +10,8 @@ export const useStore = create((set) => ({
   items: [],
   vendors: [],
   billImages: [],
-  billImagesLength:0,
+  billImagesLength: 0,
+  itemExistMessage:'',
   vendor: null,
   Item: null,
   stock: null,
@@ -142,10 +143,17 @@ export const useStore = create((set) => ({
   },
   addItemStock: async (itemName, unit, quantity,branch) => {
     try {
-      const response = await axios.post(`${HR_API_URL}/add-item-stock`, { itemName, unit, quantity,branch });
-      set({ stock: response.data.newStock });
+      const response = await axios.post(`${HR_API_URL}/add-item-stock`, { itemName, unit, quantity, branch });
+      if (response.data.message === "Item already added") {
+        return { success: false, message: response.data.message };
+      }
+      else {
+        set({ stock: response.data.newStock });
+        return { success: true, message: "Stock added successfully" };
+      }
     } catch (error) {
       console.log(error.message);
+      return { success: false, message: "Error adding stock" };
     }
   },
   getMedicalStock: async (branch) => {

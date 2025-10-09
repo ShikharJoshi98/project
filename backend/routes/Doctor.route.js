@@ -1,5 +1,5 @@
 import express from 'express';
-import { addBillInvoice, addBriefMindSymptomScribble, addCertificateDetails, addChiefComplaintScribble, addConsultationCharges, addConsultationPrice, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addInvestigationInfo, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addOtherPrescription, addOtherPrescriptionPrice, addPastHistoryPatient, addPayment, addPersonalHistoryScribble, addPresentComplaintPatient, addPresentComplaintScribble, addThermalReactionPatient, addWriteUpPatient, addWriteUpPresentComplaint, approveMedicalStock, approveStock, assignTask, createNewAppointment, deleteCaseImages, deleteCaseMaster, deleteConsultationCharges, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteInvestigationAdvised, deleteInvestigationInfo, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deleteOtherPrescription, deletePastHistoryPatient, deletePresentComplaintPatient, deletePresentComplaintScribble, deletePresentComplaintWriteUp, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, editCertificate, getAllPrescription, getAppointments, getBalanceDue, getBill, getBillInvoice, getBriefMindSymptomScribble, getCaseMaster, getCertificates, getChiefComplaintScribble, getConsultationCharges, getConsultationPrice, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getHistoryDetails, getHomeoBhagwat, getIncompleteAppointments, getInvestigationAdvised, getInvestigationInfo, getMentalCausativePatient, getMentalCausativeScribble, getMentalPersonalityPatient, getMentalPersonalityScribble, getMiasmPatient, getOtherPrescription, getOtherPrescriptionPrice, getPastHistoryPatient, getPatientImages, getPaymentBill, getPayments, getPersonalHistoryScribble, getPrescriptions, getPrescriptionToday, getPresentComplaintHistory, getPresentComplaintPatient, getPresentComplaintScribble, getSelectedTest, getThermalReactionPatient, getWriteUpPresentComplaint, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateAppointment, updateHomeoBhagwat, updateleave, updateOtherPrescription, updatePayment, updatePresInfo, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addBillInvoice, addBriefMindSymptomScribble, addCertificateDetails, addChiefComplaintScribble, addConsultationCharges, addConsultationPrice, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addInvestigationInfo, addMedicalOrderPaymentDetails, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addOrderPaymentDetails, addOtherPrescription, addOtherPrescriptionPrice, addPastHistoryPatient, addPayment, addPersonalHistoryScribble, addPresentComplaintPatient, addPresentComplaintScribble, addThermalReactionPatient, addWriteUpPatient, addWriteUpPresentComplaint, approveAllMedicalStock, approveAllStock, approveMedicalStock, approveStock, assignTask, createNewAppointment, deleteCaseImages, deleteCaseMaster, deleteConsultationCharges, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteInvestigationAdvised, deleteInvestigationInfo, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deleteOtherPrescription, deletePastHistoryPatient, deletePresentComplaintPatient, deletePresentComplaintScribble, deletePresentComplaintWriteUp, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, editCertificate, getAllPrescription, getAppointments, getBalanceDue, getBill, getBillInvoice, getBriefMindSymptomScribble, getCaseMaster, getCertificates, getChiefComplaintScribble, getConsultationCharges, getConsultationPrice, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getHistoryDetails, getHomeoBhagwat, getIncompleteAppointments, getInvestigationAdvised, getInvestigationInfo, getMedicalOrderPaymentDetails, getMentalCausativePatient, getMentalCausativeScribble, getMentalPersonalityPatient, getMentalPersonalityScribble, getMiasmPatient, getOrderPaymentDetails, getOtherPrescription, getOtherPrescriptionPrice, getPastHistoryPatient, getPatientImages, getPaymentBill, getPayments, getPersonalHistoryScribble, getPrescriptions, getPrescriptionToday, getPresentComplaintHistory, getPresentComplaintPatient, getPresentComplaintScribble, getSelectedTest, getThermalReactionPatient, getWriteUpPresentComplaint, getWriteUpUpdate, HomeoBhagwat, leaveDetails, taskDetails, updateAppointment, updateHomeoBhagwat, updateleave, updateOtherPrescription, updatePayment, updatePresInfo, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 const storage = multer.memoryStorage();
@@ -78,6 +78,7 @@ Docrouter.post("/add-follow-up-patient/:id", upload.single("savedImage"), addFol
 Docrouter.post("/add-write-up-patient/:id", addWriteUpPatient);
 Docrouter.get("/getHistoryDetails/:id", getHistoryDetails);
 Docrouter.get('/getPresentComplaint/:id', getPresentComplaintHistory);
+
 //get data to edit write up patient
 Docrouter.get('/get-write-up-update/:id', getWriteUpUpdate);
 Docrouter.delete('/patient/:patientId/write-up-delete/:imageId', deleteWriteUp);
@@ -152,9 +153,12 @@ Docrouter.get('/getBalanceDue/:id', getBalanceDue);
 
 //item-stock
 Docrouter.patch('/approveStock/:id', approveStock);
+Docrouter.patch('/approveAllStock',approveAllStock);
 
 //medical-stock
-Docrouter.patch('/approveMedicalStock/:id', approveMedicalStock)
+Docrouter.patch('/approveMedicalStock/:id', approveMedicalStock);
+Docrouter.patch('/approveAllMedicalStock',approveAllMedicalStock);
+
 
 //bill-invoice
 Docrouter.post('/addBillInvoice', addBillInvoice);
@@ -164,5 +168,14 @@ Docrouter.get('/getBillInvoices', getBillInvoice);
 Docrouter.post('/postCertificate', addCertificateDetails);
 Docrouter.get('/getCertificates', getCertificates);
 Docrouter.patch('/updateCertificate/:id', editCertificate);
+
+//orderPayment
+Docrouter.post('/addPaymentDetails/:id', addOrderPaymentDetails);
+Docrouter.get('/getOrderPaymentDetails/:id', getOrderPaymentDetails);
+
+//medicalOrderPayment
+Docrouter.post('/addMedicalPaymentDetails/:id', addMedicalOrderPaymentDetails);
+Docrouter.get('/getMedicalOrderPaymentDetails/:id', getMedicalOrderPaymentDetails);
+
 
 export default Docrouter

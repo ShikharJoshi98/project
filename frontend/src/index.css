@@ -12,3 +12,8 @@
   touch-action: none;
 }
 
+.my_toast{
+  background-color: #001f3f;
+  color: white;
+  font-size: 16px;
+}

@@ -6,8 +6,9 @@ import { RxCross2 } from 'react-icons/rx';
 
 const AssignTaskModal = ({ onClose }) => {
   const { getDetails, employees } = useStore();
-  const { addTask, tasks, getTasks, DeleteTask,toggleTaskSubmit } = docStore();
-  const filteredEmployees = employees.filter(employee => employee?.role != 'doctor');
+  const { addTask, tasks, getTasks, DeleteTask, toggleTaskSubmit } = docStore();
+  const [selectBranch, setSelectBranch] = useState('Dombivali');
+  const filteredEmployees = employees.filter(employee => employee?.role != 'doctor' && employee?.branch === selectBranch);
   const [Task, settask] = useState();
   const [isSubmit, setIsSubmit] = useState(false);
   const [username, setusername] = useState();
@@ -38,7 +39,7 @@ const AssignTaskModal = ({ onClose }) => {
 
   return (
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
-      <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
+      <div className="bg-[#e9ecef] max-h-[90vh] max-w-[97vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
         <button
           onClick={onClose}
           className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
@@ -50,7 +51,9 @@ const AssignTaskModal = ({ onClose }) => {
         </h1>
         <div className="flex flex-col  md:justify-around md:flex-row ">
           <div className="bg-white p-5 rounded-lg md:w-96 ">
-            <h1 className='text-lg text-center font-semibold text-blue-600 mb-4'>Add Task</h1>
+            <div className='flex flex-col  gap-4 mt-4'>
+              <p className='text-black mb-2 text-lg font-semibold'>Select Branch:</p>
+              <div className='h-9 bg-[#c8c8ce] mx-auto rounded-[18px]'><button onClick={() => setSelectBranch('Dombivali')} className={`py-1 ${selectBranch === 'Dombivali' ? 'bg-blue-500 rounded-[18px] text-white' : ''} py-1.5 px-5 cursor-pointer`}>Dombivali</button><button onClick={() => setSelectBranch('Mulund')} className={`py-1.5 px-5 ${selectBranch === 'Mulund' ? 'bg-blue-500 rounded-[18px] text-white' : ''} cursor-pointer`}>Mulund</button></div></div>
             <form onSubmit={handleSubmit} >
               <div className='mb-3 '>
                 <h1 className="text-black mb-2 text-lg font-semibold">Task:</h1>

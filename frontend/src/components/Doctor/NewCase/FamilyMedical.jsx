@@ -66,24 +66,20 @@ const FamilyMedical = ({ complaint }) => {
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold'>Add {complaint}</h1>
                     <button type='button' onClick={() => { setFormValues({ patient: "", relation: "", anyOther: "", lifeStatus: "", age: "" }); setSelectedInvestigationOptions([]); }} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg text-white">Clear Form</button>
-                    <div className='flex flex-col gap-2'>
+                    {/* <div className='flex flex-col gap-2'>
                         <h1>Relation*</h1>
                         <div className='relative w-full '>
                             <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                 <FaUsers className="size-4 text-blue-500" />
                             </div>
                             <select onChange={handleInputChange} name="relation" value={formValues.relation} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled className='font-normal' >Please Select the Relation</option>
-                                <option value="Paternal Grand Father">Paternal Grand Father</option>
-                                <option value="Paternal Grand Mother">Paternal Grand Mother</option>
-                                <option value="Maternal Grand Father">Maternal Grand Father</option>
-                                <option value="Maternal Grand Mother">Maternal Grand Mother</option>
-                                <option value="Mother">Mother</option>
-                                <option value="Father">Father</option>
-                                <option value="Sister">Sister</option>
-                                <option value="Brother">Brother</option>
+
                             </select>
                         </div>
+                    </div> */}
+                    <div className='flex flex-col gap-2 '>
+                        <h1>Any Other</h1>
+                        <Input icon={FaUsers} onChange={handleInputChange} name="relation" value={formValues.relation} type="text" placeholder="Enter the relation" />
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1 >List of disease*</h1>
@@ -108,7 +104,7 @@ const FamilyMedical = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col gap-2'>
                         <h1>Age*</h1>
-                        <Input icon={CiUser} onChange={handleInputChange} name="age" value={formValues.age} type="text" placeholder="Enter Age" required />
+                        <Input icon={CiUser} onChange={handleInputChange} name="age" value={formValues.age} type="text" placeholder="Enter Age" />
                     </div>
                     <button className="bg-blue-500 block mx-auto transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>
                 </form>

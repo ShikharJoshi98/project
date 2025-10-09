@@ -42,7 +42,7 @@ const PreviousIssuedInvoice = () => {
                                     <td className='px-2 py-4 text-center'>{invoice?.patient?.casePaperNo}</td>
                                     <td className='px-2 py-4 text-center'>{invoice?.patient?.fullname}</td>
                                     <td className='px-2 py-4 text-center'>{invoice?.patient?.phone}</td>
-                                    <td className='px-2 py-4'><FaRegFilePdf size={35} onClick={() => generatePreviousIssuedInvoice(invoice?.patient, invoice?.date, invoice)} className='mx-auto bg-green-500 cursor-pointer text-white p-1 rounded-md' /></td>
+                                    <td className='px-2 py-4'><FaRegFilePdf size={35} onClick={() => generatePreviousIssuedInvoice(invoice?.patient, invoice?.title, invoice?.date, invoice)} className='mx-auto bg-green-500 cursor-pointer text-white p-1 rounded-md' /></td>
                                 </tr>
                             ))}
                         </tbody>

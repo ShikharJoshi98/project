@@ -13,7 +13,7 @@ const ThermalReaction = ({ complaint }) => {
     const { getCaseData, list, ThermalReactionData, getThermalReaction } = docStore();
     const [submit, setSubmit] = useState(false)
     const { id } = useParams();
-    
+
     useEffect(() => { getCaseData(complaint), getThermalReaction(id) },
         [getCaseData, getThermalReaction, submit]);
 
@@ -55,10 +55,10 @@ const ThermalReaction = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
                         {list.map((investigation, index) => (
-                            <>
-                                <h1 className='text-xl p-1' key={index}>{investigation?.name}</h1>
+                            <div key={index}>
+                                <h1 className='text-xl p-1'>{investigation?.name}</h1>
                                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
-                            </>
+                            </div>
                         ))}
                     </div>
                 </div>

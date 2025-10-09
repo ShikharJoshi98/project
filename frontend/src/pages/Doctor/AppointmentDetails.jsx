@@ -30,7 +30,10 @@ const AppointmentDetails = () => {
                     <h2>Balance : </h2>
                     <h2>{balanceDue?.dueBalance ? balanceDue?.dueBalance >= 0 ? `Rs ${balanceDue?.dueBalance} due` : `Rs ${balanceDue?.dueBalance} advance` : 'No Balance'}</h2>
                 </span>
-                {patient?.First_Appointment_Flag && <button onClick={() => navigate(`/new-case-details/${patient?._id}`)} className='bg-blue-500 text-white py-2 px-10 rounded-lg cursor-pointer font-semibold my-10 mx-auto flex items-center gap-5'>New Case <FaPen /></button>}
+                <div className='flex flex-col sm:flex-row items-center gap-4 justify-center my-10'>
+                    {patient?.First_Appointment_Flag && <button onClick={() => navigate(`/new-case-details/${patient?._id}`)} className='bg-blue-500 text-white py-2 px-10 rounded-lg cursor-pointer font-semibold flex items-center gap-5'>New Case <FaPen /></button>}
+                    <button onClick={() => navigate(`/appointment-details/${id}/report`)} className='bg-blue-500 text-white py-2 px-6 rounded-lg cursor-pointer font-semibold flex items-center gap-5'>Case Paper Report</button>
+                </div>
                 <div className='flex md:flex-row flex-col items-center md:items-start gap-2 mt-10'>
                     <div className='flex gap-3 w-full md:w-1/5  min-h-72 rounded-lg bg-gray-300 flex-col items-center justify-center'>
                         {

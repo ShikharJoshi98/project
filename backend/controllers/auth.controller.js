@@ -8,7 +8,7 @@ import { Employee } from "../models/EmployeeModel.js";
 
 export const register = async (req, res) => {
     try {
-        const { fullname, phone, Altphone, email, username, lastLogin, password, branch } = req.body;
+        const { patientCard,fullname, phone, Altphone, email, username, lastLogin, password, branch } = req.body;
         const isBranch = branch === 'Mulund' ? 'MUL' : 'DOM';
         const existUser = await Patient.findOne({ username });
         if (existUser) {
@@ -16,7 +16,7 @@ export const register = async (req, res) => {
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         const newUser = new Patient({
-            fullname, casePaperNo: `${isBranch}-NEW`, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
+            patientCard,fullname, casePaperNo: `${isBranch}-NEW`, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
         })
         await newUser.save();
         generateTokenAndSetCookie(res, newUser._id);

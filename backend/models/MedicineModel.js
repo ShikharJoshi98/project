@@ -45,6 +45,7 @@ const orderSchema = new mongoose.Schema({
             received_date: { type: String }
         }
     ],
+    order_payment_flag: {type:Boolean,default:false},
     orderDate: { type: String },
     Bill: [
         {
@@ -55,10 +56,21 @@ const orderSchema = new mongoose.Schema({
 
 const medicalOrderIdSchema = new mongoose.Schema({
     order: { type: mongoose.Schema.Types.ObjectId, ref: 'medicalOrder' },
-    medicineId: { type:String },
-    medicine:{ type: mongoose.Schema.Types.ObjectId, ref: 'MedicalStock' },
-})
+    medicineId: { type: String },
+    medicine: { type: mongoose.Schema.Types.ObjectId, ref: 'MedicalStock' },
+});
 
+const orderMedicinePaymentDetails = new mongoose.Schema({
+    order: { type: mongoose.Schema.Types.ObjectId, ref: 'medicalOrder' },
+    transactionDetails: { type: String },
+    chequeNo: { type: String },
+    date: { type: String },
+    billNo: { type: String },
+    totalBill: { type: String },
+    amountPaid: { type: String },
+    modeOfPayment: { type: String },
+    details_added_flag:{type:Boolean,default:false}
+})
 
 export const Medicine = mongoose.model('Medicine', medicineSchema);
 export const Potency = mongoose.model('Potency', potencySchema);
@@ -66,3 +78,5 @@ export const MedicalStock = mongoose.model('MedicalStock', MedicalStockSchema);
 export const medicalItem = mongoose.model('medicalItem', orderitemsschema);
 export const medicalOrder = mongoose.model('medicalOrder', orderSchema);
 export const MedicalOrderId = mongoose.model('MedicalOrderId', medicalOrderIdSchema);
+export const OrderMedicalPaymentDetails = mongoose.model('OrderMedicalPaymentDetails', orderMedicinePaymentDetails);
+

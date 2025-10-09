@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Input from '../components/Input';
 import { useAuthStore } from '../store/authStore';
 import { CiLocationOn, CiLock, CiMail, CiPhone, CiUser } from 'react-icons/ci';
-import { LuLoaderCircle } from 'react-icons/lu';
+import { LuImage, LuLoaderCircle } from 'react-icons/lu';
 import PatientDetailModal from '../components/Receptionist/PatientDetailModal';
 
 const Register = () => {
@@ -18,6 +18,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(true);
   const [showConfirmPassword, setConfirmShowPassword] = useState(true);
   const [branch, setBranch] = useState("");
+  const [patientCard, setPatientCard] = useState("");
   const [passerror, setError] = useState(false);
   const { register, error, isLoading } = useAuthStore();
   const [isPatientRegisterModalOpen, setPatientRegisterModalIsOpen] = useState(false);
@@ -32,7 +33,7 @@ const Register = () => {
       setError(false);
     }
     try {
-      await register(name, phone, altphone, email, username, pass, branch);
+      await register(patientCard, name, phone, altphone, email, username, pass, branch);
       setPatientRegisterModalIsOpen(true);
     }
     catch (error) {
@@ -46,6 +47,19 @@ const Register = () => {
     let num = String(newPhone);
     text = firstName + num.slice(num.length - 4);
     setUsername(text);
+  }
+  const handleImageUpload = (e) => {
+    const { name, files } = e.target;
+    if (name === "patientCard" && files && files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPatientCard(
+          reader.result
+        );
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   const resetForm = () => {
@@ -66,7 +80,14 @@ const Register = () => {
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'>Registration</span> Form</h1>
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
           <div className='flex flex-col gap-4 m-auto items-start'>
-            <Input icon={CiUser} type='text' required placeholder='Full Name*' value={name} onChange={(e) => { let newName = e.target.value; setName(newName); usernameCreator(newName, phone); }} />
+            <div className='flex flex-col gap-2 w-full'>
+              <h1>Upload Patient Card</h1>
+              <Input icon={LuImage} key={patientCard} name="patientCard" onChange={(e) => handleImageUpload(e)} type="file" />
+              {
+                patientCard &&
+                <img src={patientCard} className="h-20 w-20 object-contain border border-gray-300 rounded-md" />
+              }
+            </div>            <Input icon={CiUser} type='text' required placeholder='Full Name*' value={name} onChange={(e) => { let newName = e.target.value; setName(newName); usernameCreator(newName, phone); }} />
             <Input icon={CiPhone} type='tel' required placeholder='Phone Number*' value={phone} onChange={(e) => { let newPhone = e.target.value; setPhone(newPhone); usernameCreator(name, newPhone); }} />
             <Input icon={CiPhone} type='tel' placeholder='Alternative Phone Number (Optional)' value={altphone} onChange={(e) => setAltPhone(e.target.value)} />
             <Input icon={CiMail} type='email' required placeholder='Email Address*' value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -91,7 +112,7 @@ const Register = () => {
                 <CiLocationOn className="size-4 text-blue-500" />
               </div>
               <select onChange={(e) => { setBranch(e.target.value); }} value={branch} name="branch" required id="Branch" className='py-2 pl-9 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
-                <option value="" disabled selected>Select Branch*</option>
+                <option value="" disabled>Select Branch*</option>
                 <option value="Dombivali">Dombivali</option>
                 <option value="Mulund">Mulund</option>
               </select>

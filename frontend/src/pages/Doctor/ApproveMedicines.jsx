@@ -64,6 +64,21 @@ const ApproveMedicines = () => {
       console.error(error.message);
     }
   }
+
+  const approveAllMedicalStock = async () => {
+    try {
+      await axios.patch(`${DOC_API_URL}/approveAllMedicalStock`,
+        {
+          docApproval_flag: true,
+          approval_flag_new: false
+        }
+      );
+      setSubmit(prev => !prev);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   const filteredMedicalStock = medicalStock.filter((medicine) => {
     const matchesMedicine = searchTerm === '' || medicine?.medicineName === searchTerm;
     const matchesPotency = searchPotency === '' || medicine?.potency === searchPotency;
@@ -97,7 +112,10 @@ const ApproveMedicines = () => {
               ))}
             </select>
           </div>
-          {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
+          <div className='flex justify-end'>
+            <button onClick={() => approveAllMedicalStock()} className='bg-blue-500 py-1 px-3 rounded-md text-white mt-10 mb-3 cursor-pointer font-semibold' >Approve all Stock</button>
+          </div>
+          {loading ? <LuLoaderCircle className='animate-spin mx-auto' /> : <div className="overflow-x-auto rounded-lg">
             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
               <thead className="bg-[#337ab7] text-white">
                 <tr >

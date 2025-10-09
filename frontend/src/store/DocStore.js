@@ -59,7 +59,8 @@ export const docStore = create((set) => ({
     appointmentSection: "general",
     homeoBhagwatSection: "medicine",
     orderId: [],
-    medicalOrderId:[],
+    medicalOrderId: [],
+    orderPaymentDetails:[],
     setHomeoBhagwatSection: (newsection) => set({ homeoBhagwatSection: newsection }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
@@ -374,5 +375,13 @@ export const docStore = create((set) => ({
     getMedicalOrderId: async () => {
         const response = await axios.get(`${HR_API_URL}/getMedicalOrderId`);
         set({medicalOrderId: response.data.medicalOrder})
+    },
+    getOrderPaymentDetails: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getOrderPaymentDetails/${id}`);
+        set({ orderPaymentDetails: response.data.details });
+    },
+    getMedicalOrderPaymentDetails: async (id) => {
+        const response = await axios.get(`${DOC_API_URL}/getMedicalOrderPaymentDetails/${id}`);
+        set({ orderPaymentDetails: response.data.details });
     }
 }))

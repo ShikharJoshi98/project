@@ -32,7 +32,7 @@ const DiagnoseHistory = () => {
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl mb-10 sm:text-4xl'>Diagnose History</h1>
                 <Input onChange={(e) => setSearchTerm(e.target.value)} icon={MdMedicalInformation} placeholder='Search for Disease or Medicine here ..' />
                 <button onClick={() => generateDiagnoseHistory(filteredPrescriptions)} className='py-2 px-4 bg-green-500 cursor-pointer flex items-center gap-5 my-10 place-self-end font-semibold rounded-lg text-white'>Generate Pdf <FaFilePdf /></button>
-                {loading?<LuLoaderCircle className='animate-spin size-10 mx-auto mt-10'/>:<div className="overflow-x-auto mt-10 rounded-lg">
+                {loading ? <LuLoaderCircle className='animate-spin size-10 mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >
@@ -56,7 +56,7 @@ const DiagnoseHistory = () => {
                                         <td className="px-2 py-4 text-center">{pres?.medicine} {pres?.potency}</td>
                                         <td className="px-2 py-4 text-center">{pres?.prescription_date}</td>
                                         <td className="px-2 py-4 text-center">{pres?.start_date}</td>
-                                        <td className="px-2 py-4 text-center">{pres?.duration}</td>
+                                        <td className="px-2 py-4 text-center">{pres?.duration === '60' ? '2 Months' : pres?.duration === '90' ? '3 Months' : `${pres?.duration} days`}</td>
                                         <td className="px-2 py-4 text-center">{pres?.patient?.casePaperNo}</td>
                                         <td className="px-2 py-4 text-center">{pres?.patient?.fullname}</td>
                                         <td className="px-2 py-4 text-center"><button onClick={() => generateDiagnoseRow(pres)} className='text-white bg-green-500 p-2 cursor-pointer rounded-md'><FaFilePdf className='size-6' /></button></td>

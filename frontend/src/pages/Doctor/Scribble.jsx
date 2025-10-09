@@ -50,21 +50,23 @@ const Scribble = () => {
 
 
     return ReactDOM.createPortal(
-        <div className="h-screen flex flex-col">
-            <ToastContainer />
-            <div className="flex-1 border">
-                <Excalidraw
-                    excalidrawAPI={(api) => {
-                        excalidrawAPI.current = api;
-                    }}
-                />
+        <div className="bg-[rgb(248,249,250)] rounded-xl h-screen flex items-center justify-center">
+            <div className="h-screen flex flex-col w-[90vw]">
+                <ToastContainer toastClassName="my_toast" position='bottom-right' />
+                <div className="flex-1 border">
+                    <Excalidraw
+                        excalidrawAPI={(api) => {
+                            excalidrawAPI.current = api;
+                        }}
+                    />
+                </div>
+                <button
+                    onClick={handleSave}
+                    className="m-2 p-2 bg-blue-500 text-white rounded"
+                >
+                    Save
+                </button>
             </div>
-            <button
-                onClick={handleSave}
-                className="m-2 p-2 bg-blue-500 text-white rounded"
-            >
-                Save
-            </button>
         </div>,
         document.getElementById("modal-root")
     );

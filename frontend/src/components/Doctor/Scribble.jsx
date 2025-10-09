@@ -71,9 +71,9 @@ const Scribble = ({ complaint }) => {
 
     return (
         <div className="bg-[rgb(248,249,250)] rounded-xl">
-            <ToastContainer />
+            <ToastContainer toastClassName="my_toast" position='bottom-right' />
             <div className="h-screen flex flex-col">
-                <ToastContainer />
+                <ToastContainer toastClassName="my_toast" position='bottom-right' />
                 <div className="flex-1 border">
                     <Excalidraw
                         excalidrawAPI={(api) => {

@@ -17,6 +17,7 @@ const BillInvoice = () => {
     const [selectedDiagnosis, setSelecetedDiagnosis] = useState(null);
     const [billStatus, setBillStatus] = useState('first');
     const [formValues, setFormValues] = useState({
+        title: 'Mr.',
         patient: '',
         selectedDiagnosis: '',
         medicineName: '',
@@ -62,10 +63,12 @@ const BillInvoice = () => {
         e.preventDefault();
         formValues.patient = selectedPatient;
         formValues.selectedDiagnosis = selectedDiagnosis.label;
-        await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
+        console.log(formValues);
+        const name =
+            await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
         const patient = allPatients.filter((patient) => patient?._id === formValues.patient);
 
-        generateBillInvoicePdf(patient[0], todayDate, formValues);
+        generateBillInvoicePdf(patient[0], formValues.title, todayDate, formValues);
         setFormValues({
             patient: '',
             selectedDiagnosis: '',
@@ -77,7 +80,6 @@ const BillInvoice = () => {
         })
         setBillStatus('first');
     }
-
     return (
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden'>
             <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
@@ -85,6 +87,14 @@ const BillInvoice = () => {
                 <p className='text-red-500 mt-10 font-semibold '>Add Diagnoses and Medicines for Patient's For whom Invoice is to be generated.</p>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8  rounded-xl text-zinc-600   text-sm flex flex-col gap-5' >
                     {billStatus === 'first' && <div><div className='flex flex-col gap-2'>
+                        <h1>Select title</h1>
+                        <select onChange={handleInputChange} value={formValues.title} name='title' className='py-2 pl-3 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900' >
+                            <option value="Mr.">Mr.</option>
+                            <option value="Mrs.">Mrs.</option>
+                            <option value="Miss">Miss</option>
+                            <option value="Master">Master</option>
+                            <option value="Smt.">Smt.</option>
+                        </select>
                         <h1>Patient Case Paper Number : </h1>
                         <div className='relative w-full'>
                             <SearchSelect options={allPatients} setSelectedPatient={setSelectedPatient} />

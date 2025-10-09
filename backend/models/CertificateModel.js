@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const billInvoiceSchema = new mongoose.Schema({
+    title:{type:String},
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
     selectedDiagnosis: { type: String, required: true },
     medicineName: { type: String },

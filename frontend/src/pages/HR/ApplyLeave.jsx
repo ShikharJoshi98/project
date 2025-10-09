@@ -57,7 +57,7 @@ const ApplyLeave = () => {
         });
         return acc
     }, []);
-    console.log(approvedLeaves);
+
     const groupedLeaves = Object.values(leavesByMonth);
 
     const handleSubmit = async (e) => {
@@ -80,7 +80,7 @@ const ApplyLeave = () => {
     return (
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8  min-h-screen overflow-hidden w-full'>
             <div className='bg-[#e9ecef]  w-auto p-5 rounded-lg '>
-                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Leave Reports</h1>
+                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Apply Leave</h1>
                 <div className='flex md:flex-row flex-col md:items-start items-center mt-10 w-full'>
                     <form onSubmit={handleSubmit} className='md:w-1/3 w-full space-y-5'>
                         <h1 className='text-lg text-center font-semibold text-blue-600 mb-4'>Apply Leave</h1>

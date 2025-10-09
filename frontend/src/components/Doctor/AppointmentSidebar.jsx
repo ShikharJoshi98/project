@@ -24,8 +24,7 @@ const AppointmentSidebar = () => {
         <SidebarItem active={path.pathname === `/appointment-details/${location.id}/upload-case-image`} onClick={() => navigate(`upload-case-image`)} icon={<FaRegImage size={20} />} text={"Case Paper Images"} />
         <SidebarItem active={path.pathname === `/appointment-details/${location.id}/investigation`} onClick={() => navigate(`/appointment-details/${location.id}/investigation`)} icon={<FaMagnifyingGlass size={20} />} text={"Investigation"} />
         <SidebarItem active={path.pathname === `/appointment-details/${location.id}/upload-diagnosis-image`} onClick={() => navigate(`/appointment-details/${location.id}/upload-diagnosis-image`)} icon={<FaStethoscope size={20} />} text={"Report Images"} />
-        <SidebarItem active={path.pathname === `/appointment-details/${location.id}/report`} onClick={() => navigate(`/appointment-details/${location.id}/report`)} icon={<LuScrollText size={20} />} text={"Case Paper Report"} />
-        <SidebarItem active={path.pathname === `/appointment-details/${location.id}/audio-recorder`} onClick={() => navigate(`/appointment-details/${location.id}/audio-recorder`)} icon={<FaMicrophone size={20} />} text={"Record"} />
+        {/* <SidebarItem active={path.pathname === `/appointment-details/${location.id}/audio-recorder`} onClick={() => navigate(`/appointment-details/${location.id}/audio-recorder`)} icon={<FaMicrophone size={20} />} text={"Record"} /> */}
       </Sidebar>
       {isTaskModalOpen && <AssignTaskModal onClose={() => setTaskModalIsOpen(false)} />}
       {isLeaveModalOpen && <ApproveLeaveModal onClose={() => setLeaveModalIsOpen(false)} />}

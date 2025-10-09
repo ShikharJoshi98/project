@@ -171,6 +171,10 @@ function App() {
             <Route path="medicine-stock" element={<ProtectedRoute allowedRoles={['hr']}><MedicineStock /></ProtectedRoute>} />//--
             <Route path="task-details-HR" element={<ProtectedRoute allowedRoles={['hr']}><TaskDetails /></ProtectedRoute>} />//
             <Route path="apply-leave-HR" element={<ProtectedRoute allowedRoles={['hr']}><ApplyLeave /></ProtectedRoute>} />//
+            <Route path="bill-invoice" element={<ProtectedRoute allowedRoles={['hr']}><BillInvoice /></ProtectedRoute>} />//--
+            <Route path="previous-issued-invoice" element={<ProtectedRoute allowedRoles={['hr']}><PreviousIssuedInvoice /></ProtectedRoute>} />//--
+            <Route path="add-certificate" element={<ProtectedRoute allowedRoles={['hr']}><AddCertificate /></ProtectedRoute>} />//--
+            <Route path="previous-issued-certificate" element={<ProtectedRoute allowedRoles={['hr']}><PreviousIssuedCertificates /></ProtectedRoute>} />
             <Route path="all-courier/:location" element={<ProtectedRoute allowedRoles={['hr']}><CourierList /></ProtectedRoute>} />
             <Route path="collections-HR" element={<ProtectedRoute allowedRoles={['hr']}><Collections /></ProtectedRoute>} />//
             <Route path="HR-balance" element={<ProtectedRoute allowedRoles={['hr']}><BalanceHistory /></ProtectedRoute>} />//
@@ -187,6 +191,10 @@ function App() {
             <Route path="register-patient" element={<ProtectedRoute allowedRoles={['receptionist']}><RegisterPatient /></ProtectedRoute>} />//done
             <Route path="patient-details" element={<ProtectedRoute allowedRoles={['receptionist']}><PatientDetails /></ProtectedRoute>} />//done
             <Route path="items-stock-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ItemStockRec /></ProtectedRoute>} />//done
+            <Route path="bill-invoice" element={<ProtectedRoute allowedRoles={['receptionist']}><BillInvoice /></ProtectedRoute>} />//--
+            <Route path="previous-issued-invoice" element={<ProtectedRoute allowedRoles={['receptionist']}><PreviousIssuedInvoice /></ProtectedRoute>} />//--
+            <Route path="add-certificate" element={<ProtectedRoute allowedRoles={['receptionist']}><AddCertificate /></ProtectedRoute>} />//--
+            <Route path="previous-issued-certificate" element={<ProtectedRoute allowedRoles={['receptionist']}><PreviousIssuedCertificates /></ProtectedRoute>} />
             <Route path="medicine-stock-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><MedicineStockRec /></ProtectedRoute>} />done
             <Route path="task-details-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><TaskDetailsRec /></ProtectedRoute>} />//done
             <Route path="apply-leave-rec" element={<ProtectedRoute allowedRoles={['receptionist']}><ApplyLeaveRec /></ProtectedRoute>} />//done
