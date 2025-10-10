@@ -4,19 +4,27 @@ import { updateDate } from "../../store/todayDate";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaAngleDoubleLeft, FaFilePdf } from "react-icons/fa";
 import { investigationPdf } from '../../store/generateInvestigationPDF';
+import { recStore } from "../../store/RecStore";
+import { useAuthStore } from "../../store/authStore";
 
 const GenerateInvestigationPdf = () => {
     const { getSelectedTest, selectedTest } = docStore();
+    const { user } = useAuthStore();
+    const { patient, getPatient } = recStore();
     const { id } = useParams();
     const currentDate = updateDate();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getPatient(id);
+    }, [getPatient, id])
 
     useEffect(() => {
         getSelectedTest(id);
     }, [getSelectedTest]);
 
     const handleGeneratePdf = () => {
-        investigationPdf(selectedTest);
+        investigationPdf(patient, selectedTest, user);
     }
 
     return (
