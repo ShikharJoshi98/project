@@ -13,14 +13,14 @@ const HRMedicine = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const todayDate = updateDate();
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-    const timeout = setTimeout(() => setLoading(true), 200);
+        const timeout = setTimeout(() => setLoading(true), 200);
         getAppointmentDetails(user?.branch, medSection).finally(() => {
-      clearTimeout(timeout);
-      setLoading(false);
-    });
+            clearTimeout(timeout);
+            setLoading(false);
+        });
     }, [getAppointmentDetails, medSection]);
 
     const medicineArray = appointments.filter((appointment) => (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
@@ -43,7 +43,7 @@ const HRMedicine = () => {
                 <div className='flex items-center gap-2 mt-10'>
                     <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search for Patient&apos;s Name/Case Paper No./Mobile No.' />
                 </div>
-                {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24}/>:<div className="overflow-x-auto mt-10 rounded-lg">
+                {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7] whitespace-nowrap text-white">
                             <tr >
@@ -67,7 +67,7 @@ const HRMedicine = () => {
                                         <td className="py-2 px-4 border">{appointment?.PatientCase?.fullname}</td>
                                         <td className="py-2 px-4 border">{appointment?.AppointmentType}</td>
                                         <td className="py-2 px-4 border">{appointment?.PatientCase?.branch}</td>
-                                        <td onClick={() => navigate(`/prescription-HR/${appointment?.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
+                                        <td onClick={() => navigate(`/prescription-HR/${appointment?.PatientCase._id}/${medSection}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 rounded-md text-white cursor-pointer">Details</button></td>
                                         <td className="py-2 px-4 border">{appointment?.PatientCase?.email}</td>
                                     </tr>
                                 ))}

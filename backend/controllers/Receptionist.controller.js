@@ -99,14 +99,19 @@ export const getPatients = async (req, res) => {//
 export const getAllPatients = async (req, res) => {//
     try {
         const { branch } = req.params;
-        const patients = await Patient.find();
-        const allBranchPatients = await Patient.find({ branch });
-        res.json({
+        let patients,allBranchPatients;
+        if (!branch) {
+            patients = await Patient.find();
+        }
+        else {
+            allBranchPatients = await Patient.find({ branch });
+        }
+        return res.json({
             patients,
             allBranchPatients
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })

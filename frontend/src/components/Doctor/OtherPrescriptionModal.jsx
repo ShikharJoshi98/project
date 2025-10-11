@@ -33,7 +33,7 @@ const OtherPrescriptionModal = ({ onClose }) => {
     }, [getOtherPrescription, submit]);
     useEffect(() => {
         getOtherPrescriptionPrices();
-    }, [priceSubmit, getOtherPrescriptionPrices])
+    }, [priceSubmit])
 
     const handleChange = (e) => {
         const { name, value } = e.target;

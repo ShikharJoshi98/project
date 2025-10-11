@@ -30,7 +30,11 @@ const ConsultationCharges = () => {
     useEffect(() => {
         getConsultationCharges(id);
         getConsultationPrices();
-    }, [getConsultationCharges, submit, priceSubmit])
+    }, [getConsultationCharges, submit])
+
+    useEffect(() => {
+        getConsultationPrices();
+    }, [priceSubmit, consultationPrices])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -60,7 +64,7 @@ const ConsultationCharges = () => {
             <div className="bg-[#e9ecef] w-auto relative p-5 mx-10 my-6 rounded-lg">
                 <h1 onClick={() => navigate(`/appointment-details/${id}`)} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
                 <h1 className='text-xl sm:text-4xl text-center font-semibold mt-10 text-[#337ab7]'>ADD CONSULTATION CHARGES</h1>
-                <button type="button" onClick={() => setPriceModal(true)} className="p-2 bg-blue-500 absolute top-10 right-5 flex items-center justify-center gap-2 text-white rounded-md cursor-pointer">Add Charges<FaPlus /></button>
+
                 <form onSubmit={handleSubmit} className=' mt-10'>
                     <div className='sm:grid flex flex-col pl-10 gap-y-5 gap-x-2 grid-cols-2'>
                         <div className='relative'>
@@ -69,8 +73,8 @@ const ConsultationCharges = () => {
                         </div>
                         <div>
                             <h1 className='text-black font-semibold mb-2'>Price:</h1>
-                            <div className='relative   w-full '>
-                                <select name='price' value={formValues.price} onChange={e => (handleChange(e))} required className='py-2 pl-3 bg-white rounded-lg border border-gray-400 w-full' >
+                            <div className='flex items-center gap-6'>
+                                <select name='price' value={formValues.price} onChange={e => (handleChange(e))} required className='py-2 pl-3 bg-white rounded-lg border border-gray-400' >
                                     <option defaultChecked>Select Price</option>
                                     {
                                         consultationPrices.map((price, index) =>
@@ -78,6 +82,7 @@ const ConsultationCharges = () => {
                                         )
                                     }
                                 </select>
+                                <button type="button" onClick={() => setPriceModal(true)} className="p-2 bg-blue-500 flex items-center justify-center gap-2 text-white rounded-md cursor-pointer">Add Charges<FaPlus /></button>
                             </div>
                         </div>
                     </div>
@@ -112,7 +117,7 @@ const ConsultationCharges = () => {
                     </table>
                 </div>
             </div>
-            {priceModal && <ConsultationChargePriceModal setSubmit={setPriceSubmit} onClose={() => setPriceModal(false)} />}
+            {priceModal && <ConsultationChargePriceModal setPriceSubmit={setPriceSubmit} onClose={() => setPriceModal(false)} />}
         </div>
     )
 }

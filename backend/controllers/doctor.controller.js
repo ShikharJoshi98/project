@@ -14,7 +14,7 @@ import { BillInvoice, Certificate } from "../models/CertificateModel.js";
 import { updateDate } from "../utils/todayDate.js";
 import { receiveOrderHelper } from "./HR.controller.js";
 import { ItemVendor } from "../models/VendorModel.js";
-import sendWhatsAppMessage, { sendPaymentEmail } from "../utils/sendPaymentDetails.js";
+import sendWhatsAppMessage, { sendCourierPatientEmail, sendPaymentEmail } from "../utils/sendPaymentDetails.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -891,7 +891,8 @@ export const addOtherPrescription = async (req, res) => {
 export const getOtherPrescription = async (req, res) => {
     try {
         const { id } = req.params;
-        const otherPrescription = await OtherPrescription.find({ patient: id });
+        const otherPrescription = await OtherPrescription.find({ patient: id, date: updateDate() });
+        
         return res.json({
             success: true,
             otherPrescription
@@ -2676,11 +2677,19 @@ export const addPayment = async (req, res) => {
         updateDate();
 
         const newBalance = totalBill - billPaid;
-        const payment = await billPayment.updateOne(
-            { patient: id },
-            { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag } },
-            { upsert: true }
-        );
+        // const payment = await billPayment.updateOne(
+        //     { patient: id },
+        //     { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag } },
+        //     { upsert: true }
+        // );
+        const presToday = await Prescription.find({
+            patient: id,
+            prescription_date: formattedDate
+        });
+        const patient = await Patient.findById(id);
+        const otherPrescription = await OtherPrescription.find({ patient: id,date:formattedDate });
+
+        await sendCourierPatientEmail(patient?.email, presToday, otherPrescription, totalBill);
         res.json({
             success: true,
             message: "Bill Payment Done",

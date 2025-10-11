@@ -12,6 +12,7 @@ const Prescription = () => {
     const { id } = useParams();
     const { patient, getPatient } = recStore();
     const { medSection, getAppointmentDetails, appointments } = useStore();
+    const { branch } = useParams();
     const { user } = useAuthStore();
     const { prescriptionSubmit, fetchPrescription, getBillInfo, billInfo, prescription, otherPrescriptions, getOtherPrescription, balanceDue, getBalanceDue, appointmentSection } = docStore();
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Prescription = () => {
         getBalanceDue(id);
         getBillInfo(id);
         getPatient(id);
-        getAppointmentDetails(user?.branch, medSection);
+        getAppointmentDetails(user?.branch, branch);
     }, [fetchPrescription, prescriptionSubmit, getBillInfo, getOtherPrescription, getAppointmentDetails, getPatient]);
     const appointment = appointments.filter((app) => app?.PatientCase?._id === id);
 
@@ -111,7 +112,7 @@ const Prescription = () => {
                     }
                     {
                         appointment[0]?.medicine_issued_flag === false &&
-                        <button onClick={() => { navigate(`/medicine-payment/${id}`) }} className='bg-red-500 text-white text-lg hover:scale-99 transition hover:bg-red-600 cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-8'>Pay Now</button>
+                        <button onClick={() => { navigate(`/medicine-payment/${id}/${branch}`) }} className='bg-red-500 text-white text-lg hover:scale-99 transition hover:bg-red-600 cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-8'>Pay Now</button>
                     }
                 </div>
             </div>

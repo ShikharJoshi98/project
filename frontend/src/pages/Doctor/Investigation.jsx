@@ -48,7 +48,6 @@ const Investigation = () => {
   const handleGeneratePdf = () => {
     investigationPdf(mapRef.current);
   };
-  console.log(testInfo);
   const deleteTest = async (test, id) => {
     try {
       const encodedTest = encodeURIComponent(test);

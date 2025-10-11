@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { VENDOR_BILL_TEMPLATE } from './emailTemplate.js';
+import { COURIER_PATIENT_BILL, VENDOR_BILL_TEMPLATE } from './emailTemplate.js';
 import dotenv from "dotenv";
 import axios from 'axios';
 import { updateDate } from './todayDate.js';
@@ -35,9 +35,7 @@ export const sendPaymentEmail = async (email, data) => {
     transporter.sendMail(message);
 }
 
-
-
-const token = process.env.WHATSAPP_TOKEN; // from Meta
+const token = process.env.WHATSAPP_TOKEN;
 const phoneNumberId = 'YOUR_PHONE_NUMBER_ID';
 const to = '919560718250';
 
@@ -103,3 +101,25 @@ async function sendWhatsAppMessage(data,phoneNumber) {
 }
 
 export default sendWhatsAppMessage;
+
+export const sendCourierPatientEmail = async (email, prescriptions, otherPrescription, totalBill) => {
+  const mail = COURIER_PATIENT_BILL(prescriptions, otherPrescription, totalBill);
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'shikharjoshi89@gmail.com',
+      pass: 'cbok bmms smck rakl'
+    }
+  });
+
+  const message = {
+    from: 'shikharjoshi89@gmail.com',
+    to: email,
+    subject: 'Appointment and Bill Details - Wings Classical Homeopathy',
+    html: mail
+  };
+
+  await transporter.sendMail(message);
+};
+

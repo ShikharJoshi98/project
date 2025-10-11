@@ -77,7 +77,7 @@ const UploadDiagnosis = () => {
                 <div className='flex items-center gap-20 flex-wrap mt-10'>
                     {
                         loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : diagnosisImages.map((image, idx) => (
-                            <div className='flex flex-col items-center gap-2'>
+                            <div key={idx} className='flex flex-col items-center gap-2'>
                                 <img src={image?.imageUrl} className='size-64' alt="" key={idx} />
                                 <div title='delete' onClick={async () => deleteImage(image?._id)} className='text-white bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash size={25} /></div>
                             </div>

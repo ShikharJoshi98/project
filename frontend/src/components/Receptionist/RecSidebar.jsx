@@ -8,6 +8,8 @@ import UploadCase from '../Doctor/UploadCase';
 import { useAuthStore } from '../../store/authStore';
 import { docStore } from '../../store/DocStore';
 import { IoIosArrowDown } from 'react-icons/io';
+import { FaStethoscope } from 'react-icons/fa6';
+import UploadReportModal from '../../pages/Receptionist/UploadReportModal';
 
 const RecSidebar = () => {
     const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -17,6 +19,7 @@ const RecSidebar = () => {
     const { user } = useAuthStore();
     const recTasks = tasks.filter((task) => task?.username === user?.username && task?.status === "INCOMPLETE");
     const [certificateDropdown, setCertificateDropdown] = useState(false);
+    const [isReportModalOpen, setReportModalIsOpen] = useState(false);
 
     useEffect(() => {
         getTasks(user?.username);
@@ -45,7 +48,9 @@ const RecSidebar = () => {
             <SidebarItem active={path.pathname === '/dashboard-RECEPTIONIST/apply-leave-rec'} onClick={() => navigate('/dashboard-RECEPTIONIST/apply-leave-rec')} icon={<CalendarDays />} text={"Apply Leave"} />
             <SidebarItem active={path.pathname === `/dashboard-RECEPTIONIST/courier-list-rec/${user?.branch}`} onClick={() => navigate(`/dashboard-RECEPTIONIST/courier-list-rec/${user?.branch}`)} icon={<Box />} text={"Courier List"} />
             <SidebarItem onClick={() => setUploadModalIsOpen(true)} icon={<LuScrollText size={25} />} text={"Upload Old Case Paper"} />
+            <SidebarItem onClick={() => setReportModalIsOpen(true)} icon={<FaStethoscope size={20} />} text={"Report Images"} />
             {isUploadModalOpen && <UploadCase onClose={() => setUploadModalIsOpen(false)} />}
+            {isReportModalOpen && <UploadReportModal onClose={() => setReportModalIsOpen(false)} />}
         </Sidebar>
     )
 }

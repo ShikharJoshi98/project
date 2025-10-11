@@ -11,6 +11,7 @@ const formattedDate = `${dd}/${mm}/${yyyy}`;
 
 export const investigationPdf = (patient, obj, user) => {
   const doc = new jsPDF();
+  const pageHeight = doc.internal.pageSize.height;
   doc.setFontSize(14);
   doc.text('Date: ' + formattedDate, 160, 65);
   doc.addImage(img, "JPEG", 0, 0, 210, 55);
@@ -19,6 +20,26 @@ export const investigationPdf = (patient, obj, user) => {
   const lineHeight = 22;
   const colWidth = 65;
   const labelPadding = 2;
+
+  const drawDoctorInfo = (yPosition) => {
+    doc.setFontSize(15);
+    doc.setFont("helvetica", "bold");
+    doc.text(user?.fullname || "", 146, yPosition);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "normal");
+    doc.text("M.D. (Homeopathy)", 148, yPosition + 8);
+    doc.text("Ph.D. (Homeopathy)", 148, yPosition + 14);
+  };
+
+  // --- function to handle new page creation ---
+  const addNewPage = () => {
+    doc.addPage();
+    doc.addImage(img, "JPEG", 0, 0, 210, 55); // header again
+    doc.setFontSize(14);
+    doc.text("Date: " + formattedDate, 160, 65);
+    drawDoctorInfo(40); // draw doctor info at top of new page
+    y = 75; // reset content start position
+  };
   const sections = [
     { title: 'Investigation Advised', data: obj?.investigationAdvised },
     { title: 'Ultra Sonography', data: obj?.ultra_sonography },
@@ -51,23 +72,18 @@ export const investigationPdf = (patient, obj, user) => {
 
       doc.setFontSize(12);
       section?.data.forEach(test => {
+        if (y > pageHeight - 40) {
+          addNewPage();
+        }
         doc.text(`- ${test}`, 25, y);
         y += 7;
-        if (y > 280) {
-          doc.addPage();
-          y = 20;
-        }
       });
 
       y += 10;
     }
   });
-  y += 40;
-  doc.setFontSize(15);
-  doc.text(user?.fullname, 146, y);
-  doc.setFontSize(13);
-  doc.text('M.D. (Homeopathy)', 148, y + 8);
-  doc.text('Ph.D. (Homeopathy)', 148, y + 14);
+  const footerY = pageHeight - 40;
+  drawDoctorInfo(footerY);
 
   const pdfBlob = doc.output("blob");
   const pdfUrl = URL.createObjectURL(pdfBlob);

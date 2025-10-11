@@ -8,6 +8,7 @@ import PrescribeMedicine from '../../components/Doctor/PrescribeMedicine'
 import FollowUp from '../../components/Doctor/FollowUp'
 import { FaPen } from "react-icons/fa";
 import { docStore } from '../../store/DocStore'
+import PresentComplaints from './PresentComplaints'
 
 const AppointmentDetails = () => {
     const { getBalanceDue, balanceDue } = docStore();
@@ -70,6 +71,10 @@ const AppointmentDetails = () => {
                 <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
                 <div className='mt-12'>
                     <FollowUp />
+                </div>
+                <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
+                <div className='mt-12'>
+                    <PresentComplaints />
                 </div>
                 <hr className='bg-blue-500 h-[0.5px] border-none w-full mt-12' />
                 <div className='mt-12'>

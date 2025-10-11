@@ -182,8 +182,8 @@ function App() {
             <Route path="HR-medicine" element={<ProtectedRoute allowedRoles={['hr']}><HRMedicine /></ProtectedRoute>} />//
           </Route>
 
-          <Route path="/prescription-HR/:id" element={<ProtectedRoute allowedRoles={['hr']}><Prescription /></ProtectedRoute>} />//
-          <Route path="/medicine-payment/:id" element={<ProtectedRoute allowedRoles={['hr']}><Bill /></ProtectedRoute>} />//check for courier payment
+          <Route path="/prescription-HR/:id/:branch" element={<ProtectedRoute allowedRoles={['hr']}><Prescription /></ProtectedRoute>} />//
+          <Route path="/medicine-payment/:id/:branch" element={<ProtectedRoute allowedRoles={['hr']}><Bill /></ProtectedRoute>} />//check for courier payment
           <Route path="/balance-payment/:id" element={<ProtectedRoute allowedRoles={['hr']}><PayBalance /></ProtectedRoute>} />//
 
           <Route path="/dashboard-RECEPTIONIST" element={<ReceptionistLayout />}>

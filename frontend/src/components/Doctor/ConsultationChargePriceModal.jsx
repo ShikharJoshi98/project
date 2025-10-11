@@ -5,20 +5,20 @@ import { DOC_API_URL } from '../../store/DocStore';
 import { LuIndianRupee } from 'react-icons/lu';
 import { RxCross2 } from 'react-icons/rx';
 
-const ConsultationChargePriceModal = ({onClose,setSubmit}) => {  
+const ConsultationChargePriceModal = ({ onClose, setPriceSubmit }) => {
     const [price, setPrice] = useState(0);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         try {
             axios.post(`${DOC_API_URL}/consultationChargePrice`, { price });
-            setSubmit(prev => !prev);
+            setPriceSubmit(prev => !prev);
             onClose();
         } catch (error) {
             console.log(error.message);
         }
     }
-    
+
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] overflow-x-hidden min-h-[50vh] max-w-[30vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
@@ -41,7 +41,7 @@ const ConsultationChargePriceModal = ({onClose,setSubmit}) => {
 
             </div>
         </div>
-  )
+    )
 }
 
 export default ConsultationChargePriceModal

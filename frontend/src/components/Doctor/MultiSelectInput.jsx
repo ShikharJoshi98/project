@@ -65,7 +65,7 @@ const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions }) => {
             <input checked={selectedOptions?.includes(option)}
               onChange={() => setOptions(option)} type="checkbox" id={option} /><label htmlFor={option}>{option}</label>
           </div>
-        )) : <p>Disease Not Found !</p>
+        )) : <p>Not Found !</p>
         }
       </div>}
     </div>
