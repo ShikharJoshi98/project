@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import Patient from "../models/PatientModel.js";
 import { Appointment } from "../models/AppointmentModel.js";
 import { updateDate } from "../utils/todayDate.js";
+import { Employee } from "../models/EmployeeModel.js";
 
 export const register = async (req, res) => {
     try {
@@ -99,8 +100,9 @@ export const getPatients = async (req, res) => {//
 export const getAllPatients = async (req, res) => {//
     try {
         const { branch } = req.params;
-        let patients,allBranchPatients;
-        if (!branch) {
+        let patients, allBranchPatients;
+    
+        if (!branch || branch === "null" || branch === "undefined") {
             patients = await Patient.find();
         }
         else {
@@ -217,5 +219,19 @@ export const getAppointmentLength = async (req, res) => {
             success: false,
             message: error.message
         })
+    }
+}
+
+export const getDoctor = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const doctor = await Employee.findById(id);
+        return res.json({
+            doctor
+        });
+    } catch (error) {
+        return res.json({
+            message: error.message
+        });
     }
 }

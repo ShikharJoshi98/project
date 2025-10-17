@@ -8,12 +8,13 @@ import { updateDate } from '../../store/todayDate';
 import { useAuthStore } from '../../store/authStore';
 import { HR_API_URL, useStore } from '../../store/UpdateStore';
 import { REC_API_URL } from '../../store/patientStore';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const Bill = () => {
     const { getPatient, patient } = recStore();
     const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue } = docStore();
     const { user } = useAuthStore();
-    const { getAppointmentDetails, appointments, setMedSection, medSection, } = useStore();
+    const { getAppointmentDetails, appointments } = useStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id, branch } = useParams();
     const navigate = useNavigate();
@@ -23,6 +24,9 @@ const Bill = () => {
     const [transactionDetails, setTransactionDetails] = useState('');
     const [address, setAddress] = useState('');
     const todayDate = updateDate();
+    const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+
     useEffect(() => {
         getPatient(id);
         fetchPrescription(id);
@@ -30,14 +34,18 @@ const Bill = () => {
         getBalanceDue(id);
         getAppointmentDetails(user?.branch, branch);
     }, [getPatient, fetchPrescription, prescriptionSubmit, getAppointmentDetails, branch]);
-    const appointment = appointments.filter((appointment) => appointment?.PatientCase?._id === id && appointment?.date === todayDate);
-    const [email, setEmail] = useState('');
+
+
+
     useEffect(() => {
         if (patient?.email) {
-            setEmail(patient?.email);
-            setAddress(patient?.address);
+            setEmail(patient?.email ?? '');
+            setAddress(patient?.address ?? '');
         }
     }, [patient, id]);
+
+    const appointment = appointments.filter((appointment) => appointment?.PatientCase?._id === id && appointment?.date === todayDate);
+
     const addDays = (dateStr, days) => {
         if (!dateStr || !days) return '';
         days = parseInt(days, 10);
@@ -49,26 +57,44 @@ const Bill = () => {
         let newYear = date.getFullYear();
         return `${newDay}-${newMonth}-${newYear}`;
     };
-
     const addBill = async () => {
         try {
+            setLoading(true);
             await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, {
                 billPaid: parseInt(amountPaid),
                 modeOfPayment: paymentMode,
                 appointmentType: appointment[0]?.appointmentType,
                 paymentCollectedBy: user?._id,
                 transactionDetails,
-                totalBill: (billInfo?.medicineCharges + billInfo?.newCaseCharge + billInfo?.onlineAmount + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount))
+                totalBill: (billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount))
             });
             if (appointment[0]?.appointmentType === 'courier') {
                 await axios.post(`${HR_API_URL}/courierPayment/${id}`, {
+                    appointment: appointment[0],
                     billPaid: parseInt(amountPaid),
                     totalBill: (billInfo?.medicineCharges + billInfo?.consultation + billInfo?.onlineAmount + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)),
                     transactionDetails,
+                    balance_paid_flag: false,
                     paymentCollectedBy: user?._id,
                     address,
                     modeOfPayment: 'online',
-                    email
+                    email,
+                    onlineConsultationCharge: (billInfo?.onlineAmount + (billInfo?.consultation ?? 0)),
+                    medicineCharge: billInfo?.medicineCharges,
+                    otherMedicineCharge: billInfo?.otherPrescriptionPrice,
+                    courierAmount: parseInt(courierAmount),
+                    nextFollowUp: addDays((prescription[0]?.prescription_date), (prescription[0]?.duration))
+                });
+            }
+            else {
+                await axios.post(`${DOC_API_URL}/sendAppointmentEmail/${id}`, {
+                    appointment: appointment[0],
+                    totalBill: (billInfo?.medicineCharges + (billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance)),
+                    email,
+                    newCaseCharge: billInfo?.newCaseCharge,
+                    medicineCharge: billInfo?.medicineCharges,
+                    otherMedicineCharge: billInfo?.otherPrescriptionPrice,
+                    nextFollowUp: addDays((prescription[0]?.prescription_date), (prescription[0]?.duration))
                 });
             }
             await axios.patch(`${DOC_API_URL}/update-apppointment/${id}`, {
@@ -81,6 +107,7 @@ const Bill = () => {
             await axios.patch(`${DOC_API_URL}/update-prescription`, { prescription_date: todayDate });
             await axios.patch(`${DOC_API_URL}/updateOtherPrescription/${id}`);
             await axios.patch(`${REC_API_URL}//updatePatientAppointment/${id}`);
+            setLoading(false);
             navigate(`/prescription-HR/${id}/${branch}`);
         } catch (error) {
             console.log(error.message);
@@ -116,11 +143,11 @@ const Bill = () => {
                         {appointment[0]?.appointmentType === 'courier' && appointment[0]?.new_appointment_flag === true && <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Online Consultation Charges : </p><p>Rs {billInfo?.onlineAmount}</p></div>}
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Other Consultation Charges : </p><p>Rs {billInfo?.consultation}</p></div>
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Other Medicine : </p><p>Rs {billInfo?.otherPrescriptionPrice}</p></div>
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Total Amount : </p><p>Rs {billInfo?.medicineCharges + billInfo?.newCaseCharge + billInfo?.consultation + billInfo?.otherPrescriptionPrice + billInfo?.onlineAmount}</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Total Amount : </p><p>Rs {billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice}</p></div>
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Balance Dues : </p><p>Rs {balanceDue?.dueBalance < 0 ? balanceDue?.dueBalance + ' Advance' : balanceDue?.dueBalance > 0 ? balanceDue?.dueBalance + ' Balance' : '0'}</p></div>
                         <hr className='my-3 h-0.5 w-full border-none bg-blue-500' />
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-xl'>Amount to be Paid : </p><p className='text-lg sm:text-xl'>Rs {billInfo?.medicineCharges + billInfo?.newCaseCharge + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + billInfo?.onlineAmount}</p></div>
-                        {appointment[0]?.appointmentType === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.newCaseCharge + + billInfo?.consultation + billInfo?.otherPrescriptionPrice + billInfo?.onlineAmount + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)) }}>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-xl'>Amount to be Paid : </p><p className='text-lg sm:text-xl'>Rs {billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance)}</p></div>
+                        {appointment[0]?.appointmentType === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + billInfo?.onlineAmount + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)) }}>
                             <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Courier Amount : </p><input type="number" onChange={(e) => setCourierAmount(e.target.value)} required className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md' /></div>
                             <button type='submit' className='bg-yellow-500 block text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Grand Total</button>
                         </form>}
@@ -130,8 +157,8 @@ const Bill = () => {
                         <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Amount Paid : </p><input type="number" onWheel={(e) => e.target.blur()} onChange={(e) => setAmountPaid(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>
                         {appointment[0]?.appointmentType === 'courier' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Email : </p><input onChange={(e) => setEmail(e.target.value)} value={email} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
                         {paymentMode === 'online' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Transaction Details* : </p><input onChange={(e) => setTransactionDetails(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
-                        {paymentMode === 'online' && transactionDetails.length > 0 && <button type='button' onClick={() => addBill()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Done</button>}
-                        {paymentMode === 'cash' && <button type='button' onClick={() => addBill()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Done</button>}
+                        {paymentMode === 'online' && transactionDetails.length > 0 && <button type='button' onClick={() => addBill()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>{loading ? <LuLoaderCircle className='animate-spin mx-auto ' size={24} /> : 'Done'}</button>}
+                        {paymentMode === 'cash' && <button type='button' onClick={() => addBill()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>{loading ? <LuLoaderCircle className='animate-spin mx-auto ' size={24} /> : 'Done'}</button>}
                     </div>
                 </div>
             </div>

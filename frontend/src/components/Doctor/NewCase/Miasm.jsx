@@ -42,7 +42,7 @@ const Miasm = ({ complaint }) => {
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold'>Add {complaint}</h1>
                     <div className='flex flex-col gap-2 '>
-                        <h1 >List of disease*</h1>
+                        <h1 >List of items*</h1>
                         <MultiSelectDropdown Options={listType} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
                     </div>
                     <button className="bg-blue-500 block mx-auto transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>

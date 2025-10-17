@@ -10,6 +10,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useParams } from "react-router-dom";
 import { LuLoaderCircle } from "react-icons/lu";
 import { useAuthStore } from "../../store/authStore";
+import { updateDate } from "../../store/todayDate";
 
 const UploadCase = ({ onClose }) => {
   const { allBranchPatients, getAllPatients } = recStore();
@@ -20,6 +21,7 @@ const UploadCase = ({ onClose }) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [loading, setLoading] = useState(false);
   const [patientLoading, setPatientLoading] = useState(false);
+  const date = updateDate();
 
   useEffect(() => {
     const timeout = setTimeout(() => setPatientLoading(true), 200);
@@ -38,18 +40,29 @@ const UploadCase = ({ onClose }) => {
 
   }, [getAllPatients]);
 
+  async function handleInputImage(e) {
+    const { name, files } = e.target;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(
+          reader.result
+        );
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!image) {
       toast.error("Please select an image first");
       return;
     }
-
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("caseImage", image);
-      await uploadCase(formData, selectedPatient);
+      await uploadCase({ image, date }, selectedPatient);
       toast.success("Image Uploaded");
       setImage(null);
     } catch (error) {
@@ -75,7 +88,7 @@ const UploadCase = ({ onClose }) => {
             </div>
             <div className="flex flex-col mt-5 gap-2">
               <h1>Select Case Paper Image</h1>
-              <Input icon={CiImageOn} type="file" name="caseImage" onChange={(e) => setImage(e.target.files[0])} required />
+              <Input icon={CiImageOn} type="file" name="caseImage" onChange={handleInputImage} required />
             </div>
             <div className="w-full flex items-center justify-center">
               <button className="cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{loading ? <LuLoaderCircle className='mx-auto animate-spin' /> : "Upload"}</button>

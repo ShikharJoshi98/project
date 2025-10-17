@@ -22,7 +22,6 @@ const CourierListRec = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-
         getCourierPayment(location.location)
     }, [getCourierPayment, submit]);
     const handleFilter = () => {

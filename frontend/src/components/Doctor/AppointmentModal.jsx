@@ -13,6 +13,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { CiCalendar, CiClock1 } from 'react-icons/ci';
 import { useAuthStore } from '../../store/authStore';
 import { useParams } from 'react-router-dom';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const AppointmentModal = ({ onClose }) => {
   const { appointmentSubmit, toggleAppointmentSubmit } = docStore();
@@ -32,6 +33,7 @@ const AppointmentModal = ({ onClose }) => {
     appointmentType: 'general'
   });
   const [loading, setLoading] = useState(false);
+  const [appointmentSubmitLoading, setAppointmentSubmitLoading] = useState(false)
 
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(true), 200);
@@ -53,6 +55,7 @@ const AppointmentModal = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setAppointmentSubmitLoading(true);
     if (selectedPatient === null) {
       toast("Select a Patient")
       return;
@@ -86,6 +89,7 @@ const AppointmentModal = ({ onClose }) => {
       Doctor: "",
       appointmentType: ""
     })
+    setAppointmentSubmitLoading(false);
     toast("Appointment Created");
   };
 
@@ -144,7 +148,7 @@ const AppointmentModal = ({ onClose }) => {
                 </select>
               </div>
               <div className="w-full flex items-center justify-center">
-                <button className=" cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">Create</button>
+                <button className=" cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{appointmentSubmitLoading ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : 'Create'}</button>
               </div>
             </div>
           </form>

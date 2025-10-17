@@ -16,6 +16,7 @@ export const recStore = create((set) => ({
     generalAppointments: [],
     repeatAppointments: [],
     courierAppointments: [],
+    doctor:null,
     patientLength: null,
     appointmentSection: "general",
     update: false,//
@@ -78,6 +79,14 @@ export const recStore = create((set) => ({
             set({ appointmentsLength: response.data.appointmentsLength });
             set({ pendingAppointmentLength: response.data.pendingAppointmentLength });
             set({ completeAppointmentLength: response.data.completeAppointmentLength });
+        } catch (error) {
+            console.log(error.message);
+        }
+    },
+    getDoctor: async (id) => {
+        try {
+            const response = await axios.get(`${REC_API_URL}/getDoctor/${id}`);
+            set({ doctor: response.data.doctor });
         } catch (error) {
             console.log(error.message);
         }

@@ -9,11 +9,13 @@ const billInvoiceSchema = new mongoose.Schema({
     endDate: { type: String, required: true },
     consultingFee: { type: String, required: true },
     medicineFee: { type: String, required: true },
-    date: { type: String, required: true }
+    date: { type: String, required: true },
+    billNumber:{type:String}
 });
 
 const certificateSchema = new mongoose.Schema({
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' },
+    doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
     diagnoseOne: { type: String },
     diagnoseTwo: { type: String },
     diagnoseThree: { type: String },

@@ -12,25 +12,31 @@ import { CiCirclePlus, CiTrash, CiUser } from 'react-icons/ci';
 const FamilyMedical = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
     const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
-    const { getCaseData, list, getFamilyMedicalData, FamilyMedicalData } = docStore();
+    const { getCaseData, list, getFamilyMedicalData, FamilyMedicalData, getCustomRelation, customRelations } = docStore();
     const listArray = list.map((data) => data?.name);
     const { id } = useParams();
     const [submit, setSubmit] = useState(false);
+    const [isRelation, setRelation] = useState([]);
     const [formValues, setFormValues] = useState({
         patient: id,
         relation: "",
         anyOther: "",
         lifeStatus: "",
         age: "",
-    })
+    });
+    const [relationSubmit, setRelationSubmit] = useState(false);
 
     useEffect(() => { getCaseData(complaint); getFamilyMedicalData(id) },
         [getCaseData, getFamilyMedicalData, submit]);
 
+    useEffect(() => {
+        getCustomRelation();
+    }, [relationSubmit])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${DOC_API_URL}/add-family-history-patient/${id}`, { ...formValues, diseases: selectedInvestigationOptions });
+            await axios.post(`${DOC_API_URL}/add-family-history-patient/${id}`, { ...formValues, relation: isRelation[0], diseases: selectedInvestigationOptions });
             setSubmit(prev => !prev);
             setFormValues({
                 patient: "",
@@ -40,6 +46,7 @@ const FamilyMedical = ({ complaint }) => {
                 age: ""
             });
             setSelectedInvestigationOptions([]);
+            setRelation([]);
         } catch (error) {
             console.error(error.message);
         }
@@ -66,20 +73,14 @@ const FamilyMedical = ({ complaint }) => {
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold'>Add {complaint}</h1>
                     <button type='button' onClick={() => { setFormValues({ patient: "", relation: "", anyOther: "", lifeStatus: "", age: "" }); setSelectedInvestigationOptions([]); }} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg text-white">Clear Form</button>
-                    {/* <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col gap-2'>
                         <h1>Relation*</h1>
                         <div className='relative w-full '>
                             <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                 <FaUsers className="size-4 text-blue-500" />
                             </div>
-                            <select onChange={handleInputChange} name="relation" value={formValues.relation} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-
-                            </select>
+                            <MultiSelectInput Options={customRelations} setSelectedOptions={setRelation} selectedOptions={isRelation} type='Family Medical' setRelationSubmit={setRelationSubmit} />
                         </div>
-                    </div> */}
-                    <div className='flex flex-col gap-2 '>
-                        <h1>Any Other</h1>
-                        <Input icon={FaUsers} onChange={handleInputChange} name="relation" value={formValues.relation} type="text" placeholder="Enter the relation" />
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1 >List of disease*</h1>
@@ -95,8 +96,8 @@ const FamilyMedical = ({ complaint }) => {
                             <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                                 <CiUser className="size-4 text-blue-500" />
                             </div>
-                            <select onChange={handleInputChange} name="lifeStatus" value={formValues.lifeStatus} anyOther className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                                <option value="" disabled selected className='font-normal ' >Please Select</option>
+                            <select onChange={handleInputChange} name="lifeStatus" value={formValues.lifeStatus} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
+                                <option value="" disabled className='font-normal ' >Please Select</option>
                                 <option value="Alive">Alive</option>
                                 <option value="Dead">Dead</option>
                             </select>
@@ -115,10 +116,10 @@ const FamilyMedical = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
                         {list.map((investigation, index) => (
-                            <>
-                                <h1 className='text-xl p-1' key={index}>{investigation?.name}</h1>
+                            <div key={index}>
+                                <h1 className='text-xl p-1'>{investigation?.name}</h1>
                                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
-                            </>
+                            </div>
                         ))}
                     </div>
                 </div>

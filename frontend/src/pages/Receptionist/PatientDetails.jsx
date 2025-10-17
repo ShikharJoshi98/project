@@ -8,6 +8,7 @@ import { LuLoaderCircle, LuSquarePen } from 'react-icons/lu'
 import { useAuthStore } from '../../store/authStore'
 import { CiSearch } from 'react-icons/ci'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6'
+import ViewPatientCard from '../../components/ViewPatientCard'
 
 const PatientDetails = () => {
     const { getPatientDetails, patients, update, patientLength } = recStore();
@@ -19,6 +20,8 @@ const PatientDetails = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [startSearch, setStartSearch] = useState(false);
+    const [isPatientCard, setPatientCard] = useState('');
+    const [patientCardModal, setPatientCardModal] = useState(false);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -66,7 +69,7 @@ const PatientDetails = () => {
                                     <th className="px-1 py-2">Email</th>
                                     <th className="px-1 py-2">Gender</th>
                                     <th className="px-1 py-2">Age</th>
-                                    <th className="px-1 py-2">Address</th>
+                                    <th className="px-1 py-2">Patient Card</th>
                                     <th className="px-1 py-2">Update</th>
                                 </tr>
                             </thead>
@@ -81,7 +84,11 @@ const PatientDetails = () => {
                                         <td className="px-1 py-2 text-center">{patient?.email}</td>
                                         <td className="px-1 py-2 text-center">{patient?.gender}</td>
                                         <td className="px-1 py-2 text-center">{patient?.age}</td>
-                                        <td className="px-1 py-2 text-center">{patient?.address}</td>
+                                        {patient?.patientCard ?
+                                            <td onClick={() => { setPatientCardModal(true); setPatientCard(patient?.patientCard) }} className="px-1 py-2 text-center cursor-pointer hover:underline">View</td>
+                                            :
+                                            <td className="px-1 py-2 text-center">-</td>
+                                        }
                                         <td className="px-1 py-2" onClick={() => { setPatientUpdateModalIsOpen(true); setPatientId(patient?._id) }}><LuSquarePen size={32} className='mx-auto bg-blue-500 text-white p-1 rounded-md cursor-pointer' /></td>
                                     </tr>
                                 ))}
@@ -101,6 +108,7 @@ const PatientDetails = () => {
             </div>
             {isPatientUpdateModalOpen && <PatientUpdateModal patientId={patientId} onClose={() => setPatientUpdateModalIsOpen(false)} />}
             {isAppointmentModalOpen && <AppointmentModal onClose={() => setAppointmentModalIsOpen(false)} />}
+            {patientCardModal && <ViewPatientCard onClose={() => setPatientCardModal(false)} image={isPatientCard} />}
         </>
     )
 }

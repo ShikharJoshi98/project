@@ -18,13 +18,13 @@ const PreviousIssuedInvoice = () => {
             setLoading(false);
         });
     }, [getBillInvoices]);
-
+    console.log(billInvoices)
     return (
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full'>
             <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
                 <h1 className='p-4 mb-10 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Invoice History</h1>
                 <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} placeholder="Enter Patient's Name/Case Paper no./Mobile Number here" />
-                {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
+                <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7] text-white">
                             <tr >
@@ -35,7 +35,7 @@ const PreviousIssuedInvoice = () => {
                                 <th className="px-2 py-4">INVOICE</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : <tbody>
                             {searchTerm.length > 0 && billInvoices?.filter((invoice) => String(invoice?.patient?.casePaperNo).toLowerCase().includes(searchTerm.toLowerCase()) || invoice?.patient?.fullname.toLowerCase().includes(searchTerm.toLowerCase()) || invoice?.patient?.phone.toLowerCase().includes(searchTerm.toLowerCase()))?.map((invoice, index) => (
                                 <tr key={index} className='bg-blue-200'>
                                     <td className='px-2 py-4 text-center'>{invoice?.date}</td>
@@ -45,9 +45,9 @@ const PreviousIssuedInvoice = () => {
                                     <td className='px-2 py-4'><FaRegFilePdf size={35} onClick={() => generatePreviousIssuedInvoice(invoice?.patient, invoice?.title, invoice?.date, invoice)} className='mx-auto bg-green-500 cursor-pointer text-white p-1 rounded-md' /></td>
                                 </tr>
                             ))}
-                        </tbody>
+                        </tbody>}
                     </table>
-                </div>}
+                </div>
             </div>
         </div>
     )

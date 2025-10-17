@@ -1,7 +1,7 @@
 import Input from '../../components/Input'
 import { CiMail, CiPhone, CiUser } from 'react-icons/ci'
 import { FaCarrot, FaGraduationCap } from 'react-icons/fa'
-import { FaHouse } from 'react-icons/fa6'
+import { FaHouse, FaUser } from 'react-icons/fa6'
 import { ImManWoman } from 'react-icons/im'
 import { MdOutlineBusinessCenter } from 'react-icons/md'
 import { useAuthStore } from '../../store/authStore'
@@ -28,6 +28,7 @@ const UpdateProfile = () => {
         dietaryPreference: user?.dietaryPreference || "",
         gender: user?.gender || "",
         maritalStatus: user?.maritalStatus || "",
+        referredBy: user?.referredBy || ""
     })
 
     const handleInputChange = (e) => {
@@ -55,7 +56,6 @@ const UpdateProfile = () => {
         e.preventDefault();
         try {
             const response = await axios.put(`${REC_API_URL}/update-patient/${user?._id}`, formValues);
-            window.scrollTo(0, 0);
             toast("Profile Updated");
             setUpdate((prev) => !prev)
         } catch (error) {
@@ -159,6 +159,10 @@ const UpdateProfile = () => {
                                 <option value="Widow">Widow</option>
                             </select>
                         </div>
+                    </div>
+                    <div className='flex flex-col gap-2 '>
+                        <h1>Referred By :</h1>
+                        <Input icon={FaUser} type='text' onChange={handleInputChange} name="referredBy" value={formValues.referredBy} placeholder='Referred By' />
                     </div>
                     <button className='cursor-pointer block mx-auto bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full' type='submit' >Update Profile</button>
                 </div>

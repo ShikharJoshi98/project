@@ -68,7 +68,8 @@ import AppointmentLayout from "./components/Layouts/AppointmentLayout";
 import HRLayout from "./components/Layouts/HRLayout";
 import ReceptionistLayout from "./components/Layouts/ReceptionistLayout";
 import GenerateInvestigationPdf from "./pages/Doctor/GenerateInvestigationPdf";
-import SampleDrawingCanvas from "./pages/SampleDrawingCanvas";
+import ClinicDetails from "./pages/Doctor/ClinicDetails";
+import AudioTest from "./components/audioTest";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -120,7 +121,6 @@ function App() {
           </Route>
 
           <Route path="/access-denied" element={<AccessDenied />} />//--
-          <Route path="/drawing-canvas" element={<SampleDrawingCanvas />}></Route>
 
           <Route path="/dashboard-PATIENT" element={<PatientLayout />}>//--
             <Route index element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />//--
@@ -146,6 +146,7 @@ function App() {
             <Route path="approve-items/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveItems /></ProtectedRoute>} />//--
             <Route path="approve-medicines/:location" element={<ProtectedRoute allowedRoles={['doctor']}><ApproveMedicines /></ProtectedRoute>} />//--
             <Route path="update-employee/:id" element={<ProtectedRoute allowedRoles={['doctor']}><UpdateEmployee /></ProtectedRoute>} />//--
+            <Route path="clinic-details" element={<ProtectedRoute allowedRoles={['doctor']}><ClinicDetails /></ProtectedRoute>} />
           </Route>
 
           <Route path="/appointment-details/:id" element={<AppointmentLayout />}>
@@ -185,6 +186,9 @@ function App() {
           <Route path="/prescription-HR/:id/:branch" element={<ProtectedRoute allowedRoles={['hr']}><Prescription /></ProtectedRoute>} />//
           <Route path="/medicine-payment/:id/:branch" element={<ProtectedRoute allowedRoles={['hr']}><Bill /></ProtectedRoute>} />//check for courier payment
           <Route path="/balance-payment/:id" element={<ProtectedRoute allowedRoles={['hr']}><PayBalance /></ProtectedRoute>} />//
+
+          <Route path="/audioTest" element={<AudioTest />} />//
+
 
           <Route path="/dashboard-RECEPTIONIST" element={<ReceptionistLayout />}>
             <Route index element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionistDashboard /></ProtectedRoute>} />//done

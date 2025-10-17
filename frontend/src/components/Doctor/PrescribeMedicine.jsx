@@ -111,7 +111,7 @@ const PrescribeMedicine = () => {
                         {searchMedicine && isOpen && <div className='bg-gray-300 shadow-2xl p-2 flex flex-col gap-2 w-full absolute top-20.5 z-10 border-l border-b border-r border-blue-400 rounded-md'>
                             {
                                 filteredPrescription.map((pres, index) => (
-                                    <SearchMedicine pres={pres} index={index} patientName={patient?.fullname} />
+                                    <SearchMedicine pres={pres} key={index} patientName={patient?.fullname} />
                                 ))
                             }
                         </div>}

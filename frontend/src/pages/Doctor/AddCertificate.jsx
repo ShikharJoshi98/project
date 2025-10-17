@@ -10,19 +10,48 @@ import DetailsAddedModal from '../../components/Doctor/DetailsAddedModal'
 import SearchSelect from '../../components/SearchSelect'
 import { FaCalendar, FaCalendarAlt } from 'react-icons/fa'
 import { IoIosRefresh } from 'react-icons/io'
+import { useStore } from '../../store/UpdateStore'
 
 const AddCertificate = () => {
     const { user } = useAuthStore();
-    const { getAllPatients, allPatients } = recStore();
+    const { getAllPatients, allPatients, allBranchPatients, getDoctor, doctor } = recStore();
+    const { getDetails, employees } = useStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [detailsAddedModal, setDetailsAddedModal] = useState(false);
     const [certificateDetails, setCertificateDetails] = useState(null);
     const [isFormSubmitted, setFormSubmitted] = useState(false);
-    const [durationUnit, setDurationUnit] = useState('Days'); // default
+    const [durationUnit, setDurationUnit] = useState('Days');
+    const [loading, setLoading] = useState(false);
+    const [isDoctor, setDoctor] = useState("");
 
     useEffect(() => {
-        getAllPatients();
-    }, [getAllPatients]);
+        const fetchPatients = async () => {
+            try {
+                setLoading(true);
+                if (user?.role === 'doctor') {
+                    await getAllPatients();
+                } else {
+                    await getAllPatients(user?.branch);
+                }
+            } catch (error) {
+                console.error(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPatients();
+    }, [user?.role, user?.branch]);
+
+    useEffect(() => {
+        getDetails();
+    }, []);
+
+    useEffect(() => {
+        if (user?.role === 'doctor') {
+            setDoctor(user)
+        }
+    }, [user]);
 
     const [formValues, setFormValues] = useState({
         selectedPatient: '',
@@ -43,19 +72,27 @@ const AddCertificate = () => {
             [name]: value,
         }));
     };
-    const patient = allPatients.filter((patient) => patient?._id === certificateDetails?.selectedPatient);
+    let patient;
+    if (user?.role === 'doctor') {
+        patient = allPatients.filter((patient) => patient?._id === certificateDetails?.selectedPatient);
+
+    }
+    else {
+        patient = allBranchPatients.filter((patient) => patient?._id === certificateDetails?.selectedPatient);
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const finalDuration = `${formValues.duration} ${durationUnit}`.trim();
             const payload = {
                 ...formValues,
+                doctor: isDoctor,
                 selectedPatient,
                 duration: finalDuration,
             };
-
             let response = await axios.post(`${DOC_API_URL}/postCertificate`, payload);
-
+            await getDoctor(isDoctor);
             if (response.data.message === 'certificate added') {
                 setDetailsAddedModal(true);
                 setFormSubmitted(true);
@@ -78,16 +115,32 @@ const AddCertificate = () => {
                     <button onClick={() => { setFormValues({ selectedPatient: '', diagnoseOne: '', diagnoseTwo: '', diagnoseThree: '', date: '', restFrom: '', restTill: '', resumeDate: '', duration: '' }); setCertificateDetails(null); setFormSubmitted(false); }} className='p-2 cursor-pointer bg-green-500 flex items-center gap-2 text-white rounded-md'>New certificate <IoIosRefresh /></button>
                 </div>
                 <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[6px] sm:text-[8px] md:text-sm'>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateMedicalCertificate(certificateDetails, patient[0], user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateFitnessCertificate(certificateDetails, patient[0], user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateUnfitCertificate(certificateDetails, patient[0], user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateTravellingCertificate(certificateDetails, patient[0], user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateMedicalCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateFitnessCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateUnfitCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateTravellingCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
                 </div>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto text-sm w-full md:w-[60vw] h-auto p-8 rounded-xl text-zinc-800 flex flex-col gap-5' >
                     <div className='flex flex-col gap-2'>
                         <h1>Patient Case Paper Number : </h1>
-                        <SearchSelect options={allPatients} setSelectedPatient={setSelectedPatient} />
+                        {
+                            user?.role === 'doctor' ?
+                                <SearchSelect options={allPatients} loading={loading} setSelectedPatient={setSelectedPatient} /> :
+                                <SearchSelect options={allBranchPatients} loading={loading} setSelectedPatient={setSelectedPatient} />
+                        }
                     </div>
+                    {user?.role !== 'doctor' &&
+                        <div className='flex flex-col gap-2'>
+                            <h1>Select Doctor </h1>
+                            <select onChange={(e) => setDoctor(e.target.value)} value={isDoctor} className='py-2 pl-2 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300'>
+                                <option value="" disabled>Select Doctor</option>
+                                {
+                                    employees?.filter((employee, _) => employee?.role === 'doctor')?.map((employee, index) => (
+                                        <option value={employee?._id} key={index}>{employee?.fullname}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>}
                     <div className='flex flex-col gap-2'>
                         <h1>Diagnose (1) : </h1>
                         <Input icon={CiMedicalClipboard} onChange={handleInputChange} value={formValues.diagnoseOne} name="diagnoseOne" type='text' placeholder='Diagnose' />

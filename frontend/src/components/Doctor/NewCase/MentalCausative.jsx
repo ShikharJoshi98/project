@@ -19,7 +19,7 @@ const MentalCausative = ({ complaint }) => {
 
     useEffect(() => { getCaseData(complaint); getMentalCausative(id) },
         [getCaseData, submit]);
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         await axios.post(`${DOC_API_URL}/add-mental-causative-patient/${id}`, {
@@ -44,7 +44,7 @@ const MentalCausative = ({ complaint }) => {
                 <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                     <h1 className='text-black text-2xl font-semibold'>Add {complaint}</h1>
                     <div className='flex flex-col gap-2 '>
-                        <h1 >List of disease*</h1>
+                        <h1 >List of items*</h1>
                         <MultiSelectDropdown Options={listArray} selectedOptions={selectedInvestigationOptions} setSelectedOptions={setSelectedInvestigationOptions} />
                     </div>
                     <button className="bg-blue-500 block mx-auto transition-all duration-300 cursor-pointer hover:bg-blue-600 px-5 py-2 rounded-lg mt-3 text-white">Add</button>
@@ -56,10 +56,10 @@ const MentalCausative = ({ complaint }) => {
                     </div>
                     <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
                         {list.map((investigation, index) => (
-                            <>
-                                <h1 className='text-xl p-1' key={index}>{investigation?.name}</h1>
+                            <div key={index}>
+                                <h1 className='text-xl p-1'>{investigation?.name}</h1>
                                 <hr className='border-none h-[0.5px] w-full bg-gray-300' />
-                            </>
+                            </div>
                         ))}
                     </div>
                 </div>

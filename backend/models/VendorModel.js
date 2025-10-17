@@ -14,8 +14,7 @@ const ItemVendorSchema = new mongoose.Schema({
         required:true
     },
     address: {
-        type: String,
-        required:true
+        type: String
     }
     
 })
@@ -34,8 +33,7 @@ const MedicalVendorSchema = new mongoose.Schema({
         required:true
     },
     address: {
-        type: String,
-        required:true
+        type: String
     }
     
 })

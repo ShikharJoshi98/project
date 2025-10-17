@@ -8,6 +8,7 @@ import UploadBillModal from "./UploadBillModal";
 import { FaPlus } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { LuLoaderCircle } from "react-icons/lu";
+import AddBillNumberModal from "../AddBillNumberModal";
 
 const OrderModal = ({ onClose }) => {
   const { getMedicalVendors, vendors, getMedicalStock, medicalStock, medicalStockToggle, getMedicalOrders, medicalOrders } = useStore();
@@ -21,6 +22,9 @@ const OrderModal = ({ onClose }) => {
   const [submit, setSubmit] = useState(false);
   const [billImagesLength, setBillImagesLength] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [billNumberModal, setBillNumberModal] = useState(false);
+  const [orderSubmitLoading, setOrderSubmitLoading] = useState(false);
+
   useEffect(() => {
     getMedicalStock(user?.branch)
     getMedicalVendors();
@@ -80,12 +84,13 @@ const OrderModal = ({ onClose }) => {
   async function SubmitOrder(e) {
     e.preventDefault();
     try {
+      setOrderSubmitLoading(true);
       const hasEmptyVendors = formRows.some(row => row.vendor.length === 0);
       if (hasEmptyVendors) {
         alert("Please select at least one vendor for each item.");
         return;
       }
-      const formattedFormRows = await Promise.all(formRows.map(async(row) => {
+      const formattedFormRows = await Promise.all(formRows.map(async (row) => {
         const [year, month, day] = row.deliveryDate.split("-");
         const item = medicalStock.find(i => i?.medicineName === row.medicineName);
         await axios.patch(`${HR_API_URL}/update-medical-stock/${item?._id}`, { is_order_placed: true });
@@ -96,22 +101,24 @@ const OrderModal = ({ onClose }) => {
           medicineId: item ? item?._id : "",
         };
       }));
-      
+
       await axios.post(`${HR_API_URL}/place-medical-order`, { formRows: formattedFormRows });
       alert("Order was placed");
+      await axios.post(`${HR_API_URL}/sendMedicalVendorEmail/${user?.branch}`, formattedFormRows);
       await getMedicalStock(user?.branch);
       setSubmit(prev => !prev);
+      setOrderSubmitLoading(false);
     } catch (error) {
       console.log(error.message);
     }
   }
-  const receiveOrder = async (OrderId, medicineId,medicine) => {
+  const receiveOrder = async (OrderId, medicineId, medicine) => {
     await axios.patch(`${HR_API_URL}/updateMedicalReceivedOrder/${OrderId}/${medicineId}`, {
       receivedQuantity,
       order_Delivered_Flag: true,
       received_date: todayDate
     });
-    await axios.post(`${HR_API_URL}/addMedicalOrderId`, { orderID: OrderId,medicineID:medicineId,medicine:medicine });
+    await axios.post(`${HR_API_URL}/addMedicalOrderId`, { orderID: OrderId, medicineID: medicineId, medicine: medicine });
     await axios.patch(`${HR_API_URL}/update-medical-stock/${medicine?._id}`, { is_order_placed: false });
     setSubmit(prev => !prev);
   }
@@ -138,7 +145,7 @@ const OrderModal = ({ onClose }) => {
                 {formRows.map((row, index) => (
                   <tr key={row.id} className="bg-blue-200">
                     <td className="p-2">
-                      <select value={`${row.medicineName}${row.potency}`} required onChange={(e) => {const selected = lowQuantityItems.find((item) => item.medicineName + item.potency === e.target.value); if (selected) {handleInputChange(index, "medicineName", selected.medicineName); handleInputChange(index, "potency", selected.potency);}}} className="py-2 bg-white rounded-lg w-50 border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
+                      <select value={`${row.medicineName}${row.potency}`} required onChange={(e) => { const selected = lowQuantityItems.find((item) => item.medicineName + item.potency === e.target.value); if (selected) { handleInputChange(index, "medicineName", selected.medicineName); handleInputChange(index, "potency", selected.potency); } }} className="py-2 bg-white rounded-lg w-50 border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
                         <option value="">Select Item</option>
                         {lowQuantityItems.map((item, i) => (
                           <option key={i} value={item?.medicineName + item?.potency}>
@@ -148,7 +155,7 @@ const OrderModal = ({ onClose }) => {
                       </select>
                     </td>
                     <td className="p-2">
-                      <input type="text" value={row.pack} onChange={(e) => handleInputChange(index, "pack", e.target.value)} className="w-full bg-white p-1 border border-gray-500 rounded"/>
+                      <input type="text" value={row.pack} onChange={(e) => handleInputChange(index, "pack", e.target.value)} className="w-full bg-white p-1 border border-gray-500 rounded" />
                     </td>
                     <td className="p-2 w-72">
                       <MultiSelectInput Options={vendorArray} setSelectedOptions={(options) => handleVendorChange(index, options)} selectedOptions={row.vendor} />
@@ -187,11 +194,11 @@ const OrderModal = ({ onClose }) => {
               </tbody>
             </table>
           </div>
-          <button onClick={SubmitOrder} className="mt-4 cursor-pointer transition-all duration-300 mx-auto block bg-blue-500 text-lg font-semibold w-fit rounded-lg text-white px-4 py-2  hover:bg-blue-600">Submit Order</button>
+          <button onClick={SubmitOrder} className="mt-4 cursor-pointer transition-all duration-300 mx-auto block bg-blue-500 text-lg font-semibold w-fit rounded-lg text-white px-4 py-2  hover:bg-blue-600">{orderSubmitLoading ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : 'Submit Order'}</button>
           <h1 className="text-blue-500 text-2xl md:text-3xl mt-10 mb-6 text-center font-semibold">
             Medical Order Details
           </h1>
-          {loading?<LuLoaderCircle className="animate-spin mx-auto mt-10"/>:<div className="overflow-x-auto">
+          {loading ? <LuLoaderCircle className="animate-spin mx-auto mt-10" /> : <div className="overflow-x-auto">
             <table className=" min-w-[1200px] mx-auto bg-white border border-gray-300 shadow-md rounded-lg">
               <thead>
                 <tr className=" bg-blue-500 text-white text-sm">
@@ -214,8 +221,10 @@ const OrderModal = ({ onClose }) => {
                         </td>
                       )}
                       <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillModal(true);  setOrderId(order?._id)}} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <FaPlus /></button></td>
-                                            }
+                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <FaPlus /></button>
+                        {(!order?.billNumber) ? <button onClick={() => { setBillNumberModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white mt-4 mx-auto py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Add Bill No.</button> : <p className="text-center mt-4">{`B No. - ${order?.billNumber}`}</p>}
+                      </td>
+                      }
                       {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border ">
                         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg">
                           <thead>
@@ -233,7 +242,7 @@ const OrderModal = ({ onClose }) => {
                                 <td className="py-1 px-1 border text-center">{formRow?.medicineName}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.pack}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.quantity}</td>
-                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id,formRow?.medicineId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
+                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id, formRow?.medicineId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
                                 {formRow?.order_Delivered_Flag === true && <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? (formRow?.quantity - formRow?.receivedQuantity) : '-'}</td>}
                               </tr>
                             ))}
@@ -252,6 +261,7 @@ const OrderModal = ({ onClose }) => {
         </div>
       </div>
       {billModal && <UploadBillModal setBillImagesLength={setBillImagesLength} onClose={() => setBillModal(false)} orderId={orderId} />}
+      {billNumberModal && <AddBillNumberModal onClose={() => setBillNumberModal(false)} orderId={orderId} setSubmit={setSubmit} type='medicine' />}
     </div>
 
   );

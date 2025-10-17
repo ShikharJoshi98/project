@@ -8,6 +8,8 @@ import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import { billPayment, courierPayment } from "../models/PaymentModel.js";
 import { Appointment } from "../models/AppointmentModel.js";
 import { updateDate } from "../utils/todayDate.js";
+import Patient from "../models/PatientModel.js";
+import { sendCourierPatientEmail, sendMedicalVendorOrderEmail, sendVendorOrderEmail } from "../utils/sendPaymentDetails.js";
 
 export const details = async (req, res) => {
     try {
@@ -69,11 +71,8 @@ export const update = async (req, res) => {
 
 export const LeaveApply = async (req, res) => {
     try {
-        let { startDate,halfDayDate, endDate, type, reason, duration, username } = req.body;
-        const EmployeeExist = await Employee.findOne({ username });
-        if (!EmployeeExist) {
-            res.json({ success: false, message: "This employee does not exist" });
-        }
+        let { startDate, halfDayDate, endDate, type, reason, duration, employee } = req.body;
+
         const convertDateFormat = (dateString) => {
             const [year, month, date] = dateString.split('-');
             return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
@@ -98,7 +97,7 @@ export const LeaveApply = async (req, res) => {
             type,
             reason,
             duration,
-            username
+            employee
         })
         await newLeave.save();
         res.json({
@@ -106,7 +105,6 @@ export const LeaveApply = async (req, res) => {
             newLeave
         })
     } catch (error) {
-        console.log(error);
         res.json({ success: false, message: error.message });
     }
 }
@@ -319,8 +317,8 @@ export const add_item_stock = async (req, res) => {
                     success: false,
                     message: "Item already added"
                 });
-        }        
-        
+        }
+
         const newStock = new ItemStock({
             itemName,
             unit,
@@ -416,7 +414,7 @@ export const updateItemStock = async (req, res) => {
 
 export const addOrderId = async (req, res) => {
     try {
-        
+
         const { orderID, itemID, item } = req.body;
         await OrderId.create({ order: orderID, itemId: itemID, item: item });
         res.json({
@@ -445,8 +443,26 @@ export const getOrderId = async (req, res) => {
     }
 }
 
-export const place_item_order = async (req, res) => {
+export const addOrderBillNumber = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { billNumber } = req.body;
+        const order = await Order.findByIdAndUpdate(id, {
+            billNumber
+        });
+        return res.json({
+            success: true,
+            message: "Bill Number Added"
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
 
+export const place_item_order = async (req, res) => {
     try {
         const { formRows } = req.body;
 
@@ -463,17 +479,62 @@ export const place_item_order = async (req, res) => {
             return res.status(400).json({ message: "Order items are required" });
         }
 
-
         const newOrder = new Order({ formRows, orderDate: formattedDate });
         await newOrder.save();
-        res.status(201).json({ message: "Order placed successfully", newOrder });
+
+        res.status(201).json({
+            message: "Order placed successfully",
+            newOrder
+        });
 
     } catch (error) {
-        console.log(error.message);
         res.json({ success: false, message: error.message });
     }
-
 }
+
+export const sendOrderEmail = async (req, res) => {
+  try {
+    const groupedOrders = {}; 
+    const date = updateDate();
+    const { branch } = req.params;
+    await Promise.all(
+      req.body.map(async (item) => {
+        if (!item.vendor[0] || !branch) return;
+          const vendorEmail = await ItemVendor.findOne({ vendorname: item.vendor[0] });
+        const itemUnit = await ItemStock.findById(item.itemId);
+        const formattedItem = {
+          item: item.itemName,
+          quantity: `${item.quantity} ${itemUnit?.unit}`,
+          orderDate: date,
+        };
+
+          const key = `${vendorEmail?.email}__${branch}`;
+
+        if (!groupedOrders[key]) {
+          groupedOrders[key] = {
+            vendor: vendorEmail?.email,
+            branch: branch,
+            orders: [],
+          };
+        }
+
+        groupedOrders[key].orders.push(formattedItem);
+      })
+    );
+
+    const vendorOrderList = Object.values(groupedOrders);
+
+    await sendVendorOrderEmail(vendorOrderList);
+
+    return res.json({
+      success: true,
+      payload: vendorOrderList,
+    });
+
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
 
 export const get_Item_Order = async (req, res) => {
     try {
@@ -493,12 +554,12 @@ export const get_Item_Order = async (req, res) => {
     }
 }
 
-export const receiveOrderHelper = async (itemId,orderId,data) => {
+export const receiveOrderHelper = async (itemId, orderId, data) => {
     try {
         const { receivedQuantity, order_Delivered_Flag, doctor_Approval_Flag, received_date } = data;
-       
+
         const order = await Order.findById(orderId);
-        
+
         const item = order?.formRows.filter((order) => order?._id.toString() === itemId);
 
         if (receivedQuantity != undefined) {
@@ -533,7 +594,7 @@ export const receiveOrderHelper = async (itemId,orderId,data) => {
 export const updateReceivedOrder = async (req, res) => {
     try {
         const { itemId, orderId } = req.params;
-       
+
         const item = await receiveOrderHelper(itemId, orderId, req.body);
 
         res.json({
@@ -905,6 +966,51 @@ export const place_medical_order = async (req, res) => {
     }
 }
 
+export const sendMedicalOrderEmail = async (req, res) => {
+  try {
+    const groupedOrders = {}; 
+    const date = updateDate();
+    const { branch } = req.params;
+    await Promise.all(
+      req.body.map(async (medicine) => {
+        if (!medicine.vendor[0] || !branch) return;
+          const vendorEmail = await MedicalVendor.findOne({ vendorname: medicine.vendor[0] });
+        const medicineUnit = await MedicalStock.findById(medicine.medicineId);
+        const formattedItem = {
+          medicine: medicine.medicineName,
+          quantity: medicine.quantity,
+          potency: medicine.potency,
+          orderDate: date,
+        };
+
+          const key = `${vendorEmail?.email}__${branch}`;
+
+        if (!groupedOrders[key]) {
+          groupedOrders[key] = {
+            vendor: vendorEmail?.email,
+            branch: branch,
+            orders: [],
+          };
+        }
+
+        groupedOrders[key].orders.push(formattedItem);
+      })
+    );
+
+    const vendorOrderList = Object.values(groupedOrders);
+
+    await sendMedicalVendorOrderEmail(vendorOrderList);
+
+    return res.json({
+      success: true,
+      payload: vendorOrderList,
+    });
+
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export const get_Medical_Order = async (req, res) => {
     try {
         const { id } = req.params;
@@ -995,6 +1101,25 @@ export const updateMedicalReceivedOrder = async (req, res) => {
     }
 }
 
+export const addMedicalOrderBillNumber = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { billNumber } = req.body;
+        const order = await medicalOrder.findByIdAndUpdate(id, {
+            billNumber
+        });
+        return res.json({
+            success: true,
+            message: "Bill Number Added"
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
 //collections
 export const getCollection = async (req, res) => {
     try {
@@ -1029,7 +1154,7 @@ export const getCollection = async (req, res) => {
 
 export const addCourierPayment = async (req, res) => {
     try {
-        const { totalBill, billPaid, transactionDetails, paymentCollectedBy, address, email } = req.body;
+        const { totalBill, billPaid, transactionDetails, paymentCollectedBy, address, email, courier_Received_Payment } = req.body;
         const { id } = req.params;
         const findBillDetails = await billPayment.findOne({ patient: id });
         let formattedDate = '';
@@ -1043,8 +1168,8 @@ export const addCourierPayment = async (req, res) => {
         updateDate();
 
         const balance = findBillDetails?.dueBalance;
-
-        const payment = await courierPayment.updateOne(
+        if (courier_Received_Payment === true) {
+            const payment = await courierPayment.updateOne(
             { patient: id },
             {
                 $set: {
@@ -1060,6 +1185,22 @@ export const addCourierPayment = async (req, res) => {
             },
             { upsert: true }
         );
+        }
+        else {
+            const payment = await courierPayment.create({
+            dueBalance: balance,
+            date: formattedDate,
+            totalBill,
+            billPaid,
+            transactionDetails,
+            paymentCollectedBy,
+            address,
+            email,
+            patient:id
+        });
+        }
+
+        await sendCourierPatientEmail(req.body.email, req.body);
         res.json({
             success: true,
             message: "Add Courier Payment"

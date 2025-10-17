@@ -11,7 +11,7 @@ import { FaCalendarAlt } from 'react-icons/fa';
 
 const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
     const { user } = useAuthStore();
-    const { getAllPatients, allPatients } = recStore();
+    const { getAllPatients, allPatients, allBranchPatients } = recStore();
     const [formValues, setFormValues] = useState({
         diagnoseOne: '',
         diagnoseTwo: '',
@@ -24,8 +24,20 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
     });
 
     useEffect(() => {
-        getAllPatients();
-    }, [getAllPatients]);
+        const fetchPatients = async () => {
+            try {
+                if (user?.role === 'doctor') {
+                    await getAllPatients();
+                } else {
+                    await getAllPatients(user?.branch);
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+        };
+
+        fetchPatients();
+    }, [user?.role, user?.branch]);
 
     const convertToInputDate = (ddmmyyyy) => {
         if (!ddmmyyyy) return '';
@@ -54,8 +66,6 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
         }));
     };
 
-    const patient = allPatients.filter((patient) => patient?._id === certificate?.patient?._id);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -66,7 +76,6 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
             console.error(error.message);
         }
     }
-
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-h-[99vh] max-w-[99vw] overflow-y-auto flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg">
@@ -74,10 +83,10 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
                 <h1 className="text-blue-500 text-2xl md:text-3xl  text-center font-semibold">Regenerate Certificate</h1>
                 <p className='text-red-500 mt-10 font-semibold '>Note: You can edit the Details before generating any Certificate</p>
                 <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[6px] sm:text-[8px] md:text-sm'>
-                    <button onClick={() => { generateMedicalCertificate(formValues, patient[0], user); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
-                    <button onClick={() => { generateFitnessCertificate(formValues, patient[0], user); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
-                    <button onClick={() => { generateUnfitCertificate(formValues, patient[0], user); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
-                    <button onClick={() => { generateTravellingCertificate(formValues, patient[0], user); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
+                    <button onClick={() => { generateMedicalCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
+                    <button onClick={() => { generateFitnessCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
+                    <button onClick={() => { generateUnfitCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
+                    <button onClick={() => { generateTravellingCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
                 </div>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8 rounded-xl text-zinc-800 text-sm flex flex-col gap-5' >
                     <div className='flex flex-col gap-2'>

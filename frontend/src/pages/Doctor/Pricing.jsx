@@ -56,7 +56,7 @@ const Pricing = () => {
 
     return (
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full p-8'>
-            <ToastContainer />
+            <ToastContainer toastClassName="my_toast" position='bottom-right' />
             <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Doctor's Fees</h1>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8  rounded-xl text-zinc-800   text-sm flex flex-col gap-5' >

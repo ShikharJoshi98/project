@@ -23,7 +23,6 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(user?._id, amountPaid, transactionDetails);
       await axios.post(`${DOC_API_URL}/addBillPayment/${payment?.patient?._id}`, {
         billPaid: parseInt(amountPaid),
         modeOfPayment: 'online',
@@ -39,6 +38,7 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
         modeOfPayment: 'online',
         transactionDetails,
         paymentCollectedBy: user?._id,
+        courier_Received_Payment: true
       });
       await axios.patch(`${HR_API_URL}/updateCourierStatus/${payment?._id}/${payment?.patient?._id}`, {
         balance_paid_flag: true,

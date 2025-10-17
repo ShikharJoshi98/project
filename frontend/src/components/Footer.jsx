@@ -2,13 +2,20 @@ import { FaFacebookF } from 'react-icons/fa';
 import { FaSquareXTwitter } from "react-icons/fa6";
 import { AiFillInstagram } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
+import { useEffect } from 'react';
+import { docStore } from '../store/DocStore';
 
 const Footer = () => {
+    const { clinicDetails, getClinicDetails } = docStore();
+
+    useEffect(() => {
+        getClinicDetails();
+    }, []);
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
-    
+
     return (
         <div className='bg-[#343a40]'>
             <div className='flex flex-col px-20 py-10 sm:grid lg:grid-cols-[1.1fr_1fr_1fr_1fr] gap-14 text-sm '>
@@ -28,38 +35,49 @@ const Footer = () => {
                     <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
                     <p className='w-full text-[#c2c4c2]'>All Types Of Chronic Diseases.</p>
                 </div>
-                <div>
-                    <h2 className='text-white font-semibold  mb-4'>DOMBIVALI Branch-1</h2>
-                    <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
-                    <p className='w-full text-[13px] font-medium text-[#c2c4c2] text-left leading-relaxed'>Address : 102, "Sanvi Appartment", 1st Floor, Near Shiv Sena Office, Gupte Road, Dombivali (W). <br />
-                        Time : <br />
-                        9.30 am to 2 pm <br />
-                        5.30 pm to 10 pm. <br />
-                        Tel : <br />
-                        0251 - 2492081 / 2484950
-                        Mobile : <br />
-                        +91-8080899990, +91 9892064974
-                        Email : <br />
-                        wingshomeopathy@gmail.com <br />
-                        Visit Us : www.wingshomeopathy.com</p>
-                </div>
-                <div>
-                    <h2 className='text-white font-semibold  mb-4'>MULUND Branch-2</h2>
-                    <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
-                    <p className='w-full text-[13px] font-medium text-[#c2c4c2] text-left leading-relaxed'>
-                        Address : Kapeesh Mall, Shop No. 17 ,18, 19, & 20, 1st Floor, M.G. Road, Near Mulund Railway Station, Mulund (W). <br />
-                        Time : <br />
-                        2.30 pm to 5 pm. <br />
-                        Sunday- 10.30 am to 4.30 pm. <br />
-                        <span className='text-yellow-500'>Thursday -Closed</span>
-                        Tel : <br />
-                        022 - 25628989 <br />
-                        Mobile : <br />
-                        +91-8080848403, +91 9892064974
-                        Email : <br />
-                        wingshomeopathy@gmail.com
-                    </p>
-                </div>
+                {clinicDetails.filter((detail, _) => detail?.branch === 'Dombivali').map((detail, index) => (
+                    <div key={index}>
+                        <h2 className='text-white font-semibold  mb-4'>{detail?.branch?.toUpperCase()} Branch-1</h2>
+                        <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
+                        <p className='w-full text-[13px] font-medium text-[#c2c4c2] text-left leading-relaxed'>Address : 102, "Sanvi Appartment", 1st Floor, Near Shiv Sena Office, Gupte Road, Dombivali (W). <br />
+                            Time : <br />
+                            9.30 am to 2 pm <br />
+                            5.30 pm to 10 pm. <br />
+                            Tel : <br />
+                            0251 - 2492081 / 2484950
+                            <br />
+                            Mobile :<br />
+                            {
+                                detail?.phone.join(', ')
+                            }
+                            <br />
+                            Email : <br />
+                            {detail?.email} <br />
+                            Visit Us : www.wingshomeopathy.com</p>
+                    </div>
+                ))}
+                {clinicDetails.filter((detail, _) => detail?.branch === 'Dombivali').map((detail, index) => (
+                    <div key={index}>
+                        <h2 className='text-white font-semibold  mb-4'>{detail?.branch?.toUpperCase()} Branch-2</h2>
+                        <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
+                        <p className='w-full text-[13px] font-medium text-[#c2c4c2] text-left leading-relaxed'>
+                            Address : Kapeesh Mall, Shop No. 17 ,18, 19, & 20, 1st Floor, M.G. Road, Near Mulund Railway Station, Mulund (W). <br />
+                            Time : <br />
+                            2.30 pm to 5 pm. <br />
+                            Sunday- 10.30 am to 4.30 pm. <br />
+                            <span className='text-yellow-500'>Thursday -Closed</span>
+                            <br />
+                            Tel : <br />
+                            022 - 25628989 <br />
+                            Mobile : <br />
+                            {
+                                detail?.phone.join(', ')
+                            }
+                            <br />
+                            Email : <br />
+                            {detail?.email}
+                        </p>
+                    </div>))}
             </div>
             <hr className='w-full opacity-20 mt-4 bg-[#c2c4c2] h-[0.5px] border-none ' />
             <div className=' md:flex-row flex flex-col  items-center justify-around text-[13px] text-[#c2c4c2] py-8'>

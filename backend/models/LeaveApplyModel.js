@@ -7,7 +7,7 @@ const LeaveSchema = new mongoose.Schema({
     type:{type:String,required:true},
     reason: { type: String, required: true },
     duration: { type: Number },
-    username: { type: String, required: true },
+    employee: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
     status: {type:String, default:'PENDING'}
 
 }, { timestamps: true })

@@ -2,23 +2,25 @@ import { useEffect, useState } from 'react'
 import { useStore } from '../../store/UpdateStore';
 import { useAuthStore } from '../../store/authStore';
 import { RxCross2 } from 'react-icons/rx';
+import Select from "react-select";
 
 const AddItemStockModal = ({ onClose }) => {
   const { getItems, items, units, getUnits, addItemStock, stock } = useStore();
   const { user } = useAuthStore();
-  const [item, setitem] = useState();
+  const [item, setitem] = useState(null);
   const [unit, setunit] = useState();
   const [quantity, setquantity] = useState(0);
   useEffect(() => {
     getItems();
   }, [getItems]);
+  const itemsArray = items.map(i => ({ value: i?.itemName, label: i?.itemName }));
 
   useEffect(() => {
     getUnits();
   }, [getUnits]);
   async function handleSubmit(e) {
     e.preventDefault();
-    const result = await addItemStock(item, unit, quantity, user?.branch);
+    const result = await addItemStock(item?.label, unit, quantity, user?.branch);
 
     if (result?.success) {
       setitem('');
@@ -41,12 +43,7 @@ const AddItemStockModal = ({ onClose }) => {
           <form onSubmit={handleSubmit} >
             <div className='mb-3'>
               <h1 className="text-black mb-3 text-lg font-semibold">Item:</h1>
-              <select onChange={(e) => setitem(e.target.value)} value={item} name="select item" id="item-select" className="py-2 rounded-lg w-full border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
-                <option value="">Select Items</option>
-                {items.map((item, index) => (
-                  <option key={index}>{item?.itemName}</option>
-                ))}
-              </select>
+              <Select options={itemsArray} placeholder="Search" value={item} onChange={setitem} className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200" required />
             </div>
             <div className='mb-3'>
               <h1 className="text-black mb-3 text-lg font-semibold">Unit:</h1>

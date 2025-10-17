@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllPatients, getAppDetails, getAppointmentLength, getAppointmentsRec, getPatient, getPatients, register, updatePatient } from '../controllers/Receptionist.controller.js';
+import { getAllPatients, getAppDetails, getAppointmentLength, getAppointmentsRec, getDoctor, getPatient, getPatients, register, updatePatient } from '../controllers/Receptionist.controller.js';
 
 const Recrouter = express.Router();
 
@@ -10,5 +10,7 @@ Recrouter.put('/update-patient/:id', updatePatient);
 Recrouter.get('/getAppointments/:branch', getAppointmentsRec)//
 Recrouter.get('/getRecAppointments/:branch/:appointmentType',getAppDetails)
 Recrouter.get('/getAllPatients/:branch', getAllPatients);//
-Recrouter.get('/getAppointmentsLength/:branch',getAppointmentLength)
+Recrouter.get('/getAppointmentsLength/:branch', getAppointmentLength)
+Recrouter.get('/getDoctor/:id', getDoctor);
+
 export default Recrouter;

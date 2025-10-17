@@ -45,11 +45,11 @@ const PresentComplaintsPatientSchema = new mongoose.Schema({
 
 const PastHistoryPatientSchema = new mongoose.Schema({
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},
-    complaintName: {type:String, required:true},
-    lastDiagnosed: {type:String,required:true},
-    lastSuffix: {type:String, required:true},
-    duration: {type:String,required:true},
-    durationSuffix: {type:String, required:true},
+    complaintName: {type:String},
+    lastDiagnosed: {type:String},
+    lastSuffix: {type:String},
+    duration: {type:String},
+    durationSuffix: {type:String},
     remark: {type:String},
     created_at: {type:String, required:true}
 });
@@ -113,6 +113,10 @@ const BriefMindSymptomScribbleSchema = new mongoose.Schema({
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'},    
 })
 
+const relationSchema = new mongoose.Schema({
+    relation: { type: String }
+});
+
 
 export const PresentComplaintsMaster = mongoose.model('PresentComplaintsMaster', PresentComplaintsMasterSchema );
 export const PastHistoryMaster = mongoose.model('PastHistoryMaster', PastHistoryMasterSchema );
@@ -133,4 +137,5 @@ export const MentalCausativeScribble = mongoose.model('MentalCausativeScribble',
 export const ChiefComplaintScribble = mongoose.model('ChiefComplaintScribble', ChiefComplaintScribbleSchema);
 export const PersonalHistoryScribble = mongoose.model('PersonalHistoryScribble', PersonalHistoryScribbleSchema);
 export const MentalPersonalityScribble = mongoose.model('MentalPersonalityScribble', MentalPersonalityScribbleSchema);
-export const BriefMindSymptomScribble = mongoose.model('BriefMindSymptomScribble',BriefMindSymptomScribbleSchema);
+export const BriefMindSymptomScribble = mongoose.model('BriefMindSymptomScribble', BriefMindSymptomScribbleSchema);
+export const Relation = mongoose.model('Relation', relationSchema);

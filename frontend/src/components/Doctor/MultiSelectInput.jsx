@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, X } from 'lucide-react';
+import axios from 'axios';
+import { DOC_API_URL } from '../../store/DocStore';
 
-const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions }) => {
+const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions, type = '', setRelationSubmit = () => { } }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [active, setActive] = useState(false);
   const selectedRef = useRef(null);
@@ -27,6 +29,17 @@ const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions }) => {
       document.removeEventListener('click', closeHandler);
     }
   }, [selectedRef.current])
+
+  const addRelation = async (term) => {
+    try {
+      await axios.post(`${DOC_API_URL}/addCustomRelation`, {
+        relation: term
+      });
+      setRelationSubmit(prev => !prev);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
 
   return (
     <div className='relative w-full' ref={selectedRef}>
@@ -65,7 +78,7 @@ const MultiSelectInput = ({ Options, selectedOptions, setSelectedOptions }) => {
             <input checked={selectedOptions?.includes(option)}
               onChange={() => setOptions(option)} type="checkbox" id={option} /><label htmlFor={option}>{option}</label>
           </div>
-        )) : <p>Not Found !</p>
+        )) : (type === 'Family Medical' ? <button onClick={() => addRelation(searchTerm)} className='text-white rounded-md py-1 px-3 bg-blue-500 w-fit cursor-pointer'>Add</button> : <p>Not Found !</p>)
         }
       </div>}
     </div>

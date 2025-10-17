@@ -47,6 +47,7 @@ const orderSchema = new mongoose.Schema({
     ],
     order_payment_flag: {type:Boolean,default:false},
     orderDate: { type: String },
+    billNumber:{type:String},
     Bill: [
         {
             imageUrl: { type: String }
@@ -66,6 +67,7 @@ const orderMedicinePaymentDetails = new mongoose.Schema({
     chequeNo: { type: String },
     date: { type: String },
     billNo: { type: String },
+    bills:[{type:String}],
     totalBill: { type: String },
     amountPaid: { type: String },
     modeOfPayment: { type: String },

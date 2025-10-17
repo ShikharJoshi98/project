@@ -17,12 +17,12 @@ const ApplyLeaveRec = () => {
         halfDayDate: "",
         type: "",
         reason: "",
-        username: user?.username || ""
+        employee: user?._id || ""
     });
     const [submit, setSubmit] = useState(false);
 
     useEffect(() => {
-        LeaveDetails(user?.username);
+        LeaveDetails(user?._id);
     }, [LeaveDetails, submit])
 
     const handleInputChange = (e) => {
@@ -70,7 +70,7 @@ const ApplyLeaveRec = () => {
                 type: "",
                 endDate: "",
                 reason: "",
-                username: user?.username || ""
+                employee: user?._id || ""
             })
         } catch (error) {
             console.error(error.message);

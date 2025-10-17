@@ -3,9 +3,9 @@ import { Appointment, ConsultationCharges, consultationChargesPrice } from "../m
 import { Employee } from "../models/EmployeeModel.js";
 import { Homeo } from "../models/HomeobhagwatModel.js";
 import { LeaveApplication } from "../models/LeaveApplyModel.js";
-import Patient, { FollowUpPatient, Investigation, OtherPrescription, otherPrescriptionPrice, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, WriteUpPatient } from "../models/PatientModel.js";
+import Patient, { CaseImage, FollowUpPatient, Investigation, OtherPrescription, otherPrescriptionPrice, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, ReportImage, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
-import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
+import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, Relation, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
 import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
 import { billPayment, fees } from "../models/PaymentModel.js";
 import { ItemStock, Order, OrderPaymentDetails } from "../models/ItemModel.js";
@@ -13,8 +13,9 @@ import { medicalOrder, MedicalStock, OrderMedicalPaymentDetails } from "../model
 import { BillInvoice, Certificate } from "../models/CertificateModel.js";
 import { updateDate } from "../utils/todayDate.js";
 import { receiveOrderHelper } from "./HR.controller.js";
-import { ItemVendor } from "../models/VendorModel.js";
-import sendWhatsAppMessage, { sendCourierPatientEmail, sendPaymentEmail } from "../utils/sendPaymentDetails.js";
+import { ItemVendor, MedicalVendor } from "../models/VendorModel.js";
+import sendWhatsAppMessage, { sendAppointmentPatientEmail, sendCourierPatientEmail, sendPaymentEmail } from "../utils/sendPaymentDetails.js";
+import { Clinic } from "../models/ClinicModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -80,9 +81,13 @@ export const updateTaskStatus = async (req, res) => {
 export const leaveDetails = async (req, res) => {
     try {
         const { id } = req.params;
-
-        const leaves = await LeaveApplication.find().sort({ createdAt: -1 });
-        const userLeaves = await LeaveApplication.find({ username: id }).sort({ createdAt: -1 });
+        let leaves, userLeaves;
+        if (!id || id === null || id === 'undefined') {
+            leaves = await LeaveApplication.find().populate('employee').sort({ createdAt: -1 });
+        }
+        else {
+            userLeaves = await LeaveApplication.find({ employee: id }).sort({ createdAt: -1 });
+        }
 
         res.json({
             success: true,
@@ -387,22 +392,15 @@ export const updateHomeoBhagwat = async (req, res) => {
 export const uploadCaseImage = async (req, res) => {
     try {
         const { id } = req.params;
-        const patient = await Patient.findById(id);
+        const { image, date } = req.body;
 
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
+        const caseImage = await CaseImage.create({
+            patient: id,
+            case_Image_string: image,
+            date
+        });
 
-        if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
-        }
-
-        const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-
-        patient.caseImages.push({ imageUrl: base64Image });
-        await patient.save();
-
-        res.status(200).json({ message: "Image uploaded successfully", patient });
+        res.status(200).json({ message: "Image uploaded successfully" });
 
     } catch (error) {
         console.error(error);
@@ -412,22 +410,15 @@ export const uploadCaseImage = async (req, res) => {
 export const uploadDiagnosisImage = async (req, res) => {
     try {
         const { id } = req.params;
-        const patient = await Patient.findById(id);
+        const { image, date } = req.body;
 
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
+        const reportImage = await ReportImage.create({
+            patient: id,
+            report_Image_string: image,
+            date
+        });
 
-        if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
-        }
-
-        const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-
-        patient.diagnosisImages.push({ imageUrl: base64Image });
-        await patient.save();
-
-        res.status(200).json({ message: "Image uploaded successfully", patient });
+        res.status(200).json({ message: "Image uploaded successfully" });
 
     } catch (error) {
         console.error(error);
@@ -438,13 +429,24 @@ export const uploadDiagnosisImage = async (req, res) => {
 export const getPatientImages = async (req, res) => {
     try {
         const { id } = req.params;
-        const patient = await Patient.findById(id);
+        const images = await CaseImage.find({ patient: id });
 
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
+        let combineObject = {};
+        images?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    images: []
+                }
+            }
+            combineObject[item?.date].images.push({
+                images: item?.
+                    case_Image_string, id: item?._id
+            });
+        })
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date)).reverse();
 
-        res.status(200).json({ caseImages: patient.caseImages });
+        res.status(200).json({ success: true, combinedArray });
 
     } catch (error) {
         console.error(error);
@@ -454,13 +456,24 @@ export const getPatientImages = async (req, res) => {
 export const getDiagnosisImages = async (req, res) => {
     try {
         const { id } = req.params;
-        const patient = await Patient.findById(id);
+        const images = await ReportImage.find({ patient: id });
 
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
+        let combineObject = {};
+        images?.forEach(item => {
+            if (!combineObject[item?.date]) {
+                combineObject[item.date] = {
+                    date: item?.date,
+                    images: []
+                }
+            }
+            combineObject[item?.date].images.push({
+                images: item?.report_Image_string,
+                id: item?._id
+            });
+        })
+        const combinedArray = Object.values(combineObject).sort((a, b) => new Date(b.date) - new Date(a.date)).reverse();
 
-        res.status(200).json({ diagnosisImages: patient.diagnosisImages });
+        res.status(200).json({ success: true, combinedArray });
 
     } catch (error) {
         console.error(error);
@@ -481,22 +494,13 @@ export const deleteHomeoBhagwatcol = async (req, res) => {//
     }
 }
 
-export const deleteCaseImages = async (req, res) => {//
-    const { patientId, imageId } = req.params;
-
+export const deleteCaseImages = async (req, res) => {
     try {
-        if (!mongoose.Types.ObjectId.isValid(imageId)) {
-            return res.status(400).json({ message: "Invalid Image ID" });
-        }
-
-        const patient = await Patient.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
-
-        patient.caseImages = patient.caseImages.filter(img => img._id.toString() !== imageId);
-
-        await patient.save();
+        const { patientId, imageId } = req.params;
+        const deletedCaseImage = await CaseImage.findOneAndDelete({
+            patient: patientId,
+            _id: imageId,
+        });
 
         res.json({ success: true, message: "Image deleted successfully" });
     } catch (error) {
@@ -506,20 +510,13 @@ export const deleteCaseImages = async (req, res) => {//
 };
 
 export const deleteDiagnosisImages = async (req, res) => {
-    const { patientId, imageId } = req.params;
     try {
-        if (!mongoose.Types.ObjectId.isValid(imageId)) {
-            return res.status(400).json({ message: "Invalid Image ID" });
-        }
+        const { patientId, imageId } = req.params;
+        const deletedReportImage = await ReportImage.findOneAndDelete({
+            patient: patientId,
+            _id: imageId,
+        });
 
-        const patient = await Patient.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
-
-        patient.diagnosisImages = patient.diagnosisImages.filter(img => img._id.toString() !== imageId);
-
-        await patient.save();
         res.json({ success: true, message: "Image deleted successfully" });
 
     } catch (error) {
@@ -892,7 +889,7 @@ export const getOtherPrescription = async (req, res) => {
     try {
         const { id } = req.params;
         const otherPrescription = await OtherPrescription.find({ patient: id, date: updateDate() });
-        
+
         return res.json({
             success: true,
             otherPrescription
@@ -2606,42 +2603,42 @@ export const getBill = async (req, res) => {
             otherMedicine.map((medicine, index) => otherPrescriptionPrice += medicine.price)
         }
         if (consultationCharges.length > 0) {
-            consultation += parseInt(consultationCharges[0].price);
+            consultation += parseInt(consultationCharges[0]?.price);
         }
 
         if (appointment.new_appointment_flag === true) {
-            newCaseCharge += Fees.newCase;
+            newCaseCharge += Fees?.newCase;
         }
-        if (appointment.appointmentType === 'courier') {
-            onlineAmount += Fees.Courier;
+        if (appointment.appointmentType === 'courier' && appointment.new_appointment_flag === true) {
+            onlineAmount += Fees?.Courier;
         }
         let duration = Number(prescription[0]?.duration);
         prescription.map((pres, _) => {
-            if (Number(pres.duration) > duration) {
+            if (Number(pres?.duration) > duration) {
                 duration = Number(pres?.duration);
             }
         });
         if (prescription) {
             if (duration === 7) {
-                medicineCharges += Fees.sevenDays
+                medicineCharges += Fees?.sevenDays
             }
             else if (duration === 15) {
-                medicineCharges += Fees.fifteenDays
+                medicineCharges += Fees?.fifteenDays
             }
             else if (duration === 21) {
-                medicineCharges += Fees.twentyOneDays
+                medicineCharges += Fees?.twentyOneDays
             }
             else if (duration === 30) {
-                medicineCharges += Fees.thirtyDays
+                medicineCharges += Fees?.thirtyDays
             }
             else if (duration === 45) {
-                medicineCharges += Fees.fortyFiveDays
+                medicineCharges += Fees?.fortyFiveDays
             }
             else if (duration === 60) {
-                medicineCharges += Fees.twoMonths
+                medicineCharges += Fees?.twoMonths
             }
             else if (duration === 90) {
-                medicineCharges += Fees.threeMonths
+                medicineCharges += Fees?.threeMonths
             }
         }
 
@@ -2677,25 +2674,34 @@ export const addPayment = async (req, res) => {
         updateDate();
 
         const newBalance = totalBill - billPaid;
-        // const payment = await billPayment.updateOne(
-        //     { patient: id },
-        //     { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag } },
-        //     { upsert: true }
-        // );
-        const presToday = await Prescription.find({
-            patient: id,
-            prescription_date: formattedDate
-        });
-        const patient = await Patient.findById(id);
-        const otherPrescription = await OtherPrescription.find({ patient: id,date:formattedDate });
+        const payment = await billPayment.updateOne(
+            { patient: id },
+            { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag } },
+            { upsert: true }
+        );
 
-        await sendCourierPatientEmail(patient?.email, presToday, otherPrescription, totalBill);
         res.json({
             success: true,
             message: "Bill Payment Done",
         })
     } catch (error) {
-        res.json({
+        return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const sendAppointmentEmail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await sendAppointmentPatientEmail(req.body.email, req.body, req.body.appointment, req.body.appointment.Doctor.fullname);
+        return res.json({
+            success: true,
+            message: "Sent the Email"
+        })
+    } catch (error) {
+        return res.json({
             success: false,
             message: error.message
         })
@@ -2814,6 +2820,50 @@ export const approveAllStock = async (req, res) => {
     }
 }
 
+export const getBillNumber = async (req, res) => {
+    try {
+        const { ids } = req.query;
+        let orders = [];
+        await Promise.all(ids.map(async (id, _) => {
+            const order = await Order.findById(id);
+            orders.push(order.billNumber);
+        }));
+
+        return res.json({
+            success: true,
+            message: 'fetched details successfully',
+            orders
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getMedicalBillNumber = async (req, res) => {
+    try {
+        const { ids } = req.query;
+        let orders = [];
+        await Promise.all(ids.map(async (id, _) => {
+            const order = await medicalOrder.findById(id);
+            orders.push(order.billNumber);
+        }));
+
+        return res.json({
+            success: true,
+            message: 'fetched details successfully',
+            orders
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 const updateMedicalStockApproval = async (id, flags) => {
     try {
 
@@ -2881,33 +2931,39 @@ export const approveAllMedicalStock = async (req, res) => {
 export const addOrderPaymentDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        const { transactionDetails, chequeNo, date, billNo, totalBill, amountPaid, modeOfPayment } = req.body;
-
-        const paymentDetails = await OrderPaymentDetails.create({
-            order: id,
-            transactionDetails,
-            chequeNo,
-            date,
-            billNo,
-            totalBill,
-            amountPaid,
-            modeOfPayment,
-            details_added_flag: true
-        });
-
-        const order = await Order.findById(id);
+        const { transactionDetails, chequeNo, date, billNo,bills, totalBill, amountPaid, modeOfPayment } = req.body;
+        await Promise.all(billNo.map(async (bill, _) => {
+            const paymentDetails = await OrderPaymentDetails.create({
+                order: bill,
+                transactionDetails,
+                chequeNo,
+                date,
+                totalBill,
+                bills,
+                amountPaid,
+                modeOfPayment,
+                details_added_flag: true
+            })
+            const order = await Order.findById(bill);
         if (order) {
             order.order_payment_flag = true;
         }
-        await order.save();
-        const vendors = order?.formRows.map((row, _) => {
+            await order.save();
+            const vendors = order?.formRows.map((row, _) => {
             return row?.vendor[0];
         });
-        vendors.map(async (vendor, _) => {
-            const vendorPerson = await ItemVendor.findOne({ vendorname: vendor });
-            sendPaymentEmail(vendorPerson?.email, req.body);
-            sendWhatsAppMessage(req.body,vendorPerson?.contact);
-        })
+        const emailedVendors = new Set();
+        for (const vendor of vendors) {
+            if (!emailedVendors.has(vendor)) {
+                const vendorPerson = await ItemVendor.findOne({ vendorname: vendor });
+                if (vendorPerson?.email) {
+                    await sendPaymentEmail(vendorPerson?.email, req.body);
+                    emailedVendors.add(vendor);
+                }
+            }
+        }
+        }))
+        
         return res
             .status(200)
             .json({
@@ -2926,10 +2982,19 @@ export const addOrderPaymentDetails = async (req, res) => {
 
 export const getOrderPaymentDetails = async (req, res) => {
     try {
-        const { id } = req.params;
-        const details = await OrderPaymentDetails.findOne({
+        const { id, type } = req.params;
+        let details;
+        if (type === 'item') {
+             details = await OrderPaymentDetails.findOne({
             order: id
         }).populate('order');
+        }
+        else if (type === 'medicine') {
+              details = await OrderMedicalPaymentDetails.findOne({
+            order: id
+        }).populate('order');
+        }
+        console.log(details);
         return res
             .status(200)
             .json({
@@ -2950,25 +3015,39 @@ export const getOrderPaymentDetails = async (req, res) => {
 export const addMedicalOrderPaymentDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        const { transactionDetails, chequeNo, date, billNo, totalBill, amountPaid, modeOfPayment } = req.body;
-
-        const paymentDetails = await OrderMedicalPaymentDetails.create({
-            order: id,
-            transactionDetails,
-            chequeNo,
-            date,
-            billNo,
-            totalBill,
-            amountPaid,
-            modeOfPayment,
-            details_added_flag: true
-        });
-
-        const order = await medicalOrder.findById(id);
+        const { transactionDetails, chequeNo, date, billNo,bills, totalBill, amountPaid, modeOfPayment } = req.body;
+        await Promise.all(billNo.map(async (bill, _) => {
+            const paymentDetails = await OrderMedicalPaymentDetails.create({
+                order: bill,
+                transactionDetails,
+                chequeNo,
+                date,
+                totalBill,
+                bills,
+                amountPaid,
+                modeOfPayment,
+                details_added_flag: true
+            })
+            const order = await medicalOrder.findById(bill);
         if (order) {
             order.order_payment_flag = true;
         }
-        await order.save();
+            await order.save();
+            const vendors = order?.formRows.map((row, _) => {
+            return row?.vendor[0];
+        });
+        const emailedVendors = new Set();
+        for (const vendor of vendors) {
+            if (!emailedVendors.has(vendor)) {
+                const vendorPerson = await MedicalVendor.findOne({ vendorname: vendor });
+                if (vendorPerson?.email) {
+                    await sendPaymentEmail(vendorPerson?.email, req.body);
+                    emailedVendors.add(vendor);
+                }
+            }
+        }
+        }))
+        
         return res
             .status(200)
             .json({
@@ -3014,7 +3093,7 @@ export const addBillInvoice = async (req, res) => {
     try {
         let { title, patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee } = req.body;
         let formattedDate = '';
-        console.log(title);
+
         const updateDate = () => {
             const today = new Date();
             const day = String(today.getDate()).padStart(2, '0');
@@ -3029,12 +3108,22 @@ export const addBillInvoice = async (req, res) => {
         };
         startDate = convertDateFormat(startDate);
         endDate = convertDateFormat(endDate);
-        await BillInvoice.create({
-            title, patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee, date: formattedDate
+        const invoices = await BillInvoice.find();
+        const lastInvoice = invoices[invoices.length - 1];
+        let billNumber = "001";
+        if (lastInvoice && lastInvoice.billNumber) {
+            let lastNum = parseInt(lastInvoice.billNumber, 10);
+            let nextNum = lastNum + 1;
+            if (nextNum > 999) nextNum = 1;
+            billNumber = nextNum.toString().padStart(3, "0");
+        }
+        const invoice = await BillInvoice.create({
+            title, patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee, date: formattedDate, billNumber
         });
         res.json({
             success: true,
-            message: "Invoice created"
+            message: "Invoice created",
+            invoice
         })
     } catch (error) {
         res.json({
@@ -3063,7 +3152,7 @@ export const getBillInvoice = async (req, res) => {
 
 export const addCertificateDetails = async (req, res) => {
     try {
-        let { selectedPatient, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration } = req.body;
+        let { selectedPatient, doctor, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration } = req.body;
 
         const convertDateFormat = (dateString) => {
             const [year, month, date] = dateString.split('-');
@@ -3073,9 +3162,9 @@ export const addCertificateDetails = async (req, res) => {
         restFrom = convertDateFormat(restFrom);
         restTill = convertDateFormat(restTill);
         resumeDate = convertDateFormat(resumeDate);
-
+        if (!doctor) doctor = undefined;
         await Certificate.create({
-            patient: selectedPatient, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration
+            patient: selectedPatient, doctor, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration
         })
         res.json({
             success: true,
@@ -3091,7 +3180,7 @@ export const addCertificateDetails = async (req, res) => {
 
 export const getCertificates = async (req, res) => {
     try {
-        const certificates = await Certificate.find().populate('patient');
+        const certificates = await Certificate.find().populate('patient').populate('doctor');
         res.json({
             certificates,
             success: true
@@ -3127,6 +3216,103 @@ export const editCertificate = async (req, res) => {
         res.json({
             message: error.message,
             success: false
+        })
+    }
+}
+
+export const addRelation = async (req, res) => {
+    try {
+        const { relation } = req.body;
+        const customRelation = await Relation.create({ relation });
+        return res.json({
+            message: "custom relation added",
+            success: true
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const getRelations = async (req, res) => {
+    try {
+        const relations = (await Relation.find()).map((relation, _) => {
+            return relation?.relation
+        });
+        return res.json({
+            success: true,
+            relations
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const addClinicDetails = async (req, res) => {
+    try {
+        const { branch, phone, email } = req.body;
+        const branchExists = await Clinic.findOne({ branch });
+        if (branchExists) {
+            if (phone) {
+                branchExists?.phone.push(phone);
+                await branchExists.save();
+            }
+            if (email) {
+                await Clinic.updateOne(
+                    { branch: branch },
+                    { $set: { email: email } }
+                );
+            }
+        }
+        else {
+            let phoneArray = [];
+            phoneArray.push(phone);
+            await Clinic.create({ branch, phone: phoneArray, email });
+        }
+        return res.json({
+            success: true,
+            message: "Clinic Details added"
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getClinicDetails = async (req, res) => {
+    try {
+        const details = await Clinic.find();
+        return res.json({
+            success: true,
+            details
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const deleteClinicDetail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Clinic.findByIdAndDelete(id);
+        return res.json({
+            success: true,
+            message: "Deleted Successfully"
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
         })
     }
 }

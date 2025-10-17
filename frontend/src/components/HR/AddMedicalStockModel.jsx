@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useStore } from '../../store/UpdateStore';
 import { useAuthStore } from '../../store/authStore';
 import { RxCross1 } from 'react-icons/rx';
+import Select from "react-select";
 
 const AddMedicalStockModel = ({ onClose }) => {
   const { getMedicine, medicines, potencys, getPotency, addMedicineStock, medicalStockToggleSubmit } = useStore();
@@ -12,6 +13,7 @@ const AddMedicalStockModel = ({ onClose }) => {
   useEffect(() => {
     getMedicine();
   }, [getMedicine]);
+  const medicineArray = medicines.map(m => ({ value: m?.medicine, label: m?.medicine }));
 
   useEffect(() => {
     getPotency();
@@ -20,7 +22,7 @@ const AddMedicalStockModel = ({ onClose }) => {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    await addMedicineStock(medicine, potency, quantity, user?.branch);
+    await addMedicineStock(medicine?.label, potency, quantity, user?.branch);
     alert("Added Medicine stock");
     setmedicine('');
     setpotency('');
@@ -43,7 +45,7 @@ const AddMedicalStockModel = ({ onClose }) => {
           <form onSubmit={handleSubmit} >
             <div className='mb-3'>
               <h1 className="text-black mb-3 text-lg font-semibold">Medicine:</h1>
-              <select
+              {/* <select
                 onChange={(e) => setmedicine(e.target.value)}
                 value={medicine}
                 name="select item"
@@ -54,7 +56,8 @@ const AddMedicalStockModel = ({ onClose }) => {
                 {medicines.map((medicine, index) => (
                   <option key={index}>{medicine?.medicine}</option>
                 ))}
-              </select>
+              </select> */}
+              <Select options={medicineArray} placeholder="Search" value={medicine} onChange={setmedicine} className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200" required />
             </div>
             <div className='mb-3'>
               <h1 className="text-black mb-3 text-lg font-semibold">Unit:</h1>

@@ -8,16 +8,28 @@ import { Employee } from "../models/EmployeeModel.js";
 
 export const register = async (req, res) => {
     try {
-        const { patientCard,fullname, phone, Altphone, email, username, lastLogin, password, branch } = req.body;
-        const isBranch = branch === 'Mulund' ? 'MUL' : 'DOM';
+        let { patientCard, fullname, phone, Altphone, email, username, lastLogin, password, branch, casePaperNo } = req.body;
+        let isBranch = branch === 'Mulund' ? 'MUL' : 'DOM';
+
         const existUser = await Patient.findOne({ username });
         if (existUser) {
             return res.status(400).json({ success: false, message: "Already exists try logging in." })
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
-        const newUser = new Patient({
-            patientCard,fullname, casePaperNo: `${isBranch}-NEW`, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
-        })
+        let newUser;
+        if (!casePaperNo) {
+            casePaperNo = `${isBranch}-NEW`;
+            newUser = new Patient({
+                patientCard, fullname, casePaperNo, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
+            })
+        }
+        else {
+            newUser = new Patient({
+                patientCard, fullname, casePaperNo, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch,
+                Case_Assignment_Flag: true
+            })
+        }
+
         await newUser.save();
         generateTokenAndSetCookie(res, newUser._id);
         res.status(200).json({
@@ -142,45 +154,45 @@ export const resetPassword = async (req, res) => {
 }
 
 export const checkAuth = async (req, res) => {
-  try {
-    const { role, userId } = req;
+    try {
+        const { role, userId } = req;
 
-    if (!role || !userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized - missing role or user ID",
-      });
-    }
+        if (!role || !userId) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized - missing role or user ID",
+            });
+        }
 
-    let user;
+        let user;
 
-    if (role === "patient") {
-      user = await Patient.findById(userId).select("-password").lean();
-    } else {
-      user = await Employee.findById(userId).select("-password").lean();
+        if (role === "patient") {
+            user = await Patient.findById(userId).select("-password").lean();
+        } else {
+            user = await Employee.findById(userId).select("-password").lean();
 
-      if (user && user.role !== role) {
-        return res.status(403).json({
-          success: false,
-          message: "Forbidden - role mismatch",
+            if (user && user.role !== role) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Forbidden - role mismatch",
+                });
+            }
+        }
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({ success: true, user });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
         });
-      }
     }
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    return res.status(200).json({ success: true, user });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
-  }
 };
 

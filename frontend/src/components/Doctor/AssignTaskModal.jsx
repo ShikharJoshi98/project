@@ -51,9 +51,10 @@ const AssignTaskModal = ({ onClose }) => {
         </h1>
         <div className="flex flex-col  md:justify-around md:flex-row ">
           <div className="bg-white p-5 rounded-lg md:w-96 ">
-            <div className='flex flex-col  gap-4 mt-4'>
+            <div className='flex flex-col gap-4 mt-4'>
               <p className='text-black mb-2 text-lg font-semibold'>Select Branch:</p>
-              <div className='h-9 bg-[#c8c8ce] mx-auto rounded-[18px]'><button onClick={() => setSelectBranch('Dombivali')} className={`py-1 ${selectBranch === 'Dombivali' ? 'bg-blue-500 rounded-[18px] text-white' : ''} py-1.5 px-5 cursor-pointer`}>Dombivali</button><button onClick={() => setSelectBranch('Mulund')} className={`py-1.5 px-5 ${selectBranch === 'Mulund' ? 'bg-blue-500 rounded-[18px] text-white' : ''} cursor-pointer`}>Mulund</button></div></div>
+              <div className='h-9 bg-[#c8c8ce] mx-auto rounded-[18px]'><button onClick={() => setSelectBranch('Dombivali')} className={`py-1 ${selectBranch === 'Dombivali' ? 'bg-blue-500 rounded-[18px] text-white' : ''} py-1.5 px-5 cursor-pointer`}>Dombivali</button><button onClick={() => setSelectBranch('Mulund')} className={`py-1.5 px-5 ${selectBranch === 'Mulund' ? 'bg-blue-500 rounded-[18px] text-white' : ''} cursor-pointer`}>Mulund</button></div>
+            </div>
             <form onSubmit={handleSubmit} >
               <div className='mb-3 '>
                 <h1 className="text-black mb-2 text-lg font-semibold">Task:</h1>

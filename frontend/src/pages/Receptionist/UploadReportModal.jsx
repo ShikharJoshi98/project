@@ -10,6 +10,7 @@ import { CiImageOn } from 'react-icons/ci';
 import { LuLoaderCircle } from 'react-icons/lu';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
+import { updateDate } from '../../store/todayDate';
 
 const UploadReportModal = ({ onClose }) => {
     const { allBranchPatients, getAllPatients } = recStore();
@@ -19,7 +20,7 @@ const UploadReportModal = ({ onClose }) => {
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [loading, setLoading] = useState(false);
     const [patientLoading, setPatientLoading] = useState(false);
-    const [uploadLoading, setUploadLoading] = useState(false);
+    const date = updateDate();
 
     useEffect(() => {
         const timeout = setTimeout(() => setPatientLoading(true), 200);
@@ -37,6 +38,20 @@ const UploadReportModal = ({ onClose }) => {
         }
     }, [getAllPatients]);
 
+    async function handleInputImage(e) {
+        const { name, files } = e.target;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImage(
+                    reader.result
+                );
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
         if (!image) {
@@ -44,19 +59,15 @@ const UploadReportModal = ({ onClose }) => {
             return;
         }
         try {
-            setUploadLoading(true);
-            const formData = new FormData();
-            formData.append("diagnosisImage", image);
-            await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${selectedPatient}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
-            })
+            setLoading(true);
+            await axios.post(`${DOC_API_URL}/upload-diagnosis-image/${selectedPatient}`, { image, date })
             toast.success("Image Uploaded");
             setImage(null);
         } catch (error) {
             console.log(error.message);
             toast.error("Failed to upload image.");
         } finally {
-            setUploadLoading(false);
+            setLoading(false);
         }
     }
 
@@ -76,9 +87,9 @@ const UploadReportModal = ({ onClose }) => {
                         </div>
                         <div className="flex flex-col mt-5 gap-2">
                             <h1>Select Case Paper Image</h1>
-                            <Input icon={CiImageOn} type="file" name="caseImage" onChange={(e) => setImage(e.target.files[0])} required />
+                            <Input icon={CiImageOn} type="file" name="diagnoseImage" onChange={handleInputImage} required />
                             {
-                                image && <img src={URL.createObjectURL(image)} className='h-40 w-40 object-cover' />
+                                image && <img src={image} className='h-40 w-40 object-cover' />
                             }
                         </div>
                         <div className="w-full flex items-center justify-center">

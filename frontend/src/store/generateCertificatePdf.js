@@ -61,12 +61,12 @@ function numberToWords(num) {
     return result;
 }
 
-export const generateBillInvoicePdf = (patient,title, today, data) => {
+export const generateBillInvoicePdf = (patient,title, today, data, billNumber) => {
     const doc = new jsPDF();
     patient.casePaperNo = String(patient?.casePaperNo).split('-');
     doc.addImage(img, 'JPEG', 0, 0, 210, 297);
     doc.setFontSize(12);
-    doc.text('D-' + patient.casePaperNo[1], 52, 67);
+    doc.text(billNumber, 52, 67);
     doc.text(today, 162, 67);
     doc.setFontSize(16);
     doc.text(`${title} ${patient.fullname}`, 25, 134);
@@ -92,7 +92,7 @@ export const generateBillInvoicePdf = (patient,title, today, data) => {
     data?.medicineName && doc.text(`Rx ${data.medicineName}`, 27, 215);
     doc.text(`Rs ${parseInt(data.medicineFee) + parseInt(data.consultingFee)}`, 165, 230);
     doc.setFontSize(17);
-    doc.text(`${numberToWords(parseInt(data.medicineFee) + parseInt(data.consultingFee))} Only`, 75, 241).splitTextToSize(135);
+    doc.text(`${numberToWords(parseInt(data.medicineFee) + parseInt(data.consultingFee))} Only`, 75, 241).splitTextToSize(100);
     const pdfBlob = doc.output("blob");
     const pdfUrl = URL.createObjectURL(pdfBlob);
 
@@ -104,7 +104,7 @@ export const generatePreviousIssuedInvoice = (patient,title="", today, data) => 
     patient.casePaperNo = String(patient?.casePaperNo).split('-');
     doc.addImage(img, 'JPEG', 0, 0, 210, 297);
     doc.setFontSize(12);
-    doc.text('D-' + patient.casePaperNo[1], 52, 67);
+    doc.text(data?.billNumber, 52, 67);
     doc.text(today, 162, 67);
     doc.setFontSize(16);
     doc.text(`${title} ${patient.fullname}`, 25, 134);
@@ -131,7 +131,7 @@ export const generatePreviousIssuedInvoice = (patient,title="", today, data) => 
     doc.text(`Rs ${parseInt(data.medicineFee) + parseInt(data.consultingFee)}`, 165, 230);
     const totalAmount = parseInt(data.medicineFee) + parseInt(data.consultingFee);
 const amountWords = `${numberToWords(totalAmount)} Only`;
-const splitText = doc.splitTextToSize(amountWords, 110);
+const splitText = doc.splitTextToSize(amountWords, 100);
 
 doc.setFontSize(16);
 doc.text(splitText, 75, 241);
@@ -226,7 +226,9 @@ export const generateTravellingCertificate = (details, patient, user) => {
       : details?.diagnoseOne && details?.diagnoseTwo
       ? `${details?.diagnoseOne} and ${details?.diagnoseTwo}`
       : `${details?.diagnoseOne}`
-  }. He/She had been given medicine for ${details?.duration} according to his/her disease concerned.`;
+    }. 
+He/She has been given medicine for ${details?.duration} according to his/her disease concerned.`;
+
 
   // Set up text rendering with custom line spacing
   doc.setFontSize(14);
@@ -333,7 +335,7 @@ export const generateUnfitCertificate = (details, patient, user) => {
       : details.diagnoseOne && details.diagnoseTwo
       ? `${details.diagnoseOne} and ${details.diagnoseTwo}`
       : `${details.diagnoseOne}`
-  } on ${convertDateFormat(details.date)}. He/She is advised to take rest accordingly.`;
+  } on ${convertDateFormat(details.date)} so He/She is advised to take rest accordingly.`;
 
   // Apply custom line spacing
   doc.setFontSize(14);

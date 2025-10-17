@@ -3,8 +3,10 @@ import { LuCheck, LuLock } from 'react-icons/lu';
 import { RxCross2 } from 'react-icons/rx';
 import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
 const PatientDetailModal = ({ username, password, onClose }) => {
+    const { user } = useAuthStore();
     const navigate = useNavigate();
     const copyToClipboard = async (text) => {
         try {
@@ -32,7 +34,7 @@ const PatientDetailModal = ({ username, password, onClose }) => {
                         <div title='Copy' onClick={() => copyToClipboard(password)} className='bg-blue-500 p-2 rounded-md text-white cursor-pointer'>Copy</div>
                     </div>
                 </div>
-                <button onClick={() => navigate('/login')} className='bg-blue-500 mx-auto mt-10 font-semibold text-white text-xl rounded-md py-2 px-6 cursor-pointer'>Go to Login</button>
+                {!user && <button onClick={() => navigate('/login')} className='bg-blue-500 mx-auto mt-10 font-semibold text-white text-xl rounded-md py-2 px-6 cursor-pointer'>Go to Login</button>}
             </div>
         </div>
     )

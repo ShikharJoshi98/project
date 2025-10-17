@@ -9,9 +9,11 @@ import axios from 'axios';
 import { generateBillInvoicePdf } from '../../store/generateCertificatePdf';
 import { updateDate } from '../../store/todayDate';
 import SearchSelect from '../../components/SearchSelect';
+import { useAuthStore } from '../../store/authStore';
 
 const BillInvoice = () => {
-    const { getAllPatients, allPatients } = recStore();
+    const { getAllPatients, allPatients, allBranchPatients } = recStore();
+    const { user } = useAuthStore();
     const { getPrescriptions, prescriptionsArray } = docStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [selectedDiagnosis, setSelecetedDiagnosis] = useState(null);
@@ -27,11 +29,38 @@ const BillInvoice = () => {
         medicineFee: ''
     });
     const todayDate = updateDate();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getAllPatients();
+        const fetchPatients = async () => {
+            try {
+                setLoading(true);
+                if (user?.role === 'doctor') {
+                    await getAllPatients();
+                } else {
+                    await getAllPatients(user?.branch);
+                }
+            } catch (error) {
+                console.error(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPatients();
+    }, [user?.role, user?.branch]);
+
+
+    useEffect(() => {
         getPrescriptions();
-    }, [getAllPatients]);
+    }, [getPrescriptions]);
+
+    useEffect(() => {
+        setFormValues((prev) => ({
+            ...prev,
+            title: 'Mr.'
+        }))
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -63,13 +92,18 @@ const BillInvoice = () => {
         e.preventDefault();
         formValues.patient = selectedPatient;
         formValues.selectedDiagnosis = selectedDiagnosis.label;
-        console.log(formValues);
-        const name =
-            await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
-        const patient = allPatients.filter((patient) => patient?._id === formValues.patient);
+        let patient;
+        const response = await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
+        if (user?.role === 'doctor') {
+            patient = allPatients.filter((patient) => patient?._id === formValues.patient);
+        }
+        else {
+            patient = allBranchPatients.filter((patient) => patient?._id === formValues.patient);
+        }
 
-        generateBillInvoicePdf(patient[0], formValues.title, todayDate, formValues);
+        generateBillInvoicePdf(patient[0], formValues.title, todayDate, formValues, response?.data?.invoice?.billNumber);
         setFormValues({
+            title: 'Mr.',
             patient: '',
             selectedDiagnosis: '',
             medicineName: '',
@@ -84,7 +118,6 @@ const BillInvoice = () => {
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 min-h-screen w-full overflow-hidden'>
             <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Bill Invoice</h1>
-                <p className='text-red-500 mt-10 font-semibold '>Add Diagnoses and Medicines for Patient's For whom Invoice is to be generated.</p>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8  rounded-xl text-zinc-600   text-sm flex flex-col gap-5' >
                     {billStatus === 'first' && <div><div className='flex flex-col gap-2'>
                         <h1>Select title</h1>
@@ -96,8 +129,11 @@ const BillInvoice = () => {
                             <option value="Smt.">Smt.</option>
                         </select>
                         <h1>Patient Case Paper Number : </h1>
-                        <div className='relative w-full'>
-                            <SearchSelect options={allPatients} setSelectedPatient={setSelectedPatient} />
+                        <div className='relative w-full'>{
+                            user?.role === 'doctor' ?
+                                <SearchSelect options={allPatients} loading={loading} setSelectedPatient={setSelectedPatient} /> :
+                                <SearchSelect options={allBranchPatients} loading={loading} setSelectedPatient={setSelectedPatient} />
+                        }
                         </div>
                     </div>
                         <div className='flex flex-col gap-2'>

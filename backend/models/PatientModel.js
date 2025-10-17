@@ -6,30 +6,6 @@ const PatientSchema = new mongoose.Schema({
     username: { type: String, required: true },
     role:{type:String,default:'patient'},
     casePaperNo: { type: String },
-    caseImages: [
-        {
-            imageUrl: { type: String, required: true }, 
-            uploadedAt: { type: Date, default: Date.now },
-        }
-    ],
-    diagnosisImages: [
-        {
-            imageUrl: { type: String, required: true }, 
-            uploadedAt: { type: Date, default: Date.now },
-        }
-    ],
-    followUpImages: [
-        {
-            imageUrl: { type: String, required: true }, 
-            uploadedAt: { type: Date, default: Date.now },
-        }
-    ],  
-    complaintImages: [
-        {
-            imageUrl: { type: String, required: true }, 
-            uploadedAt: { type: Date, default: Date.now },
-        }
-    ],
     fullname: { type: String, required: true },
     age: { type: Number },
     gender: { type: String },
@@ -200,6 +176,32 @@ const otherPrescriptionSchema = new mongoose.Schema({
     date:{type:String}
 })
 
+const caseImagesSchema = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    case_Image_string: {
+        type: String
+    },
+    date: {
+        type:String
+    }
+})
+
+const reportImagesSchema = new mongoose.Schema({
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient'
+    },
+    report_Image_string: {
+        type: String
+    },
+    date: {
+        type:String
+    }
+})
+
 const Patient = mongoose.model('Patient', PatientSchema);
 export const Prescription = mongoose.model('Prescription', prescriptionSchema);
 export const FollowUpPatient = mongoose.model('FollowUpPatient', followUpPatientSchema);
@@ -210,5 +212,7 @@ export const Investigation = mongoose.model('Investigation', investigationSchema
 export const OtherPrescription = mongoose.model('OtherPrescription', otherPrescriptionSchema);
 export const diagnosis = mongoose.model('diagnosis', diagnosisMasterSchema);
 export const otherPrescriptionPrice = mongoose.model('otherPrescriptionPrice', otherPrescriptionPriceSchema);
+export const CaseImage = mongoose.model('CaseImage', caseImagesSchema);
+export const ReportImage = mongoose.model('ReportImage', reportImagesSchema);
 
 export default Patient

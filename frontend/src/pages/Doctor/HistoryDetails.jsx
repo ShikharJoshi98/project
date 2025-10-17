@@ -6,7 +6,7 @@ import History from './History';
 import PresentComplaintModal from '../../components/Doctor/PresentComplaintModal';
 
 const HistoryDetails = () => {
-  const { getHistoryDetails,historyDetails, getPresentComplaint,PresentComplaintData } = docStore();
+  const { getHistoryDetails, historyDetails, getPresentComplaint, PresentComplaintData } = docStore();
   const location = useParams();
   const [isHistoryModalOpen, setHistoryModalIsOpen] = useState(false);
   const [isPresentComplaintModalOpen, setPresentComplaintModalOpen] = useState(false);
@@ -14,14 +14,14 @@ const HistoryDetails = () => {
   const [submit, setSubmit] = useState(false);
   const navigate = useNavigate();
   const selectInfo = (data) => {
-      setSelectedData(data)
-    }
-
+    setSelectedData(data)
+  }
+  console.log(historyDetails);
   useEffect(() => {
     getHistoryDetails(location.id);
-    getPresentComplaint(location.id);    
-  }, [getHistoryDetails,getPresentComplaint,submit]);  
- 
+    getPresentComplaint(location.id);
+  }, [getHistoryDetails, getPresentComplaint, submit]);
+
   return (
     <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full">
       <div className="bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg">
@@ -31,13 +31,13 @@ const HistoryDetails = () => {
         <div className='flex flex-wrap gap-10 px-20 items-center mt-20'>
           {historyDetails?.map((data, index) =>
             <button key={index} onClick={() => { setHistoryModalIsOpen(true); selectInfo(data) }} className='p-2 bg-blue-500 cursor-pointer rounded-lg text-white'>{data?.date}</button>
-            )}
+          )}
         </div>
         <h3 className='text-base sm:text-2xl text-center font-semibold mt-15 text-[#598fbd]'>Present Complaints History</h3>
         <div className='flex flex-wrap gap-10 px-20 items-center mt-20'>
           {PresentComplaintData?.map((data, index) =>
-              <button key={index} onClick={() => { setPresentComplaintModalOpen(true); selectInfo(data) }} className='p-2 bg-blue-500 cursor-pointer rounded-lg text-white'>{data?.date}</button>
-            )}
+            <button key={index} onClick={() => { setPresentComplaintModalOpen(true); selectInfo(data) }} className='p-2 bg-blue-500 cursor-pointer rounded-lg text-white'>{data?.date}</button>
+          )}
         </div>
       </div>
       {isHistoryModalOpen && <History data={selectedData} setSelectedData={setSelectedData} setSubmit={setSubmit} onClose={() => setHistoryModalIsOpen(false)} />}

@@ -40,7 +40,7 @@ const AddComplaintModal = ({ onClose, complaint }) => {
                     onClick={onClose}
                     className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"
                 ><RxCross2 size={24} /></button>
-                <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">Add a New Disease - {complaint}</h1>
+                <h1 className="text-blue-500 text-2xl md:text-3xl mb-6 text-center font-semibold">Add New - {complaint}</h1>
                 <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
                     <form onSubmit={handleSubmit} className='sm:w-1/2 w-full space-y-5'>
                         <div className='flex flex-col gap-2'>
@@ -51,7 +51,6 @@ const AddComplaintModal = ({ onClose, complaint }) => {
                     </form>
                     <div className='sm:w-1/2 w-full'>
                         <h1 className='text-black text-xl font-semibold mb-4'>Recent List</h1>
-
                         <div className='flex flex-col h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
                             {list?.map((investigation, index) => (
                                 <div key={index} >

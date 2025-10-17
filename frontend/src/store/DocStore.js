@@ -60,7 +60,11 @@ export const docStore = create((set) => ({
     homeoBhagwatSection: "medicine",
     orderId: [],
     medicalOrderId: [],
-    orderPaymentDetails:[],
+    orderPaymentDetails: [],
+    customRelations: [],
+    clinicDetails: [],
+    ordersBillNumber: [],
+    medicalOrderBillNumbers:[],
     setHomeoBhagwatSection: (newsection) => set({ homeoBhagwatSection: newsection }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
@@ -178,14 +182,10 @@ export const docStore = create((set) => ({
 
         }
     },
-    uploadCase: async (formData, id) => {//
+    uploadCase: async (data, id) => {//
         try {
-            const response = await axios.post(`${DOC_API_URL}/upload-case-image/${id}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
-            })
-            set((state) => ({
-                caseImages: [...state.caseImages, response.data.patient.caseImages.imageUrl]
-            }));
+            const response = await axios.post(`${DOC_API_URL}/upload-case-image/${id}`, data
+            );
         } catch (error) {
             console.log(error.message);
         }
@@ -193,7 +193,7 @@ export const docStore = create((set) => ({
     getCaseImages: async (id) => {
         try {
             const response = await axios.get(`${DOC_API_URL}/case-images/${id}`)
-            set({ caseImages: response.data.caseImages });
+            set({ caseImages: response.data.combinedArray });
         } catch (error) {
             console.log(error.message);
         }
@@ -201,7 +201,7 @@ export const docStore = create((set) => ({
     getDiagnosisImages: async (id) => {
         try {
             const response = await axios.get(`${DOC_API_URL}/diagnosis-images/${id}`)
-            set({ diagnosisImages: response.data.diagnosisImages });
+            set({ diagnosisImages: response.data.combinedArray });
         } catch (error) {
             console.log(error.message);
         }
@@ -376,12 +376,32 @@ export const docStore = create((set) => ({
         const response = await axios.get(`${HR_API_URL}/getMedicalOrderId`);
         set({medicalOrderId: response.data.medicalOrder})
     },
-    getOrderPaymentDetails: async (id) => {
-        const response = await axios.get(`${DOC_API_URL}/getOrderPaymentDetails/${id}`);
+    getOrderPaymentDetails: async (id,type) => {
+        const response = await axios.get(`${DOC_API_URL}/getOrderPaymentDetails/${id}/${type}`);
         set({ orderPaymentDetails: response.data.details });
     },
     getMedicalOrderPaymentDetails: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/getMedicalOrderPaymentDetails/${id}`);
         set({ orderPaymentDetails: response.data.details });
+    },
+    getCustomRelation: async () => {
+        const response = await axios.get(`${DOC_API_URL}//getCustomRelation`);
+        set({ customRelations: response.data.relations });
+    },
+    getClinicDetails: async () => {
+        const response = await axios.get(`${DOC_API_URL}/getClinicDetails`);
+        set({ clinicDetails: response.data.details });
+    },
+    getBillNumbers: async (ids) => {
+        const response = await axios.get(`${DOC_API_URL}/getBillNumber`, {
+            params: { ids }
+        });
+        set({ ordersBillNumber: response.data.orders });
+    },
+    getMedicalBillNumbers: async (ids) => {
+        const response = await axios.get(`${DOC_API_URL}/getMedicalBillNumber`, {
+            params: { ids }
+        });
+        set({ medicalOrderBillNumbers: response.data.orders });
     }
 }))
