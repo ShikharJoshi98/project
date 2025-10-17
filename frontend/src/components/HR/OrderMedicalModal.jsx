@@ -101,7 +101,6 @@ const OrderModal = ({ onClose }) => {
           medicineId: item ? item?._id : "",
         };
       }));
-
       await axios.post(`${HR_API_URL}/place-medical-order`, { formRows: formattedFormRows });
       alert("Order was placed");
       await axios.post(`${HR_API_URL}/sendMedicalVendorEmail/${user?.branch}`, formattedFormRows);

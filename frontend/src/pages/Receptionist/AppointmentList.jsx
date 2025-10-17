@@ -12,22 +12,24 @@ import { LuLoaderCircle } from 'react-icons/lu';
 const AppointmentList = () => {
     const { appointmentSubmit } = docStore();
     const { user } = useAuthStore();
-    const { setAppointmentSection, appointmentSection,getAppointments,appointments } = recStore();
+    const { setAppointmentSection, appointmentSection, getAppointments, appointments, isShift, getShift, shiftToggle } = recStore();
     const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const currentDate = updateDate();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        getShift(user?.role, user?._id);
+    }, [shiftToggle]);
+    useEffect(() => {
         const timeout = setTimeout(() => setLoading(true), 200);
-        getAppointments(user?.branch,appointmentSection).finally(() => {
+        getAppointments(user?.branch, appointmentSection, isShift?.shift).finally(() => {
             clearTimeout(timeout);
             setLoading(false);
         });
     }, [appointmentSection, appointmentSubmit]);
-    
-    const appointmentList = appointments.filter((appointment) => (appointment?.PatientCase?.fullname.toLowerCase().includes(searchTerm.toLowerCase())) );
-    
+    const appointmentList = appointments.filter((appointment) => (appointment?.PatientCase?.fullname.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone.toLowerCase().includes(searchTerm.toLowerCase())));
+
     return (
         <>
             <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
@@ -45,7 +47,7 @@ const AppointmentList = () => {
                     <div className='flex items-center gap-2 mt-10'>
                         <Input onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} icon={CiSearch} placeholder='Search for Patient&apos;s Name/Case Paper No./Mobile No.' />
                     </div>
-                    {loading?<LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} />:<div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] whitespace-nowrap text-white">
                                 <tr >

@@ -1,10 +1,11 @@
 import { Appointment } from "../models/AppointmentModel.js";
-import Patient from "../models/PatientModel.js";
+import Patient, { Prescription } from "../models/PatientModel.js";
 
 export const getPatientAppointment = async (req, res) => {
     try {
         const { id } = req.params;
         const appointments = await Appointment.find({ PatientCase: id }).populate('PatientCase').populate('Doctor');
+        const prescription = await Prescription.find({ patient: id }).populate('patient');
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const parseDate = (dateStr) => {
@@ -19,13 +20,12 @@ export const getPatientAppointment = async (req, res) => {
             );
         });
 
-        const nextAppointment = appointments.filter((appointment) => {
-            const appointmentDate = parseDate(appointment.date);
+        const nextAppointment = prescription.filter((appointment) => {
+            const appointmentDate = parseDate(appointment?.prescription_date);
             appointmentDate.setHours(0, 0, 0, 0);
 
             return (
-                appointment?.medicine_issued_flag === false &&
-                appointment?.complete_appointment_flag === false &&
+                appointment?.medicine_issued_flag === true &&
                 appointmentDate >= today
             );
         });

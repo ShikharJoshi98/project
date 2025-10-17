@@ -128,7 +128,7 @@ export const updateleave = async (req, res) => {
 //appointments
 export const createNewAppointment = async (req, res) => {//
     try {
-        const { date, time, PatientCase, Doctor, appointmentType } = req.body;
+        let { date, time, PatientCase, Doctor, appointmentType, shift } = req.body;
         const patient = await Patient.findById(PatientCase);
         const dateConverter = (date) => {
             const [y, m, d] = date.split('-');
@@ -147,7 +147,10 @@ export const createNewAppointment = async (req, res) => {//
         }
         const pastAppointment = await Appointment.find({ PatientCase: PatientCase.toString() });
         let newAppointment;
-
+        if (patient.branch === 'Mulund') {
+            shift='noShift'
+        };
+        
         if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length - 1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
                 date: convertedDate,
@@ -157,7 +160,8 @@ export const createNewAppointment = async (req, res) => {//
                 appointmentType,
                 branch: patient.branch,
                 new_appointment_flag: false,
-                followUp_appointment_flag: true
+                followUp_appointment_flag: true,
+                shift
             })
         }
         else {
@@ -168,6 +172,7 @@ export const createNewAppointment = async (req, res) => {//
                 Doctor,
                 appointmentType,
                 branch: patient.branch,
+                shift
             })
         }
 

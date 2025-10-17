@@ -3,6 +3,7 @@ import Patient from "../models/PatientModel.js";
 import { Appointment } from "../models/AppointmentModel.js";
 import { updateDate } from "../utils/todayDate.js";
 import { Employee } from "../models/EmployeeModel.js";
+import { Shift } from "../models/ShiftModel.js";
 
 export const register = async (req, res) => {
     try {
@@ -138,9 +139,8 @@ export const getPatient = async (req, res) => {
 
 export const getAppointmentsRec = async (req, res) => {//
     try {
-        const { branch } = req.params;
+        const { branch, shift } = req.params;
         const date = updateDate();
-
         const result = await Appointment.aggregate([
             {
                 $match: {
@@ -148,14 +148,16 @@ export const getAppointmentsRec = async (req, res) => {//
                     complete_appointment_flag: false,
                     medicine_issued_flag: false,
                     branch: branch,
-                    appointmentType: { $in: ['general', 'repeat', 'courier'] }
+                    appointmentType: { $in: ['general', 'repeat', 'courier'] },
+                    shift:shift
                 }
             },
             {
                 $group: {
                     _id: {
                         branch: "$branch",
-                        appointmentType: "$appointmentType"
+                        appointmentType: "$appointmentType",
+                        shift:"$shift"
                     },
                     count: { $sum: 1 }
                 }
@@ -187,10 +189,10 @@ export const getAppointmentsRec = async (req, res) => {//
 
 export const getAppDetails = async (req, res) => {
     try {
-        const { branch, appointmentType } = req.params;
-
+        const { branch, appointmentType,shift } = req.params;
+       
         const date = updateDate();
-        const appointments = await Appointment.find({ branch, date, appointmentType }).populate('Doctor').populate('PatientCase');
+        const appointments = await Appointment.find({ branch, date, appointmentType, shift }).populate('Doctor').populate('PatientCase');
 
         res.json({
             success: true,
@@ -206,11 +208,11 @@ export const getAppDetails = async (req, res) => {
 
 export const getAppointmentLength = async (req, res) => {
     try {
-        const { branch } = req.params;
+        const { branch,shift } = req.params;
         const todayDate = updateDate();
-        const appointmentsLength = await Appointment.countDocuments({ branch, date: todayDate });
-        const pendingAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, complete_appointment_flag: false, medicine_issued_flag: false });
-        const completeAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, complete_appointment_flag: true, medicine_issued_flag: true });
+        const appointmentsLength = await Appointment.countDocuments({ branch, date: todayDate, shift });
+        const pendingAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, shift, complete_appointment_flag: false, medicine_issued_flag: false });
+        const completeAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, complete_appointment_flag: true, shift, medicine_issued_flag: true });
         res.json({
             appointmentsLength, pendingAppointmentLength, completeAppointmentLength
         })
@@ -231,6 +233,42 @@ export const getDoctor = async (req, res) => {
         });
     } catch (error) {
         return res.json({
+            message: error.message
+        });
+    }
+}
+
+export const setShift = async (req, res) => {
+    try {
+        const { shift,role,user } = req.body;
+        const hello = await Shift.updateOne(
+                    { role: role, user },
+                    { $set: { shift } },
+                    { upsert: true }
+        );
+        return res.json({
+            success: true,
+            message:"Shift Added"
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const getShift = async (req, res) => {
+    try {
+        const { user, role } = req.params;
+        const shift = await Shift.findOne({user,role});
+        return res.json({
+            success: true,
+            shift
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
             message: error.message
         });
     }

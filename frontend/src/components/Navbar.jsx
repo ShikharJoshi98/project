@@ -29,15 +29,15 @@ const Navbar = () => {
             </div>
             <div className='relative'>
                 <ul className=' hidden md:flex  items-center gap-8 text-white text-lg'>
-                    <li onClick={() => navigate('/')} className='hover:text-gray-300 cursor-pointer'>Home</li>
-                    <li onClick={() => navigate('/register')} className='hover:text-gray-300 cursor-pointer'>Register</li>
-                    <li onClick={() => navigate('/login')} className='hover:text-gray-300 cursor-pointer'>Login</li>
+                    <li onClick={() => { navigate('/'); window.scrollTo(0, 0) }} className='hover:text-gray-300 cursor-pointer'>Home</li>
+                    <li onClick={() => { navigate('/register'); window.scrollTo(0, 0) }} className='hover:text-gray-300 cursor-pointer'>Register</li>
+                    <li onClick={() => { navigate('/login'); window.scrollTo(0, 0) }} className='hover:text-gray-300 cursor-pointer'>Login</li>
                 </ul>
                 <button onClick={() => setOpen(!isOpen)} className="md:hidden cursor-pointer hover:text-gray-200 text-white font-semibold text-xl">☰</button>
                 {isOpen && <div ref={menuRef} className='absolute md:hidden border-white border-1 rounded-md w-28 z-10 bg-[#404858] p-4 text-white  right-5 overflow-hidden"'>
-                    <p onClick={() => { navigate('/'); setOpen(false)}} className='text-center  hover:text-gray-300 cursor-pointer'>Home</p>
-                    <p onClick={() => { navigate('/register'); setOpen(false)}} className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Register</p>
-                    <p onClick={() => { navigate('/login'); setOpen(false)}} className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Login</p>
+                    <p onClick={() => { navigate('/'); setOpen(false) }} className='text-center  hover:text-gray-300 cursor-pointer'>Home</p>
+                    <p onClick={() => { navigate('/register'); setOpen(false) }} className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Register</p>
+                    <p onClick={() => { navigate('/login'); setOpen(false) }} className='text-center pt-4 hover:text-gray-300 cursor-pointer'>Login</p>
                 </div>}
             </div>
         </div>

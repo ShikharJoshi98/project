@@ -12,7 +12,8 @@ const Home = () => {
   const { clinicDetails, getClinicDetails } = docStore();
   const navigate = useNavigate();
   const images = ["/image-2.jpeg", "/image-3.jpeg", "/image-4.jpeg", "/image-5.jpeg", "/image-8 (1).jpeg", "/image-8 (3).jpeg"];
-
+  const email = clinicDetails[0]?.email;
+  console.log(email);
   useEffect(() => {
     getClinicDetails();
   }, []);
@@ -32,16 +33,24 @@ const Home = () => {
                 <h1 className='text-lg font-bold text-zinc-900'>{detail?.branch} Branch</h1>
               </div>
               <hr className='bg-[#4a9acc] h-1 border-none rounded-sm w-16 mt-2 ' />
-              <div className='flex items-center gap-3 group '>
-                <FaPhoneAlt style={{ width: '25px', height: '25px', color: 'white', backgroundColor: '#1e232f', padding: '5px', borderRadius: '50%', }} className='group-hover:rotate-[20deg]' />
-                <h2 className='font-semibold'>{detail?.phone[0]}</h2>
-              </div>
+              {
+                detail?.phone.map((phone) => (
+                  <div className='flex items-center gap-3 group '>
+                    <FaPhoneAlt style={{ width: '25px', height: '25px', color: 'white', backgroundColor: '#1e232f', padding: '5px', borderRadius: '50%', }} className='group-hover:rotate-[20deg]' />
+                    <h2 className='font-semibold'>{phone}</h2>
+                  </div>
+                ))
+              }
             </div>
           ))}
         </div>
         <div className='flex mt-4 mb-4 items-center gap-6'>
           <h1 className='text-lg font-semibold'>Visit Us </h1>
-          <button onClick={() => navigate('/register')} className='bg-blue-400 cursor-pointer hover:bg-blue-600 hover:scale-99 hover:text-gray-200 text-lg transition-all duration-300 text-white font-semibold w-40 h-10 rounded-full'>Register</button>
+          <button onClick={() => { navigate('/register'); window.scrollTo(0, 0) }} className='bg-blue-400 cursor-pointer hover:bg-blue-600 hover:scale-99 hover:text-gray-200 text-lg transition-all duration-300 text-white font-semibold w-40 h-10 rounded-full'>Register</button>
+        </div>
+        <div className='flex mb-4 items-center gap-2'>
+          <h1 className='text-lg font-semibold'>Contact Us: </h1>
+          <p>{email}</p>
         </div>
       </div>
       <div className='flex flex-col p-5 items-center gap-5 max-w-[326px]  md:max-w-[760px]  lg:max-w-[900px] h-auto mt-20 bg-white mx-auto shadow-gray-700 shadow-lg rounded-lg'>

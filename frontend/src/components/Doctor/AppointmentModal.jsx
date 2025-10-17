@@ -25,12 +25,14 @@ const AppointmentModal = ({ onClose }) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const today = new Date().toLocaleDateString('en-CA');
   const todayDate = updateDate();
+
   const [formValues, setFormValues] = useState({
     date: today,
     time: "",
     PatientCase: "",
     Doctor: "",
-    appointmentType: 'general'
+    appointmentType: 'general',
+    shift: ''
   });
   const [loading, setLoading] = useState(false);
   const [appointmentSubmitLoading, setAppointmentSubmitLoading] = useState(false)
@@ -51,7 +53,6 @@ const AppointmentModal = ({ onClose }) => {
     }
     getDetails();
   }, [getAllPatients, getDetails])
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,8 +78,10 @@ const AppointmentModal = ({ onClose }) => {
         time: "",
         PatientCase: "",
         Doctor: "",
-        appointmentType: ""
+        appointmentType: "",
+        shift: ''
       })
+      setAppointmentSubmitLoading(false);
       return;
     }
     toggleAppointmentSubmit(!appointmentSubmit);
@@ -87,7 +90,8 @@ const AppointmentModal = ({ onClose }) => {
       time: "",
       PatientCase: "",
       Doctor: "",
-      appointmentType: ""
+      appointmentType: "",
+      shift: ''
     })
     setAppointmentSubmitLoading(false);
     toast("Appointment Created");
@@ -145,6 +149,14 @@ const AppointmentModal = ({ onClose }) => {
                   <option value="general">General</option>
                   <option value="repeat">Repeat Medicine</option>
                   <option value="courier">Courier Medicine</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <h1>Select Shift</h1>
+                <select name="shift" value={formValues.shift} onChange={handleInputChange} required className="py-2 pl-3 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
+                  <option value="" disabled>Select shift</option>
+                  <option value="Morning">Morning</option>
+                  <option value="Night">Night</option>
                 </select>
               </div>
               <div className="w-full flex items-center justify-center">

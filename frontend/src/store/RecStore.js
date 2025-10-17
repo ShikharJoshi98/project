@@ -21,7 +21,29 @@ export const recStore = create((set) => ({
     appointmentSection: "general",
     update: false,//
     stockToggle: false,
+    isShift: null,
+    shiftToggle:false,
+    setShift: async (shift, role, user) => {
+        try {
+            const response = await axios.post(`${REC_API_URL}/setShift`, {
+                shift,
+                role,
+                user
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    },
+    getShift: async (role, user) => {
+      try {
+          const response = await axios.get(`${REC_API_URL}/getShift/${user}/${role}`);
+          set({ isShift: response.data.shift });
+      } catch (error) {
+          console.log(error.message);
+      }  
+    },
     toggleStockUpdate: () => set((state) => ({ stockToggle: !state.stockToggle })),
+    toggleShiftUpdate: () => set((state) => ({ shiftToggle: !state.shiftToggle })),
     setUpdate: () => set((state)=>({ update: !state.update })),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     getPatientDetails: async (page, search, branch) => {//
@@ -55,9 +77,9 @@ export const recStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAppointmentsRec: async (branch) => {
+    getAppointmentsRec: async (branch,shift) => {
         try {
-            const response = await axios.get(`${REC_API_URL}/getAppointments/${branch}`);
+            const response = await axios.get(`${REC_API_URL}/getAppointments/${branch}/${shift}`);
             set({ generalAppointments: response.data.generalAppointments });
             set({ repeatAppointments: response.data.repeatAppointments });
             set({ courierAppointments: response.data.courierAppointments });
@@ -65,17 +87,20 @@ export const recStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAppointments: async (branch,appointmentType) => {
+    getAppointments: async (branch,appointmentType,shift) => {
         try {
-            const response = await axios.get(`${REC_API_URL}/getRecAppointments/${branch}/${appointmentType}`);
+              if (branch === 'Mulund') {
+                shift = 'noShift';
+            }
+            const response = await axios.get(`${REC_API_URL}/getRecAppointments/${branch}/${appointmentType}/${shift}`);
             set({ appointments: response.data.appointments });
         } catch (error) {
             console.log(error.message);
         }
     },
-    getAppointmentLength: async (branch) => {
+    getAppointmentLength: async (branch,shift) => {
         try {
-            const response = await axios.get(`${REC_API_URL}/getAppointmentsLength/${branch}`);
+            const response = await axios.get(`${REC_API_URL}/getAppointmentsLength/${branch}/${shift}`);
             set({ appointmentsLength: response.data.appointmentsLength });
             set({ pendingAppointmentLength: response.data.pendingAppointmentLength });
             set({ completeAppointmentLength: response.data.completeAppointmentLength });

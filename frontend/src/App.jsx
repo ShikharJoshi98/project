@@ -69,7 +69,7 @@ import HRLayout from "./components/Layouts/HRLayout";
 import ReceptionistLayout from "./components/Layouts/ReceptionistLayout";
 import GenerateInvestigationPdf from "./pages/Doctor/GenerateInvestigationPdf";
 import ClinicDetails from "./pages/Doctor/ClinicDetails";
-import AudioTest from "./components/audioTest";
+import AudioTest from "./components/AudioTest";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();

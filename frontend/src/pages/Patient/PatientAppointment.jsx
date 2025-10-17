@@ -15,7 +15,7 @@ const PatientAppointment = () => {
     useEffect(() => {
         getClinicDetails();
     }, []);
-
+    // const nextAppointmentDoctor = 
     return (
         <div>
             <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 overflow-hidden min-h-screen w-full p-8'>
@@ -83,10 +83,10 @@ const PatientAppointment = () => {
                                 {
                                     nextAppointment.map((appointment, index) => (
                                         <tr key={index} className='bg-blue-200'>
-                                            <td className='py-2 px-2 text-center'>{appointment?.PatientCase?.casePaperNo}</td>
-                                            <td className='py-2 px-2 text-center'>{appointment?.date}</td>
+                                            <td className='py-2 px-2 text-center'>{appointment?.patient?.casePaperNo}</td>
+                                            <td className='py-2 px-2 text-center'>{appointment?.next_visit}</td>
                                             <td className='py-2 px-2 text-center'>{appointment?.time ? appointment?.time : "-"}</td>
-                                            <td className='py-2 px-2 text-center'>{appointment?.Doctor?.fullname}</td>
+                                            <td className='py-2 px-2 text-center'>Dr. Santosh K Yadav</td>
                                         </tr>
                                     ))
                                 }

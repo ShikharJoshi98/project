@@ -848,7 +848,7 @@ export const add_medical_stock = async (req, res) => {
 export const updateMedicalStock = async (req, res) => {
     try {
         const { id } = req.params;
-
+        
         if (!id) {
             return res.status(400).json({ success: false, message: "Missing item ID" });
         }

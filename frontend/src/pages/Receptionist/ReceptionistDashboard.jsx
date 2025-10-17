@@ -5,19 +5,46 @@ import { FaUserDoctor } from 'react-icons/fa6';
 import { FaRegCheckCircle, FaUsers } from 'react-icons/fa';
 import AppointmentModal from '../../components/Doctor/AppointmentModal';
 import { docStore } from '../../store/DocStore';
-import { LuMapPin } from 'react-icons/lu';
+import { LuLoaderCircle, LuMapPin } from 'react-icons/lu';
 import { recStore } from '../../store/RecStore';
 
 const ReceptionistDashboard = () => {
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const { user } = useAuthStore();
   const { appointmentSubmit } = docStore();
-  const { getAppointmentLength, appointmentsLength, completeAppointmentLength, pendingAppointmentLength } = recStore();
+  const { getAppointmentLength, appointmentsLength, completeAppointmentLength, pendingAppointmentLength, isShift, setShift, getShift, toggleShiftUpdate, shiftToggle } = recStore();
+  const [shiftLoading, setShiftLoading] = useState(false);
+  const [shiftSubmit, setShiftSubmit] = useState(false);
 
   useEffect(() => {
-    getAppointmentLength(user?.branch);
-  }, [getAppointmentLength, appointmentSubmit])
+    const fetchShiftAndAppointments = async () => {
+      await getShift(user?.role, user?._id);
 
+      if (user?.branch === 'Dombivali') {
+        getAppointmentLength(user?.branch, recStore.getState().isShift?.shift);
+      } else {
+        getAppointmentLength(user?.branch, 'noShift');
+      }
+    };
+
+    if (user?._id) fetchShiftAndAppointments();
+  }, [appointmentSubmit, shiftToggle])
+
+  // useEffect(() => {
+  //   getAppointmentLength(user?.branch);
+  // }, [getAppointmentLength, appointmentSubmit])
+
+  // useEffect(async () => {
+  //   await getShift(user?.role, user?._id);
+  // }, [shiftSubmit, shiftToggle])
+
+  const changeShift = async (type, role, id) => {
+    setShiftLoading(true);
+    await setShift(type, role, id);
+    setShiftLoading(false);
+    setShiftSubmit(prev => !prev);
+    toggleShiftUpdate(prev => !prev);
+  }
   return (
     <>
       <div className='bg-gradient-to-br from-blue-300 flex flex-col gap-10 via-blue-400 to-sky-700 min-h-screen w-full p-8 overflow-hidden'>
@@ -25,7 +52,19 @@ const ReceptionistDashboard = () => {
           <h1 className='text-stone-800 w-fit text:lg sm:text-xl font-semibold md:text-2xl bg-[#dae5f4] p-3 md:p-5 rounded-lg'>Receptionist Admin Panel</h1>
           <h1 className='text-stone-800 flex text-lg sm:text-xl items-center gap-2 w-fit font-semibold md:text-2xl bg-[#dae5f4] p-3 md:p-5 rounded-lg'><span><LuMapPin /></span>{user?.branch}</h1>
         </div>
-        <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer text-lg place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold hover:scale-99 transition-all duration-300 shadow-gray-600 shadow-md bg-blue-500 px-4 py-2 hover:bg-blue-700 rounded-lg'>Create Appointment<TbPencilPlus /></button>
+        <div className='flex sm:flex-row flex-col items-center gap-10 sm:justify-between'>
+          <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer text-lg place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold hover:scale-99 transition-all duration-300 shadow-gray-600 shadow-md bg-blue-500 px-4 py-2 hover:bg-blue-700 rounded-lg'>Create Appointment<TbPencilPlus /></button>
+          {user?.branch === 'Dombivali' &&
+            (shiftLoading === false ?
+              (<div className='h-12 bg-[#c8c8ce]  rounded-[18px]'>
+                <button onClick={() => changeShift('Morning', user?.role, user?._id)} className={`${isShift?.shift === 'Morning' ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>Morning</button>
+                <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Night</button>
+              </div>)
+              :
+              <LuLoaderCircle className='animate-spin text-white' size={24} />
+            )
+          }
+        </div>
         <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
           <h1 className='w-fit mx-auto font-semibold text-[#337ab7] text-lg sm:text-xl md:text-4xl'>Dashboard</h1>
           <hr className='h-[0.5px] px-5 border-none bg-blue-500 my-10' />
