@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Input from '../components/Input';
 import { useAuthStore } from '../store/authStore';
 import { CiLocationOn, CiLock, CiMail, CiPhone, CiUser } from 'react-icons/ci';
-import { LuImage, LuLoaderCircle } from 'react-icons/lu';
+import { LuImage, LuLoaderCircle, LuUser } from 'react-icons/lu';
 import PatientDetailModal from '../components/Receptionist/PatientDetailModal';
 
 const Register = () => {
@@ -23,6 +23,7 @@ const Register = () => {
   const [passerror, setError] = useState(false);
   const { register, error, isLoading } = useAuthStore();
   const [isPatientRegisterModalOpen, setPatientRegisterModalIsOpen] = useState(false);
+  const [patientStatus, setPatientStatus] = useState('new');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ const Register = () => {
     }
     try {
       const prefix = branch === "Dombivali" ? "DOM-" : "MUL-";
-      const finalCasePaperNo = `${prefix}${casePaperNo}`;
+      const finalCasePaperNo = `${prefix}${casePaperNo ? casePaperNo : 'NEW'}`;
       await register(patientCard, name, phone, altphone, email, username, pass, branch, finalCasePaperNo);
       setPatientRegisterModalIsOpen(true);
     }
@@ -74,29 +75,43 @@ const Register = () => {
     setConfirmPassword('');
     setPhone('');
     setBranch('');
+    setCasePaperNo('');
   }
 
   return (
     <div className='flex flex-col min-h-screen bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden'>
       <div>
+
         <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-8 h-auto bg-white p-8 md:max-w-[500px] max-w-[80vw] border rounded-xl text-zinc-600 text-sm shadow-lg'>
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'>Registration</span> Form</h1>
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
+          <div className='flex flex-col gap-2 mb-3'>
+            <h1>Are you a new patient or a returning patient ?</h1>
+            <div className='relative w-full '>
+              <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
+                <LuUser className="size-4 text-blue-500" />
+              </div>
+              <select defaultValue='new' onChange={(e) => setPatientStatus(e.target.value)} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
+                <option value="returning">Returning Patient</option>
+                <option value="new">New Patient</option>
+              </select>
+            </div>
+          </div>
           <div className='flex flex-col gap-4 m-auto items-start'>
-            <div className='flex flex-col gap-2 w-full'>
-              <h1>Upload Patient Card</h1>
+            {patientStatus === 'returning' && <div className='flex flex-col gap-2 w-full'>
+              <h1>Upload Patient Card (if available)</h1>
               <Input icon={LuImage} key={patientCard} name="patientCard" onChange={(e) => handleImageUpload(e)} type="file" />
               {
                 patientCard &&
                 <img src={patientCard} className="h-20 w-20 object-contain border border-gray-300 rounded-md" />
               }
-            </div>
+            </div>}
             <select onChange={(e) => { setBranch(e.target.value); }} value={branch} name="branch" required id="Branch" className='py-2 pl-3 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
               <option value="" disabled>Select Branch*</option>
               <option value="Dombivali">Dombivali</option>
               <option value="Mulund">Mulund</option>
             </select>
-            <div className="relative w-full">
+            {patientStatus === 'returning' && <div className="relative w-full">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-semibold">
                 {branch === "Dombivali" ? "DOM-" : branch === "Mulund" ? "MUL-" : ""}
               </span>
@@ -107,7 +122,7 @@ const Register = () => {
                 onChange={(e) => setCasePaperNo(e.target.value)}
                 className="pl-14 pr-3 py-2 w-full border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
-            </div>
+            </div>}
             <Input icon={CiUser} type='text' required placeholder='Full Name*' value={name} onChange={(e) => { let newName = e.target.value; setName(newName); usernameCreator(newName, phone); }} />
             <Input icon={CiPhone} type='tel' required placeholder='Phone Number*' value={phone} onChange={(e) => { let newPhone = e.target.value; setPhone(newPhone); usernameCreator(name, newPhone); }} />
             <Input icon={CiPhone} type='tel' placeholder='Alternative Phone Number (Optional)' value={altphone} onChange={(e) => setAltPhone(e.target.value)} />

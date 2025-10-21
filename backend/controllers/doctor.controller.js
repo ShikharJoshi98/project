@@ -148,9 +148,9 @@ export const createNewAppointment = async (req, res) => {//
         const pastAppointment = await Appointment.find({ PatientCase: PatientCase.toString() });
         let newAppointment;
         if (patient.branch === 'Mulund') {
-            shift='noShift'
+            shift = 'noShift'
         };
-        
+
         if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length - 1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
                 date: convertedDate,
@@ -190,38 +190,56 @@ export const createNewAppointment = async (req, res) => {//
 
 export const getIncompleteAppointments = async (req, res) => {
     try {
+        const { shift, user } = req.query;
         const todayDate = updateDate();
 
-        const appointments = await Appointment.find({
+        const domApointments = await Appointment.find({
             date: todayDate,
-            complete_appointment_flag: false
+            complete_appointment_flag: false,
+            Doctor: user,
+            shift
         });
 
-        const counts = {
+        const mulAppointments = await Appointment.find({
+            date: todayDate,
+            complete_appointment_flag: false,
+            Doctor: user,
+            shift: 'noShift'
+        });
+
+        const domCounts = {
             domGeneral: 0,
-            mulGeneral: 0,
             domRepeat: 0,
-            mulRepeat: 0,
-            domCourier: 0,
-            mulCourier: 0,
+            domCourier: 0
         };
 
-        appointments.forEach((appointment) => {
-            const { branch, appointmentType } = appointment;
+        const mulCounts = {
+            mulGeneral: 0,
+            mulRepeat: 0,
+            mulCourier: 0
+        }
 
+        domApointments.forEach((appointment) => {
+            const { branch, appointmentType } = appointment;
             if (branch === 'Dombivali') {
-                if (appointmentType === 'general') counts.domGeneral++;
-                else if (appointmentType === 'repeat') counts.domRepeat++;
-                else if (appointmentType === 'courier') counts.domCourier++;
-            } else if (branch === 'Mulund') {
-                if (appointmentType === 'general') counts.mulGeneral++;
-                else if (appointmentType === 'repeat') counts.mulRepeat++;
-                else if (appointmentType === 'courier') counts.mulCourier++;
-            }
+                if (appointmentType === 'general') domCounts.domGeneral++;
+                else if (appointmentType === 'repeat') domCounts.domRepeat++;
+                else if (appointmentType === 'courier') domCounts.domCourier++;
+            } 
+        });
+
+        mulAppointments.forEach((appointment) => {
+            const { branch, appointmentType } = appointment;
+            if (branch === 'Mulund') {
+                if (appointmentType === 'general') mulCounts.mulGeneral++;
+                else if (appointmentType === 'repeat') mulCounts.mulRepeat++;
+                else if (appointmentType === 'courier') mulCounts.mulCourier++;
+            } 
         });
 
         res.json({
-            ...counts,
+            domCounts,
+            mulCounts,
             success: true
         });
 
@@ -235,14 +253,15 @@ export const getIncompleteAppointments = async (req, res) => {
 
 export const getAppointments = async (req, res) => {//
     try {
-        const { branch, appointmentSection, doctor } = req.params;
+        const { branch, appointmentSection, doctor, shift } = req.params;
         const todayDate = updateDate();
 
         const Appointments = await Appointment.find({
             date: todayDate,
             branch,
             appointmentType: appointmentSection,
-            Doctor: doctor
+            Doctor: doctor,
+            shift
         })
             .populate('PatientCase')
             .populate('Doctor');
@@ -2665,8 +2684,8 @@ export const getBill = async (req, res) => {
 
 export const addPayment = async (req, res) => {
     try {
-        const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag } = req.body;
-
+        const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag, shift } = req.body;
+        console.log(shift);
         const { id } = req.params;
         let formattedDate;
         const updateDate = () => {
@@ -2681,7 +2700,7 @@ export const addPayment = async (req, res) => {
         const newBalance = totalBill - billPaid;
         const payment = await billPayment.updateOne(
             { patient: id },
-            { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag } },
+            { $set: { dueBalance: newBalance, date: formattedDate, transactionDetails, billPaid, totalBill, modeOfPayment, appointmentType, paymentCollectedBy, balance_paid_flag, shift } },
             { upsert: true }
         );
 
@@ -2936,7 +2955,7 @@ export const approveAllMedicalStock = async (req, res) => {
 export const addOrderPaymentDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        const { transactionDetails, chequeNo, date, billNo,bills, totalBill, amountPaid, modeOfPayment } = req.body;
+        const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment } = req.body;
         await Promise.all(billNo.map(async (bill, _) => {
             const paymentDetails = await OrderPaymentDetails.create({
                 order: bill,
@@ -2950,25 +2969,25 @@ export const addOrderPaymentDetails = async (req, res) => {
                 details_added_flag: true
             })
             const order = await Order.findById(bill);
-        if (order) {
-            order.order_payment_flag = true;
-        }
+            if (order) {
+                order.order_payment_flag = true;
+            }
             await order.save();
             const vendors = order?.formRows.map((row, _) => {
-            return row?.vendor[0];
-        });
-        const emailedVendors = new Set();
-        for (const vendor of vendors) {
-            if (!emailedVendors.has(vendor)) {
-                const vendorPerson = await ItemVendor.findOne({ vendorname: vendor });
-                if (vendorPerson?.email) {
-                    await sendPaymentEmail(vendorPerson?.email, req.body);
-                    emailedVendors.add(vendor);
+                return row?.vendor[0];
+            });
+            const emailedVendors = new Set();
+            for (const vendor of vendors) {
+                if (!emailedVendors.has(vendor)) {
+                    const vendorPerson = await ItemVendor.findOne({ vendorname: vendor });
+                    if (vendorPerson?.email) {
+                        await sendPaymentEmail(vendorPerson?.email, req.body);
+                        emailedVendors.add(vendor);
+                    }
                 }
             }
-        }
         }))
-        
+
         return res
             .status(200)
             .json({
@@ -2990,14 +3009,14 @@ export const getOrderPaymentDetails = async (req, res) => {
         const { id, type } = req.params;
         let details;
         if (type === 'item') {
-             details = await OrderPaymentDetails.findOne({
-            order: id
-        }).populate('order');
+            details = await OrderPaymentDetails.findOne({
+                order: id
+            }).populate('order');
         }
         else if (type === 'medicine') {
-              details = await OrderMedicalPaymentDetails.findOne({
-            order: id
-        }).populate('order');
+            details = await OrderMedicalPaymentDetails.findOne({
+                order: id
+            }).populate('order');
         }
         console.log(details);
         return res
@@ -3020,7 +3039,7 @@ export const getOrderPaymentDetails = async (req, res) => {
 export const addMedicalOrderPaymentDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        const { transactionDetails, chequeNo, date, billNo,bills, totalBill, amountPaid, modeOfPayment } = req.body;
+        const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment } = req.body;
         await Promise.all(billNo.map(async (bill, _) => {
             const paymentDetails = await OrderMedicalPaymentDetails.create({
                 order: bill,
@@ -3034,25 +3053,25 @@ export const addMedicalOrderPaymentDetails = async (req, res) => {
                 details_added_flag: true
             })
             const order = await medicalOrder.findById(bill);
-        if (order) {
-            order.order_payment_flag = true;
-        }
+            if (order) {
+                order.order_payment_flag = true;
+            }
             await order.save();
             const vendors = order?.formRows.map((row, _) => {
-            return row?.vendor[0];
-        });
-        const emailedVendors = new Set();
-        for (const vendor of vendors) {
-            if (!emailedVendors.has(vendor)) {
-                const vendorPerson = await MedicalVendor.findOne({ vendorname: vendor });
-                if (vendorPerson?.email) {
-                    await sendPaymentEmail(vendorPerson?.email, req.body);
-                    emailedVendors.add(vendor);
+                return row?.vendor[0];
+            });
+            const emailedVendors = new Set();
+            for (const vendor of vendors) {
+                if (!emailedVendors.has(vendor)) {
+                    const vendorPerson = await MedicalVendor.findOne({ vendorname: vendor });
+                    if (vendorPerson?.email) {
+                        await sendPaymentEmail(vendorPerson?.email, req.body);
+                        emailedVendors.add(vendor);
+                    }
                 }
             }
-        }
         }))
-        
+
         return res
             .status(200)
             .json({

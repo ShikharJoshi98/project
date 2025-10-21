@@ -3,18 +3,29 @@ import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { docStore } from '../../store/DocStore';
 import { CiHospital1 } from 'react-icons/ci';
+import { recStore } from '../../store/RecStore';
 
 const Docnavbar = () => {
   const [isOpen, setOpen] = useState(false);
   const { setAppointmentSection, appointmentSection, prescription, appointmentSubmit, getAppointmentCount, domGeneral, mulGeneral, domRepeat, mulRepeat, domCourier, mulCourier, prescriptionSubmit } = docStore();
+  const { isShift, getShift } = recStore();
+  const { user } = useAuthStore();
   const { logout } = useAuthStore();
   const navigate = useNavigate();
   const [isAppointmentHovered, setIsAppointmentHovered] = useState(false);
   const [isRepeatMedicineHovered, setIsRepeatMedicineHovered] = useState(false);
   const [isCourierMedicineHovered, setIsCourierMedicineHovered] = useState(false);
+
   useEffect(() => {
-    getAppointmentCount();
-  }, [getAppointmentCount, appointmentSection, appointmentSubmit, prescriptionSubmit, prescription]);
+    if (!user?._id) return;
+    getShift(user.role, user._id);
+  }, [user?._id]);
+
+  useEffect(() => {
+    if (!user?._id || !isShift?.shift) return;
+    getAppointmentCount(isShift.shift, user._id);
+  }, [isShift?.shift, appointmentSubmit, prescriptionSubmit]);
+
   const menuRef = useRef(null);
   useEffect(() => {
     const handleClikcOutside = (e) => {
@@ -119,7 +130,7 @@ const Docnavbar = () => {
         {isOpen && (
           <div ref={menuRef} className="absolute lg:hidden right-5 top-16 bg-[#404858] border border-white rounded-md w-64 z-50 text-white p-4 space-y-3">
             <div>
-              <p className="cursor-pointer flex items-center gap-2 font-semibold hover:text-gray-300" onClick={() =>setIsAppointmentHovered((prev) => !prev)}>
+              <p className="cursor-pointer flex items-center gap-2 font-semibold hover:text-gray-300" onClick={() => setIsAppointmentHovered((prev) => !prev)}>
                 Appointments {(domGeneral + mulGeneral) > 0 && <span className="bg-blue-400 rounded-full w-7 h-7 flex items-center justify-center text-sm">{domGeneral + mulGeneral}</span>}
               </p>
               {isAppointmentHovered && (

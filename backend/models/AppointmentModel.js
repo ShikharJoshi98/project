@@ -11,6 +11,7 @@ const createAppointmentSchema = new mongoose.Schema({
     medicine_issued_flag: { type: Boolean, default: false },
     followUp_appointment_flag: { type: Boolean, default: false },
     branch: { type: String, required: true },
+    visit_complete_flag:{ type: String, default: false },
     shift: {type: String}
 })
 

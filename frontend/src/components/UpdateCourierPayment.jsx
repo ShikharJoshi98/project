@@ -8,14 +8,23 @@ import { useAuthStore } from "../store/authStore";
 import { HR_API_URL } from "../store/UpdateStore";
 import { updateDate } from "../store/todayDate";
 import { RxCross2 } from "react-icons/rx";
+import { LuLoaderCircle } from "react-icons/lu";
 
 
 const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
-  const { getPatient, patient } = recStore();
+  const { getPatient, patient, getShift, isShift, shiftToggle } = recStore();
   const { user } = useAuthStore();
   const [amountPaid, setAmountPaid] = useState(0);
   const [transactionDetails, setTransactionDetails] = useState('');
   const todayDate = updateDate();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchShiftAndAppointments = async () => {
+      await getShift(user?.role, user?._id);
+    };
+    if (user?._id) fetchShiftAndAppointments();
+  }, [shiftToggle, recStore.getState().isShift?.shift])
 
   useEffect(() => {
     getPatient(payment?.patient?._id);
@@ -23,6 +32,7 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       await axios.post(`${DOC_API_URL}/addBillPayment/${payment?.patient?._id}`, {
         billPaid: parseInt(amountPaid),
         modeOfPayment: 'online',
@@ -30,9 +40,10 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
         paymentCollectedBy: user?._id,
         transactionDetails,
         totalBill: (payment?.dueBalance),
-        balance_paid_flag: true
+        balance_paid_flag: true,
+        shift: isShift?.shift
       });
-      await axios.post(`${HR_API_URL}/courierPayment/${payment?.patient?._id}`, {
+      await axios.patch(`${HR_API_URL}/makeDeliveryPayment/${payment?._id}/${payment?.patient?._id}`, {
         billPaid: parseInt(amountPaid),
         totalBill: (payment?.dueBalance),
         modeOfPayment: 'online',
@@ -45,6 +56,7 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
         date: todayDate
       });
       onClose();
+      setLoading(false);
       setSubmit(prev => !prev);
     } catch (error) {
       console.log(error.message);
@@ -85,7 +97,7 @@ const UpdateCourierPayment = ({ payment, setSubmit, onClose }) => {
               <h1>Transaction ID</h1>
               <Input icon={FaLock} onChange={(e) => setTransactionDetails(e.target.value)} type='text' placeholder='Mention Transaction ID' />
             </div>
-            <button type='submit' className='bg-green-500 block text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Add</button>
+            <button type='submit' className='bg-green-500 block text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>{loading ? <LuLoaderCircle className="mx-auto" size={24} /> : 'Add'}</button>
           </form></div> :
           <div className="mx-auto">
             <p className="text-2xl p-3 font-semibold">Address : {patient?.address}</p>

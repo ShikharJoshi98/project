@@ -58,7 +58,7 @@ const UploadPatientImage = () => {
 
                     <button disabled={loading} className='cursor-pointer block mx-auto bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 text-white mt-7 w-52 p-2 rounded-full' type='submit' >{loading ? <LuLoaderCircle className='mx-auto animate-spin' /> : "Upload"}</button>
                     {
-                        image && <img src={image} className='h-40 w-40 object-contain' />
+                        image && <img src={image} className='h-90 w-90 mx-auto object-contain' />
                     }
                 </form>
             </div>

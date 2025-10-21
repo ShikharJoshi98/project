@@ -6,6 +6,7 @@ import { useAuthStore } from '../../store/authStore'
 import { updateDate } from '../../store/todayDate'
 import { CiSearch } from 'react-icons/ci'
 import { LuLoaderCircle } from 'react-icons/lu'
+import { recStore } from '../../store/RecStore'
 
 const HRMedicine = () => {
     const { setMedSection, medSection, getAppointmentDetails, appointments } = useStore();
@@ -14,14 +15,27 @@ const HRMedicine = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const todayDate = updateDate();
     const [loading, setLoading] = useState(false);
+    const { isShift, shiftToggle, getShift } = recStore();
 
     useEffect(() => {
-        const timeout = setTimeout(() => setLoading(true), 200);
-        getAppointmentDetails(user?.branch, medSection).finally(() => {
-            clearTimeout(timeout);
-            setLoading(false);
-        });
-    }, [getAppointmentDetails, medSection]);
+        const fetchShiftAndAppointments = async () => {
+            await getShift(user?.role, user?._id);
+            const timeout = setTimeout(() => setLoading(true), 200);
+            if (user?.branch === 'Dombivali') {
+                getAppointmentDetails(user?.branch, medSection, isShift?.shift).finally(() => {
+                    clearTimeout(timeout);
+                    setLoading(false);
+                });
+            }
+            else {
+                getAppointmentDetails(user?.branch, medSection, 'noShift').finally(() => {
+                    clearTimeout(timeout);
+                    setLoading(false);
+                });
+            }
+        }
+        if (user?._id) fetchShiftAndAppointments();
+    }, [medSection]);
 
     const medicineArray = appointments.filter((appointment) => (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
 

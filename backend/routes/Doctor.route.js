@@ -25,7 +25,7 @@ Docrouter.put('/leave-status/:id', updateleave);
 //appointment
 Docrouter.post('/new-appointment', createNewAppointment);
 Docrouter.get('/get-incomplete-appointments', getIncompleteAppointments);
-Docrouter.get('/getAppointments/:branch/:appointmentSection/:doctor',getAppointments)//
+Docrouter.get('/getAppointments/:branch/:appointmentSection/:doctor/:shift',getAppointments)//
 Docrouter.patch('/update-apppointment/:id', updateAppointment);
 
 //homeo-bhagwat

@@ -10,7 +10,7 @@ import { useStore } from '../../store/UpdateStore';
 
 const Prescription = () => {
     const { id } = useParams();
-    const { patient, getPatient } = recStore();
+    const { patient, getPatient, isShift, shiftToggle, getShift } = recStore();
     const { medSection, getAppointmentDetails, appointments } = useStore();
     const { branch } = useParams();
     const { user } = useAuthStore();
@@ -19,15 +19,25 @@ const Prescription = () => {
     const todayDate = updateDate();
 
     useEffect(() => {
+        if (!user?._id) return;
+        getShift(user?.role, user?._id);
+    }, []);
+
+    useEffect(() => {
+        if (!user?.branch || !isShift) return;
+        const shiftValue = user?.branch === 'Dombivali' ? isShift?.shift : 'noShift';
+        getAppointmentDetails(user?.branch, medSection, shiftValue);
+    }, []);
+
+    useEffect(() => {
         fetchPrescription(id);
         getOtherPrescription(id);
         getBalanceDue(id);
         getBillInfo(id);
         getPatient(id);
-        getAppointmentDetails(user?.branch, branch);
     }, [fetchPrescription, prescriptionSubmit, getBillInfo, getOtherPrescription, getAppointmentDetails, getPatient]);
-    const appointment = appointments.filter((app) => app?.PatientCase?._id === id);
-
+    const appointment = appointments.filter((app) => app?.PatientCase?._id === id) || [];
+    const currentAppointment = appointment[0];
     return (
         <div>
             <HRnavbar />
@@ -77,7 +87,7 @@ const Prescription = () => {
                                             <td className='py-2 px-1 text-center'>{pres?.note}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.duration === '60' ? '2 Months' : pres?.duration === '90' ? '3 Months' : (pres?.duration + ' Days')}</td>
                                             <td className='py-2 px-1 text-center'>{pres?.next_visit}</td>
-                                            <td className={`py-2 px-1 ${appointment[0]?.medicine_issued_flag === false ? 'text-red-500' : 'text-green-500'} text-center`}>{appointment[0]?.medicine_issued_flag === false ? 'Pending' : 'Medicine Issued'}</td>
+                                            <td className={`py-2 px-1 ${currentAppointment?.medicine_issued_flag === false ? 'text-red-500' : 'text-green-500'} text-center`}>{currentAppointment?.medicine_issued_flag === false ? 'Pending' : 'Medicine Issued'}</td>
                                             <td className='py-2 px-1 text-center'>{index === 0 && `Rs ${balanceDue === 'No Balance Field' ? 0 : balanceDue.dueBalance}`}</td>
                                         </tr>
                                     ))
@@ -111,7 +121,7 @@ const Prescription = () => {
                     </div>
                     }
                     {
-                        appointment[0]?.medicine_issued_flag === false &&
+                        currentAppointment?.medicine_issued_flag === false &&
                         <button onClick={() => { navigate(`/medicine-payment/${id}/${branch}`) }} className='bg-red-500 text-white text-lg hover:scale-99 transition hover:bg-red-600 cursor-pointer font-semibold py-2 px-5 rounded-md mx-auto block mt-8'>Pay Now</button>
                     }
                 </div>

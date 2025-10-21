@@ -19,15 +19,25 @@ const AppointmentList = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getShift(user?.role, user?._id);
-    }, [shiftToggle]);
-    useEffect(() => {
-        const timeout = setTimeout(() => setLoading(true), 200);
-        getAppointments(user?.branch, appointmentSection, isShift?.shift).finally(() => {
-            clearTimeout(timeout);
-            setLoading(false);
-        });
-    }, [appointmentSection, appointmentSubmit]);
+        const fetchShiftAndAppointments = async () => {
+            await getShift(user?.role, user?._id);
+            const timeout = setTimeout(() => setLoading(true), 200);
+            if (user?.branch === 'Dombivali') {
+                getAppointments(user?.branch, appointmentSection, recStore.getState().isShift?.shift).finally(() => {
+                    clearTimeout(timeout);
+                    setLoading(false);
+                });
+            } else {
+                getAppointments(user?.branch, appointmentSection, 'noShift').finally(() => {
+                    clearTimeout(timeout);
+                    setLoading(false);
+                });
+            }
+        };
+
+        if (user?._id) fetchShiftAndAppointments();
+    }, [appointmentSubmit, appointmentSection, shiftToggle])
+
     const appointmentList = appointments.filter((appointment) => (appointment?.PatientCase?.fullname.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone.toLowerCase().includes(searchTerm.toLowerCase())));
 
     return (

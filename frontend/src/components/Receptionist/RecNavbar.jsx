@@ -16,10 +16,8 @@ const RecNavbar = () => {
 
     useEffect(() => {
         const fetchShiftAndAppointments = async () => {
-            // First, get the new shift
             await getShift(user?.role, user?._id);
 
-            // Now, after shift updates, use the latest value from the store
             if (user?.branch === 'Dombivali') {
                 getAppointmentsRec(user?.branch, recStore.getState().isShift?.shift);
             } else {

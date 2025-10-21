@@ -5,15 +5,24 @@ import { useStore } from '../../store/UpdateStore';
 import { useAuthStore } from '../../store/authStore';
 import { recStore } from '../../store/RecStore';
 import { updateDate } from '../../store/todayDate';
-import { LuMapPin } from 'react-icons/lu';
+import { LuLoaderCircle, LuMapPin } from 'react-icons/lu';
 
 const HRDashboard = () => {
   const { getDetails, employees } = useStore();
   const { user } = useAuthStore();
-  const { getAllPatients, allBranchPatients } = recStore();
+  const { getAllPatients, allBranchPatients, isShift, setShift, getShift, toggleShiftUpdate, shiftToggle } = recStore();
   const [patientNumber, setPatientNumber] = useState(0);
   const doctors = employees.filter(emp => emp?.role === 'doctor');
   const todayDate = updateDate();
+  const [shiftLoading, setShiftLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchShiftAndAppointments = async () => {
+      await getShift(user?.role, user?._id);
+    };
+
+    if (user?._id) fetchShiftAndAppointments();
+  }, [shiftToggle])
 
   useEffect(() => {
     getDetails();
@@ -28,6 +37,13 @@ const HRDashboard = () => {
     }
   }, [allBranchPatients]);
 
+  const changeShift = async (type, role, id) => {
+    setShiftLoading(true);
+    await setShift(type, role, id);
+    setShiftLoading(false);
+    toggleShiftUpdate(prev => !prev);
+  }
+
   return (
     <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full'>
       <div className='flex md:flex-row h-fit flex-col items-center justify-between'>
@@ -37,6 +53,18 @@ const HRDashboard = () => {
         <h1 className='text-stone-800 flex text-lg sm:text-2xl items-center gap-2 w-fit font-semibold bg-[#dae5f4] p-3 md:p-5 rounded-lg'>
           <LuMapPin /> {user?.branch}
         </h1>
+      </div>
+      <div className='place-items-end my-8' >
+        {user?.branch === 'Dombivali' &&
+          (shiftLoading === false ?
+            (<div className='h-12 bg-[#c8c8ce]  rounded-[18px]'>
+              <button onClick={() => changeShift('Morning', user?.role, user?._id)} className={`${isShift?.shift === 'Morning' ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>Morning</button>
+              <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Evening</button>
+            </div>)
+            :
+            <LuLoaderCircle className='animate-spin text-white' size={24} />
+          )
+        }
       </div>
       <div className='bg-[#e9ecef] w-auto p-5 mt-8 rounded-lg'>
         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>

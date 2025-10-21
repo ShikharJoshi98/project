@@ -6,21 +6,21 @@ import { useNavigate } from 'react-router-dom'
 import { CiSearch } from 'react-icons/ci'
 
 const BalanceHistory = () => {
-    const { getCollection, branchCollection } = useStore();
+    const { getAllCollection, branchCollection } = useStore();
     const { user } = useAuthStore();
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     useEffect(() => {
-        getCollection(user?.branch);
-    }, [getCollection]);
+        getAllCollection(user?.branch);
+    }, []);
     const collectionList = branchCollection.filter((item) => (item?.patient?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || item?.patient?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
     const lastItem = collectionList[collectionList.length - 1];
-    
+
     return (
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen p-8 w-full overflow-hidden'>
             <div className='bg-[#e9ecef] w-auto p-5 mx-10 my-6 rounded-lg'>
                 <h1 className='p-4 text-center font-semibold mb-6 text-[#337ab7] text-xl sm:text-4xl'>Balance History Details</h1>
-                    <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search Case PaperNo./ Mobile Number / Patient&apos;s Name' />
+                <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search Case PaperNo./ Mobile Number / Patient&apos;s Name' />
                 <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7] whitespace-nowrap text-white">

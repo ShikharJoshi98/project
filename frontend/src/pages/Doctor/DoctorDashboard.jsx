@@ -4,16 +4,48 @@ import ApproveButton from '../../components/Doctor/ApproveButton';
 import { FaCartPlus } from 'react-icons/fa6';
 import { AiFillMedicineBox } from "react-icons/ai";
 import { updateDate } from '../../store/todayDate';
+import { LuLoaderCircle } from 'react-icons/lu';
+import { recStore } from '../../store/RecStore';
+import { useEffect, useState } from 'react';
 
 const DoctorDashboard = () => {
   const { user } = useAuthStore();
+  const { isShift, setShift, getShift, toggleShiftUpdate, shiftToggle } = recStore();
   const navigate = useNavigate();
   const todayDate = updateDate();
+  const [shiftLoading, setShiftLoading] = useState(false);
+  const [shiftSubmit, setShiftSubmit] = useState(false);
+
+  useEffect(() => {
+    const fetchShiftAndAppointments = async () => {
+      await getShift(user?.role, user?._id);
+    };
+
+    if (user?._id) fetchShiftAndAppointments();
+  }, [shiftToggle])
+
+  const changeShift = async (type, role, id) => {
+    setShiftLoading(true);
+    await setShift(type, role, id);
+    setShiftLoading(false);
+    setShiftSubmit(prev => !prev);
+    toggleShiftUpdate(prev => !prev);
+  }
 
   return (
     <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-10 overflow-hidden min-h-screen w-full'>
       <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
         <h1 className='text-stone-800 w-fit text:lg sm:text-2xl font-semibold bg-[#dae5f4] p-3 rounded-lg'>Welcome {user?.fullname}</h1>
+        {
+          (shiftLoading === false ?
+            (<div className='h-12 bg-[#c8c8ce]  rounded-[18px]'>
+              <button onClick={() => changeShift('Morning', user?.role, user?._id)} className={`${isShift?.shift === 'Morning' ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>Morning</button>
+              <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Evening</button>
+            </div>)
+            :
+            <LuLoaderCircle className='animate-spin text-white' size={24} />
+          )
+        }
       </div>
       <div className='bg-[#e9ecef] w-auto p-5 my-6 rounded-lg '>
         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Dashboard</h1>

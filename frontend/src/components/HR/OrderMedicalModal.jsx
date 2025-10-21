@@ -55,6 +55,7 @@ const OrderModal = ({ onClose }) => {
         vendor: [],
         quantity: 1,
         deliveryDate: getFutureDate(7),
+        medicineId: item?._id,
         branch: user?.branch
       }));
       setFormRows(initialFormRows);
@@ -80,7 +81,6 @@ const OrderModal = ({ onClose }) => {
   const deleteRow = (index) => {
     setFormRows(prevRows => prevRows.filter((_, i) => i !== index));
   };
-
   async function SubmitOrder(e) {
     e.preventDefault();
     try {
@@ -92,7 +92,7 @@ const OrderModal = ({ onClose }) => {
       }
       const formattedFormRows = await Promise.all(formRows.map(async (row) => {
         const [year, month, day] = row.deliveryDate.split("-");
-        const item = medicalStock.find(i => i?.medicineName === row.medicineName);
+        const item = medicalStock.find(i => i?._id === row.medicineId);
         await axios.patch(`${HR_API_URL}/update-medical-stock/${item?._id}`, { is_order_placed: true });
 
         return {

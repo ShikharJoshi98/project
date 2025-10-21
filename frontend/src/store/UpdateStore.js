@@ -37,6 +37,7 @@ export const useStore = create((set) => ({
   medicalStock:[],
   medSection: "general",
   medicalStockToggle: false,
+  stockExistsMessage:null,
   medicalStockToggleSubmit: () => set((state) => ({ medicalStockToggle: !state.medicalStockToggle })),
   setMedSection: (newsection) => set({ medSection: newsection }),
   getDetails: async () => {
@@ -77,9 +78,9 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  getAppointment: async (branch) => {
+  getAppointment: async (branch, shift) => {
     try {
-      const response = await axios.get(`${HR_API_URL}/getHrAppointments/${branch}`);
+      const response = await axios.get(`${HR_API_URL}/getHrAppointments/${branch}/${shift}`);
       set({ generalAppointments: response.data.generalAppointments });
       set({ repeatAppointments: response.data.repeatAppointments });
       set({ courierAppointments: response.data.courierAppointments });
@@ -87,9 +88,9 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  getAppointmentDetails: async (branch, appointmentType) => {
+  getAppointmentDetails: async (branch, appointmentType, shift) => {
     try {
-      const response = await axios.get(`${HR_API_URL}/appDetails/${branch}/${appointmentType}`);
+      const response = await axios.get(`${HR_API_URL}/appDetails/${branch}/${appointmentType}/${shift}`);
       set({appointments:response.data.appointments})
     } catch (error) {
       console.log(error.message);
@@ -242,8 +243,13 @@ export const useStore = create((set) => ({
   },
   addMedicineStock: async (medicineName, potency, quantity,branch) => {
     try {
-      const response = await axios.post(`${HR_API_URL}/add-medicine-stock`, { medicineName, potency, quantity,branch });
-      set({ stock: response.data.newStock });
+      const response = await axios.post(`${HR_API_URL}/add-medicine-stock`, { medicineName, potency, quantity, branch });
+      if (response.data.message === "Stock already exists") {
+        set({ stockExistsMessage: 'This Stock already exists' });
+      }
+      else {
+        set({ stock: response.data.newStock });
+      }
     } catch (error) {
       console.log(error.message);
     }
@@ -289,9 +295,12 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  getCollection: async (branch) => {
-    const response = await axios.get(`${HR_API_URL}/collections/${branch}`);
+  getCollection: async (branch, shift) => {
+    const response = await axios.get(`${HR_API_URL}/collections/${branch}/${shift}`);
     set({ collection: response.data.patientsCollection });
+  },
+  getAllCollection: async (branch) => {
+    const response = await axios.get(`${HR_API_URL}/allCollection/${branch}`);
     set({ branchCollection: response.data.branchCollection });
   },
   getCourierPayment: async (id) => {

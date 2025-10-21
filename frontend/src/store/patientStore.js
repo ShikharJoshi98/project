@@ -8,10 +8,12 @@ export const patientStore = create((set) => (
     {
         lastTwoAppointments: [],
         nextAppointment: [],
+        doctor:null,
         getPatientAppointments: async (id) => {
             const response = await axios.get(`${REC_API_URL}/getAppointments/${id}`);
             set({ lastTwoAppointments: response.data.lastTwoAppointment });
-            set({nextAppointment:response.data.nextAppointment})
+            set({ nextAppointment: response.data.nextAppointment })
+            set({doctor:response.data.doctorNextAppointment})
         }
     }
 ))

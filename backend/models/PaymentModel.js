@@ -20,16 +20,17 @@ const billPaymentSchema = new mongoose.Schema({
     date: { type: String },
     appointmentType: { type: String },
     balance_paid_flag: { type: Boolean, default: false },
-    transactionDetails:{type:String},
-    paymentCollectedBy:{
+    transactionDetails: { type: String },
+    paymentCollectedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee'
     },
     patient: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Patient'
-    }
-})
+    },
+    shift: { type: String }
+});
 
 const courierPaymentSchema = new mongoose.Schema({
     dueBalance: { type: Number, default: 0 },

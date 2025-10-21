@@ -206,22 +206,24 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAppointmentCount: async () => {//
+    getAppointmentCount: async (shift,user) => {//
         try {
-            const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`);
-            set({ domGeneral: response.data.domGeneral })
-            set({ mulGeneral: response.data.mulGeneral });
-            set({ domRepeat: response.data.domRepeat });
-            set({ mulRepeat: response.data.mulRepeat });
-            set({ domCourier: response.data.domCourier });
-            set({ mulCourier: response.data.mulCourier });
+            const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`,{
+            params: { shift,user }
+        });
+            set({ domGeneral: response.data.domCounts.domGeneral })
+            set({ mulGeneral: response.data.mulCounts.mulGeneral });
+            set({ domRepeat: response.data.domCounts.domRepeat });
+            set({ mulRepeat: response.data.mulCounts.mulRepeat });
+            set({ domCourier: response.data.domCounts.domCourier });
+            set({ mulCourier: response.data.mulCounts.mulCourier });
         } catch (error) {
             console.log(error.message);
         }
     }, 
-    getAppDetails: async (appointmentSection,branch,user) => {//
+    getAppDetails: async (appointmentSection,branch,user,shift) => {//
       try {
-          const response = await axios.get(`${DOC_API_URL}/getAppointments/${branch}/${appointmentSection}/${user}`);
+          const response = await axios.get(`${DOC_API_URL}/getAppointments/${branch}/${appointmentSection}/${user}/${shift}`);
           set({ appointments: response.data.Appointments });
           set({ newAppointmentLength: response.data.newAppointmentLength });
           set({ followUpAppointmentLength: response.data.followUpAppointmentLength });

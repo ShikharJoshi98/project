@@ -6,6 +6,7 @@ import { docStore } from '../../store/DocStore';
 import { updateDate } from '../../store/todayDate';
 import { FaBell } from 'react-icons/fa';
 import { CiHospital1 } from 'react-icons/ci';
+import { recStore } from '../../store/RecStore';
 
 const HRnavbar = () => {
     const [isOpen, setOpen] = useState(false);
@@ -13,6 +14,7 @@ const HRnavbar = () => {
     const { getAppointment, courierAppointments, repeatAppointments, generalAppointments, setMedSection } = useStore();
     const { user, logout } = useAuthStore();
     const { appointmentSubmit, getAppdetails, appointments } = docStore();
+    const { isShift, shiftToggle } = recStore();
     const [isMedicineHovered, setIsMedicineHovered] = useState(false);
     const navigate = useNavigate();
     const date = updateDate();
@@ -22,8 +24,13 @@ const HRnavbar = () => {
         navigate('/login');
     }
     useEffect(() => {
-        getAppointment(user?.branch)
-    }, [getAppdetails, appointmentSubmit]);
+        if (user?.branch === 'Dombivali') {
+            getAppointment(user?.branch, isShift?.shift)
+        }
+        else {
+            getAppointment(user?.branch, 'noShift')
+        }
+    }, [getAppdetails, appointmentSubmit, shiftToggle, isShift]);
 
     useEffect(() => {
         const handleClikcOutside = (e) => {
@@ -66,7 +73,6 @@ const HRnavbar = () => {
                             </div>
                         )}
                     </div>
-                    {/* <li onClick={() => navigate('/email-courier-details')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Courier Mail</li> */}
                     <li onClick={handleLogout} className="cursor-pointer text-gray-200 hover:text-white">Logout</li>
                 </ul>
                 <button onClick={() => setOpen(!isOpen)} className="lg:hidden cursor-pointer hover:text-gray-200 text-white font-semibold text-xl">☰</button>

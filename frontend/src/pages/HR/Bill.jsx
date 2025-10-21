@@ -11,10 +11,10 @@ import { REC_API_URL } from '../../store/patientStore';
 import { LuLoaderCircle } from 'react-icons/lu';
 
 const Bill = () => {
-    const { getPatient, patient } = recStore();
+    const { getPatient, patient, isShift, shiftToggle, getShift } = recStore();
     const { prescriptionSubmit, fetchPrescription, prescription, getBillInfo, billInfo, balanceDue, getBalanceDue } = docStore();
     const { user } = useAuthStore();
-    const { getAppointmentDetails, appointments } = useStore();
+    const { getAppointmentDetails, appointments, medSection } = useStore();
     const [paymentMode, setPaymentMode] = useState('cash');
     const { id, branch } = useParams();
     const navigate = useNavigate();
@@ -28,14 +28,26 @@ const Bill = () => {
     const [email, setEmail] = useState('');
 
     useEffect(() => {
+        const fetchShiftAndAppointments = async () => {
+            await getShift(user?.role, user?._id);
+            if (user?.branch === 'Dombivali') {
+                getAppointmentDetails(user?.branch, medSection, isShift?.shift).finally(() => {
+                });
+            }
+            else {
+                getAppointmentDetails(user?.branch, medSection, 'noShift').finally(() => {
+                });
+            }
+        }
+        if (user?._id) fetchShiftAndAppointments();
+    }, [medSection, branch, shiftToggle, recStore.getState().isShift?.shift]);
+
+    useEffect(() => {
         getPatient(id);
         fetchPrescription(id);
         getBillInfo(id);
         getBalanceDue(id);
-        getAppointmentDetails(user?.branch, branch);
     }, [getPatient, fetchPrescription, prescriptionSubmit, getAppointmentDetails, branch]);
-
-
 
     useEffect(() => {
         if (patient?.email) {
@@ -60,13 +72,15 @@ const Bill = () => {
     const addBill = async () => {
         try {
             setLoading(true);
+
             await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, {
                 billPaid: parseInt(amountPaid),
                 modeOfPayment: paymentMode,
                 appointmentType: appointment[0]?.appointmentType,
                 paymentCollectedBy: user?._id,
                 transactionDetails,
-                totalBill: (billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount))
+                totalBill: (billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)),
+                shift: (user?.branch === 'Dombivali' ? isShift?.shift : 'noShift')
             });
             if (appointment[0]?.appointmentType === 'courier') {
                 await axios.post(`${HR_API_URL}/courierPayment/${id}`, {
@@ -102,6 +116,7 @@ const Bill = () => {
                 complete_appointment_flag: true,
                 medicine_issued_flag: true,
                 followUp_appointment_flag: true,
+                visit_complete_flag: true,
                 date: todayDate
             })
             await axios.patch(`${DOC_API_URL}/update-prescription`, { prescription_date: todayDate });
@@ -113,7 +128,7 @@ const Bill = () => {
             console.log(error.message);
         }
     }
-
+    console.log(appointment[0]?.appointmentType);
     return (
         <div>
             <HRnavbar />
@@ -140,22 +155,22 @@ const Bill = () => {
                     <div className='bg-white max-w-[410px]  mt-6 py-5 flex flex-col text-sm sm:text-base gap-2 border-1 border-blue-400 rounded-md shadow-md mx-auto'>
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Medicine Charges : </p><p>Rs {billInfo?.medicineCharges}</p></div>
                         {appointment[0]?.new_appointment_flag === true && branch !== 'courier' && <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>New Case Consultation Charges : </p><p>Rs {billInfo?.newCaseCharge}</p></div>}
-                        {appointment[0]?.appointmentType === 'courier' && appointment[0]?.new_appointment_flag === true && <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Online Consultation Charges : </p><p>Rs {billInfo?.onlineAmount}</p></div>}
+                        {branch === 'courier' && appointment[0]?.new_appointment_flag === true && <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Online Consultation Charges : </p><p>Rs {billInfo?.onlineAmount}</p></div>}
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Other Consultation Charges : </p><p>Rs {billInfo?.consultation}</p></div>
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Other Medicine : </p><p>Rs {billInfo?.otherPrescriptionPrice}</p></div>
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Total Amount : </p><p>Rs {billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice}</p></div>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Total Amount : </p><p>Rs {billInfo?.medicineCharges + (branch === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice}</p></div>
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold'>Balance Dues : </p><p>Rs {balanceDue?.dueBalance < 0 ? balanceDue?.dueBalance + ' Advance' : balanceDue?.dueBalance > 0 ? balanceDue?.dueBalance + ' Balance' : '0'}</p></div>
                         <hr className='my-3 h-0.5 w-full border-none bg-blue-500' />
-                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-xl'>Amount to be Paid : </p><p className='text-lg sm:text-xl'>Rs {billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance)}</p></div>
-                        {appointment[0]?.appointmentType === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + billInfo?.onlineAmount + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)) }}>
+                        <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-xl'>Amount to be Paid : </p><p className='text-lg sm:text-xl'>Rs {billInfo?.medicineCharges + (branch === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance)}</p></div>
+                        {branch === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + billInfo?.onlineAmount + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)) }}>
                             <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Courier Amount : </p><input type="number" onChange={(e) => setCourierAmount(e.target.value)} required className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md' /></div>
                             <button type='submit' className='bg-yellow-500 block text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Grand Total</button>
                         </form>}
-                        {grandTotal > 0 && appointment[0]?.appointmentType === 'courier' && <div className='flex justify-between mt-5 px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Grand Total Amount : </p><p className='text-lg sm:text-2xl'>Rs {grandTotal}</p></div>}
+                        {grandTotal > 0 && branch === 'courier' && <div className='flex justify-between mt-5 px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Grand Total Amount : </p><p className='text-lg sm:text-2xl'>Rs {grandTotal}</p></div>}
                         <div className='flex items-center flex-col  gap-4 mt-4'><p>Mode of Payment : </p><div className='h-9 bg-[#c8c8ce] rounded-[18px]'><button onClick={() => setPaymentMode('cash')} className={`py-1 ${paymentMode === 'cash' ? 'bg-blue-500 rounded-[18px] text-white' : ''} py-1.5 px-5 cursor-pointer`}>Cash</button><button onClick={() => setPaymentMode('online')} className={`py-1.5 px-5 ${paymentMode === 'online' ? 'bg-blue-500 rounded-[18px] text-white' : ''} cursor-pointer`}>Online</button></div></div>
-                        {appointment[0]?.appointmentType === 'courier' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Address : </p><input onChange={(e) => setAddress(e.target.value)} value={address} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
+                        {branch === 'courier' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Address : </p><input onChange={(e) => setAddress(e.target.value)} value={address} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
                         <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Amount Paid : </p><input type="number" onWheel={(e) => e.target.blur()} onChange={(e) => setAmountPaid(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>
-                        {appointment[0]?.appointmentType === 'courier' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Email : </p><input onChange={(e) => setEmail(e.target.value)} value={email} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
+                        {branch === 'courier' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Email : </p><input onChange={(e) => setEmail(e.target.value)} value={email} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
                         {paymentMode === 'online' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Transaction Details* : </p><input onChange={(e) => setTransactionDetails(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
                         {paymentMode === 'online' && transactionDetails.length > 0 && <button type='button' onClick={() => addBill()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>{loading ? <LuLoaderCircle className='animate-spin mx-auto ' size={24} /> : 'Done'}</button>}
                         {paymentMode === 'cash' && <button type='button' onClick={() => addBill()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>{loading ? <LuLoaderCircle className='animate-spin mx-auto ' size={24} /> : 'Done'}</button>}

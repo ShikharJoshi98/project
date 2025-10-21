@@ -1,15 +1,25 @@
 import { useEffect } from 'react'
 import { useStore } from '../../store/UpdateStore'
 import { useAuthStore } from '../../store/authStore'
+import { recStore } from '../../store/RecStore';
 
 const Collections = () => {
     const { getCollection, collection } = useStore();
     const { user } = useAuthStore();
-    
-    useEffect(() => {
-        getCollection(user?.branch);
-    }, [getCollection]);
+    const { isShift, shiftToggle, getShift } = recStore();
 
+    useEffect(() => {
+        const fetchShiftAndAppointments = async () => {
+            await getShift(user?.role, user?._id);
+            if (user?.branch === 'Dombivali') {
+                getCollection(user?.branch, isShift?.shift);
+            }
+            else {
+                getCollection(user?.branch, 'noShift');
+            }
+        }
+        if (user?._id) fetchShiftAndAppointments();
+    }, [getCollection, shiftToggle, recStore.getState().isShift?.shift]);
     let collectionSum = 0;
     let cashPayment = 0;
     let onlinePayment = 0;

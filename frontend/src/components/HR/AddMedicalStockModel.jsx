@@ -5,7 +5,7 @@ import { RxCross1 } from 'react-icons/rx';
 import Select from "react-select";
 
 const AddMedicalStockModel = ({ onClose }) => {
-  const { getMedicine, medicines, potencys, getPotency, addMedicineStock, medicalStockToggleSubmit } = useStore();
+  const { getMedicine, medicines, potencys, getPotency, addMedicineStock, medicalStockToggleSubmit, stockExistsMessage } = useStore();
   const { user } = useAuthStore();
   const [medicine, setmedicine] = useState();
   const [potency, setpotency] = useState();
@@ -21,9 +21,13 @@ const AddMedicalStockModel = ({ onClose }) => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    await addMedicineStock(medicine?.label, potency, quantity, user?.branch);
-    alert("Added Medicine stock");
+    if (stockExistsMessage) {
+      alert(stockExistsMessage);
+    }
+    else {
+      await addMedicineStock(medicine?.label, potency, quantity, user?.branch);
+      alert("Added Medicine stock");
+    }
     setmedicine('');
     setpotency('');
     setquantity('');
@@ -45,18 +49,6 @@ const AddMedicalStockModel = ({ onClose }) => {
           <form onSubmit={handleSubmit} >
             <div className='mb-3'>
               <h1 className="text-black mb-3 text-lg font-semibold">Medicine:</h1>
-              {/* <select
-                onChange={(e) => setmedicine(e.target.value)}
-                value={medicine}
-                name="select item"
-                id="item-select"
-                className="py-2 rounded-lg w-full border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
-              >
-                <option value="">Select Medicine</option>
-                {medicines.map((medicine, index) => (
-                  <option key={index}>{medicine?.medicine}</option>
-                ))}
-              </select> */}
               <Select options={medicineArray} placeholder="Search" value={medicine} onChange={setmedicine} className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200" required />
             </div>
             <div className='mb-3'>
@@ -92,7 +84,6 @@ const AddMedicalStockModel = ({ onClose }) => {
           </form>
         </div>
       </div>
-
     </div>
   )
 }

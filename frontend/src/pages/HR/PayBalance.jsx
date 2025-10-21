@@ -6,9 +6,10 @@ import { DOC_API_URL, docStore } from '../../store/DocStore';
 import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import { HR_API_URL, useStore } from '../../store/UpdateStore';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const PayBalance = () => {
-  const { patient, getPatient } = recStore();
+  const { patient, getPatient, getShift, isShift, shiftToggle } = recStore();
   const { getBalanceDue, balanceDue } = docStore();
   const { branchCourierPayment, getCourierPayment } = useStore();
   const [paymentMode, setPaymentMode] = useState('cash');
@@ -17,7 +18,15 @@ const PayBalance = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log(patient)
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchShiftAndAppointments = async () => {
+      await getShift(user?.role, user?._id);
+    };
+    if (user?._id) fetchShiftAndAppointments();
+  }, [shiftToggle, recStore.getState().isShift?.shift])
+
   useEffect(() => {
     getPatient(id);
     getBalanceDue(id);
@@ -28,10 +37,12 @@ const PayBalance = () => {
 
   const pay = async () => {
     try {
-      await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, { billPaid: amountPaid, transactionDetails, modeOfPayment: paymentMode, paymentCollectedBy: user?._id, totalBill: balanceDue?.dueBalance, balance_paid_flag: true });
+      setLoading(true);
+      await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, { billPaid: amountPaid, transactionDetails, modeOfPayment: paymentMode, paymentCollectedBy: user?._id, totalBill: balanceDue?.dueBalance, balance_paid_flag: true, shift: isShift?.shift });
       if (balanceDue?.appointmentType === 'courier') {
         await axios.patch(`${HR_API_URL}/updateCourierStatus/${courier[0]?._id}/${patient?._id}`);
       }
+      setLoading(false);
       navigate('/dashboard-HR/HR-balance');
     } catch (error) {
       console.error(error.message);
@@ -62,7 +73,7 @@ const PayBalance = () => {
             <div className='flex items-center flex-col  gap-4 mt-4'><p>Mode of Payment : </p><div className='h-9 bg-[#c8c8ce] rounded-[18px]'><button onClick={() => setPaymentMode('cash')} className={`py-1 ${paymentMode === 'cash' ? 'bg-blue-500 rounded-[18px] text-white' : ''} py-1.5 px-5 cursor-pointer`}>Cash</button><button onClick={() => setPaymentMode('online')} className={`py-1.5 px-5 ${paymentMode === 'online' ? 'bg-blue-500 rounded-[18px] text-white' : ''} cursor-pointer`}>Online</button></div></div>
             <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Amount Paid : </p><input type="number" onChange={(e) => setAmountPaid(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>
             {paymentMode === 'online' && <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Transaction Details : </p><input onChange={(e) => setTransactionDetails(e.target.value)} className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md ' /></div>}
-            <button type='button' onClick={() => pay()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Done</button>
+            <button type='button' onClick={() => pay()} className='bg-green-500 text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>{loading ? <LuLoaderCircle className='mx-auto' size={24} /> : 'Done'}</button>
           </div>
         </div>
       </div>

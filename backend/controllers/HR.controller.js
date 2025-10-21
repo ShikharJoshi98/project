@@ -111,7 +111,7 @@ export const LeaveApply = async (req, res) => {
 
 export const getHrAppointments = async (req, res) => {
     try {
-        const { branch } = req.params;
+        const { branch, shift } = req.params;
         const date = updateDate();
 
         const result = await Appointment.aggregate([
@@ -121,14 +121,16 @@ export const getHrAppointments = async (req, res) => {
                     complete_appointment_flag: true,
                     medicine_issued_flag: false,
                     branch: branch,
-                    appointmentType: { $in: ['general', 'repeat', 'courier'] }
+                    appointmentType: { $in: ['general', 'repeat', 'courier'] },
+                    shift
                 }
             },
             {
                 $group: {
                     _id: {
                         branch: "$branch",
-                        appointmentType: "$appointmentType"
+                        appointmentType: "$appointmentType",
+                        shift
                     },
                     count: { $sum: 1 }
                 }
@@ -160,9 +162,9 @@ export const getHrAppointments = async (req, res) => {
 
 export const getAppDetails = async (req, res) => {
     try {
-        const { branch, appointmentType } = req.params;
+        const { branch, appointmentType, shift } = req.params;
         const date = updateDate();
-        const appointments = await Appointment.find({ branch, date, complete_appointment_flag: true, appointmentType }).populate('Doctor').populate('PatientCase');
+        const appointments = await Appointment.find({ branch, date, shift, complete_appointment_flag: true, appointmentType }).populate('Doctor').populate('PatientCase');
 
         res.json({
             success: true,
@@ -824,10 +826,13 @@ export const add_medical_stock = async (req, res) => {
         const { medicineName, potency, quantity, branch } = req.body;
         const itemexists = await Medicine.findOne({ medicine: medicineName });
         const unitexists = await Potency.findOne({ potency });
-
+        const stockExists = await MedicalStock.findOne({ medicineName: medicineName, potency: potency });
+        if (stockExists) {
+            return res.json({ success: false, message: "Stock already exists" });
+        }
         if (!itemexists || !unitexists) {
             return res.json({ success: false, message: "Stock does not have these" });
-        }
+        } 
         const newStock = new MedicalStock({
             medicineName,
             potency,
@@ -1123,7 +1128,7 @@ export const addMedicalOrderBillNumber = async (req, res) => {
 //collections
 export const getCollection = async (req, res) => {
     try {
-        const { branch } = req.params;
+        const { branch, shift } = req.params;
 
         const updateDate = () => {
             const today = new Date();
@@ -1134,13 +1139,31 @@ export const getCollection = async (req, res) => {
             return formattedDate;
         };
         const todayDate = updateDate();
-        const collection = await billPayment.find().populate('patient').populate('paymentCollectedBy');
+        const collection = await billPayment.find({shift}).populate('patient').populate('paymentCollectedBy');
         const branchCollection = collection.filter((item) => item?.patient?.branch === branch);
         const patientsCollection = collection.filter((item) => item?.patient?.branch === branch && item?.date === todayDate);
 
         res.json({
             patientsCollection,
             branchCollection,
+        })
+    } catch (error) {
+        res.json({
+            message: error.message,
+            success: false
+        })
+    }
+}
+
+export const getAllCollection = async (req, res) => {
+    try {
+        const { branch } = req.params;
+
+        const collection = await billPayment.find().populate('patient').populate('paymentCollectedBy');
+        const branchCollection = collection.filter((item) => item?.patient?.branch === branch);
+
+        res.json({
+            branchCollection
         })
     } catch (error) {
         res.json({
@@ -1180,7 +1203,7 @@ export const addCourierPayment = async (req, res) => {
                     totalBill,
                     paymentCollectedBy,
                     address,
-                    email
+                    email,
                 }
             },
             { upsert: true }
@@ -1228,6 +1251,7 @@ export const getCourierPayment = async (req, res) => {
         const allCourier = await courierPayment.find().populate('patient').populate('paymentCollectedBy');
         const branchCourier = allCourier.filter((item) => item?.patient?.branch === id);
         const patientsCourier = allCourier.filter((item) => item?.patient?.branch === id && item?.date === todayDate);
+        
         res.json({
             branchCourier,
             patientsCourier,
@@ -1235,6 +1259,40 @@ export const getCourierPayment = async (req, res) => {
         })
     } catch (error) {
         res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const deliveryPayment = async (req, res) => {
+    try {
+        const { id, patientId } = req.params;
+        const { totalBill, billPaid, transactionDetails, paymentCollectedBy, address, email } = req.body;
+        const payment = await courierPayment.findById(id);
+        const findBillDetails = await billPayment.findOne({ patient: patientId });
+        const balance = findBillDetails?.dueBalance;
+        const formattedDate = updateDate();
+        if (payment) {
+            const updatePayment = await courierPayment.findByIdAndUpdate(id, {
+                dueBalance: balance,
+                date: formattedDate,
+                transactionDetails,
+                billPaid,
+                totalBill,
+                paymentCollectedBy,
+                address,
+                email
+            })
+        }
+
+        return res.json({
+            success: true,
+            message:'Payment of courier done'
+        })
+
+    } catch (error) {
+        return res.json({
             success: false,
             message: error.message
         })

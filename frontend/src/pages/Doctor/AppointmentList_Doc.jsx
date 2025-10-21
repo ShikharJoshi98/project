@@ -9,9 +9,11 @@ import { updateDate } from '../../store/todayDate';
 import { BiPlus } from 'react-icons/bi';
 import { CiSearch } from 'react-icons/ci';
 import { LuLoaderCircle } from 'react-icons/lu';
+import { recStore } from '../../store/RecStore';
 
 const AppointmentList_Doc = () => {
-  const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppDetails, appointments,newAppointmentLength,followUpAppointmentLength,medicineIssuedLength,medicineNotIssuedLength } = docStore();
+  const { setAppointmentSection, appointmentSection, appointmentSubmit, getAppDetails, appointments, newAppointmentLength, followUpAppointmentLength, medicineIssuedLength, medicineNotIssuedLength } = docStore();
+  const { isShift, shiftToggle } = recStore();
   const { branch } = useParams();
   const { user } = useAuthStore();
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
@@ -20,15 +22,24 @@ const AppointmentList_Doc = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const currentDate = updateDate();
-  
+
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(true), 200);
-    getAppDetails(appointmentSection, branch, user?._id).finally(() => {
-      clearTimeout(timeout);
-      setLoading(false);
-    });    
-  }, [getAppDetails, appointmentSection, branch, appointmentSubmit]);
-  
+    if (branch === 'Dombivali') {
+      getAppDetails(appointmentSection, branch, user?._id, isShift?.shift).finally(() => {
+        clearTimeout(timeout);
+        setLoading(false);
+      });
+    }
+    else {
+      getAppDetails(appointmentSection, branch, user?._id, 'noShift').finally(() => {
+        clearTimeout(timeout);
+        setLoading(false);
+      });
+    }
+
+  }, [getAppDetails, appointmentSection, branch, appointmentSubmit, shiftToggle, recStore.getState().isShift?.shift]);
+
   return (
     <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full">
       <div className="bg-[#e9ecef] w-auto p-5 rounded-lg">
@@ -47,7 +58,7 @@ const AppointmentList_Doc = () => {
         <div className='mt-10'>
           <Input onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} icon={CiSearch} placeholder='Search for Patient&apos;s Name/Case Paper No./Mobile No.' />
         </div>
-        {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24}/>: <div className="overflow-x-auto mt-10">
+        {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : <div className="overflow-x-auto mt-10">
           <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
             <thead>
               <tr className="bg-blue-500 text-white text-sm ">
@@ -62,19 +73,19 @@ const AppointmentList_Doc = () => {
             </thead>
             <tbody className=" bg-gray-200 text-black text-sm">
               {
-                appointments.filter((appointment)=>appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())).map((appointment, index) => (
-                  <tr key={index} className={`${appointment?.medicine_issued_flag === true ? 'bg-pink-200' : appointment?.complete_appointment_flag === true ? 'bg-blue-200' : appointment?.new_appointment_flag === true ? 'bg-yellow-200' : 'bg-green-200'} `}>
-                    <td className="py-2 px-4 text-center border">{index + 1}</td>
-                    <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.casePaperNo}</td>
-                    <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.phone}</td>
-                    <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.fullname}</td>
-                    <td className="py-2 px-4 text-center border">{appointment?.appointmentType}</td>
-                    <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.branch}</td>
-                    <td onClick={() => navigate(`/appointment-details/${appointment?.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 mx-auto block rounded-md text-white cursor-pointer">Details</button></td>
-                  </tr>
-                ))}
+                appointments.filter((appointment) => appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())).map((appointment, index) => (
+                    <tr key={index} className={`${appointment?.medicine_issued_flag === true ? 'bg-pink-200' : appointment?.complete_appointment_flag === true ? 'bg-blue-200' : appointment?.new_appointment_flag === true ? 'bg-yellow-200' : 'bg-green-200'} `}>
+                      <td className="py-2 px-4 text-center border">{index + 1}</td>
+                      <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.casePaperNo}</td>
+                      <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.phone}</td>
+                      <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.fullname}</td>
+                      <td className="py-2 px-4 text-center border">{appointment?.appointmentType}</td>
+                      <td className="py-2 px-4 text-center border">{appointment?.PatientCase?.branch}</td>
+                      <td onClick={() => navigate(`/appointment-details/${appointment?.PatientCase._id}`)} className="py-2 px-4 border"><button className="bg-blue-500 p-2 mx-auto block rounded-md text-white cursor-pointer">Details</button></td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>}

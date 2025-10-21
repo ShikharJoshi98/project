@@ -30,14 +30,6 @@ const ReceptionistDashboard = () => {
     if (user?._id) fetchShiftAndAppointments();
   }, [appointmentSubmit, shiftToggle])
 
-  // useEffect(() => {
-  //   getAppointmentLength(user?.branch);
-  // }, [getAppointmentLength, appointmentSubmit])
-
-  // useEffect(async () => {
-  //   await getShift(user?.role, user?._id);
-  // }, [shiftSubmit, shiftToggle])
-
   const changeShift = async (type, role, id) => {
     setShiftLoading(true);
     await setShift(type, role, id);
@@ -58,7 +50,7 @@ const ReceptionistDashboard = () => {
             (shiftLoading === false ?
               (<div className='h-12 bg-[#c8c8ce]  rounded-[18px]'>
                 <button onClick={() => changeShift('Morning', user?.role, user?._id)} className={`${isShift?.shift === 'Morning' ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>Morning</button>
-                <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Night</button>
+                <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Evening</button>
               </div>)
               :
               <LuLoaderCircle className='animate-spin text-white' size={24} />

@@ -10,15 +10,14 @@ export const register = async (req, res) => {
     try {
         let { patientCard, fullname, phone, Altphone, email, username, lastLogin, password, branch, casePaperNo } = req.body;
         let isBranch = branch === 'Mulund' ? 'MUL' : 'DOM';
-
+        console.log(casePaperNo);
         const existUser = await Patient.findOne({ username });
         if (existUser) {
             return res.status(400).json({ success: false, message: "Already exists try logging in." })
         }
         const hashedPassword = await bcryptjs.hash(password, 11);
         let newUser;
-        if (!casePaperNo) {
-            casePaperNo = `${isBranch}-NEW`;
+        if (casePaperNo === `${isBranch}-NEW`) {
             newUser = new Patient({
                 patientCard, fullname, casePaperNo, phone, Altphone, email, username, lastLogin, password: hashedPassword, branch
             })

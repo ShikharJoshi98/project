@@ -2,15 +2,28 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CiMedicalClipboard } from 'react-icons/ci'
 import { useStore } from '../../store/UpdateStore'
+import { LuLoaderCircle } from 'react-icons/lu'
 
 const BalanceList = () => {
+    const [loading, setLoading] = useState(false);
     const location = useParams();
-    const { getCollection, branchCollection } = useStore();
+    const { getAllCollection, branchCollection } = useStore();
     const [selectAppointmentType, setSelectAppointmentType] = useState('All');
 
     useEffect(() => {
-        getCollection(location.location);
-    }, [getCollection]);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                await getAllCollection(location.location);
+            } catch (error) {
+                console.error(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [getAllCollection]);
 
     return (
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden'>
@@ -30,7 +43,7 @@ const BalanceList = () => {
                         </select>
                     </div>
                 </div>
-                <div className="overflow-x-auto mt-10 rounded-lg">
+                {loading ? <LuLoaderCircle className='mx-auto animate-spin mt-10 text-gray-500' size={44} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >
@@ -56,10 +69,12 @@ const BalanceList = () => {
                                             <td className='px-1 text-center py-2'>{item?.date}</td>
                                             <td className='px-1 text-center py-2'>{item?.dueBalance}</td>
                                         </tr>
-                                    })}
+                                    })
+                            }
                         </tbody>
                     </table>
-                </div>
+                </div>}
+                {branchCollection.length === 0 && loading === false ? <p className='text-center mt-10 text-lg'>No Data</p> : ''}
             </div>
         </div>
     )

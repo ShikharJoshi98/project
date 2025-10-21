@@ -43,7 +43,7 @@ const CourierList = () => {
         await axios.patch(`${HR_API_URL}/updateCourierStatus/${id}/${patientId}`);
         setSubmit(prev => !prev);
     }
-    console.log(branchCourierPayment)
+
     const data = showFilter ? filteredData : branchCourierPayment;
 
     return (
