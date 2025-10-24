@@ -8,17 +8,22 @@ import { HR_API_URL } from '../../store/UpdateStore';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { CiSearch } from 'react-icons/ci';
 import { LuLoaderCircle } from 'react-icons/lu';
+import PaymentHistoryModal from '../../components/Doctor/PaymentHistoryModal';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 
 const ApproveItems = () => {
     const location = useParams();
     const [id, setId] = useState('');
     const [isOrderItemModalOpen, setOrderItemModalIsOpen] = useState(false);
     const [isOrderItemHistoryModalOpen, setOrderItemHistoryModalIsOpen] = useState(false);
+    const [isPaymentHistoryModalOpen, setPaymentHistoryModalIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [itemStock, setItemStock] = useState([]);
     const [submit, setSubmit] = useState(false);
     const { orderId, getOrderId } = docStore();
     const [loading, setLoading] = useState(false);
+    const [isDeleteModal, setDeleteModal] = useState(false);
+
     const getItemStock = async () => {
         const response = await axios.get(`${HR_API_URL}/get-item-stock/${location.location}`);
         setItemStock(response.data.itemStock);
@@ -96,11 +101,12 @@ const ApproveItems = () => {
                     <div className='sm:flex grid grid-cols-1 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9'>
                         <button onClick={() => setOrderItemModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Order History</button>
                         <button onClick={() => setOrderItemHistoryModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Order Balances</button>
+                        <button onClick={() => setPaymentHistoryModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Payment History</button>
                     </div>
                     <h1 className='font-semibold mt-10'>Item : </h1>
                     <Input icon={CiSearch} onChange={(e) => setSearchTerm(e.target.value)} placeholder='Search for Items here' />
                     <div className='flex justify-end'>
-                        <button onClick={() => approveAllStock()} className='bg-blue-500 py-1 px-3 rounded-md text-white mt-10 mb-3 cursor-pointer font-semibold' >Approve all Stock</button>
+                        <button onClick={() => { setDeleteModal(true) }} className='bg-blue-500 py-1 px-3 rounded-md text-white mt-10 mb-3 cursor-pointer font-semibold' >Approve all Stock</button>
                     </div>
                     {loading ? <LuLoaderCircle className='animate-spin mx-auto' /> : <div className="overflow-x-auto rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
@@ -138,7 +144,9 @@ const ApproveItems = () => {
                 </div>
             </div>
             {isOrderItemModalOpen && <OrderItemHistoryModal location={location.location} onClose={() => setOrderItemModalIsOpen(false)} />}
+            {isPaymentHistoryModalOpen && <PaymentHistoryModal location={location.location} type='item' onClose={() => setPaymentHistoryModalIsOpen(false)} />}
             {isOrderItemHistoryModalOpen && <OrderItemBalanceModal location={location.location} onClose={() => setOrderItemHistoryModalIsOpen(false)} />}
+            {isDeleteModal && <ConfirmDeleteModal onClose={() => setDeleteModal(false)} message="Do you want approve all Stocks?" onConfirm={() => approveAllStock()} />}
         </>
     )
 }

@@ -58,7 +58,7 @@ const BalanceList = () => {
                         </thead>
                         <tbody>
                             {
-                                branchCollection.filter(item => selectAppointmentType === 'All' || item?.appointmentType === selectAppointmentType)
+                                branchCollection.filter(item => item?.dueBalance !== 0 && (selectAppointmentType === 'All' || item?.appointmentType === selectAppointmentType))
                                     .map((item, index) => {
                                         return <tr key={index} className='bg-blue-200'>
                                             <td className='px-1 text-center py-2'>{index + 1}</td>

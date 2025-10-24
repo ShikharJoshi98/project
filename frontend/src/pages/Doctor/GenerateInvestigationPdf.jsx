@@ -38,8 +38,8 @@ const GenerateInvestigationPdf = () => {
                     <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
-                                <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Investigation Advised</th>
+                                <th className="py-2 px-4 w-44 border">S No.</th>
+                                <th className="bg-blue-500 text-white text-sm ">Blood test</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
@@ -52,11 +52,29 @@ const GenerateInvestigationPdf = () => {
                         </tbody>
                     </table>
                 </div>}
+                {selectedTest?.xray?.length > 0 && <div className="overflow-x-auto mt-10">
+                    <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
+                        <thead>
+                            <tr className="bg-blue-500 text-white text-sm ">
+                                <th className="py-2 px-4 w-44 border">S No.</th>
+                                <th className="bg-blue-500 text-white text-sm ">X-RAY</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-blue-200">
+                            {selectedTest?.xray.map((investigation, index) =>
+                                <tr key={index}>
+                                    <td className="py-2 px-4 text-center">{index + 1}</td>
+                                    <td className="py-2 px-4 text-center">{investigation}</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>}
                 {selectedTest?.ultra_sonography?.length > 0 && <div className="overflow-x-auto mt-10">
                     <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
-                                <th className="py-2 px-4 border">S No.</th>
+                                <th className="py-2 px-4 w-44 border">S No.</th>
                                 <th className="bg-blue-500 text-white text-sm ">Ultra-Sonography</th>
                             </tr>
                         </thead>
@@ -74,7 +92,7 @@ const GenerateInvestigationPdf = () => {
                     <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
-                                <th className="py-2 px-4 border">S No.</th>
+                                <th className="py-2 px-4 w-44 border">S No.</th>
                                 <th className="bg-blue-500 text-white text-sm ">Doppler studies</th>
                             </tr>
                         </thead>
@@ -92,8 +110,8 @@ const GenerateInvestigationPdf = () => {
                     <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
-                                <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Obsetrics(Pregnancy)</th>
+                                <th className="py-2 px-4 w-44 border">S No.</th>
+                                <th className="bg-blue-500 text-white text-sm">Obstetrics(Pregnancy)-Sonography</th>
                             </tr>
                         </thead>
                         <tbody className="bg-blue-200">
@@ -106,29 +124,11 @@ const GenerateInvestigationPdf = () => {
                         </tbody>
                     </table>
                 </div>}
-                {selectedTest?.sonography?.length > 0 && <div className="overflow-x-auto mt-10">
-                    <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
-                        <thead>
-                            <tr className="bg-blue-500 text-white text-sm ">
-                                <th className="py-2 px-4 border">S No.</th>
-                                <th className="bg-blue-500 text-white text-sm ">Sonography</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-blue-200">
-                            {selectedTest?.sonography.map((investigation, index) =>
-                                <tr key={index}>
-                                    <td className="py-2 px-4 text-center">{index + 1}</td>
-                                    <td className="py-2 px-4 text-center">{investigation}</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>}
                 {selectedTest?.ctScan?.length > 0 && <div className="overflow-x-auto mt-10">
                     <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
-                                <th className="py-2 px-4 border">S No.</th>
+                                <th className="py-2 px-4 w-44 border">S No.</th>
                                 <th className="bg-blue-500 text-white text-sm">16 Slice C.T Scan</th>
                             </tr>
                         </thead>
@@ -146,7 +146,7 @@ const GenerateInvestigationPdf = () => {
                     <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                         <thead>
                             <tr className="bg-blue-500 text-white text-sm ">
-                                <th className="py-2 px-4 border">S No.</th>
+                                <th className="py-2 px-4 w-44 border">S No.</th>
                                 <th className="bg-blue-500 text-white text-sm">1.5 MRI Scan</th>
                             </tr>
                         </thead>

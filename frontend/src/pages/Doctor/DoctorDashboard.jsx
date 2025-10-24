@@ -4,49 +4,90 @@ import ApproveButton from '../../components/Doctor/ApproveButton';
 import { FaCartPlus } from 'react-icons/fa6';
 import { AiFillMedicineBox } from "react-icons/ai";
 import { updateDate } from '../../store/todayDate';
-import { LuLoaderCircle } from 'react-icons/lu';
+import { LuLoaderCircle, LuMapPin } from 'react-icons/lu';
 import { recStore } from '../../store/RecStore';
 import { useEffect, useState } from 'react';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
+import axios from 'axios';
 
 const DoctorDashboard = () => {
   const { user } = useAuthStore();
-  const { isShift, setShift, getShift, toggleShiftUpdate, shiftToggle } = recStore();
+  const { getClinicDetails, clinicDetails, setSelectedBranch, isBranch } = docStore();
+  const { isShift, toggleShiftUpdate, setShift, getShift, shiftToggle } = recStore();
   const navigate = useNavigate();
   const todayDate = updateDate();
   const [shiftLoading, setShiftLoading] = useState(false);
   const [shiftSubmit, setShiftSubmit] = useState(false);
+  const [branchToggle, setBranchToggle] = useState(false);
+  const [branchLoading, setBranchLoading] = useState(false);
 
   useEffect(() => {
-    const fetchShiftAndAppointments = async () => {
-      await getShift(user?.role, user?._id);
-    };
+    getClinicDetails();
+  }, [shiftToggle, user]);
+  const selected = clinicDetails.find(clinic => clinic?.selectedBranch === true);
 
-    if (user?._id) fetchShiftAndAppointments();
-  }, [shiftToggle])
+  useEffect(() => {
+    if (selected) {
+      setSelectedBranch(selected.branch);
+    }
+  }, [selected]);
 
-  const changeShift = async (type, role, id) => {
+  useEffect(() => {
+    getShift(user?.role, user?._id)
+  }, [shiftToggle]);
+
+  const changeShift = async (type = '', role, id) => {
     setShiftLoading(true);
     await setShift(type, role, id);
     setShiftLoading(false);
     setShiftSubmit(prev => !prev);
     toggleShiftUpdate(prev => !prev);
   }
+  const changeBranch = async (id, branch) => {
+    setBranchLoading(true);
+    await axios.patch(`${DOC_API_URL}/changeBranch/${id}`);
+    await setShift('', user?.role, user?._id);
+    setSelectedBranch(branch)
+    setBranchToggle(prev => !prev);
+    toggleShiftUpdate(prev => !prev);
+    setBranchLoading(false);
+  }
 
   return (
     <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-10 overflow-hidden min-h-screen w-full'>
-      <div className='flex md:flex-row h-fit flex-col items-center justify-between '>
+      <div className='flex md:flex-row gap-3 h-fit flex-col items-center justify-between '>
         <h1 className='text-stone-800 w-fit text:lg sm:text-2xl font-semibold bg-[#dae5f4] p-3 rounded-lg'>Welcome {user?.fullname}</h1>
         {
-          (shiftLoading === false ?
-            (<div className='h-12 bg-[#c8c8ce]  rounded-[18px]'>
-              <button onClick={() => changeShift('Morning', user?.role, user?._id)} className={`${isShift?.shift === 'Morning' ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>Morning</button>
-              <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Evening</button>
+          (branchLoading === false ?
+            (<div className='h-12 bg-[#c8c8ce] w-fit place-self-center md:place-self-end rounded-[18px]'>
+              {
+                clinicDetails?.map((branch, index) => (
+                  <button key={index} onClick={() => changeBranch(branch?._id, branch?.branch)} className={`${branch?.selectedBranch
+                    === true ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>{branch?.branch}</button>
+                ))
+              }
             </div>)
             :
             <LuLoaderCircle className='animate-spin text-white' size={24} />
           )
         }
       </div>
+      {
+        (shiftLoading === false ?
+          (<div className='h-12 bg-[#c8c8ce] w-fit mt-5 place-self-center md:place-self-end rounded-[18px]'>
+            {
+              clinicDetails?.filter((clinic, _) => clinic?.branch === isBranch).map((clinic, clinicIndex) => (
+                clinic?.shifts?.length > 0 && clinic?.shifts?.map((shift, index) => (
+                  <button key={index - clinicIndex} onClick={() => changeShift(shift, user?.role, user?._id)} className={`${isShift?.shift === shift ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>{shift}</button>
+
+                ))
+              ))
+            }
+          </div>)
+          :
+          <LuLoaderCircle className='animate-spin text-white' size={24} />
+        )
+      }
       <div className='bg-[#e9ecef] w-auto p-5 my-6 rounded-lg '>
         <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Dashboard</h1>
         <h1 className=' text-blue-500 font-semibold mb-3 text-lg mt-4'>{todayDate}</h1>

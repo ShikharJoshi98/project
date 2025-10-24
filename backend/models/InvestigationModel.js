@@ -4,6 +4,10 @@ const investigationAdvisedSchema = new mongoose.Schema({
     inputData: { type: String }
 });
 
+const xraySchema = new mongoose.Schema({
+    inputData: { type: String }
+});
+
 const ultraSonogrophySchema = new mongoose.Schema({
     inputData: { type: String }
 });
@@ -30,6 +34,7 @@ const mriScanSchema = new mongoose.Schema({
 
 const testSchema = new mongoose.Schema({
     investigationAdvised: [{ type: String }],
+    xray: [{ type: String }],
     ultra_sonography: [{ type: String }],
     dopplerStudies: [{ type: String }],
     obsetrics: [{ type: String }],
@@ -46,6 +51,7 @@ testSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 }); // 24 hours
 
 
 export const investigationAdvised = mongoose.model('investigationAdvised', investigationAdvisedSchema); 
+export const XRay = mongoose.model('XRay', xraySchema); 
 export const ultraSonography = mongoose.model('ultraSonography', ultraSonogrophySchema); 
 export const dopplerStudies = mongoose.model('dopplerStudies', dopplerStudiesSchema); 
 export const obsetrics = mongoose.model('obsetrics', obsetricsSchema); 

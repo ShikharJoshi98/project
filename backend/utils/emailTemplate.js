@@ -113,7 +113,10 @@ export const VENDOR_BILL_TEMPLATE = `
           <strong>Doctor:</strong> Dr. Santosh K Yadav
         </p>
         <p style="margin:0 0 18px;font-size:14px;color:#333;">
-          <strong>Phone Number:</strong> +91 9892064974
+          <strong>Phone Number:</strong> contact
+        </p>
+        <p style="margin:0 0 18px;font-size:14px;color:#333;">
+          <strong>Branch:</strong> clinicBranch
         </p>
       <p style="font-size: 15px; margin-bottom: 20px;">Below are bill payment details:</p>
 
@@ -369,7 +372,7 @@ export const VENDOR_ORDER_DETAILS = `
           <strong>Doctor:</strong> Dr. Santosh K Yadav
         </p>
         <p style="margin:0 0 18px;font-size:14px;color:#333;">
-          <strong>Phone Number:</strong> +91 9892064974
+          <strong>Phone Number:</strong> {{doctorContact}}
         </p>
         <p style="margin:0 0 18px;font-size:14px;color:#333;">
           <strong>Branch:</strong> {{branch}}
@@ -430,7 +433,7 @@ export const MEDICAL_VENDOR_ORDER_DETAILS = `
           <strong>Doctor:</strong> Dr. Santosh K Yadav
         </p>
         <p style="margin:0 0 18px;font-size:14px;color:#333;">
-          <strong>Phone Number:</strong> +91 9892064974
+          <strong>Phone Number:</strong> {{contact}}
         </p>
         <p style="margin:0 0 18px;font-size:14px;color:#333;">
           <strong>Branch:</strong> {{branch}}
@@ -441,6 +444,7 @@ export const MEDICAL_VENDOR_ORDER_DETAILS = `
           <thead>
             <tr>
               <th style="text-align:left;padding:10px 8px;background:#f1f7fb;border-bottom:1px solid #e6eef9;font-size:13px;color:#0b75c9;">Medicine Name</th>
+              <th style="text-align:left;padding:10px 8px;background:#f1f7fb;border-bottom:1px solid #e6eef9;font-size:13px;color:#0b75c9;">Pack</th>
               <th style="text-align:center;padding:10px 8px;background:#f1f7fb;border-bottom:1px solid #e6eef9;font-size:13px;color:#0b75c9;">Ordered Quantity</th>
               <th style="text-align:center;padding:10px 8px;background:#f1f7fb;border-bottom:1px solid #e6eef9;font-size:13px;color:#0b75c9;">Potency</th>
               <th style="text-align:center;padding:10px 8px;background:#f1f7fb;border-bottom:1px solid #e6eef9;font-size:13px;color:#0b75c9;">Order Date</th>
@@ -450,6 +454,7 @@ export const MEDICAL_VENDOR_ORDER_DETAILS = `
             <!-- Repeat this TR for each item (replace placeholders) -->
             <tr>
               <td style="padding:10px 8px;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">{{medicineName}}</td>
+              <td style="padding:10px 8px;text-align:center;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">{{medidinePack}}</td>
               <td style="padding:10px 8px;text-align:center;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">{{quantity}}</td>
               <td style="padding:10px 8px;text-align:center;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">{{potency}}</td>
               <td style="padding:10px 8px;text-align:center;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">{{orderDate}}</td>

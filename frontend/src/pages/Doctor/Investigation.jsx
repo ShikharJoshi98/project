@@ -9,7 +9,7 @@ import MultiSelectInput from '../../components/Doctor/MultiSelectInput';
 import { investigationPdf } from '../../store/generateInvestigationPDF';
 import { CiTrash } from 'react-icons/ci';
 
-const testArray = [{ title: 'Investigation Advised', color: 'blue' }, { title: 'Ultra-Sonography', color: 'red' }, { title: 'Doppler Studies', color: 'green' }, { title: 'Obstetrics(Pregnancy)', color: 'orange' }, { title: 'Sonography', color: 'black' }, { title: '16 Slice C.T Scan', color: 'brown' }, { title: '1.5 MRI Scan', color: 'purple' }];
+const testArray = [{ title: 'Blood Test', color: 'blue' }, { title: 'X-RAY', color: 'black' }, { title: 'Ultra-Sonography', color: 'red' }, { title: 'Doppler Studies', color: 'green' }, { title: 'Obstetrics(Pregnancy)-Sonography', color: 'orange' }, { title: '16 Slice C.T Scan', color: 'brown' }, { title: '1.5 MRI Scan', color: 'purple' }];
 
 const Investigation = () => {
   const { id } = useParams();
@@ -17,7 +17,7 @@ const Investigation = () => {
   const { getInvestigationAdvised, investigationAdvised, getTestInfo, testInfo } = docStore();
   const [selectedInvestigationOptions, setSelectedInvestigationOptions] = useState([]);
   const [isAddInvestigationModalOpen, setAddInvestigationModalIsOpen] = useState(false);
-  const [investigationType, setInvestigationType] = useState('Investigation Advised')
+  const [investigationType, setInvestigationType] = useState('Blood Test')
   const [submit, setSubmit] = useState(false);
   const mapRef = useRef(new Map());
 
@@ -45,9 +45,6 @@ const Investigation = () => {
 
   }
 
-  const handleGeneratePdf = () => {
-    investigationPdf(mapRef.current);
-  };
   const deleteTest = async (test, id) => {
     try {
       const encodedTest = encodeURIComponent(test);
@@ -76,10 +73,10 @@ const Investigation = () => {
         <ul className='flex items-center justify-center flex-wrap gap-1 w-full my-15 font-semibold'>
           {
             testArray.map((test, index) => (
-              <>
-                <li key={index} onClick={() => { setInvestigationType(test.title); setSelectedInvestigationOptions([]); }} style={{ color: `${test.color}` }} className='cursor-pointer'>{test.title}</li>
+              <span className='flex gap-1' key={index}>
+                <li onClick={() => { setInvestigationType(test.title); setSelectedInvestigationOptions([]); }} style={{ color: `${test.color}` }} className='cursor-pointer'>{test.title}</li>
                 <li>|</li>
-              </>
+              </span>
             ))
           }
         </ul>
@@ -95,7 +92,7 @@ const Investigation = () => {
               <h3 className='text-blue-500 text-xl mb-2 text-center font-bold'>{investigationType} Added</h3>
               {
                 testInfo?.map((test, index) => (
-                  <div className='py-2 px-3 flex justify-between'>
+                  <div key={index} className='py-2 px-3 flex justify-between'>
                     <p>{index + 1}. {test}</p>
                     <CiTrash size={24} onClick={() => deleteTest(test, id)} className='text-red-500 cursor-pointer' />
                   </div>
@@ -110,16 +107,15 @@ const Investigation = () => {
             </div>
             <div className='flex flex-col items-center h-[500px] overflow-y-auto gap-1 bg-gray-200 border rounded-2xl pt-3 mt-5'>
               {investigationAdvised.map((investigation, index) => (
-                <>
+                <div key={index}>
                   <h1 className='text-xl p-1' key={index}>{investigation?.inputData}</h1>
                   <hr className='border-none h-[0.5px] w-full bg-gray-300' />
-                </>
+                </div>
               ))}
             </div>
           </div>
         </div>
         <button onClick={() => navigate(`/generate-investigation-pdf/${id}`)} className="bg-blue-500 flex items-center justify-center gap-5 mx-auto  transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-7 py-4 rounded-lg mt-8 text-white">Generate Pdf <FaFilePdf /></button>
-        {/* <button onClick={() => handleGeneratePdf()} className="bg-blue-500 flex items-center justify-center gap-5 mx-auto  transition duration-300 text-xl cursor-pointer hover:bg-blue-600 px-7 py-4 rounded-lg mt-8 text-white">Generate Pdf <FaFilePdf /></button> */}
       </div>
       {isAddInvestigationModalOpen && <InvestigationModal type={investigationType} submit setSubmit={setSubmit} onClose={() => setAddInvestigationModalIsOpen(false)} />}
     </div>

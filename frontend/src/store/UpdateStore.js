@@ -19,6 +19,8 @@ export const useStore = create((set) => ({
   Tasks: [],
   units: [],
   order: [],
+  Orders: null,
+  orderBillAmount:null,
   medicines: [],
   Medicine: null,
   medicalitems: [],
@@ -37,7 +39,10 @@ export const useStore = create((set) => ({
   medicalStock:[],
   medSection: "general",
   medicalStockToggle: false,
-  stockExistsMessage:null,
+  stockExistsMessage: null,
+  aadharCard: [],
+  panCard: [],
+  everyCollection:[],
   medicalStockToggleSubmit: () => set((state) => ({ medicalStockToggle: !state.medicalStockToggle })),
   setMedSection: (newsection) => set({ medSection: newsection }),
   getDetails: async () => {
@@ -62,6 +67,15 @@ export const useStore = create((set) => ({
       throw error;
     }
   },
+  getDocuments: async (id) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/getEmployeeDocuments/${id}`);
+      set({ aadharCard: response.data.aadharCard });
+      set({ panCard: response.data.panCard });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   getItems: async () => {
     try {
       const response = await axios.get(`${HR_API_URL}/get-items`);
@@ -78,9 +92,14 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  getAppointment: async (branch, shift) => {
+  getAppointment: async (branch, shift="") => {
     try {
-      const response = await axios.get(`${HR_API_URL}/getHrAppointments/${branch}/${shift}`);
+      const response = await axios.get(`${HR_API_URL}/getHrAppointments`, {
+        params: {
+          branch,
+          shift
+        }
+      });
       set({ generalAppointments: response.data.generalAppointments });
       set({ repeatAppointments: response.data.repeatAppointments });
       set({ courierAppointments: response.data.courierAppointments });
@@ -88,9 +107,15 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  getAppointmentDetails: async (branch, appointmentType, shift) => {
+  getAppointmentDetails: async (branch, appointmentType, shift="") => {
     try {
-      const response = await axios.get(`${HR_API_URL}/appDetails/${branch}/${appointmentType}/${shift}`);
+      const response = await axios.get(`${HR_API_URL}/appDetails`, {
+        params: {
+          branch,
+          appointmentType,
+          shift
+        }
+      });
       set({appointments:response.data.appointments})
     } catch (error) {
       console.log(error.message);
@@ -169,6 +194,32 @@ export const useStore = create((set) => ({
     try {
       const response = await axios.post(`${HR_API_URL}/place-item-order`, { items });
       set({ order: response.data.newOrder })
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getOrder: async (ids) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/getItemOrder`, {
+        params: {
+          ids
+        }
+      });
+      set({ Orders: response.data.orders });
+      set({orderBillAmount: response.data.totalAmount})
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+   getMedicalOrder: async (ids) => {
+    try {
+      const response = await axios.get(`${HR_API_URL}/getMedicalOrder`, {
+        params: {
+          ids
+        }
+      });
+      set({ Orders: response.data.orders });
+      set({orderBillAmount: response.data.totalAmount})
     } catch (error) {
       console.log(error.message);
     }
@@ -295,13 +346,26 @@ export const useStore = create((set) => ({
       console.log(error.message);
     }
   },
-  getCollection: async (branch, shift) => {
-    const response = await axios.get(`${HR_API_URL}/collections/${branch}/${shift}`);
+  getCollection: async (branch, shift="") => {
+    const response = await axios.get(`${HR_API_URL}/collections`, {
+      params: {
+        branch,
+        shift
+      }
+    });
     set({ collection: response.data.patientsCollection });
   },
   getAllCollection: async (branch) => {
     const response = await axios.get(`${HR_API_URL}/allCollection/${branch}`);
     set({ branchCollection: response.data.branchCollection });
+  },
+  getEveryCollection: async (branch) => {
+    const response = await axios.get(`${HR_API_URL}/everyCollection`, {
+      params: {
+        branch
+      }
+    });
+    set({ collection: response.data.everyCollection });
   },
   getCourierPayment: async (id) => {
     const response = await axios.get(`${HR_API_URL}/getCourierPayment/${id}`);

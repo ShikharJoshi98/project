@@ -1,5 +1,5 @@
 import express from 'express';
-import { addBillInvoice, addBriefMindSymptomScribble, addCertificateDetails, addChiefComplaintScribble, addClinicDetails, addConsultationCharges, addConsultationPrice, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addInvestigationInfo, addMedicalOrderPaymentDetails, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addOrderPaymentDetails, addOtherPrescription, addOtherPrescriptionPrice, addPastHistoryPatient, addPayment, addPersonalHistoryScribble, addPresentComplaintPatient, addPresentComplaintScribble, addRelation, addThermalReactionPatient, addWriteUpPatient, addWriteUpPresentComplaint, approveAllMedicalStock, approveAllStock, approveMedicalStock, approveStock, assignTask, createNewAppointment, deleteCaseImages, deleteCaseMaster, deleteClinicDetail, deleteConsultationCharges, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteInvestigationAdvised, deleteInvestigationInfo, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deleteOtherPrescription, deletePastHistoryPatient, deletePresentComplaintPatient, deletePresentComplaintScribble, deletePresentComplaintWriteUp, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, editCertificate, getAllPrescription, getAppointments, getBalanceDue, getBill, getBillInvoice, getBillNumber, getBriefMindSymptomScribble, getCaseMaster, getCertificates, getChiefComplaintScribble, getClinicDetails, getConsultationCharges, getConsultationPrice, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getHistoryDetails, getHomeoBhagwat, getIncompleteAppointments, getInvestigationAdvised, getInvestigationInfo, getMedicalBillNumber, getMedicalOrderPaymentDetails, getMentalCausativePatient, getMentalCausativeScribble, getMentalPersonalityPatient, getMentalPersonalityScribble, getMiasmPatient, getOrderPaymentDetails, getOtherPrescription, getOtherPrescriptionPrice, getPastHistoryPatient, getPatientImages, getPaymentBill, getPayments, getPersonalHistoryScribble, getPrescriptions, getPrescriptionToday, getPresentComplaintHistory, getPresentComplaintPatient, getPresentComplaintScribble, getRelations, getSelectedTest, getThermalReactionPatient, getWriteUpPresentComplaint, getWriteUpUpdate, HomeoBhagwat, leaveDetails, sendAppointmentEmail, taskDetails, updateAppointment, updateHomeoBhagwat, updateleave, updateOtherPrescription, updatePayment, updatePresInfo, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
+import { addBillInvoice, addBriefMindSymptomScribble, addCertificateDetails, addChiefComplaintScribble, addClinicDetails, addConsultationCharges, addConsultationPrice, addDiagnosis, addFamilyMedicalPatient, addFollowUpPatient, addHealthRecord, addInvestigationAdvised, addInvestigationInfo, addMedicalOrderPaymentDetails, addMentalCausativePatient, addMentalCausativeScribble, addMentalPersonalityPatient, addMentalPersonalityScribble, addMiasmPatient, addNewCaseMaster, addNewPrescription, addOrderPaymentDetails, addOtherPrescription, addOtherPrescriptionPrice, addPastHistoryPatient, addPayment, addPersonalHistoryScribble, addPresentComplaintPatient, addPresentComplaintScribble, addRelation, addThermalReactionPatient, addWriteUpPatient, addWriteUpPresentComplaint, approveAllMedicalStock, approveAllStock, approveMedicalStock, approveStock, assignTask, createNewAppointment, deleteCaseImages, deleteCaseMaster, deleteClinicDetail, deleteClinicEmail, deleteConsultationCharges, deleteDiagnosisImages, deleteEmployee, deleteFamilyMedical, deleteFollowUpPatient, deleteHealthRecord, deleteHomeoBhagwatcol, deleteInvestigationAdvised, deleteInvestigationInfo, deleteMentalCausative, deleteMentalPersonality, deleteMiasm, deleteOtherPrescription, deletePastHistoryPatient, deletePhoneNumber, deletePresentComplaintPatient, deletePresentComplaintScribble, deletePresentComplaintWriteUp, deleteShift, DeleteTask, deleteThermalReaction, deleteTodayPrescription, deleteWriteUp, editCertificate, getAllPrescription, getAppointments, getBalanceDue, getBill, getBillInvoice, getBillNumber, getBriefMindSymptomScribble, getCaseMaster, getCertificates, getChiefComplaintScribble, getClinicDetails, getConsultationCharges, getConsultationPrice, getDiagnosis, getDiagnosisImages, getFamilyMedicalPatient, getFollowUpImages, getHistoryDetails, getHomeoBhagwat, getIncompleteAppointments, getInvestigationAdvised, getInvestigationInfo, getMedicalBillNumber, getMentalCausativePatient, getMentalCausativeScribble, getMentalPersonalityPatient, getMentalPersonalityScribble, getMiasmPatient, getOrderPaymentDetails, getOtherPrescription, getOtherPrescriptionPrice, getPastHistoryPatient, getPatientImages, getPaymentBill, getPayments, getPersonalHistoryScribble, getPrescriptions, getPrescriptionToday, getPresentComplaintHistory, getPresentComplaintPatient, getPresentComplaintScribble, getRelations, getSelectedTest, getShifts, getThermalReactionPatient, getWriteUpPresentComplaint, getWriteUpUpdate, HomeoBhagwat, leaveDetails, selectBranch, sendAppointmentEmail, taskDetails, updateAppointment, updateHomeoBhagwat, updateleave, updateOtherPrescription, updatePayment, updatePresInfo, updateTaskStatus, updateTodayPrescription, uploadCaseImage, uploadComplaintImage, uploadDiagnosisImage, uploadFollowUpImage } from '../controllers/doctor.controller.js';
 import multer from 'multer';
 
 const storage = multer.memoryStorage();
@@ -25,7 +25,7 @@ Docrouter.put('/leave-status/:id', updateleave);
 //appointment
 Docrouter.post('/new-appointment', createNewAppointment);
 Docrouter.get('/get-incomplete-appointments', getIncompleteAppointments);
-Docrouter.get('/getAppointments/:branch/:appointmentSection/:doctor/:shift',getAppointments)//
+Docrouter.get('/getAppointments',getAppointments)//
 Docrouter.patch('/update-apppointment/:id', updateAppointment);
 
 //homeo-bhagwat
@@ -175,11 +175,10 @@ Docrouter.patch('/updateCertificate/:id', editCertificate);
 
 //orderPayment
 Docrouter.post('/addPaymentDetails', addOrderPaymentDetails);
-Docrouter.get('/getOrderPaymentDetails/:id/:type', getOrderPaymentDetails);
+Docrouter.get('/getOrderPaymentDetails/:type', getOrderPaymentDetails);
 
 //medicalOrderPayment
 Docrouter.post('/addMedicalPaymentDetails', addMedicalOrderPaymentDetails);
-Docrouter.get('/getMedicalOrderPaymentDetails/:id', getMedicalOrderPaymentDetails);
 
 //addCustomRelation
 Docrouter.post('/addCustomRelation', addRelation)
@@ -189,5 +188,11 @@ Docrouter.get('/getCustomRelation', getRelations);
 Docrouter.post('/addClinicDetails', addClinicDetails);
 Docrouter.get('/getClinicDetails', getClinicDetails);
 Docrouter.delete('/deleteClinicDetail/:id', deleteClinicDetail);
+Docrouter.delete('/deletePhoneNumber/:index/:id', deletePhoneNumber);
+Docrouter.delete('/deleteClinicEmail/:id', deleteClinicEmail);
+Docrouter.delete('/deleteShift/:shiftIndex/:id', deleteShift);
+Docrouter.get(`/getShifts/:branch`, getShifts);
+Docrouter.patch('/changeBranch/:id', selectBranch);
 
 export default Docrouter
+

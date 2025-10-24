@@ -137,9 +137,9 @@ export const getPatient = async (req, res) => {
     }
 }
 
-export const getAppointmentsRec = async (req, res) => {//
+export const getAppointmentsRec = async (req, res) => {
     try {
-        const { branch, shift } = req.params;
+        const { branch, shift } = req.query;
         const date = updateDate();
         const result = await Appointment.aggregate([
             {
@@ -189,11 +189,11 @@ export const getAppointmentsRec = async (req, res) => {//
 
 export const getAppDetails = async (req, res) => {
     try {
-        const { branch, appointmentType,shift } = req.params;
-       
+        const { branch, appointmentType,shift } = req.query;
+        
         const date = updateDate();
         const appointments = await Appointment.find({ branch, date, appointmentType, shift }).populate('Doctor').populate('PatientCase');
-
+        
         res.json({
             success: true,
             appointments
@@ -208,7 +208,7 @@ export const getAppDetails = async (req, res) => {
 
 export const getAppointmentLength = async (req, res) => {
     try {
-        const { branch,shift } = req.params;
+        const { branch, shift } = req.query;
         const todayDate = updateDate();
         const appointmentsLength = await Appointment.countDocuments({ branch, date: todayDate, shift });
         const pendingAppointmentLength = await Appointment.countDocuments({ branch, date: todayDate, shift, complete_appointment_flag: false, medicine_issued_flag: false });
@@ -240,15 +240,15 @@ export const getDoctor = async (req, res) => {
 
 export const setShift = async (req, res) => {
     try {
-        const { shift,role,user } = req.body;
-        const hello = await Shift.updateOne(
+        const { role, user, shift } = req.body;
+        await Shift.updateOne(
                     { role: role, user },
                     { $set: { shift } },
                     { upsert: true }
         );
         return res.json({
             success: true,
-            message:"Shift Added"
+            message:'Added Shift'
         })
     } catch (error) {
         return res.json({
@@ -260,8 +260,11 @@ export const setShift = async (req, res) => {
 
 export const getShift = async (req, res) => {
     try {
-        const { user, role } = req.params;
-        const shift = await Shift.findOne({user,role});
+        const { user, role } = req.query;
+        const shift = await Shift.findOne({
+            user,
+            role
+        });
         return res.json({
             success: true,
             shift
@@ -270,6 +273,6 @@ export const getShift = async (req, res) => {
         return res.json({
             success: false,
             message: error.message
-        });
+        })
     }
 }

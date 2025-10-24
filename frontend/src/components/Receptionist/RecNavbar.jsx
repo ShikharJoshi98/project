@@ -12,17 +12,12 @@ const RecNavbar = () => {
     const [isMedicineHovered, setIsMedicineHovered] = useState(false);
     const navigate = useNavigate();
     const { appointmentSubmit } = docStore();
-    const { setAppointmentSection, generalAppointments, repeatAppointments, courierAppointments, getAppointmentsRec, isShift, getShift, shiftToggle } = recStore();
+    const { setAppointmentSection, generalAppointments, repeatAppointments, courierAppointments, getAppointmentsRec, getShift, shiftToggle } = recStore();
 
     useEffect(() => {
         const fetchShiftAndAppointments = async () => {
             await getShift(user?.role, user?._id);
-
-            if (user?.branch === 'Dombivali') {
-                getAppointmentsRec(user?.branch, recStore.getState().isShift?.shift);
-            } else {
-                getAppointmentsRec(user?.branch, 'noShift');
-            }
+            await getAppointmentsRec(user?.branch, recStore.getState().isShift?.shift);
         };
 
         if (user?._id) fetchShiftAndAppointments();

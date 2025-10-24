@@ -6,7 +6,7 @@ import { updateDate } from './todayDate.js';
 
 dotenv.config();
 
-export const sendPaymentEmail = async (email, data) => {
+export const sendPaymentEmail = async (email, data,branch,phone) => {
   const recipient = email;
   let config = {
     service: 'gmail',
@@ -24,7 +24,9 @@ export const sendPaymentEmail = async (email, data) => {
     .replace('totalBill', data.totalBill)
     .replace('chequeNo', data.chequeNo)
     .replace('amountPaid', data.amountPaid)
-    .replace('modeOfPayment', data.modeOfPayment);
+    .replace('modeOfPayment', data.modeOfPayment)
+    .replace('contact', phone)
+    .replace('clinicBranch', branch);
 
   let message = {
     from: 'shikharjoshi89@gmail.com',
@@ -172,13 +174,13 @@ export const sendAppointmentPatientEmail = async (email, data, appointment, doct
   
 };
 
-export const sendVendorOrderEmail = async (vendorList) => {
+export const sendVendorOrderEmail = async (vendorList,phone) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: "shikharjoshi89@gmail.com",
-        pass: "cbok bmms smck rakl", // consider using environment variables ⚠️
+        pass: "cbok bmms smck rakl", 
       },
     });
 
@@ -201,6 +203,7 @@ export const sendVendorOrderEmail = async (vendorList) => {
       // Fill the HTML template
       const mailHtml = VENDOR_ORDER_DETAILS
         .replace("{{branch}}", branch || "N/A")
+        .replace("{{doctorContact}}", phone || "N/A")
         .replace(
           /<tr>\s*<td style="padding:10px 8px;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">{{itemName}}<\/td>[\s\S]*?<\/tr>/,
           tableRows
@@ -220,7 +223,7 @@ export const sendVendorOrderEmail = async (vendorList) => {
   }
 };
 
-export const sendMedicalVendorOrderEmail = async (vendorList) => {
+export const sendMedicalVendorOrderEmail = async (vendorList,phone) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -239,6 +242,7 @@ export const sendMedicalVendorOrderEmail = async (vendorList) => {
           (order) => `
           <tr>
             <td style="padding:10px 8px;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">${order.medicine}</td>
+            <td style="padding:10px 8px;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">${order.pack}</td>
             <td style="padding:10px 8px;text-align:center;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">${order.quantity}</td>
             <td style="padding:10px 8px;text-align:center;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">${order.potency}</td>
             <td style="padding:10px 8px;text-align:center;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">${order.orderDate}</td>
@@ -249,6 +253,7 @@ export const sendMedicalVendorOrderEmail = async (vendorList) => {
       // Fill the HTML template
       const mailHtml = MEDICAL_VENDOR_ORDER_DETAILS
         .replace("{{branch}}", branch || "N/A")
+        .replace("{{contact}}", phone || "N/A")
         .replace(
           /<tr>\s*<td style="padding:10px 8px;border-bottom:1px solid #eef3f8;font-size:14px;color:#333;">{{medicineName}}<\/td>[\s\S]*?<\/tr>/,
           tableRows

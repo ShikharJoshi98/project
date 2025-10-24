@@ -11,7 +11,7 @@ import { recStore } from '../../store/RecStore';
 const ReceptionistDashboard = () => {
   const [isAppointmentModalOpen, setAppointmentModalIsOpen] = useState(false);
   const { user } = useAuthStore();
-  const { appointmentSubmit } = docStore();
+  const { appointmentSubmit, getClinicDetails, clinicDetails } = docStore();
   const { getAppointmentLength, appointmentsLength, completeAppointmentLength, pendingAppointmentLength, isShift, setShift, getShift, toggleShiftUpdate, shiftToggle } = recStore();
   const [shiftLoading, setShiftLoading] = useState(false);
   const [shiftSubmit, setShiftSubmit] = useState(false);
@@ -19,16 +19,15 @@ const ReceptionistDashboard = () => {
   useEffect(() => {
     const fetchShiftAndAppointments = async () => {
       await getShift(user?.role, user?._id);
-
-      if (user?.branch === 'Dombivali') {
-        getAppointmentLength(user?.branch, recStore.getState().isShift?.shift);
-      } else {
-        getAppointmentLength(user?.branch, 'noShift');
-      }
+      await getAppointmentLength(user?.branch, recStore.getState().isShift?.shift);
     };
 
     if (user?._id) fetchShiftAndAppointments();
   }, [appointmentSubmit, shiftToggle])
+
+  useEffect(() => {
+    getClinicDetails();
+  }, []);
 
   const changeShift = async (type, role, id) => {
     setShiftLoading(true);
@@ -37,6 +36,7 @@ const ReceptionistDashboard = () => {
     setShiftSubmit(prev => !prev);
     toggleShiftUpdate(prev => !prev);
   }
+
   return (
     <>
       <div className='bg-gradient-to-br from-blue-300 flex flex-col gap-10 via-blue-400 to-sky-700 min-h-screen w-full p-8 overflow-hidden'>
@@ -46,11 +46,17 @@ const ReceptionistDashboard = () => {
         </div>
         <div className='flex sm:flex-row flex-col items-center gap-10 sm:justify-between'>
           <button onClick={() => setAppointmentModalIsOpen(true)} className='cursor-pointer text-lg place-self-center md:place-self-start flex items-center gap-3 text-white font-semibold hover:scale-99 transition-all duration-300 shadow-gray-600 shadow-md bg-blue-500 px-4 py-2 hover:bg-blue-700 rounded-lg'>Create Appointment<TbPencilPlus /></button>
-          {user?.branch === 'Dombivali' &&
+          {
             (shiftLoading === false ?
-              (<div className='h-12 bg-[#c8c8ce]  rounded-[18px]'>
-                <button onClick={() => changeShift('Morning', user?.role, user?._id)} className={`${isShift?.shift === 'Morning' ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>Morning</button>
-                <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Evening</button>
+              (<div className='h-12 bg-[#c8c8ce] w-fit mt-5 place-self-center md:place-self-end rounded-[18px]'>
+                {
+                  clinicDetails?.filter((clinic, _) => clinic?.branch === user?.branch).map((clinic, clinicIndex) => (
+                    clinic?.shifts?.length > 0 && clinic?.shifts?.map((shift, index) => (
+                      <button key={index - clinicIndex} onClick={() => changeShift(shift, user?.role, user?._id)} className={`${isShift?.shift === shift ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>{shift}</button>
+
+                    ))
+                  ))
+                }
               </div>)
               :
               <LuLoaderCircle className='animate-spin text-white' size={24} />

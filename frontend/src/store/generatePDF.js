@@ -8,7 +8,7 @@ const mm = String(today.getMonth() + 1).padStart(2, '0');
 const yyyy = today.getFullYear();
 const formattedDate = `${dd}/${mm}/${yyyy}`;
 
-export const generateTablePDF = (
+export const generateTablePDF = async (
   patient,
   PresentComplaintData,
   chiefComplaints,
@@ -100,108 +100,109 @@ export const generateTablePDF = (
     didDrawPage: data => { nextY = data.cursor.y + 10; }
   });
 
-  // Present Complaint Table
-  checkPageBreak(30);
+  const safeText = (text, x, y) => {
+    doc.text(String(text || ""), x, y);
+  };
+  const renderImages = async (title, imageList) => {
+    checkPageBreak(30);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    safeText(title, 20, nextY);
+    nextY += 10;
+
+    for (const src of imageList || []) {
+      if (!src || typeof src !== "string") continue;
+
+      const img = await new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.src = src;
+      });
+
+      const maxWidth = 180;
+      const maxHeight = pageHeight - 20; // Max height an image can take per page
+      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+      const imgWidth = img.width * ratio;
+      const imgHeight = img.height * ratio;
+
+      // Move to next page if image won't fit on current page
+      if (nextY + imgHeight > pageHeight) {
+        doc.addPage();
+        nextY = 20;
+      }
+
+      doc.addImage(img, "JPEG", 15, nextY, imgWidth, imgHeight);
+      nextY += imgHeight + 10;
+    }
+  };
+
+
+  const renderTableWithHeading = (title, tableHead, tableBody) => {
+  const estimatedHeight = 40 + (tableBody?.length || 0) * 8;
+  checkPageBreak(estimatedHeight);
+
   doc.setFontSize(13);
   doc.setFont("helvetica", "bold");
-  doc.text("Present Complaint", 20, nextY);
+  doc.text(title, 20, nextY);
   nextY += 6;
-
-  const presentComplaintTable = PresentComplaintData?.map(record => ([
-    record?.created_at || "-",
-    record?.complaintName || "-",
-    `${record?.duration} ${record?.durationSuffix}`
-  ])) || [];
 
   doc.autoTable({
     startY: nextY,
-    head: [['Date', 'Complaint', 'Duration']],
-    body: presentComplaintTable,
+    head: [tableHead],
+    body: tableBody,
     theme: 'grid',
     headStyles: { fillColor: [242, 242, 242], textColor: 0, fontStyle: 'bold' },
     styles: { fontSize: 10, halign: 'center' },
     didDrawPage: data => { nextY = data.cursor.y + 10; }
   });
+};
 
-  // Chief Complaint Images
-  checkPageBreak(20);
-  doc.setFontSize(13);
-  doc.setFont("helvetica", "bold");
-  doc.text("Chief Complaint", 20, nextY);
   nextY += 6;
-
-  const chiefComplaintImages = chiefComplaints?.map(record => record?.image) || [];
-  for (const image of chiefComplaintImages) {
-    checkPageBreak(110);
-    doc.addImage(image, "JPEG", 15, nextY, 180, 100);
-    nextY += 110;
-  }
-
-  // Past History Table
+  const presentComplaintTable = PresentComplaintData?.map(record => (
+    [record?.created_at || "-",
+    record?.complaintName || "-",
+    `${record?.duration} ${record?.durationSuffix}`
+    ])) || [];
+  
+renderTableWithHeading(
+  "Present Complaint",
+  ['Date', 'Complaint', 'Duration'],
+  presentComplaintTable
+);
   checkPageBreak(30);
   doc.setFontSize(13);
   doc.setFont("helvetica", "bold");
-  doc.text("Past History", 20, nextY);
+  const chiefComplaintImages = chiefComplaints?.map(r => r?.image);
+  await renderImages("Chief Complaint", chiefComplaintImages);
   nextY += 6;
-
-  const pastHistoryTable = PastHistoryData?.map(record => ([
-    record?.created_at || "-",
+  const pastHistoryTable = PastHistoryData?.map(record =>
+  ([record?.created_at || "-",
     record?.complaintName || "-",
     record?.lastDiagnosed || "-",
     `${record?.duration} ${record?.durationSuffix}`,
-    record?.remark || "-"
-  ])) || [];
-
-  doc.autoTable({
-    startY: nextY,
-    head: [['Date', 'Complaint', 'Last Diagnosed', 'Duration', 'Remarks']],
-    body: pastHistoryTable,
-    theme: 'grid',
-    headStyles: { fillColor: [242, 242, 242], textColor: 0, fontStyle: 'bold' },
-    styles: { fontSize: 10, halign: 'center' },
-    didDrawPage: data => { nextY = data.cursor.y + 10; }
-  });
-
-  //Personal History
-
-  checkPageBreak(20);
-  doc.setFontSize(13);
-  doc.setFont("helvetica", "bold");
-  doc.text("Personal History", 20, nextY);
-  nextY += 6;
-
-  const personalHistoryImages = personalHistory?.map(record => record?.image) || [];
-  for (const image of personalHistoryImages) {
-    checkPageBreak(110);
-    doc.addImage(image, "JPEG", 15, nextY, 180, 100);
-    nextY += 110;
-  }
-  // Family Medical History Table
+    record?.remark || "-"])) || [];
+  
+renderTableWithHeading(
+  "Past History",
+  ['Date', 'Complaint', 'Last Diagnosed', 'Duration', 'Remarks'],
+  pastHistoryTable
+);
   checkPageBreak(30);
-  doc.setFontSize(13);
-  doc.setFont("helvetica", "bold");
-  doc.text("Family Medical History", 20, nextY);
-  nextY += 6;
+    await renderImages("Personal History", personalHistory?.map(r => r?.image));
 
-  const familyMedicalTable = FamilyMedicalData?.map(record => ([
-    record?.relation || "-",
+  nextY += 6;
+  const familyMedicalTable = FamilyMedicalData?.map(record =>
+  ([record?.relation || "-",
     record?.age || "-",
     (record?.diseases || []).join(', ') || "-",
     record?.anyOther || "-",
-    record?.lifeStatus || "-"
-  ])) || [];
-
-  doc.autoTable({
-    startY: nextY,
-    head: [['Relation', 'Age', 'Diseases', 'Any Other', 'Life Status']],
-    body: familyMedicalTable,
-    theme: 'grid',
-    headStyles: { fillColor: [242, 242, 242], textColor: 0, fontStyle: 'bold' },
-    styles: { fontSize: 10, halign: 'center' },
-    didDrawPage: data => { nextY = data.cursor.y + 10; }
-  });
-
-  // Render Lists & Images
+    record?.lifeStatus || "-"])) || [];
+  
+renderTableWithHeading(
+  "Family Medical History",
+  ['Relation', 'Age', 'Diseases', 'Any Other', 'Life Status'],
+  familyMedicalTable
+);
   const renderList = (title, list) => {
     checkPageBreak(30);
     doc.setFontSize(13);
@@ -212,41 +213,20 @@ export const generateTablePDF = (
     doc.setFontSize(12);
     list?.forEach((item, i) => {
       checkPageBreak(10);
-      doc.text(`${i + 1}. ${item}`, 25, nextY);
+      doc.text(`${i + 1}.${item}`, 25, nextY);
       nextY += 8;
     });
     nextY += 6;
   };
+    renderList("Mental Causative Factors", mentalCausative);
 
-  const renderImages = (title, imageList) => {
-    checkPageBreak(30);
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.text(title, 20, nextY);
-    nextY += 10;
-    for (const image of imageList || []) {
-  if (!image || typeof image !== 'string' || !image.startsWith("data:image/")) {
-    console.warn("Skipping invalid image", image);
-    continue;
-  }
-  checkPageBreak(110);
-  doc.addImage(image, "JPEG", 15, nextY, 180, 100);
-  nextY += 110;
-}
-  };
+  await renderImages("Mental Causative Scribbles", mentalCausativeScribble?.map(r => r?.image));
+    renderList("Mental Personality Character", MentalPersonalityData);
 
-  renderList("Mental Causative Factors", mentalCausative);
-  renderImages("Mental Causative Scribbles", mentalCausativeScribble?.map(r => r?.image));
-
-  renderList("Mental Personality Character", MentalPersonalityData);
-  renderImages("Mental Personality Scribbles", mentalPersonalityScribble?.map(r => r?.image));
-
-  renderImages("Brief Mind Symptom", briefMindSymptomScribble?.map(r => r?.image));
-
+  await renderImages("Mental Personality Scribbles", mentalPersonalityScribble?.map(r => r?.image));
+  await renderImages("Brief Mind Symptom", briefMindSymptomScribble?.map(r => r?.image));
   renderList("Thermal Reaction", ThermalReactionData);
   renderList("Miasm", MiasmData);
-
-  // Output PDF
   const pdfBlob = doc.output("blob");
   const pdfUrl = URL.createObjectURL(pdfBlob);
   window.open(pdfUrl, "_blank");

@@ -64,7 +64,8 @@ export const docStore = create((set) => ({
     customRelations: [],
     clinicDetails: [],
     ordersBillNumber: [],
-    medicalOrderBillNumbers:[],
+    medicalOrderBillNumbers: [],
+    shifts:[],
     setHomeoBhagwatSection: (newsection) => set({ homeoBhagwatSection: newsection }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
@@ -74,6 +75,10 @@ export const docStore = create((set) => ({
     toggleTaskSubmit: () => set((state) => ({ addTaskToggle: !state.addTaskToggle })),
     branch: "",
     setbranch: (newbranch) => set({ branch: newbranch }),
+    isBranch: '',
+    setSelectedBranch: (newbranch) => set({ isBranch: newbranch }),
+    approveLeaveToggle: false,
+    toggleApproveLeaveSubmit: () => set((state) => ({ approveLeaveToggle: !state.approveLeaveToggle })),
     getTasks: async () => {
         try {
             const response = await axios.get(`${DOC_API_URL}/task-details`);
@@ -206,10 +211,10 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAppointmentCount: async (shift,user) => {//
+    getAppointmentCount: async (shift='',user, isBranch) => {
         try {
             const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`,{
-            params: { shift,user }
+            params: { shift, user, isBranch }
         });
             set({ domGeneral: response.data.domCounts.domGeneral })
             set({ mulGeneral: response.data.mulCounts.mulGeneral });
@@ -221,9 +226,11 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     }, 
-    getAppDetails: async (appointmentSection,branch,user,shift) => {//
-      try {
-          const response = await axios.get(`${DOC_API_URL}/getAppointments/${branch}/${appointmentSection}/${user}/${shift}`);
+    getAppDetails: async (appointmentSection,branch,doctor,shift='') => {
+        try {
+          const response = await axios.get(`${DOC_API_URL}/getAppointments`,{
+            params: { appointmentSection, branch, doctor, shift}
+        });
           set({ appointments: response.data.Appointments });
           set({ newAppointmentLength: response.data.newAppointmentLength });
           set({ followUpAppointmentLength: response.data.followUpAppointmentLength });
@@ -378,8 +385,8 @@ export const docStore = create((set) => ({
         const response = await axios.get(`${HR_API_URL}/getMedicalOrderId`);
         set({medicalOrderId: response.data.medicalOrder})
     },
-    getOrderPaymentDetails: async (id,type) => {
-        const response = await axios.get(`${DOC_API_URL}/getOrderPaymentDetails/${id}/${type}`);
+    getOrderPaymentDetails: async (type) => {
+        const response = await axios.get(`${DOC_API_URL}/getOrderPaymentDetails/${type}`);
         set({ orderPaymentDetails: response.data.details });
     },
     getMedicalOrderPaymentDetails: async (id) => {
@@ -405,5 +412,9 @@ export const docStore = create((set) => ({
             params: { ids }
         });
         set({ medicalOrderBillNumbers: response.data.orders });
+    },
+    getClinicShifts: async (branch) => {
+        const response = await axios.get(`${DOC_API_URL}/getShifts/${branch}`);
+        set({ shifts: response.data.shifts });
     }
 }))

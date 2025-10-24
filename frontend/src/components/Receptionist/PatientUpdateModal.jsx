@@ -1,10 +1,11 @@
-import { BriefcaseBusiness, Carrot, GraduationCap, Hospital, HouseIcon, Image, Mail, Phone, User, X } from 'lucide-react'
+import { BriefcaseBusiness, Carrot, GraduationCap, Hospital, HouseIcon, Image, Mail, Phone, User } from 'lucide-react'
 import { ImManWoman } from "react-icons/im";
 import React, { useEffect, useState } from 'react'
 import Input from '../Input'
 import { REC_API_URL, recStore } from '../../store/RecStore';
 import axios from 'axios';
 import { CiUser } from 'react-icons/ci';
+import { RxCross2 } from 'react-icons/rx';
 
 const PatientUpdateModal = ({ patientId, onClose }) => {
     const { setUpdate, getPatient, patient } = recStore();
@@ -88,7 +89,7 @@ const PatientUpdateModal = ({ patientId, onClose }) => {
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
             <div className="bg-[#e9ecef] max-h-[90vh] max-w-[80vw] overflow-y-auto   flex flex-col w-full  rounded-xl p-6 md:p-10 shadow-lg">
-                <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><X size={24} /></button>
+                <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
                 <form onSubmit={handleSubmit} className='z-10 my-8 mx-auto bg-white p-8 sm:max-w-[50vw] w-full border rounded-xl text-zinc-800 text-sm shadow-lg ' >
                     <h1 className='text-3xl font-semibold mb-5 text-center'>Update Patient Details</h1>
                     <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />

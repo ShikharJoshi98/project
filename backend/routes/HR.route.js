@@ -1,5 +1,5 @@
 import express from 'express';
-import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  addBillImage,  addCourierPayment,  addMedicalOrderBillNumber,  addMedicalOrderId,  addOrderBillNumber,  addOrderId,  courierStatus,  deleteBillImages,  deliveryPayment,  details,  edit_medical_vendor,  edit_vendor,  get_Item_Order,  get_item_stock,  get_Medical_Order,  get_medical_stock,  get_medical_vendor,  get_vendor,  getAllCollection,  getAppDetails,  getBillImage,  getCollection,  getCourierPayment,  getHrAppointments,  getItems,  getMedicalOrderId,  getMedicine, getOrderId, getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order, register,   sendMedicalOrderEmail,   sendOrderEmail,   update, updateItemStock, updateMedicalReceivedOrder, updateMedicalStock, updateReceivedOrder} from '../controllers/HR.controller.js';
+import { add_item, add_item_stock, add_item_vendor, add_medical_stock, add_medical_vendor, add_medicine, add_potency, add_unit,  addBillImage,  addCourierPayment,  addMedicalOrderBillNumber,  addMedicalOrderId,  addOrderBillNumber,  addOrderId,  courierStatus,  deleteBillImages,  deliveryPayment,  details,  edit_medical_vendor,  edit_vendor,  get_Item_Order,  get_item_stock,  get_Medical_Order,  get_medical_stock,  get_medical_vendor,  get_vendor,  getAllCollection,  getAppDetails,  getBillImage,  getCollection,  getCourierPayment,  getDocuments,  getEveryCollectionToday,  getHrAppointments,  getItemOrder,  getItems,  getMedicalOrder,  getMedicalOrderId,  getMedicine, getOrderId, getPotency,  getUnits,  LeaveApply,  medical_items_get,  medical_items_order,  place_item_order,  place_medical_order, register,   sendMedicalOrderEmail,   sendOrderEmail,   update, updateItemStock, updateMedicalReceivedOrder, updateMedicalStock, updateReceivedOrder} from '../controllers/HR.controller.js';
 import multer from 'multer';
 
 const storage = multer.memoryStorage();
@@ -17,10 +17,11 @@ HRrouter.get('/get-details',details)
 HRrouter.post('/register', register);
 HRrouter.post('/apply-leave', LeaveApply);
 HRrouter.put('/update/:id', update);
+HRrouter.get('/getEmployeeDocuments/:id', getDocuments);
 
 //appointment
-HRrouter.get('/getHrAppointments/:branch/:shift',getHrAppointments)
-HRrouter.get('/appDetails/:branch/:appointmentType/:shift', getAppDetails);
+HRrouter.get('/getHrAppointments',getHrAppointments)
+HRrouter.get('/appDetails', getAppDetails);
 
 //item stock
 HRrouter.post('/add-item', add_item);
@@ -43,6 +44,7 @@ HRrouter.delete('/deleteBillImage/:orderId/:id', deleteBillImages);
 HRrouter.post('/addOrderId', addOrderId);
 HRrouter.get('/getOrderId', getOrderId);
 HRrouter.post('/addOrderBillNumber/:id', addOrderBillNumber);
+HRrouter.get('/getItemOrder', getItemOrder);
 
 //medical stock
 HRrouter.post('/add-medicine', add_medicine);
@@ -64,10 +66,12 @@ HRrouter.patch('/updateMedicalReceivedOrder/:orderId/:medicineId', updateMedical
 HRrouter.post('/addMedicalOrderId', addMedicalOrderId);
 HRrouter.get('/getMedicalOrderId', getMedicalOrderId);
 HRrouter.post('/addMedicalOrderBillNumber/:id', addMedicalOrderBillNumber);
+HRrouter.get('/getMedicalOrder', getMedicalOrder);
 
 //collections
-HRrouter.get('/collections/:branch/:shift', getCollection);
+HRrouter.get('/collections', getCollection);
 HRrouter.get('/allCollection/:branch', getAllCollection);
+HRrouter.get('/everyCollection', getEveryCollectionToday);
 
 //courier Payment
 HRrouter.post('/courierPayment/:id', addCourierPayment);

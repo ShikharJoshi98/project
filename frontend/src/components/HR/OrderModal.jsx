@@ -27,6 +27,7 @@ const OrderModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [billNumberModal, setBillNumberModal] = useState(false);
+  const [billAmount, setBillAmount] = useState('');
   const getFutureDate = (daysToAdd = 7) => {
     const date = new Date();
     date.setDate(date.getDate() + daysToAdd);
@@ -114,7 +115,6 @@ const OrderModal = ({ onClose }) => {
         };
       }));
       await axios.post(`${HR_API_URL}/place-item-order`, { formRows: formattedFormRows });
-      alert('Placed Order');
       await axios.post(`${HR_API_URL}/sendVendorEmail/${user?.branch}`, formattedFormRows);
       await getItemStock();
       setSubmit(prev => !prev);
@@ -186,6 +186,7 @@ const OrderModal = ({ onClose }) => {
                         <input
                           type="number"
                           value={row.quantity}
+                          onWheel={(e) => e.target.blur()}
                           onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
                           className="w-50 bg-white p-1 border border-gray-500 rounded"
                           min="1"
@@ -206,7 +207,6 @@ const OrderModal = ({ onClose }) => {
                   ))
                 }
               </tbody>
-
             </table>
           </div>
           <button onClick={SubmitOrder} className="mt-4 cursor-pointer transition-all duration-300 mx-auto block bg-blue-500 text-lg font-semibold w-fit rounded-lg text-white px-4 py-2  hover:bg-blue-600">{submitLoading === true ? <LuLoaderCircle className="animate-spin mx-auto" size={24} /> : 'Submit Order'}</button>
@@ -236,8 +236,8 @@ const OrderModal = ({ onClose }) => {
                         </td>
                       )}
                       <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 mx-auto flex items-center rounded-md gap-1">Upload <FaPlus /></button>
-                        {(!order?.billNumber) ? <button onClick={() => { setBillNumberModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white mt-4 mx-auto py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Add Bill No.</button> : <p className="text-center mt-4">{`B No. - ${order?.billNumber}`}</p>}
+                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillAmount(order?.billAmount); setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 mx-auto flex items-center rounded-md gap-1">Upload <FaPlus /></button>
+                        {(!order?.billNumber) ? <button onClick={() => { setBillNumberModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white mt-4 mx-auto py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Add Bill Details</button> : <p className="text-center mt-4">{`B No. - ${order?.billNumber}`}</p>}
                       </td>
                       }
                       {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border ">
@@ -255,14 +255,14 @@ const OrderModal = ({ onClose }) => {
                               <tr key={idx} className="bg-blue-200">
                                 <td className="py-1 px-1 border text-center">{formRow?.itemName}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.quantity} {formRow?.itemId?.unit}</td>
-                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id, formRow?.itemId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
+                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onWheel={(e) => e.target.blur()} onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id, formRow?.itemId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
                                 {formRow?.order_Delivered_Flag === true && <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? (formRow?.quantity - formRow?.receivedQuantity) : '-'}</td>}
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </td>}
-                      <td onClick={() => { setOrder(order?._id); console.log(order?._id) }} className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
+                      <td onClick={() => { setOrder(order?._id) }} className="py-2 px-1 border text-center">{row?.deliveryDate}</td>
                       <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag === true ? 'Delivered' : 'Pending'}</span></td>
                       <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.doctor_Approval_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'} rounded-md py-1 px-2`}>{row?.doctor_Approval_Flag === true ? 'Approved' : 'Pending'}</span></td>
                     </tr>
@@ -273,7 +273,7 @@ const OrderModal = ({ onClose }) => {
           </div>}
         </div>
       </div>
-      {billModal && <UploadBillModal onClose={() => setBillModal(false)} orderId={orderId} />}
+      {billModal && <UploadBillModal onClose={() => setBillModal(false)} orderId={orderId} amount={billAmount} />}
       {billNumberModal && <AddBillNumberModal onClose={() => setBillNumberModal(false)} orderId={orderId} setSubmit={setSubmit} type='item' />}
     </div>
   );

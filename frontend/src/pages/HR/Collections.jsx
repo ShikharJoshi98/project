@@ -1,25 +1,37 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from '../../store/UpdateStore'
 import { useAuthStore } from '../../store/authStore'
 import { recStore } from '../../store/RecStore';
+import { docStore } from '../../store/DocStore';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const Collections = () => {
     const { getCollection, collection } = useStore();
+    const { getClinicDetails, clinicDetails } = docStore();
     const { user } = useAuthStore();
     const { isShift, shiftToggle, getShift } = recStore();
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        getClinicDetails();
+    }, []);
 
     useEffect(() => {
-        const fetchShiftAndAppointments = async () => {
-            await getShift(user?.role, user?._id);
-            if (user?.branch === 'Dombivali') {
-                getCollection(user?.branch, isShift?.shift);
-            }
-            else {
-                getCollection(user?.branch, 'noShift');
-            }
+        if (user?._id && user?.role) {
+            getShift(user.role, user._id);
         }
-        if (user?._id) fetchShiftAndAppointments();
-    }, [getCollection, shiftToggle, recStore.getState().isShift?.shift]);
+    }, [user]);
+
+    useEffect(() => {
+        if (user?.branch) {
+            const timeout = setTimeout(() => setLoading(true), 200);
+
+            getCollection(user.branch, isShift?.shift)
+                .finally(() => {
+                    clearTimeout(timeout);
+                    setLoading(false);
+                });
+        }
+    }, [user?.branch, isShift?.shift]);
     let collectionSum = 0;
     let cashPayment = 0;
     let onlinePayment = 0;
@@ -35,12 +47,13 @@ const Collections = () => {
 
         else { advanceSum += item?.dueBalance }
     });
+    const clinic = clinicDetails?.filter((detail, _) => detail?.branch === location.location)
 
     return (
         <div className='bg-opacity-50 backdrop-filter backdrop-blur-xl bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700  min-h-screen  w-full overflow-hidden '>
             <div className='bg-[#e9ecef]  w-auto p-5 mx-10 my-6 rounded-lg '>
                 <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-3xl md:text-5xl'>{user?.branch} - Collections</h1>
-                <div className="overflow-x-auto mt-10 rounded-lg">
+                {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7]  text-white">
                             <tr >
@@ -61,9 +74,9 @@ const Collections = () => {
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div>}
                 <h1 className='p-4 text-center mt-10 font-semibold text-[#337ab7] text-lg sm:text-xl md:text-3xl'>Details</h1>
-                <div className="overflow-x-auto mt-10 rounded-lg">
+                {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                         <thead className="bg-[#337ab7] whitespace-nowrap text-sm text-white">
                             <tr >
@@ -100,7 +113,7 @@ const Collections = () => {
                                 })}
                         </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
         </div>
     )

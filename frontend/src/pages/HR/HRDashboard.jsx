@@ -6,10 +6,12 @@ import { useAuthStore } from '../../store/authStore';
 import { recStore } from '../../store/RecStore';
 import { updateDate } from '../../store/todayDate';
 import { LuLoaderCircle, LuMapPin } from 'react-icons/lu';
+import { docStore } from '../../store/DocStore';
 
 const HRDashboard = () => {
   const { getDetails, employees } = useStore();
   const { user } = useAuthStore();
+  const { appointmentSubmit, getClinicDetails, clinicDetails } = docStore();
   const { getAllPatients, allBranchPatients, isShift, setShift, getShift, toggleShiftUpdate, shiftToggle } = recStore();
   const [patientNumber, setPatientNumber] = useState(0);
   const doctors = employees.filter(emp => emp?.role === 'doctor');
@@ -23,6 +25,9 @@ const HRDashboard = () => {
 
     if (user?._id) fetchShiftAndAppointments();
   }, [shiftToggle])
+  useEffect(() => {
+    getClinicDetails();
+  }, []);
 
   useEffect(() => {
     getDetails();
@@ -55,11 +60,17 @@ const HRDashboard = () => {
         </h1>
       </div>
       <div className='place-items-end my-8' >
-        {user?.branch === 'Dombivali' &&
+        {
           (shiftLoading === false ?
-            (<div className='h-12 bg-[#c8c8ce]  rounded-[18px]'>
-              <button onClick={() => changeShift('Morning', user?.role, user?._id)} className={`${isShift?.shift === 'Morning' ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>Morning</button>
-              <button onClick={() => changeShift('Night', user?.role, user?._id)} className={`py-2.5 px-5 ${isShift?.shift === 'Night' ? 'bg-blue-700 rounded-[18px] text-white' : ''} text-lg cursor-pointer`}>Evening</button>
+            (<div className='h-12 bg-[#c8c8ce] w-fit mt-5 place-self-center md:place-self-end rounded-[18px]'>
+              {
+                clinicDetails?.filter((clinic, _) => clinic?.branch === user?.branch).map((clinic, clinicIndex) => (
+                  clinic?.shifts?.length > 0 && clinic?.shifts?.map((shift, index) => (
+                    <button key={index - clinicIndex} onClick={() => changeShift(shift, user?.role, user?._id)} className={`${isShift?.shift === shift ? 'bg-blue-700 rounded-[18px] text-white' : ''} py-2.5 px-5 text-lg cursor-pointer`}>{shift}</button>
+
+                  ))
+                ))
+              }
             </div>)
             :
             <LuLoaderCircle className='animate-spin text-white' size={24} />

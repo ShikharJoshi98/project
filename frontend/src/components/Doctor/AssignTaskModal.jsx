@@ -76,7 +76,7 @@ const AssignTaskModal = ({ onClose }) => {
                 >
                   <option value="" disabled selected>Select Staff Here</option>
                   {filteredEmployees.map((employee, index) => (
-                    <option key={index}>{employee?.username}</option>
+                    <option key={index}>{employee?.fullname}-{employee?.username}</option>
                   ))}
                 </select>
               </div>

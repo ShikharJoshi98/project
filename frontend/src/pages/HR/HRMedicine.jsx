@@ -21,18 +21,10 @@ const HRMedicine = () => {
         const fetchShiftAndAppointments = async () => {
             await getShift(user?.role, user?._id);
             const timeout = setTimeout(() => setLoading(true), 200);
-            if (user?.branch === 'Dombivali') {
-                getAppointmentDetails(user?.branch, medSection, isShift?.shift).finally(() => {
-                    clearTimeout(timeout);
-                    setLoading(false);
-                });
-            }
-            else {
-                getAppointmentDetails(user?.branch, medSection, 'noShift').finally(() => {
-                    clearTimeout(timeout);
-                    setLoading(false);
-                });
-            }
+            getAppointmentDetails(user?.branch, medSection, isShift?.shift).finally(() => {
+                clearTimeout(timeout);
+                setLoading(false);
+            });
         }
         if (user?._id) fetchShiftAndAppointments();
     }, [medSection]);

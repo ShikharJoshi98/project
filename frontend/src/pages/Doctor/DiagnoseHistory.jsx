@@ -7,9 +7,11 @@ import { generateDiagnoseHistory, generateDiagnoseRow } from '../../store/genera
 import { LuLoaderCircle } from 'react-icons/lu'
 
 const DiagnoseHistory = () => {
-    const { prescriptionsArray, getPrescriptions } = docStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
+    const [generateLoading, setGenerateLoading] = useState(false);
+    const [patientId, setPatientId] = useState('');
+    const { prescriptionsArray, getPrescriptions, getPresentComplaintData, getChiefComplaints, getPastHistoryData, getPersonalHistory, getFamilyMedicalData, getMentalCausative, getMentalCausativeScribble, getMentalPersonality, getMentalPersonalityScribble, getBriefMindSymptomScribble, getThermalReaction, getMiasm } = docStore();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,6 +34,42 @@ const DiagnoseHistory = () => {
         const medicineMatch = prescription?.medicine?.toLowerCase().includes(searchTerm.toLowerCase());
         return diagnosisMatch || medicineMatch;
     });
+
+    const generatePdf = async (pres, id) => {
+        setGenerateLoading(true);
+        setPatientId(id);
+        await Promise.all([
+            getPresentComplaintData(id),
+            getChiefComplaints(id),
+            getPastHistoryData(id),
+            getPersonalHistory(id),
+            getFamilyMedicalData(id),
+            getMentalCausative(id),
+            getMentalCausativeScribble(id),
+            getMentalPersonality(id),
+            getMentalPersonalityScribble(id),
+            getBriefMindSymptomScribble(id),
+            getThermalReaction(id),
+            getMiasm(id),
+        ]);
+        const {
+            PresentComplaintData,
+            chiefComplaints,
+            PastHistoryData,
+            personalHistory,
+            FamilyMedicalData,
+            MentalCausativeData,
+            mentalCausativeScribble,
+            MentalPersonalityData,
+            mentalPersonalityScribble,
+            briefMindSymptomScribble,
+            ThermalReactionData,
+            MiasmData,
+        } = docStore.getState();
+        generateDiagnoseRow(pres, PresentComplaintData, chiefComplaints, PastHistoryData, personalHistory, FamilyMedicalData, MentalCausativeData[0]?.diseases, mentalCausativeScribble, MentalPersonalityData[0]?.diseases, mentalPersonalityScribble, briefMindSymptomScribble, ThermalReactionData[0]?.diseases, MiasmData[0]?.diseases);
+        setGenerateLoading(false);
+        setPatientId('');
+    }
 
     return (
 
@@ -70,7 +108,7 @@ const DiagnoseHistory = () => {
                                             <td className="px-2 py-4 text-center">{pres?.duration === '60' ? '2 Months' : pres?.duration === '90' ? '3 Months' : `${pres?.duration} days`}</td>
                                             <td className="px-2 py-4 text-center">{pres?.patient?.casePaperNo}</td>
                                             <td className="px-2 py-4 text-center">{pres?.patient?.fullname}</td>
-                                            <td className="px-2 py-4 text-center"><button onClick={() => generateDiagnoseRow(pres)} className='text-white bg-green-500 p-2 cursor-pointer rounded-md'><FaFilePdf className='size-6' /></button></td>
+                                            <td className="px-2 py-4 text-center"><button onClick={() => generatePdf(pres, pres?.patient?._id)} className='text-white bg-green-500 p-2 cursor-pointer rounded-md'>{(generateLoading && patientId === pres?.patient?._id) ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : <FaFilePdf className='size-6' />}</button></td>
                                         </tr>
                                     ))
                                 }

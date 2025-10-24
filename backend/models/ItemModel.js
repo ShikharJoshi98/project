@@ -49,7 +49,8 @@ const orderSchema = new mongoose.Schema({
             imageUrl: { type: String }
         }
     ],
-    billNumber:{type:String}
+    billNumber: { type: String },
+    billAmount: {type:Number}
 });
 
 const orderIdSchema = new mongoose.Schema({
@@ -59,7 +60,7 @@ const orderIdSchema = new mongoose.Schema({
 })
 
 const orderPaymentDetails = new mongoose.Schema({
-    order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+    order: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
     transactionDetails: { type: String },
     chequeNo: { type: String },
     date: { type: String },

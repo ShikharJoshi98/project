@@ -30,14 +30,9 @@ const Bill = () => {
     useEffect(() => {
         const fetchShiftAndAppointments = async () => {
             await getShift(user?.role, user?._id);
-            if (user?.branch === 'Dombivali') {
-                getAppointmentDetails(user?.branch, medSection, isShift?.shift).finally(() => {
-                });
-            }
-            else {
-                getAppointmentDetails(user?.branch, medSection, 'noShift').finally(() => {
-                });
-            }
+            getAppointmentDetails(user?.branch, medSection, isShift?.shift).finally(() => {
+            });
+
         }
         if (user?._id) fetchShiftAndAppointments();
     }, [medSection, branch, shiftToggle, recStore.getState().isShift?.shift]);
@@ -72,7 +67,6 @@ const Bill = () => {
     const addBill = async () => {
         try {
             setLoading(true);
-
             await axios.post(`${DOC_API_URL}/addBillPayment/${id}`, {
                 billPaid: parseInt(amountPaid),
                 modeOfPayment: paymentMode,
@@ -80,7 +74,7 @@ const Bill = () => {
                 paymentCollectedBy: user?._id,
                 transactionDetails,
                 totalBill: (billInfo?.medicineCharges + (appointment[0]?.appointmentType === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)),
-                shift: (user?.branch === 'Dombivali' ? isShift?.shift : 'noShift')
+                shift: isShift?.shift || ''
             });
             if (appointment[0]?.appointmentType === 'courier') {
                 await axios.post(`${HR_API_URL}/courierPayment/${id}`, {
@@ -128,7 +122,7 @@ const Bill = () => {
             console.log(error.message);
         }
     }
-    console.log(appointment[0]?.appointmentType);
+
     return (
         <div>
             <HRnavbar />
@@ -163,7 +157,7 @@ const Bill = () => {
                         <hr className='my-3 h-0.5 w-full border-none bg-blue-500' />
                         <div className='flex justify-between px-2 sm:px-5'><p className='font-semibold text-lg sm:text-xl'>Amount to be Paid : </p><p className='text-lg sm:text-xl'>Rs {billInfo?.medicineCharges + (branch === 'courier' ? billInfo?.onlineAmount : billInfo?.newCaseCharge) + billInfo?.consultation + billInfo?.otherPrescriptionPrice + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance)}</p></div>
                         {branch === 'courier' && <form onSubmit={(e) => { e.preventDefault(); setGrandTotal(billInfo?.medicineCharges + billInfo?.consultation + billInfo?.otherPrescriptionPrice + billInfo?.onlineAmount + (balanceDue === 'No Balance Field' ? 0 : balanceDue?.dueBalance) + parseInt(courierAmount)) }}>
-                            <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Courier Amount : </p><input type="number" onChange={(e) => setCourierAmount(e.target.value)} required className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md' /></div>
+                            <div className='flex justify-between items-center px-2 mt-5 sm:px-5'><p className='font-semibold'>Courier Amount : </p><input type="number" onWheel={(e) => e.target.blur()} onChange={(e) => setCourierAmount(e.target.value)} required className='border border-gray-300 pl-2 w-40 focus:outline-none h-10 rounded-md' /></div>
                             <button type='submit' className='bg-yellow-500 block text-white font-semibold rounded-lg w-fit py-2 px-8 cursor-pointer mx-auto mt-8'>Grand Total</button>
                         </form>}
                         {grandTotal > 0 && branch === 'courier' && <div className='flex justify-between mt-5 px-2 sm:px-5'><p className='font-semibold text-lg sm:text-2xl'>Grand Total Amount : </p><p className='text-lg sm:text-2xl'>Rs {grandTotal}</p></div>}

@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import { updateDate } from '../../store/todayDate'
 import { CiCalendar, CiSearch } from 'react-icons/ci'
 import axios from 'axios'
+import { LuLoaderCircle } from 'react-icons/lu'
 
 const CourierListRec = () => {
     const location = useParams();
@@ -18,9 +19,21 @@ const CourierListRec = () => {
     const [submit, setSubmit] = useState(false);
     const [filteredData, setFilteredData] = useState([]);
     const [showFilter, setShowFilter] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getCourierPayment(location.location)
+        const fetchCourierPayments = async () => {
+            try {
+                setLoading(true);
+                await getCourierPayment(location.location)
+            } catch (error) {
+                setLoading(false);
+            }
+            finally {
+                setLoading(false);
+            }
+        }
+        fetchCourierPayments();
     }, [getCourierPayment, submit]);
     const handleFilter = () => {
         if (!startDate || !endDate) return;
@@ -41,7 +54,11 @@ const CourierListRec = () => {
         await axios.patch(`${HR_API_URL}/updateCourierStatus/${id}/${patientId}`);
         setSubmit(prev => !prev);
     }
-
+    function handleReset() {
+        setStartDate('');
+        setEndDate('');
+        setShowFilter(false);
+    }
     const data = showFilter ? filteredData : branchCourierPayment;
 
     return (
@@ -60,10 +77,13 @@ const CourierListRec = () => {
                             <p className='whitespace-nowrap'>End Date :</p>
                             <Input icon={CiCalendar} type='Date' value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                         </div>
-                        <button onClick={handleFilter} className='py-2 px-4 bg-blue-500 flex items-center gap-5 text-lg font-semibold rounded-lg text-white'>Filter Data <CiSearch /></button>
+                        <div className='flex items-center gap-3'>
+                            <button onClick={handleFilter} className='py-2 cursor-pointer px-4 bg-blue-500 flex items-center gap-5 text-lg font-semibold rounded-lg text-white'>Filter Data <CiSearch size={25} /></button>
+                            <button onClick={handleReset} className='py-2 px-4 cursor-pointer bg-green-500 flex items-center gap-5 text-lg font-semibold rounded-lg text-white'>Reset</button>
+                        </div>
                     </div>
                     <h1 className=' text-blue-500 font-semibold mb-3 text-lg md:text-2xl text-center my-4'>Courier Details</h1>
-                    <div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading ? <LuLoaderCircle size={24} className='mx-auto mt-10 animate-spin text-gray-500' /> : <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] text-sm text-white">
                                 <tr>
@@ -94,7 +114,7 @@ const CourierListRec = () => {
                                 )}
                             </tbody>
                         </table>
-                    </div>
+                    </div>}
                 </div>
             </div>
             {updatePaymentModal && <UpdateCourierPayment payment={paymentDetails} setSubmit={setSubmit} onClose={() => setUpdatePaymentModal(false)} />}

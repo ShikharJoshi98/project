@@ -24,12 +24,7 @@ const HRnavbar = () => {
         navigate('/login');
     }
     useEffect(() => {
-        if (user?.branch === 'Dombivali') {
-            getAppointment(user?.branch, isShift?.shift)
-        }
-        else {
-            getAppointment(user?.branch, 'noShift')
-        }
+        getAppointment(user?.branch, isShift?.shift)
     }, [getAppdetails, appointmentSubmit, shiftToggle, isShift]);
 
     useEffect(() => {

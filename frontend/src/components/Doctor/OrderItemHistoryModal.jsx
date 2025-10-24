@@ -6,14 +6,11 @@ import { RxCross2 } from 'react-icons/rx'
 import { CiSearch } from 'react-icons/ci'
 import { LuLoaderCircle } from 'react-icons/lu'
 import OrderPaymentModal from './OrderPaymentModal'
-import { docStore } from '../../store/DocStore'
 import { FaCheck } from 'react-icons/fa'
 
 const OrderItemHistoryModal = ({ location, onClose }) => {
     const { getOrders, ordersPlaced } = useStore();
-    const [billModal, setBillModal] = useState(false);
     const [orderPaymentModal, setOrderPaymentModal] = useState(false);
-    const [orderId, setOrderId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
     const [submit, setSubmit] = useState(false);
@@ -60,7 +57,7 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                 {loading ? <LuLoaderCircle className='animate-spin size-10 mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <div className='flex items-center mb-5 gap-2 justify-center' >
                         {isPayMultiple === false ?
-                            <button onClick={() => setPayMultiple(true)} className='text-white font-semibold bg-blue-500 rounded-md py-1 px-3 block cursor-pointer'>Select Multiple Bills</button>
+                            <button onClick={() => setPayMultiple(true)} className='text-white font-semibold bg-blue-500 rounded-md py-1 px-3 block cursor-pointer'>Select Bills</button>
                             :
                             <button className='text-white font-semibold bg-blue-500 rounded-md py-1 px-3 block cursor-pointer' onClick={() => { if (isChecked.length === 0) { alert('No Bills Added') } else { setOrderPaymentModal(true) } }}>Add Selected Bill Details</button>
                         }
@@ -71,7 +68,7 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                             <tr >
                                 <th className="px-2 py-4 ">Serial No.</th>
                                 <th className="px-2 py-4 ">Vendor</th>
-                                <th className="px-2 py-4 ">Bill Detail</th>
+                                <th className="px-2 py-4 ">Bill Number</th>
                                 <th className="px-2 py-4 ">Order Date</th>
                                 <th className="px-2 py-4 ">Expected Delivery Date</th>
                                 <th className="px-2 py-4 ">Order Status</th>
@@ -91,8 +88,9 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                                             </td>
                                         )}
                                         <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                                        {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border text-center">{row?.order_Delivered_Flag === false ? 'Order Not Delivered' : <button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white mx-auto py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">View</button>}
-                                            <p className="text-center mt-4">{`B No. : ${order?.billNumber ? order?.billNumber : '-'}`}</p>
+                                        {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border text-center">
+                                            <p>{row?.order_Delivered_Flag === false ? 'Order Not Delivered' : 'Received'}</p>
+                                            < p className="text-center mt-4">{`B No. : ${order?.billNumber ? order?.billNumber : '-'}`}</p>
                                         </td>
                                         }
                                         {rowIndex === 0 && (
@@ -104,6 +102,7 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                                         <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.order_Delivered_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.order_Delivered_Flag === true ? 'Delivered' : 'Pending'}</span></td>
                                         <td className="py-2 px-1 border text-center"><span className={`border-1 ${row?.doctor_Approval_Flag === true ? 'text-green-500 border-green-500' : 'text-red-500 border-red-500'}  rounded-md py-1 px-2`}>{row?.doctor_Approval_Flag === true ? 'Approved' : 'Pending'}</span></td>
                                         {rowIndex === 0 && (<td rowSpan={order?.formRows.length} className={`${order?.order_payment_flag === true ? 'text-green-500' : 'text-red-500'} py-2 px-1 border border-black text-center`}>{order?.order_payment_flag === true ? 'Paid' : 'Unpaid'}</td>)}
+
                                     </tr>
                                 ))
                             )}
@@ -111,7 +110,6 @@ const OrderItemHistoryModal = ({ location, onClose }) => {
                     </table>
                 </div>}
             </div>
-            {billModal && <BillModal onClose={() => setBillModal(false)} type='item' orderId={orderId} />}
             {orderPaymentModal && <OrderPaymentModal setSubmit={setSubmit} type='item' onClose={() => setOrderPaymentModal(false)} isChecked={isChecked} />}
         </div>
     )

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Input from "../../components/Input";
 import { FaPhone } from "react-icons/fa6";
-import { LuLoaderCircle, LuMail, LuTrash } from "react-icons/lu";
+import { LuClock, LuLoaderCircle, LuMail, LuTrash } from "react-icons/lu";
 import { DOC_API_URL, docStore } from "../../store/DocStore";
 import axios from "axios";
 
@@ -10,7 +10,8 @@ const ClinicDetails = () => {
     const [selectBranch, setSelectBranch] = useState('Dombivali');
     const [formValues, setFormValues] = useState({
         phone: '',
-        email: ''
+        email: '',
+        shift: ''
     });
     const [loading, setLoading] = useState(false);
     const [submit, setSubmit] = useState(false);
@@ -42,7 +43,8 @@ const ClinicDetails = () => {
             setFormValues({
                 phone: '',
                 email: '',
-                branch: selectBranch
+                branch: selectBranch,
+                shift: ''
             });
             setSubmit(prev => !prev);
         } catch (error) {
@@ -74,6 +76,10 @@ const ClinicDetails = () => {
                         <p>Email :</p>
                         <Input icon={LuMail} value={formValues.email} type='email' onChange={handleInputChange} name="email" />
                     </div>
+                    <div className="flex flex-col gap-2">
+                        <p>Add Shifts :</p>
+                        <Input icon={LuClock} value={formValues.shift} type='text' onChange={handleInputChange} name="shift" />
+                    </div>
                     <button className="bg-blue-500 rounded-md text-white mx-auto block my-4 px-3 py-1">{loading ? <LuLoaderCircle className="mx-auto animate-spin" size={24} /> : 'Add'}</button>
                 </form>
                 <div className="overflow-x-auto mt-10">
@@ -83,6 +89,7 @@ const ClinicDetails = () => {
                                 <th className="py-2 px-1 border">Branch</th>
                                 <th className="py-2 px-1 border">Contact Details</th>
                                 <th className="py-2 px-1 border">Email</th>
+                                <th className="py-2 px-1 border">Shifts</th>
                                 <th className="py-2 px-1 border">Delete</th>
                             </tr>
                         </thead>
@@ -92,12 +99,39 @@ const ClinicDetails = () => {
                                     <tr key={index} className="bg-blue-200">
                                         <td className="py-2 px-1 border text-center">{detail?.branch}</td>
                                         <td className="py-2 px-1 border text-center">
-                                            <ul>{detail?.phone.map((phone, phoneIndex) => (
-                                                <li key={phoneIndex} className="my-1" >{phone}</li>
+                                            {detail?.phone.length > 0 ? <ul>{detail?.phone.map((phone, phoneIndex) => (
+                                                <li key={phoneIndex} className="my-1 flex items-center justify-center gap-3" >{phone}<LuTrash onClick={async () => { await axios.delete(`${DOC_API_URL}/deletePhoneNumber/${phoneIndex}/${detail?._id}`); setSubmit(prev => !prev) }} className="cursor-pointer text-red-600" /></li>
                                             ))}
                                             </ul>
+                                                :
+                                                '-'
+                                            }
                                         </td>
-                                        <td className="py-2 px-1 border text-center">{detail?.email}</td>
+                                        <td className="py-2 px-1 border text-center">{(detail?.email
+                                            ?
+                                            (
+                                                <>
+                                                    {detail?.email}
+                                                    <button
+                                                        onClick={async () => { await axios.delete(`${DOC_API_URL}/deleteClinicEmail/${detail?._id}`); setSubmit(prev => !prev) }}
+                                                        className="inline-flex items-center cursor-pointer text-red-600 ml-2"
+                                                    >
+                                                        <LuTrash />
+                                                    </button>
+                                                </>
+                                            )
+                                            :
+                                            '-')}
+                                        </td>
+                                        <td className="py-2 px-1 border text-center">
+                                            {detail?.shifts.length > 0 ? <ul>{detail?.shifts.map((shift, shiftIndex) => (
+                                                <li key={shiftIndex} className="my-1 flex items-center justify-center gap-3" >{shift}<LuTrash onClick={async () => { await axios.delete(`${DOC_API_URL}/deleteShift/${shiftIndex}/${detail?._id}`); setSubmit(prev => !prev) }} className="cursor-pointer text-red-600" /></li>
+                                            ))}
+                                            </ul>
+                                                :
+                                                '-'
+                                            }
+                                        </td>
                                         <td onClick={() => handleDelete(detail?._id)} className="py-2 px-1 border text-center"><LuTrash className="text-red-500 cursor-pointer mx-auto" size={24} /></td>
                                     </tr>
                                 ))

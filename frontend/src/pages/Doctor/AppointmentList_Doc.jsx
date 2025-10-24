@@ -25,19 +25,10 @@ const AppointmentList_Doc = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(true), 200);
-    if (branch === 'Dombivali') {
-      getAppDetails(appointmentSection, branch, user?._id, isShift?.shift).finally(() => {
-        clearTimeout(timeout);
-        setLoading(false);
-      });
-    }
-    else {
-      getAppDetails(appointmentSection, branch, user?._id, 'noShift').finally(() => {
-        clearTimeout(timeout);
-        setLoading(false);
-      });
-    }
-
+    getAppDetails(appointmentSection, branch, user?._id, isShift?.shift).finally(() => {
+      clearTimeout(timeout);
+      setLoading(false);
+    });
   }, [getAppDetails, appointmentSection, branch, appointmentSubmit, shiftToggle, recStore.getState().isShift?.shift]);
 
   return (

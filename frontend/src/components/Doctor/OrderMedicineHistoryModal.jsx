@@ -51,7 +51,7 @@ const OrderMedicineHistoryModal = ({ location, onClose }) => {
                 {loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' /> : <div className="overflow-x-auto mt-10 rounded-lg">
                     <div className='flex items-center mb-5 gap-2 justify-center' >
                         {isPayMultiple === false ?
-                            <button onClick={() => setPayMultiple(true)} className='text-white font-semibold bg-blue-500 rounded-md py-1 px-3 block cursor-pointer'>Select Multiple Bills</button>
+                            <button onClick={() => setPayMultiple(true)} className='text-white font-semibold bg-blue-500 rounded-md py-1 px-3 block cursor-pointer'>Select Bills</button>
                             :
                             <button className='text-white font-semibold bg-blue-500 rounded-md py-1 px-3 block cursor-pointer' onClick={() => { if (isChecked.length === 0) { alert('No Bills Added') } else { setOrderPaymentModal(true) } }}>Add Selected Bill Details</button>
                         }
@@ -82,7 +82,7 @@ const OrderMedicineHistoryModal = ({ location, onClose }) => {
                                             </td>
                                         )}
                                         <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                                        {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border text-center">{row?.order_Delivered_Flag === false ? 'Order Not Delivered' : <button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white mx-auto py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">View</button>}
+                                        {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border text-center">{row?.order_Delivered_Flag === false ? 'Order Not Delivered' : 'Received'}
                                             <p className="text-center mt-4">{`B No. : ${order?.billNumber ? order?.billNumber : '-'}`}</p>
                                         </td>
                                         }

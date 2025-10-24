@@ -7,6 +7,7 @@ import { DOC_API_URL } from '../../store/DocStore';
 import { FaPlus } from 'react-icons/fa';
 import { CiTrash } from 'react-icons/ci';
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal"
+import DocumentViewModal from '../../components/DocumentViewModal';
 
 const StaffManagment = () => {
     const doccolumns = ['fullname', 'phone', 'email', 'gender', 'age', 'username'];
@@ -17,6 +18,7 @@ const StaffManagment = () => {
     const [isDeleteModal, setDeleteModal] = useState(false);
     const [empId, setEmpId] = useState(null);
     const navigate = useNavigate();
+    const [isDocumentViewModal, setDocumentViewModal] = useState(false);
 
     useEffect(() => {
         getDetails();
@@ -47,6 +49,7 @@ const StaffManagment = () => {
                                 <th className="px-1 py-4 ">Gender</th>
                                 <th className="px-1 py-4 ">Age</th>
                                 <th className="px-1 py-4 ">Username</th>
+                                <th className="px-1 py-4 ">Employee Documents</th>
                                 <th className="px-1 py-4 ">Update</th>
                                 <th className="px-1 py-4 ">Delete</th>
                             </tr>
@@ -60,6 +63,9 @@ const StaffManagment = () => {
                                         </td>
 
                                     ))}
+                                    <td className="px-1 py-4  text-center">
+                                        <button onClick={() => { setDocumentViewModal(true); setEmpId(emp?._id) }} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">View</button>
+                                    </td>
                                     <td className="px-1 py-4  text-center">
                                         <button onClick={() => navigate(`/dashboard-DOCTOR/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                     </td>
@@ -81,6 +87,7 @@ const StaffManagment = () => {
                                 <th className="px-1 py-4 ">Address</th>
                                 <th className="px-1 py-4 ">Branch</th>
                                 <th className="px-1 py-4 ">Username</th>
+                                <th className="px-1 py-4 ">Employee Documents</th>
                                 <th className="px-1 py-4 ">Update</th>
                                 <th className="px-1 py-4 ">Delete</th>
                             </tr>
@@ -94,6 +101,9 @@ const StaffManagment = () => {
                                         </td>
 
                                     ))}
+                                    <td className="px-1 py-4  text-center">
+                                        <button onClick={() => { setDocumentViewModal(true); setEmpId(emp?._id) }} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">View</button>
+                                    </td>
                                     <td className="px-1 py-4 text-center">
                                         <button onClick={() => navigate(`/dashboard-DOCTOR/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                     </td>
@@ -115,6 +125,7 @@ const StaffManagment = () => {
                                 <th className="px-1 py-4 ">Address</th>
                                 <th className="px-1 py-4 ">Branch</th>
                                 <th className="px-1 py-4 ">Username</th>
+                                <th className="px-1 py-4 ">Employee Documents</th>
                                 <th className="px-1 py-4 ">Update</th>
                                 <th className="px-1 py-4 ">Delete</th>
                             </tr>
@@ -127,6 +138,9 @@ const StaffManagment = () => {
                                             {emp[col]}
                                         </td>))}
                                     <td className="px-1 py-4  text-center">
+                                        <button onClick={() => { setDocumentViewModal(true); setEmpId(emp?._id) }} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">View</button>
+                                    </td>
+                                    <td className="px-1 py-4  text-center">
                                         <button onClick={() => navigate(`/dashboard-DOCTOR/update-employee/${emp?._id}`)} className="bg-blue-500 font-semibold hover:scale-105 transition-all duration-300 cursor-pointer text-white px-2 py-1 rounded-md">Update</button>
                                     </td>
                                     <td onClick={() => { setDeleteModal(true); setEmpId(emp?._id) }} className="font-semibold cursor-pointer text-red-500 text-lg"><CiTrash className='mx-auto' /></td>
@@ -138,6 +152,7 @@ const StaffManagment = () => {
             </div>
             {isAddStaffModalOpen && <AddStaffModal setSubmit={setSubmit} onClose={() => setAddStaffModalIsOpen(false)} />}
             {isDeleteModal && <ConfirmDeleteModal onClose={() => setDeleteModal(false)} message="Do you want remove the employee?" onConfirm={() => deleteCol(empId)} />}
+            {isDocumentViewModal && <DocumentViewModal onClose={() => setDocumentViewModal(false)} emp={empId} />}
         </div>
     )
 }

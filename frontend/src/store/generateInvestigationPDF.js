@@ -41,11 +41,11 @@ export const investigationPdf = (patient, obj, user) => {
     y = 75; // reset content start position
   };
   const sections = [
-    { title: 'Investigation Advised', data: obj?.investigationAdvised },
+    { title: 'Blood Test', data: obj?.investigationAdvised },
+    { title: 'X-RAY', data: obj?.xray },
     { title: 'Ultra Sonography', data: obj?.ultra_sonography },
     { title: 'Doppler Studies', data: obj?.dopplerStudies },
-    { title: 'Obstetrics', data: obj?.obsetrics },
-    { title: 'Sonography', data: obj?.sonography },
+    { title: 'Obstetrics(Pregnancy)-Sonography', data: obj?.obsetrics },
     { title: 'CT Scan', data: obj?.ctScan },
     { title: 'MRI Scan', data: obj?.mriScan },
   ];

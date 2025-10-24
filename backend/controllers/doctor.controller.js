@@ -6,7 +6,7 @@ import { LeaveApplication } from "../models/LeaveApplyModel.js";
 import Patient, { CaseImage, FollowUpPatient, Investigation, OtherPrescription, otherPrescriptionPrice, Prescription, PresentComplaintScribble, PresentComplaintWriteUp, ReportImage, WriteUpPatient } from "../models/PatientModel.js";
 import { Task } from "../models/TaskModel.js";
 import { BriefMindSymptomScribble, BriefMindSymptomsMaster, ChiefComplaintScribble, FamilyHistoryPatient, FamilyMedicalMaster, MentalCausativeMaster, MentalCausativePatient, MentalCausativeScribble, MentalPersonalityMaster, MentalPersonalityPatient, MentalPersonalityScribble, MiasmMaster, MiasmPatient, PastHistoryMaster, PastHistoryPatient, PersonalHistoryScribble, PresentComplaintsMaster, PresentComplaintsPatient, Relation, ThermalReactionMaster, ThermalReactionPatient } from "../models/NewCasePatient.js";
-import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography } from "../models/InvestigationModel.js";
+import { ctScan, dopplerStudies, investigationAdvised, mriScan, obsetrics, sonography, testTable, ultraSonography, XRay } from "../models/InvestigationModel.js";
 import { billPayment, fees } from "../models/PaymentModel.js";
 import { ItemStock, Order, OrderPaymentDetails } from "../models/ItemModel.js";
 import { medicalOrder, MedicalStock, OrderMedicalPaymentDetails } from "../models/MedicineModel.js";
@@ -147,9 +147,6 @@ export const createNewAppointment = async (req, res) => {//
         }
         const pastAppointment = await Appointment.find({ PatientCase: PatientCase.toString() });
         let newAppointment;
-        if (patient.branch === 'Mulund') {
-            shift = 'noShift'
-        };
 
         if (pastAppointment.length > 0 && pastAppointment[pastAppointment.length - 1].new_appointment_flag === false) {
             newAppointment = await Appointment.create({
@@ -190,23 +187,17 @@ export const createNewAppointment = async (req, res) => {//
 
 export const getIncompleteAppointments = async (req, res) => {
     try {
-        const { shift, user } = req.query;
+        const { shift, user, isBranch } = req.query;
         const todayDate = updateDate();
-
-        const domApointments = await Appointment.find({
+        
+        const appointments = await Appointment.find({
             date: todayDate,
             complete_appointment_flag: false,
             Doctor: user,
-            shift
-        });
-
-        const mulAppointments = await Appointment.find({
-            date: todayDate,
-            complete_appointment_flag: false,
-            Doctor: user,
-            shift: 'noShift'
-        });
-
+            shift,
+            branch: isBranch
+        })
+        
         const domCounts = {
             domGeneral: 0,
             domRepeat: 0,
@@ -219,43 +210,38 @@ export const getIncompleteAppointments = async (req, res) => {
             mulCourier: 0
         }
 
-        domApointments.forEach((appointment) => {
+        appointments.forEach((appointment) => {
             const { branch, appointmentType } = appointment;
             if (branch === 'Dombivali') {
                 if (appointmentType === 'general') domCounts.domGeneral++;
                 else if (appointmentType === 'repeat') domCounts.domRepeat++;
                 else if (appointmentType === 'courier') domCounts.domCourier++;
-            } 
-        });
-
-        mulAppointments.forEach((appointment) => {
-            const { branch, appointmentType } = appointment;
-            if (branch === 'Mulund') {
+            }
+            else if (branch === 'Mulund') {
                 if (appointmentType === 'general') mulCounts.mulGeneral++;
                 else if (appointmentType === 'repeat') mulCounts.mulRepeat++;
-                else if (appointmentType === 'courier') mulCounts.mulCourier++;
-            } 
+                else if (appointmentType === 'courier') mulCounts.mulCourier++; 
+            }
         });
-
-        res.json({
+        
+        return res.json({
             domCounts,
             mulCounts,
             success: true
         });
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             error: error.message
         });
     }
 };
 
-export const getAppointments = async (req, res) => {//
+export const getAppointments = async (req, res) => {
     try {
-        const { branch, appointmentSection, doctor, shift } = req.params;
+        const { branch, appointmentSection, doctor, shift } = req.query;
         const todayDate = updateDate();
-
         const Appointments = await Appointment.find({
             date: todayDate,
             branch,
@@ -265,7 +251,6 @@ export const getAppointments = async (req, res) => {//
         })
             .populate('PatientCase')
             .populate('Doctor');
-
         const counts = {
             newAppointmentLength: 0,
             followUpAppointmentLength: 0,
@@ -324,7 +309,7 @@ export const getAppointments = async (req, res) => {//
 
 export const updateAppointment = async (req, res) => {
     try {
-        const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag, date } = req.body;
+        const { new_appointment_flag, complete_appointment_flag, medicine_issued_flag, followUp_appointment_flag,visit_complete_flag, date } = req.body;
         const { id } = req.params;
         const updated = {};
         if (new_appointment_flag !== undefined) {
@@ -338,6 +323,9 @@ export const updateAppointment = async (req, res) => {
         }
         if (followUp_appointment_flag !== undefined) {
             updated.followUp_appointment_flag = followUp_appointment_flag;
+        }
+        if (followUp_appointment_flag !== undefined) {
+            updated.visit_complete_flag = visit_complete_flag;
         }
         const appointment = await Appointment.findOneAndUpdate({ PatientCase: id, date }, updated,
             { new: true });
@@ -1348,10 +1336,13 @@ export const deletePresentComplaintWriteUp = async (req, res) => {
 export const addInvestigationAdvised = async (req, res) => {
     try {
         const { inputData, type } = req.body;
-
+        
         switch (type) {
-            case 'Investigation Advised':
+            case 'Blood Test':
                 await investigationAdvised.create({ inputData: inputData.trim() })
+                break;
+            case 'X-RAY':
+                await XRay.create({ inputData: inputData.trim() })
                 break;
             case 'Ultra-Sonography':
                 await ultraSonography.create({ inputData: inputData.trim() })
@@ -1359,11 +1350,8 @@ export const addInvestigationAdvised = async (req, res) => {
             case 'Doppler Studies':
                 await dopplerStudies.create({ inputData: inputData.trim() })
                 break;
-            case 'Obstetrics(Pregnancy)':
+            case 'Obstetrics(Pregnancy)-Sonography':
                 await obsetrics.create({ inputData: inputData.trim() })
-                break;
-            case 'Sonography':
-                await sonography.create({ inputData: inputData.trim() })
                 break;
             case '16 Slice C.T Scan':
                 await ctScan.create({ inputData: inputData.trim() })
@@ -1390,8 +1378,11 @@ export const getInvestigationAdvised = async (req, res) => {
         const { type } = req.params;
         let response;
         switch (type) {
-            case 'Investigation Advised':
+            case 'Blood Test':
                 response = await investigationAdvised.find();
+                break;
+            case 'X-RAY':
+                response = await XRay.find();
                 break;
             case 'Ultra-Sonography':
                 response = await ultraSonography.find();
@@ -1399,11 +1390,8 @@ export const getInvestigationAdvised = async (req, res) => {
             case 'Doppler Studies':
                 response = await dopplerStudies.find();
                 break;
-            case 'Obstetrics(Pregnancy)':
+            case 'Obstetrics(Pregnancy)-Sonography':
                 response = await obsetrics.find();
-                break;
-            case 'Sonography':
-                response = await sonography.find();
                 break;
             case '16 Slice C.T Scan':
                 response = await ctScan.find();
@@ -1427,7 +1415,6 @@ export const getInvestigationAdvised = async (req, res) => {
 export const getSelectedTest = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log("hit")
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
 
@@ -1459,8 +1446,11 @@ export const deleteInvestigationAdvised = async (req, res) => {
         const { id, type } = req.params;
 
         switch (type) {
-            case 'Investigation Advised':
+            case 'Blood Test':
                 await investigationAdvised.findByIdAndDelete(id);
+                break;
+            case 'X-RAY':
+                await XRay.findByIdAndDelete(id);
                 break;
             case 'Ultra-Sonography':
                 await ultraSonography.findByIdAndDelete(id);
@@ -1468,11 +1458,8 @@ export const deleteInvestigationAdvised = async (req, res) => {
             case 'Doppler Studies':
                 await dopplerStudies.findByIdAndDelete(id);
                 break;
-            case 'Obstetrics(Pregnancy)':
+            case 'Obstetrics(Pregnancy)-Sonography':
                 response = await obsetrics.findByIdAndDelete(id);
-                break;
-            case 'Sonography':
-                await sonography.findByIdAndDelete(id);
                 break;
             case '16 Slice C.T Scan':
                 await ctScan.findByIdAndDelete(id);
@@ -1503,8 +1490,11 @@ export const addInvestigationInfo = async (req, res) => {
         if (!test) {
             test = new testTable({ patient: id });
         }
-        if (investigationType === 'Investigation Advised') {
+        if (investigationType === 'Blood Test') {
             test['investigationAdvised'].push(...selectedInvestigationOptions);
+        }
+        else if (investigationType === 'X-RAY') {
+            test['xray'].push(...selectedInvestigationOptions);
         }
         else if (investigationType === 'Ultra-Sonography') {
             test['ultra_sonography'].push(...selectedInvestigationOptions);
@@ -1512,11 +1502,8 @@ export const addInvestigationInfo = async (req, res) => {
         else if (investigationType === 'Doppler Studies') {
             test['dopplerStudies'].push(...selectedInvestigationOptions);
         }
-        else if (investigationType === 'Obstetrics(Pregnancy)') {
+        else if (investigationType === 'Obstetrics(Pregnancy)-Sonography') {
             test['obsetrics'].push(...selectedInvestigationOptions);
-        }
-        else if (investigationType === 'Sonography') {
-            test['sonography'].push(...selectedInvestigationOptions);
         }
         else if (investigationType === '16 Slice C.T Scan') {
             test['ctScan'].push(...selectedInvestigationOptions);
@@ -1542,8 +1529,11 @@ export const getInvestigationInfo = async (req, res) => {
         let { id, investigationType } = req.params;
         const patientInvestigationInfo = await testTable.findOne({ patient: id });
         let investigationInfo;
-        if (investigationType === 'Investigation Advised') {
+        if (investigationType === 'Blood Test') {
             investigationInfo = patientInvestigationInfo.investigationAdvised;
+        }
+         else if (investigationType === 'X-RAY') {
+            investigationInfo = patientInvestigationInfo.xray;
         }
         else if (investigationType === 'Ultra-Sonography') {
             investigationInfo = patientInvestigationInfo.ultra_sonography;
@@ -1551,11 +1541,8 @@ export const getInvestigationInfo = async (req, res) => {
         else if (investigationType === 'Doppler Studies') {
             investigationInfo = patientInvestigationInfo.dopplerStudies;
         }
-        else if (investigationType === 'Obstetrics(Pregnancy)') {
+        else if (investigationType === 'Obstetrics(Pregnancy)-Sonography') {
             investigationInfo = patientInvestigationInfo.obsetrics;
-        }
-        else if (investigationType === 'Sonography') {
-            investigationInfo = patientInvestigationInfo.sonography;
         }
         else if (investigationType === '16 Slice C.T Scan') {
             investigationInfo = patientInvestigationInfo.ctScan;
@@ -1579,9 +1566,13 @@ export const deleteInvestigationInfo = async (req, res) => {
         let { investigationType, id, test } = req.params;
         const testInfo = await testTable.findOne({ patient: id });
         let val;
-        if (investigationType === 'Investigation Advised') {
+        if (investigationType === 'Blood Test') {
             val = testInfo.investigationAdvised.filter((investigation) => investigation !== test);
             testInfo.investigationAdvised = val;
+        }
+        else if (investigationType === 'X-RAY') {
+            val = testInfo.xray.filter((investigation) => investigation !== test);
+            testInfo.xray = val;
         }
         else if (investigationType === 'Ultra-Sonography') {
             val = testInfo.ultra_sonography.filter((investigation) => investigation !== test);
@@ -1591,13 +1582,9 @@ export const deleteInvestigationInfo = async (req, res) => {
             val = testInfo.dopplerStudies.filter((investigation) => investigation !== test);
             testInfo.dopplerStudies = val;
         }
-        else if (investigationType === 'Obstetrics(Pregnancy)') {
+        else if (investigationType === 'Obstetrics(Pregnancy)-Sonography') {
             val = testInfo.obsetrics.filter((investigation) => investigation !== test);
             testInfo.obsetrics = val;
-        }
-        else if (investigationType === 'Sonography') {
-            val = testInfo.sonography.filter((investigation) => investigation !== test);
-            testInfo.sonography = val;
         }
         else if (investigationType === '16 Slice C.T Scan') {
             val = testInfo.ctScan.filter((investigation) => investigation !== test);
@@ -2685,7 +2672,7 @@ export const getBill = async (req, res) => {
 export const addPayment = async (req, res) => {
     try {
         const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag, shift } = req.body;
-        console.log(shift);
+       
         const { id } = req.params;
         let formattedDate;
         const updateDate = () => {
@@ -2954,20 +2941,25 @@ export const approveAllMedicalStock = async (req, res) => {
 
 export const addOrderPaymentDetails = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment } = req.body;
+        const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment, branch, phone } = req.body;
+        
+        const dateConverter = (date) => {
+            const [y, m, d] = date.split('-');
+            const newDate = String(d + '-' + m + '-' + y);
+            return newDate;
+        }
+        const paymentDetails = await OrderPaymentDetails.create({
+            order: billNo,
+            transactionDetails,
+            chequeNo,
+            date:dateConverter(date),
+            totalBill,
+            bills,
+            amountPaid,
+            modeOfPayment,
+            details_added_flag: true
+        });
         await Promise.all(billNo.map(async (bill, _) => {
-            const paymentDetails = await OrderPaymentDetails.create({
-                order: bill,
-                transactionDetails,
-                chequeNo,
-                date,
-                totalBill,
-                bills,
-                amountPaid,
-                modeOfPayment,
-                details_added_flag: true
-            })
             const order = await Order.findById(bill);
             if (order) {
                 order.order_payment_flag = true;
@@ -2981,7 +2973,7 @@ export const addOrderPaymentDetails = async (req, res) => {
                 if (!emailedVendors.has(vendor)) {
                     const vendorPerson = await ItemVendor.findOne({ vendorname: vendor });
                     if (vendorPerson?.email) {
-                        await sendPaymentEmail(vendorPerson?.email, req.body);
+                        await sendPaymentEmail(vendorPerson?.email, req.body,branch, phone);
                         emailedVendors.add(vendor);
                     }
                 }
@@ -3006,19 +2998,14 @@ export const addOrderPaymentDetails = async (req, res) => {
 
 export const getOrderPaymentDetails = async (req, res) => {
     try {
-        const { id, type } = req.params;
+        const { type } = req.params;
         let details;
         if (type === 'item') {
-            details = await OrderPaymentDetails.findOne({
-                order: id
-            }).populate('order');
+            details = await OrderPaymentDetails.find().populate('order');
         }
         else if (type === 'medicine') {
-            details = await OrderMedicalPaymentDetails.findOne({
-                order: id
-            }).populate('order');
+            details = await OrderMedicalPaymentDetails.find().populate('order');
         }
-        console.log(details);
         return res
             .status(200)
             .json({
@@ -3038,20 +3025,27 @@ export const getOrderPaymentDetails = async (req, res) => {
 
 export const addMedicalOrderPaymentDetails = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment } = req.body;
-        await Promise.all(billNo.map(async (bill, _) => {
-            const paymentDetails = await OrderMedicalPaymentDetails.create({
-                order: bill,
+
+        const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment, branch, phone } = req.body;
+        const dateConverter = (date) => {
+            const [y, m, d] = date.split('-');
+            const newDate = String(d + '-' + m + '-' + y);
+            return newDate;
+        }
+        
+        const paymentDetails = await OrderMedicalPaymentDetails.create({
+                order: billNo,
                 transactionDetails,
                 chequeNo,
-                date,
+                date:dateConverter(date),
                 totalBill,
                 bills,
                 amountPaid,
                 modeOfPayment,
                 details_added_flag: true
             })
+        await Promise.all(billNo.map(async (bill, _) => {
+            
             const order = await medicalOrder.findById(bill);
             if (order) {
                 order.order_payment_flag = true;
@@ -3065,7 +3059,7 @@ export const addMedicalOrderPaymentDetails = async (req, res) => {
                 if (!emailedVendors.has(vendor)) {
                     const vendorPerson = await MedicalVendor.findOne({ vendorname: vendor });
                     if (vendorPerson?.email) {
-                        await sendPaymentEmail(vendorPerson?.email, req.body);
+                        await sendPaymentEmail(vendorPerson?.email, req.body,branch,phone);
                         emailedVendors.add(vendor);
                     }
                 }
@@ -3077,29 +3071,6 @@ export const addMedicalOrderPaymentDetails = async (req, res) => {
             .json({
                 success: true,
                 message: 'Added Payment Details'
-            });
-    } catch (error) {
-        return res
-            .status(500)
-            .json({
-                success: false,
-                message: error.message
-            });
-    }
-}
-
-export const getMedicalOrderPaymentDetails = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const details = await OrderMedicalPaymentDetails.findOne({
-            order: id
-        });
-        return res
-            .status(200)
-            .json({
-                success: true,
-                message: "Fetched details successfully",
-                details
             });
     } catch (error) {
         return res
@@ -3279,11 +3250,15 @@ export const getRelations = async (req, res) => {
 
 export const addClinicDetails = async (req, res) => {
     try {
-        const { branch, phone, email } = req.body;
+        const { branch, phone, email, shift } = req.body;
         const branchExists = await Clinic.findOne({ branch });
         if (branchExists) {
             if (phone) {
                 branchExists?.phone.push(phone);
+                await branchExists.save();
+            }
+            if (shift) {
+                branchExists?.shifts.push(shift);
                 await branchExists.save();
             }
             if (email) {
@@ -3295,8 +3270,10 @@ export const addClinicDetails = async (req, res) => {
         }
         else {
             let phoneArray = [];
+            let shifts = [];
+            shifts.push(shift);
             phoneArray.push(phone);
-            await Clinic.create({ branch, phone: phoneArray, email });
+            await Clinic.create({ branch, phone: phoneArray, email, shifts });
         }
         return res.json({
             success: true,
@@ -3338,5 +3315,95 @@ export const deleteClinicDetail = async (req, res) => {
             success: false,
             message: error.message
         })
+    }
+}
+
+export const deletePhoneNumber = async (req, res) => {
+    try {
+        const { index, id } = req.params;
+        let detail = await Clinic.findById(id);
+        detail.phone = detail?.phone?.filter((phone, idx) => idx != index);
+        await detail.save();
+        return res.json({
+            success: true,
+            message: 'Deleted a phone number'
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const deleteClinicEmail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const detail = await Clinic.findById(id);
+        detail.email = '';
+        await detail.save();
+        return res.json({
+            success: true,
+            message:'deleted clinic email'
+        })
+    } catch (error) {
+         return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const deleteShift = async (req, res) => {
+    try {
+        const { shiftIndex, id } = req.params;
+        let branch = await Clinic.findById(id);
+        branch.shifts = branch?.shifts?.filter((item, index) => index !== Number(shiftIndex));
+        
+        await branch.save();
+         return res.json({
+            success: true,
+            message: 'Deleted a shift'
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const getShifts = async (req, res) => {
+    try {
+        const { branch } = req.params;
+        const shifts = await Clinic.findOne({ branch });
+        return res.json({
+            success: true,
+            shifts:shifts.shifts
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const selectBranch = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Clinic.updateMany({}, { selectedBranch: false });
+        const branchUpdate = await Clinic.findByIdAndUpdate(id, {
+            selectedBranch: true
+        });
+        return res.json({
+            success: true,
+            message: 'Selected Branch'
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
     }
 }

@@ -7,7 +7,7 @@ import { recStore } from '../../store/RecStore';
 
 const Docnavbar = () => {
   const [isOpen, setOpen] = useState(false);
-  const { setAppointmentSection, appointmentSection, prescription, appointmentSubmit, getAppointmentCount, domGeneral, mulGeneral, domRepeat, mulRepeat, domCourier, mulCourier, prescriptionSubmit } = docStore();
+  const { setAppointmentSection, appointmentSection, prescription, appointmentSubmit, getAppointmentCount, domGeneral, mulGeneral, domRepeat, mulRepeat, domCourier, mulCourier, prescriptionSubmit, setSelectedBranch, isBranch, getClinicDetails, clinicDetails } = docStore();
   const { isShift, getShift } = recStore();
   const { user } = useAuthStore();
   const { logout } = useAuthStore();
@@ -22,9 +22,21 @@ const Docnavbar = () => {
   }, [user?._id]);
 
   useEffect(() => {
-    if (!user?._id || !isShift?.shift) return;
-    getAppointmentCount(isShift.shift, user._id);
-  }, [isShift?.shift, appointmentSubmit, prescriptionSubmit]);
+    if (!user?._id || !isShift) return;
+
+    getAppointmentCount(isShift.shift, user._id, isBranch);
+  }, [isShift?.shift, appointmentSubmit, prescriptionSubmit, isBranch, user?._id]);
+
+  useEffect(() => {
+    getClinicDetails();
+  }, [])
+  const selected = clinicDetails.find(clinic => clinic?.selectedBranch === true);
+
+  useEffect(() => {
+    if (selected) {
+      setSelectedBranch(selected.branch);
+    }
+  }, [selected]);
 
   const menuRef = useRef(null);
   useEffect(() => {
@@ -123,7 +135,6 @@ const Docnavbar = () => {
             )}
           </div>
           <li onClick={() => navigate('/dashboard-DOCTOR/homeo-bhagwat')} className="hover:text-white cursor-pointer">Homeo Bhagwat Gita</li>
-          {/* <li onClick={() => navigate('/doc-courier-mail')} className="hover:text-gray-300 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:h-[2px] after:w-0 after:bg-gray-400 after:transition-all after:duration-300 hover:after:left-0 hover:after:w-full">Courier Mail</li>  */}
           <li onClick={handleLogout} className="hover:text-white cursor-pointer">Logout</li>
         </ul>
         <button onClick={() => setOpen(!isOpen)} className="lg:hidden cursor-pointer hover:text-gray-200 text-white font-semibold text-xl">☰</button>

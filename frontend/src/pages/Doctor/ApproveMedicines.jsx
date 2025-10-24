@@ -6,6 +6,8 @@ import { HR_API_URL, useStore } from '../../store/UpdateStore';
 import axios from 'axios';
 import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { LuLoaderCircle } from 'react-icons/lu';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
+import PaymentHistoryModal from '../../components/Doctor/PaymentHistoryModal';
 
 const ApproveMedicines = () => {
   const location = useParams();
@@ -17,6 +19,8 @@ const ApproveMedicines = () => {
   const [submit, setSubmit] = useState(false);
   const { getMedicine, medicines, potencys, getPotency, getMedicalStock, medicalStock, medicalStockToggle } = useStore();
   const [loading, setLoading] = useState(false);
+  const [isDeleteModal, setDeleteModal] = useState(false);
+  const [isPaymentHistoryModalOpen, setPaymentHistoryModalIsOpen] = useState(false);
 
   useEffect(() => {
     getMedicine();
@@ -93,6 +97,7 @@ const ApproveMedicines = () => {
           <div className='sm:flex grid grid-cols-1 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9'>
             <button onClick={() => setOrderMedicineHistoryModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Order History</button>
             <button onClick={() => setOrderMedicineModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Order Balances</button>
+            <button onClick={() => setPaymentHistoryModalIsOpen(true)} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>Payment History</button>
           </div>
           <div className='flex flex-col gap-2'>
             <p>Search Medicine :</p>
@@ -113,7 +118,7 @@ const ApproveMedicines = () => {
             </select>
           </div>
           <div className='flex justify-end'>
-            <button onClick={() => approveAllMedicalStock()} className='bg-blue-500 py-1 px-3 rounded-md text-white mt-10 mb-3 cursor-pointer font-semibold' >Approve all Stock</button>
+            <button onClick={() => setDeleteModal(true)} className='bg-blue-500 py-1 px-3 rounded-md text-white mt-10 mb-3 cursor-pointer font-semibold' >Approve all Stock</button>
           </div>
           {loading ? <LuLoaderCircle className='animate-spin mx-auto' /> : <div className="overflow-x-auto rounded-lg">
             <table className="min-w-full border border-gray-300 bg-white shadow-md ">
@@ -153,7 +158,9 @@ const ApproveMedicines = () => {
         </div>
       </div>
       {isOrderMedicineModalOpen && <OrderMedicineBalanceModal location={location.location} onClose={() => setOrderMedicineModalIsOpen(false)} />}
+      {isPaymentHistoryModalOpen && <PaymentHistoryModal location={location.location} type='medicine' onClose={() => setPaymentHistoryModalIsOpen(false)} />}
       {isOrderMedicineHistoryModalOpen && <OrderMedicineHistoryModal location={location.location} onClose={() => setOrderMedicineHistoryModalIsOpen(false)} />}
+      {isDeleteModal && <ConfirmDeleteModal onClose={() => setDeleteModal(false)} message="Do you want approve all Stocks?" onConfirm={() => approveAllMedicalStock()} />}
     </>
   )
 }

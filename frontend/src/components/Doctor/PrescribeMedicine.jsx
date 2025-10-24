@@ -100,7 +100,7 @@ const PrescribeMedicine = () => {
                         <div className='flex sm:flex-row flex-col  items-center justify-between mb-2 pr-5'>
                             <h1 className='text-black font-semibold '>Diagnosis:</h1>
                             <div className='relative'>
-                                <button onClick={() => setComplaintModalIsOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Diagnosis <FaPlus /></button>
+                                <button onClick={() => setComplaintModalIsOpen(true)} type='button' className='bg-blue-500 flex items-center gap-2 cursor-pointer  hover:bg-blue-600 rounded-md text-white p-1 '>Add Diagnosis <FaPlus /></button>
                             </div>
                         </div>
                         <MultiSelectInput Options={PresentComplaintDataArray} setSelectedOptions={setSelectedDiagnosisOptions} selectedOptions={selectedDiagnosisOptions} />

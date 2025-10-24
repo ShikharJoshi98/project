@@ -6,7 +6,7 @@ import { CiImageOn, CiTrash } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import { LuLoaderCircle } from "react-icons/lu";
 
-const UploadBillModal = ({ onClose, setBillImagesLength = () => { }, orderId }) => {
+const UploadBillModal = ({ onClose, setBillImagesLength = () => { }, amount, orderId }) => {
   const [image, setImage] = useState(null);
   const [submit, setSubmit] = useState(false);
   const { getBillImages, billImages } = useStore();
@@ -44,7 +44,6 @@ const UploadBillModal = ({ onClose, setBillImagesLength = () => { }, orderId }) 
     await axios.delete(`${HR_API_URL}/deleteBillImage/${orderId}/${id}`);
     setSubmit(prev => !prev);
   }
-
   return (
     <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-4">
       <div className="bg-[#e9ecef] max-h-[90vh] max-w-[90vw]  flex flex-col w-full rounded-xl p-6 md:p-10 shadow-lg">
@@ -55,8 +54,8 @@ const UploadBillModal = ({ onClose, setBillImagesLength = () => { }, orderId }) 
           <RxCross2 size={24} />
         </button>
         <div className="overflow-y-auto">
-
           <h1 className="text-blue-500 text-2xl md:text-4xl mb-10 text-center font-semibold">Upload Bill Image</h1>
+          <p className="my-5 text-2xl">Bill Amount: Rs {amount}</p>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col mt-5 gap-2">
               <h1>Upload Bill</h1>
@@ -68,12 +67,13 @@ const UploadBillModal = ({ onClose, setBillImagesLength = () => { }, orderId }) 
           </form>
           <h1 className="text-blue-500 text-xl md:text-2xl my-10 text-center font-semibold">Bill Images</h1>
           {
-            loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : billImages?.map((image, index) => (
-              <div key={index} className="flex justify-between px-2">
-                <img src={image?.imageUrl} alt="Bill Image" className="w-[90%] mb-5" />
-                <div title='delete' onClick={() => deleteBill(image?._id)} className='text-white max-w-[10%] w-fit h-fit  bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash /></div>
-              </div>
-            ))
+            loading ? <LuLoaderCircle className='animate-spin mx-auto mt-10' size={24} /> : billImages.length > 0 ?
+              billImages?.map((image, index) => (
+                <div key={index} className="flex justify-between px-2">
+                  <img src={image?.imageUrl} alt="Bill Image" className="w-[90%] mb-5" />
+                  <div title='delete' onClick={() => deleteBill(image?._id)} className='text-white max-w-[10%] w-fit h-fit  bg-red-500 p-2 rounded-full cursor-pointer'><CiTrash /></div>
+                </div>
+              )) : <p className="text-blue-500 text-xl text-center">No Bill Uploaded</p>
           }
         </div>
       </div>

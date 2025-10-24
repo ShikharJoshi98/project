@@ -4,18 +4,20 @@ import { IoReceiptSharp } from "react-icons/io5";
 import { useState } from "react";
 import { HR_API_URL } from "../store/UpdateStore";
 import axios from "axios";
+import { FaRupeeSign } from "react-icons/fa";
 
 const AddBillNumberModal = ({ onClose, orderId, setSubmit, type }) => {
     const [billNumber, setBillNumber] = useState('');
+    const [billAmount, setBillAmount] = useState('');
 
     const handleSumbit = async (e) => {
         e.preventDefault();
         try {
             if (type === 'medicine') {
-                await axios.post(`${HR_API_URL}//addMedicalOrderBillNumber/${orderId}`, { billNumber });
+                await axios.post(`${HR_API_URL}//addMedicalOrderBillNumber/${orderId}`, { billNumber, billAmount });
             }
             else if (type === 'item') {
-                await axios.post(`${HR_API_URL}/addOrderBillNumber/${orderId}`, { billNumber });
+                await axios.post(`${HR_API_URL}/addOrderBillNumber/${orderId}`, { billNumber, billAmount });
             }
             setSubmit(prev => !prev);
             onClose();
@@ -39,6 +41,10 @@ const AddBillNumberModal = ({ onClose, orderId, setSubmit, type }) => {
                     <div className='flex flex-col gap-2 '>
                         <p>Bill Number:</p>
                         <Input icon={IoReceiptSharp} value={billNumber} onChange={(e) => setBillNumber(e.target.value)} type='text' required />
+                    </div>
+                    <div className='flex flex-col gap-2 '>
+                        <p>Bill Amount:</p>
+                        <Input icon={FaRupeeSign} value={billAmount} onChange={(e) => setBillAmount(e.target.value)} onWheel={(e) => e.target.blur()} type='number' required />
                     </div>
                     <button className='cursor-pointer block mx-auto bg-blue-400 text-lg  font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full'>Add</button>
                 </form>

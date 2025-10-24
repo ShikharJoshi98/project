@@ -25,8 +25,7 @@ const Prescription = () => {
 
     useEffect(() => {
         if (!user?.branch || !isShift) return;
-        const shiftValue = user?.branch === 'Dombivali' ? isShift?.shift : 'noShift';
-        getAppointmentDetails(user?.branch, medSection, shiftValue);
+        getAppointmentDetails(user?.branch, medSection, isShift?.shift);
     }, []);
 
     useEffect(() => {

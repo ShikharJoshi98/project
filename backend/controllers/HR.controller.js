@@ -50,11 +50,11 @@ export const register = async (req, res) => {
 
 export const update = async (req, res) => {
     try {
-        const { fullname, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, branch, role } = req.body;
+        const { fullname, email, phone, aadharCard, panCard, age, gender, bloodGroup, address, department, Salary, attendance, status, branch, role } = req.body;
 
         const updatedUser = await Employee.findByIdAndUpdate(
             req.params.id,
-            { fullname, email, phone, age, gender, bloodGroup, address, department, Salary, attendance, status, branch, role },
+            { fullname, email, phone, age, gender, bloodGroup, address, aadharCard, panCard, department, Salary, attendance, status, branch, role },
             { new: true, runValidators: true } // Return updated document
         );
         if (!updatedUser) {
@@ -66,6 +66,24 @@ export const update = async (req, res) => {
 
         res.status(500).json({ error: error.message });
 
+    }
+}
+
+export const getDocuments = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const employee = await Employee.findById(id);
+        return res.json({
+            panCard: employee.panCard,
+            aadharCard: employee.aadharCard,
+            success: true,
+            message:'fetched documents successfully'
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message:error.message
+        })
     }
 }
 
@@ -111,7 +129,7 @@ export const LeaveApply = async (req, res) => {
 
 export const getHrAppointments = async (req, res) => {
     try {
-        const { branch, shift } = req.params;
+        const { branch, shift } = req.query;
         const date = updateDate();
 
         const result = await Appointment.aggregate([
@@ -162,7 +180,7 @@ export const getHrAppointments = async (req, res) => {
 
 export const getAppDetails = async (req, res) => {
     try {
-        const { branch, appointmentType, shift } = req.params;
+        const { branch, appointmentType, shift } = req.query;
         const date = updateDate();
         const appointments = await Appointment.find({ branch, date, shift, complete_appointment_flag: true, appointmentType }).populate('Doctor').populate('PatientCase');
 
@@ -448,9 +466,10 @@ export const getOrderId = async (req, res) => {
 export const addOrderBillNumber = async (req, res) => {
     try {
         const { id } = req.params;
-        const { billNumber } = req.body;
+        const { billNumber, billAmount } = req.body;
         const order = await Order.findByIdAndUpdate(id, {
-            billNumber
+            billNumber,
+            billAmount
         });
         return res.json({
             success: true,
@@ -499,6 +518,8 @@ export const sendOrderEmail = async (req, res) => {
     const groupedOrders = {}; 
     const date = updateDate();
     const { branch } = req.params;
+    const doctor = await Employee.findOne({ fullname: 'Dr. Santosh K Yadav' });
+
     await Promise.all(
       req.body.map(async (item) => {
         if (!item.vendor[0] || !branch) return;
@@ -526,7 +547,7 @@ export const sendOrderEmail = async (req, res) => {
 
     const vendorOrderList = Object.values(groupedOrders);
 
-    await sendVendorOrderEmail(vendorOrderList);
+    await sendVendorOrderEmail(vendorOrderList,doctor.phone);
 
     return res.json({
       success: true,
@@ -696,6 +717,54 @@ export const deleteBillImages = async (req, res) => {
             success: false,
             message: error.message
         })
+    }
+}
+
+export const getItemOrder = async (req, res) => {
+    try {
+        const { ids } = req.query;
+        let orders = [];
+        let totalAmount = 0;
+        await Promise.all(ids?.map( async (id, _) => {
+            const order = await Order.findById(id);
+            orders.push(order);
+            totalAmount += order?.billAmount;
+        }))
+        
+        return res.json({
+            success: true,
+            orders,
+            totalAmount
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const getMedicalOrder = async (req, res) => {
+    try {
+        const { ids } = req.query;
+        let orders = [];
+        let totalAmount = 0;
+        await Promise.all(ids?.map( async (id, _) => {
+            const order = await medicalOrder.findById(id);
+            orders.push(order);
+            totalAmount += order?.billAmount;
+        }))
+        
+        return res.json({
+            success: true,
+            orders,
+            totalAmount
+        });
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
     }
 }
 
@@ -974,8 +1043,9 @@ export const place_medical_order = async (req, res) => {
 export const sendMedicalOrderEmail = async (req, res) => {
   try {
     const groupedOrders = {}; 
-    const date = updateDate();
-    const { branch } = req.params;
+      const date = updateDate();
+      const { branch } = req.params;
+      const doctor = await Employee.findOne({ fullname: 'Dr. Santosh K Yadav' });
     await Promise.all(
       req.body.map(async (medicine) => {
         if (!medicine.vendor[0] || !branch) return;
@@ -985,6 +1055,7 @@ export const sendMedicalOrderEmail = async (req, res) => {
           medicine: medicine.medicineName,
           quantity: medicine.quantity,
           potency: medicine.potency,
+          pack:medicine.pack,
           orderDate: date,
         };
 
@@ -1002,9 +1073,8 @@ export const sendMedicalOrderEmail = async (req, res) => {
       })
     );
 
-    const vendorOrderList = Object.values(groupedOrders);
-
-    await sendMedicalVendorOrderEmail(vendorOrderList);
+      const vendorOrderList = Object.values(groupedOrders);
+    await sendMedicalVendorOrderEmail(vendorOrderList,doctor.phone);
 
     return res.json({
       success: true,
@@ -1109,9 +1179,10 @@ export const updateMedicalReceivedOrder = async (req, res) => {
 export const addMedicalOrderBillNumber = async (req, res) => {
     try {
         const { id } = req.params;
-        const { billNumber } = req.body;
+        const { billNumber,billAmount } = req.body;
         const order = await medicalOrder.findByIdAndUpdate(id, {
-            billNumber
+            billNumber,
+            billAmount
         });
         return res.json({
             success: true,
@@ -1128,8 +1199,8 @@ export const addMedicalOrderBillNumber = async (req, res) => {
 //collections
 export const getCollection = async (req, res) => {
     try {
-        const { branch, shift } = req.params;
-
+        const { branch, shift } = req.query;
+       
         const updateDate = () => {
             const today = new Date();
             const day = String(today.getDate()).padStart(2, '0');
@@ -1155,12 +1226,41 @@ export const getCollection = async (req, res) => {
     }
 }
 
+export const getEveryCollectionToday = async (req, res) => {
+    try {
+        const { branch } = req.query;
+        const updateDate = () => {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+            return formattedDate;
+        };
+        const todayDate = updateDate();
+        const collection = await billPayment.find().populate('patient').populate('paymentCollectedBy');
+        const everyCollection = collection.filter((item) => item?.patient?.branch === branch && item?.date === todayDate);
+        return res.json({
+            success: true,
+            everyCollection,    
+            message:'fetched all of today collection'
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message:error.message
+        })
+    }
+}
+
 export const getAllCollection = async (req, res) => {
     try {
         const { branch } = req.params;
 
         const collection = await billPayment.find().populate('patient').populate('paymentCollectedBy');
-        const branchCollection = collection.filter((item) => item?.patient?.branch === branch);
+        const branchCollection = collection
+      .filter((item) => item?.patient?.branch === branch)
+      .sort((a, b) => b.dueBalance - a.dueBalance);;
 
         res.json({
             branchCollection

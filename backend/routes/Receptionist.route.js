@@ -7,12 +7,12 @@ Recrouter.post("/register", register);
 Recrouter.get('/get-patients/:branch', getPatients);//
 Recrouter.get('/getPatient/:id', getPatient);
 Recrouter.put('/update-patient/:id', updatePatient);
-Recrouter.get('/getAppointments/:branch/:shift', getAppointmentsRec)//
-Recrouter.get('/getRecAppointments/:branch/:appointmentType/:shift',getAppDetails)
+Recrouter.get('/getAppointments', getAppointmentsRec)//
+Recrouter.get('/getRecAppointments',getAppDetails)
 Recrouter.get('/getAllPatients/:branch', getAllPatients);//
-Recrouter.get('/getAppointmentsLength/:branch/:shift', getAppointmentLength)
+Recrouter.get('/getAppointmentsLength', getAppointmentLength)
 Recrouter.get('/getDoctor/:id', getDoctor);
-Recrouter.post('/setShift', setShift)
-Recrouter.get('/getShift/:user/:role',getShift)
+Recrouter.post('/setShift', setShift);
+Recrouter.get('/getShift',getShift)
 
 export default Recrouter;

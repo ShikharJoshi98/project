@@ -6,8 +6,9 @@ import { DOC_API_URL, docStore } from '../../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import MultiSelectInput from '../MultiSelectInput';
-import { FaUsers } from 'react-icons/fa';
 import { CiCirclePlus, CiTrash, CiUser } from 'react-icons/ci';
+import Select from "react-select";
+import { FaPlus } from 'react-icons/fa';
 
 const FamilyMedical = ({ complaint }) => {
     const [isComplaintModalOpen, setComplaintModalIsOpen] = useState(false);
@@ -16,7 +17,7 @@ const FamilyMedical = ({ complaint }) => {
     const listArray = list.map((data) => data?.name);
     const { id } = useParams();
     const [submit, setSubmit] = useState(false);
-    const [isRelation, setRelation] = useState([]);
+    const [relation, setRelation] = useState('');
     const [formValues, setFormValues] = useState({
         patient: id,
         relation: "",
@@ -25,6 +26,8 @@ const FamilyMedical = ({ complaint }) => {
         age: "",
     });
     const [relationSubmit, setRelationSubmit] = useState(false);
+    const [isAddRelation, setAddRelation] = useState(false);
+    const [customRelation, setCustomRelation] = useState('');
 
     useEffect(() => { getCaseData(complaint); getFamilyMedicalData(id) },
         [getCaseData, getFamilyMedicalData, submit]);
@@ -32,11 +35,12 @@ const FamilyMedical = ({ complaint }) => {
     useEffect(() => {
         getCustomRelation();
     }, [relationSubmit])
+    const relations = customRelations.map(i => ({ value: i, label: i }));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${DOC_API_URL}/add-family-history-patient/${id}`, { ...formValues, relation: isRelation[0], diseases: selectedInvestigationOptions });
+            await axios.post(`${DOC_API_URL}/add-family-history-patient/${id}`, { ...formValues, relation: relation.label, diseases: selectedInvestigationOptions });
             setSubmit(prev => !prev);
             setFormValues({
                 patient: "",
@@ -66,7 +70,25 @@ const FamilyMedical = ({ complaint }) => {
             console.error(error.message);
         }
     }
+    const addRelation = async () => {
+        try {
+            if (customRelation) {
+                await axios.post(`${DOC_API_URL}/addCustomRelation`, {
+                    relation: customRelation
+                });
+                setAddRelation(false);
+                setCustomRelation('');
+            }
+            else {
+                alert('Enter the relation');
+            }
 
+            setRelationSubmit(prev => !prev);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+    console.log(relation);
     return (
         <div>
             <div className='flex sm:flex-row flex-col items-center sm:items-start w-full gap-10 mt-10 mb-2 pr-5'>
@@ -75,12 +97,16 @@ const FamilyMedical = ({ complaint }) => {
                     <button type='button' onClick={() => { setFormValues({ patient: "", relation: "", anyOther: "", lifeStatus: "", age: "" }); setSelectedInvestigationOptions([]); }} className="bg-gray-700 block place-self-end transition-all duration-300 cursor-pointer hover:bg-black px-5 py-2 rounded-lg text-white">Clear Form</button>
                     <div className='flex flex-col gap-2'>
                         <h1>Relation*</h1>
-                        <div className='relative w-full '>
-                            <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-                                <FaUsers className="size-4 text-blue-500" />
+                        {isAddRelation === false ? <div className='flex items-center gap-3'>
+                            <Select options={relations} placeholder="Search" value={relation} onChange={setRelation} className="font-normal rounded-lg border w-full border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200" required />
+                            <button onClick={() => setAddRelation(true)} className='bg-blue-500 text-white rounded-md py-1 px-2'>Add</button>
+                        </div> :
+                            <div>
+                                <Input icon={FaPlus} value={customRelation} onChange={(e) => setCustomRelation(e.target.value)} />
+                                <button type='button' onClick={() => addRelation()} className='bg-blue-500 text-white rounded-md py-1 px-2 mt-2 mx-auto block cursor-pointer' >Add Relation</button>
+                                <button type='button' onClick={() => setAddRelation(false)} className='bg-red-500 text-white rounded-md py-1 px-2 mt-2 mx-auto block cursor-pointer' >Close</button>
                             </div>
-                            <MultiSelectInput Options={customRelations} setSelectedOptions={setRelation} selectedOptions={isRelation} type='Family Medical' setRelationSubmit={setRelationSubmit} />
-                        </div>
+                        }
                     </div>
                     <div className='flex flex-col gap-2 '>
                         <h1 >List of disease*</h1>

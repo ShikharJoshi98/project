@@ -24,6 +24,7 @@ const OrderModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [billNumberModal, setBillNumberModal] = useState(false);
   const [orderSubmitLoading, setOrderSubmitLoading] = useState(false);
+  const [billAmount, setBillAmount] = useState('');
 
   useEffect(() => {
     getMedicalStock(user?.branch)
@@ -102,7 +103,7 @@ const OrderModal = ({ onClose }) => {
         };
       }));
       await axios.post(`${HR_API_URL}/place-medical-order`, { formRows: formattedFormRows });
-      alert("Order was placed");
+
       await axios.post(`${HR_API_URL}/sendMedicalVendorEmail/${user?.branch}`, formattedFormRows);
       await getMedicalStock(user?.branch);
       setSubmit(prev => !prev);
@@ -162,6 +163,7 @@ const OrderModal = ({ onClose }) => {
                     <td className="p-2">
                       <input
                         type="number"
+                        onWheel={(e) => e.target.blur()}
                         value={row.quantity}
                         onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
                         className="w-50 bg-white p-1 border border-gray-500 rounded"
@@ -220,7 +222,7 @@ const OrderModal = ({ onClose }) => {
                         </td>
                       )}
                       <td className="py-2 px-1 border">{row?.vendor.join(", ")}</td>
-                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <FaPlus /></button>
+                      {rowIndex === 0 && <td rowSpan={order?.formRows.length} className="py-2 px-1 border"><button onClick={() => { setBillAmount(order?.billAmount); setBillModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Upload <FaPlus /></button>
                         {(!order?.billNumber) ? <button onClick={() => { setBillNumberModal(true); setOrderId(order?._id) }} className="bg-blue-500 text-white mt-4 mx-auto py-1 cursor-pointer px-2 flex items-center rounded-md gap-1">Add Bill No.</button> : <p className="text-center mt-4">{`B No. - ${order?.billNumber}`}</p>}
                       </td>
                       }
@@ -229,6 +231,7 @@ const OrderModal = ({ onClose }) => {
                           <thead>
                             <tr className=" bg-blue-500 text-white text-sm">
                               <th className="py-2 px-1 border">Medicine</th>
+                              <th className="py-2 px-1 border">Potency</th>
                               <th className="py-2 px-1 border">Pack</th>
                               <th className="py-2 px-1 border">Ordered Quantity</th>
                               <th className="py-2 px-1 border">Received Quantity</th>
@@ -239,9 +242,10 @@ const OrderModal = ({ onClose }) => {
                             {order.formRows.map((formRow, idx) => (
                               <tr key={idx} className="bg-blue-200">
                                 <td className="py-1 px-1 border text-center">{formRow?.medicineName}</td>
+                                <td className="py-1 px-1 border text-center">{formRow?.medicineId?.potency}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.pack}</td>
                                 <td className="py-1 px-1 border text-center">{formRow?.quantity}</td>
-                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id, formRow?.medicineId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
+                                <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? formRow?.receivedQuantity : <div className="flex flex-col items-center gap-2"><input type="number" onWheel={(e) => e.target.blur()} onChange={(e) => setReceivedQuantity(e.target.value)} className="bg-white w-20 border border-gray-400 focus:outline-none pl-1 py-1 rounded-md" /><button onClick={() => receiveOrder(order?._id, formRow?._id, formRow?.medicineId)} className="bg-blue-500 cursor-pointer text-white py-1 px-3 rounded-md">Add</button></div>}</td>
                                 {formRow?.order_Delivered_Flag === true && <td className="py-1 px-1 border text-center">{formRow?.order_Delivered_Flag === true ? (formRow?.quantity - formRow?.receivedQuantity) : '-'}</td>}
                               </tr>
                             ))}
@@ -259,7 +263,7 @@ const OrderModal = ({ onClose }) => {
           </div>}
         </div>
       </div>
-      {billModal && <UploadBillModal setBillImagesLength={setBillImagesLength} onClose={() => setBillModal(false)} orderId={orderId} />}
+      {billModal && <UploadBillModal setBillImagesLength={setBillImagesLength} amount={billAmount} onClose={() => setBillModal(false)} orderId={orderId} />}
       {billNumberModal && <AddBillNumberModal onClose={() => setBillNumberModal(false)} orderId={orderId} setSubmit={setSubmit} type='medicine' />}
     </div>
 

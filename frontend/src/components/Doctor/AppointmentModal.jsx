@@ -16,7 +16,7 @@ import { useParams } from 'react-router-dom';
 import { LuLoaderCircle } from 'react-icons/lu';
 
 const AppointmentModal = ({ onClose }) => {
-  const { appointmentSubmit, toggleAppointmentSubmit } = docStore();
+  const { appointmentSubmit, toggleAppointmentSubmit, getClinicDetails, clinicDetails } = docStore();
   const { allBranchPatients, getAllPatients } = recStore();
   const { user } = useAuthStore();
   const { branch } = useParams();
@@ -53,6 +53,9 @@ const AppointmentModal = ({ onClose }) => {
     }
     getDetails();
   }, [getAllPatients, getDetails])
+  useEffect(() => {
+    getClinicDetails();
+  }, [branch]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -151,28 +154,35 @@ const AppointmentModal = ({ onClose }) => {
                   <option value="courier">Courier Medicine</option>
                 </select>
               </div>
-              {(user?.role === 'doctor' && branch === 'Dombivali') ?
+              {clinicDetails?.some(clinic => clinic.branch === (user?.role === 'doctor' ? branch : user?.branch) && clinic.shifts?.length > 0) && (
                 <div className="flex flex-col gap-2">
                   <h1>Select Shift</h1>
-                  <select name="shift" value={formValues.shift} onChange={handleInputChange} required className="py-2 pl-3 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
+                  <select
+                    name="shift"
+                    value={formValues.shift}
+                    onChange={handleInputChange}
+                    required
+                    className="py-2 pl-3 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900"
+                  >
                     <option value="" disabled>Select shift</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Night">Evening</option>
+                    {
+                      clinicDetails
+                        ?.filter(clinic => {
+                          const userBranch = user?.role === 'doctor' ? branch : user?.branch;
+                          return clinic.branch === userBranch && clinic.shifts?.length > 0;
+                        })
+                        .flatMap(clinic =>
+                          clinic.shifts.map((shift, index) => (
+                            <option key={`${clinic.branch}-${index}`} value={shift}>
+                              {shift}
+                            </option>
+                          ))
+                        )
+                    }
+
                   </select>
-                </div> :
-                (user?.role !== 'doctor' && user?.branch === 'Dombivali')
-                  ?
-                  <div className="flex flex-col gap-2">
-                    <h1>Select Shift</h1>
-                    <select name="shift" value={formValues.shift} onChange={handleInputChange} required className="py-2 pl-3 rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900">
-                      <option value="" disabled>Select shift</option>
-                      <option value="Morning">Morning</option>
-                      <option value="Night">Evening</option>
-                    </select>
-                  </div>
-                  :
-                  ''
-              }
+                </div>
+              )}
               <div className="w-full flex items-center justify-center">
                 <button className=" cursor-pointer bg-blue-400 text-lg font-semibold hover:text-gray-200 hover:bg-blue-600 hover:scale-101 text-white mt-7 w-52 p-2 rounded-full" type="submit">{appointmentSubmitLoading ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : 'Create'}</button>
               </div>

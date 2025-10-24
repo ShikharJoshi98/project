@@ -86,13 +86,13 @@ const Register = () => {
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'>Registration</span> Form</h1>
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
           <div className='flex flex-col gap-2 mb-3'>
-            <h1>Are you a new patient or a returning patient ?</h1>
+            <h1>Are you a new patient or a existing patient ?</h1>
             <div className='relative w-full '>
               <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
                 <LuUser className="size-4 text-blue-500" />
               </div>
               <select defaultValue='new' onChange={(e) => setPatientStatus(e.target.value)} className='py-2 pl-9 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 '>
-                <option value="returning">Returning Patient</option>
+                <option value="returning">Existing Patient</option>
                 <option value="new">New Patient</option>
               </select>
             </div>
