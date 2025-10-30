@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { CiMedicalClipboard } from 'react-icons/ci'
 import Input from '../../components/Input'
 import { recStore } from '../../store/RecStore'
-import { DOC_API_URL } from '../../store/DocStore'
+import { DOC_API_URL, docStore } from '../../store/DocStore'
 import axios from 'axios'
 import { generateFitnessCertificate, generateMedicalCertificate, generateTravellingCertificate, generateUnfitCertificate } from '../../store/generateCertificatePdf'
 import { useAuthStore } from '../../store/authStore'
@@ -16,6 +16,7 @@ const AddCertificate = () => {
     const { user } = useAuthStore();
     const { getAllPatients, allPatients, allBranchPatients, getDoctor, doctor } = recStore();
     const { getDetails, employees } = useStore();
+    const { getLetterHead, letterHead } = docStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [detailsAddedModal, setDetailsAddedModal] = useState(false);
     const [certificateDetails, setCertificateDetails] = useState(null);
@@ -42,6 +43,10 @@ const AddCertificate = () => {
 
         fetchPatients();
     }, [user?.role, user?.branch]);
+
+    useEffect(() => {
+        getLetterHead(user?._id)
+    }, []);
 
     useEffect(() => {
         getDetails();
@@ -115,10 +120,10 @@ const AddCertificate = () => {
                     <button onClick={() => { setFormValues({ selectedPatient: '', diagnoseOne: '', diagnoseTwo: '', diagnoseThree: '', date: '', restFrom: '', restTill: '', resumeDate: '', duration: '' }); setCertificateDetails(null); setFormSubmitted(false); }} className='p-2 cursor-pointer bg-green-500 flex items-center gap-2 text-white rounded-md'>New certificate <IoIosRefresh /></button>
                 </div>
                 <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[6px] sm:text-[8px] md:text-sm'>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateMedicalCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateFitnessCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateUnfitCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
-                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateTravellingCertificate(certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateMedicalCertificate(letterHead?.letterHeadImage, certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateFitnessCertificate(letterHead?.letterHeadImage, certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateUnfitCertificate(letterHead?.letterHeadImage, certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
+                    <button onClick={() => { if (isFormSubmitted === false) { alert('Fill in the details to generate any certificate.') } else { generateTravellingCertificate(letterHead?.letterHeadImage, certificateDetails, patient[0], doctor ?? user); } }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
                 </div>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto text-sm w-full md:w-[60vw] h-auto p-8 rounded-xl text-zinc-800 flex flex-col gap-5' >
                     <div className='flex flex-col gap-2'>

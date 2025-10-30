@@ -15,7 +15,7 @@ import { updateDate } from "../utils/todayDate.js";
 import { receiveOrderHelper } from "./HR.controller.js";
 import { ItemVendor, MedicalVendor } from "../models/VendorModel.js";
 import sendWhatsAppMessage, { sendAppointmentPatientEmail, sendCourierPatientEmail, sendPaymentEmail } from "../utils/sendPaymentDetails.js";
-import { Clinic } from "../models/ClinicModel.js";
+import { Clinic, letterHead } from "../models/ClinicModel.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -3403,6 +3403,49 @@ export const selectBranch = async (req, res) => {
     } catch (error) {
         return res.json({
             success: false,
+            message: error.message
+        });
+    }
+}
+
+export const uploadLetterHead = async (req, res) => {
+    try {
+        const { billInvoiceImage, letterHeadImage, doctor } = req.body;
+        let updated = {};
+        if (letterHeadImage) {
+            updated.letterHeadImage = letterHeadImage;
+        }
+        if (billInvoiceImage) {
+            updated.billInvoiceImage = billInvoiceImage;
+        }
+        await letterHead.updateOne(
+            { doctor: doctor },
+            { $set: updated },
+            { upsert: true }
+        );
+        return res.json({
+            success: true,
+            message:'uploaded letter head'
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const getLetterHead = async (req, res) => {
+    try {
+        const { doctor } = req.params;
+        const letterHeads = await letterHead.findOne({ doctor });  
+        return res.json({
+            success: true,
+            letterHeads
+        })
+    } catch (error) {
+        return res.json({
+            success: true,
             message: error.message
         });
     }

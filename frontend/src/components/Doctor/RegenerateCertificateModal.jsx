@@ -5,12 +5,13 @@ import Input from '../Input';
 import { CiCalendar, CiMedicalClipboard, CiUser } from 'react-icons/ci';
 import { generateFitnessCertificate, generateMedicalCertificate, generateTravellingCertificate, generateUnfitCertificate } from '../../store/generateCertificatePdf';
 import axios from 'axios';
-import { DOC_API_URL } from '../../store/DocStore';
+import { DOC_API_URL, docStore } from '../../store/DocStore';
 import { RxCross2 } from 'react-icons/rx';
 import { FaCalendarAlt } from 'react-icons/fa';
 
 const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
     const { user } = useAuthStore();
+    const { getLetterHead, letterHead } = docStore();
     const { getAllPatients, allPatients, allBranchPatients } = recStore();
     const [formValues, setFormValues] = useState({
         diagnoseOne: '',
@@ -22,6 +23,10 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
         resumeDate: '',
         duration: ''
     });
+
+    useEffect(() => {
+        getLetterHead(user?._id)
+    }, []);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -83,10 +88,10 @@ const RegenerateCertificateModal = ({ setSubmit, onClose, certificate }) => {
                 <h1 className="text-blue-500 text-2xl md:text-3xl  text-center font-semibold">Regenerate Certificate</h1>
                 <p className='text-red-500 mt-10 font-semibold '>Note: You can edit the Details before generating any Certificate</p>
                 <div className='sm:flex grid grid-cols-2 mt-10 sm:flex-row text-white font-semibold  gap-2 sm:gap-9 justify-center items-center md:gap-9 text-[6px] sm:text-[8px] md:text-sm'>
-                    <button onClick={() => { generateMedicalCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
-                    <button onClick={() => { generateFitnessCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
-                    <button onClick={() => { generateUnfitCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
-                    <button onClick={() => { generateTravellingCertificate(formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
+                    <button onClick={() => { generateMedicalCertificate(letterHead?.letterHeadImage, formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>MEDICAL CERTIFICATE</button>
+                    <button onClick={() => { generateFitnessCertificate(letterHead?.letterHeadImage, formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>FITNESS CERTIFICATE</button>
+                    <button onClick={() => { generateUnfitCertificate(letterHead?.letterHeadImage, formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>UNFIT CERTIFICATE</button>
+                    <button onClick={() => { generateTravellingCertificate(letterHead?.letterHeadImage, formValues, certificate?.patient, certificate?.doctor); }} className='cursor-pointer hover:scale-102 transition-all duration-300 bg-blue-500 p-2 hover:bg-blue-600 rounded-lg'>TRAVELLING CERTIFICATE</button>
                 </div>
                 <form onSubmit={handleSubmit} className='relative my-4 mx-auto w-full md:w-[60vw] h-auto p-8 rounded-xl text-zinc-800 text-sm flex flex-col gap-5' >
                     <div className='flex flex-col gap-2'>

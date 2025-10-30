@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import Input from "../../components/Input";
-import { FaPhone } from "react-icons/fa6";
+import { FaImage, FaPhone } from "react-icons/fa6";
 import { LuClock, LuLoaderCircle, LuMail, LuTrash } from "react-icons/lu";
 import { DOC_API_URL, docStore } from "../../store/DocStore";
 import axios from "axios";
+import { useAuthStore } from '../../store/authStore';
 
 const ClinicDetails = () => {
-    const { getClinicDetails, clinicDetails } = docStore();
+    const { getClinicDetails, clinicDetails, getLetterHead, letterHead } = docStore();
+    const { user } = useAuthStore();
     const [selectBranch, setSelectBranch] = useState('Dombivali');
     const [formValues, setFormValues] = useState({
         phone: '',
@@ -14,7 +16,11 @@ const ClinicDetails = () => {
         shift: ''
     });
     const [loading, setLoading] = useState(false);
+    const [imageLoading, setimageLoading] = useState(false);
     const [submit, setSubmit] = useState(false);
+    const [billInvoiceImage, setBillInvoiceImage] = useState('');
+    const [letterHeadImage, setLetterHead] = useState('');
+    const [imageLoader, setImageLoader] = useState(false);
 
     useEffect(() => {
         setFormValues((prev) => ({
@@ -27,6 +33,14 @@ const ClinicDetails = () => {
         getClinicDetails();
     }, [submit]);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => setImageLoader(true), 200);
+        getLetterHead(user?._id).finally(() => {
+            clearTimeout(timeout);
+            setImageLoader(false);
+        });
+    }, [submit]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormValues((prevValues) => ({
@@ -34,6 +48,29 @@ const ClinicDetails = () => {
             [name]: value,
         }));
     };
+    async function handleInputImage(e) {
+        const { name, files } = e.target;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            if (name === 'billInvoiceImage') {
+                reader.onloadend = () => {
+                    setBillInvoiceImage(
+                        reader.result
+                    );
+                };
+            }
+            else if (name === 'letterHeadImage') {
+                reader.onloadend = () => {
+                    setLetterHead(
+                        reader.result
+                    );
+                };
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -46,6 +83,17 @@ const ClinicDetails = () => {
                 branch: selectBranch,
                 shift: ''
             });
+            setSubmit(prev => !prev);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+    const uploadImage = async (e) => {
+        e.preventDefault();
+        try {
+            setimageLoading(true);
+            await axios.post(`${DOC_API_URL}/uploadLetterHead`, { billInvoiceImage, letterHeadImage, doctor: user?._id })
+            setimageLoading(false);
             setSubmit(prev => !prev);
         } catch (error) {
             console.error(error.message);
@@ -81,6 +129,18 @@ const ClinicDetails = () => {
                         <Input icon={LuClock} value={formValues.shift} type='text' onChange={handleInputChange} name="shift" />
                     </div>
                     <button className="bg-blue-500 rounded-md text-white mx-auto block my-4 px-3 py-1">{loading ? <LuLoaderCircle className="mx-auto animate-spin" size={24} /> : 'Add'}</button>
+                </form>
+                <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Upload Clinic Dociments</h1>
+                <form onSubmit={uploadImage} className="flex flex-col gap-3" >
+                    <div className="flex flex-col gap-2">
+                        <p>Upload Bill Invoice :</p>
+                        <Input icon={FaImage} type='file' name="billInvoiceImage" onChange={handleInputImage} />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <p>Upload Letter Head : (for investigations and certificates)</p>
+                        <Input icon={FaImage} type='file' name="letterHeadImage" onChange={handleInputImage} />
+                    </div>
+                    <button className="bg-blue-500 rounded-md text-white mx-auto block my-4 px-3 py-1">{imageLoading ? <LuLoaderCircle className="mx-auto animate-spin" size={24} /> : 'Add'}</button>
                 </form>
                 <div className="overflow-x-auto mt-10">
                     <table className="w-[90%] mx-auto bg-white border border-gray-300 shadow-md rounded-lg">
@@ -139,6 +199,10 @@ const ClinicDetails = () => {
                         </tbody>
                     </table>
                 </div>
+                <h1 className="text-3xl mt-6 mb-3 font-semibold">Bill Invoice</h1>
+                {imageLoader ? <LuLoaderCircle className="mx-auto animate-spin" size={24} /> : <img src={letterHead?.billInvoiceImage} className="object-contain mx-auto" />}
+                <h1 className="text-3xl mt-6 mb-3 font-semibold">Letterhead</h1>
+                {imageLoader ? <LuLoaderCircle className="mx-auto animate-spin" size={24} /> : <img src={letterHead?.letterHeadImage} className="object-contain mx-auto" />}
             </div>
         </div>
     )

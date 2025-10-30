@@ -8,7 +8,7 @@ import { recStore } from "../../store/RecStore";
 import { useAuthStore } from "../../store/authStore";
 
 const GenerateInvestigationPdf = () => {
-    const { getSelectedTest, selectedTest } = docStore();
+    const { getSelectedTest, selectedTest, getLetterHead, letterHead } = docStore();
     const { user } = useAuthStore();
     const { patient, getPatient } = recStore();
     const { id } = useParams();
@@ -23,8 +23,12 @@ const GenerateInvestigationPdf = () => {
         getSelectedTest(id);
     }, [getSelectedTest]);
 
+    useEffect(() => {
+        getLetterHead(user?._id)
+    }, []);
+
     const handleGeneratePdf = () => {
-        investigationPdf(patient, selectedTest, user);
+        investigationPdf(letterHead?.letterHeadImage, patient, selectedTest, user);
     }
 
     return (

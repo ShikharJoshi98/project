@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import HRnavbar from '../../components/HR/HRnavbar'
 import { docStore } from '../../store/DocStore';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { FaAngleDoubleLeft } from 'react-icons/fa';
 import { recStore } from '../../store/RecStore';
 import { useAuthStore } from '../../store/authStore';
 import { useStore } from '../../store/UpdateStore';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const Prescription = () => {
     const { id } = useParams();
@@ -17,23 +18,44 @@ const Prescription = () => {
     const { prescriptionSubmit, fetchPrescription, getBillInfo, billInfo, prescription, otherPrescriptions, getOtherPrescription, balanceDue, getBalanceDue, appointmentSection } = docStore();
     const navigate = useNavigate();
     const todayDate = updateDate();
-
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         if (!user?._id) return;
         getShift(user?.role, user?._id);
     }, []);
 
     useEffect(() => {
-        if (!user?.branch || !isShift) return;
-        getAppointmentDetails(user?.branch, medSection, isShift?.shift);
-    }, []);
+        const fetchShiftAndAppointments = async () => {
+            await getShift(user?.role, user?._id);
+            const timeout = setTimeout(() => setLoading(true), 200);
+            getAppointmentDetails(user?.branch, medSection, isShift?.shift).finally(() => {
+                clearTimeout(timeout);
+                setLoading(false);
+            });
+        }
+        if (user?._id) fetchShiftAndAppointments();
+    }, [medSection, recStore.getState().isShift?.shift, shiftToggle]);
 
     useEffect(() => {
-        fetchPrescription(id);
-        getOtherPrescription(id);
-        getBalanceDue(id);
-        getBillInfo(id);
-        getPatient(id);
+        const fetchData = async () => {
+            try {
+                const timeout = setTimeout(() => setLoading(true), 200);
+                await Promise.all([
+                    fetchPrescription(id),
+                    getOtherPrescription(id),
+                    getBalanceDue(id),
+                    getBillInfo(id),
+                    getPatient(id)
+                ]);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                clearTimeout(timeout);
+                setLoading(false);
+            }
+        };
+
+        if (id) fetchData();
     }, [fetchPrescription, prescriptionSubmit, getBillInfo, getOtherPrescription, getAppointmentDetails, getPatient]);
     const appointment = appointments.filter((app) => app?.PatientCase?._id === id) || [];
     const currentAppointment = appointment[0];
@@ -58,7 +80,7 @@ const Prescription = () => {
                     <h1 onClick={() => navigate('/dashboard-HR/HR-medicine')} className='text-3xl cursor-pointer ml-10'><FaAngleDoubleLeft /></h1>
                     <h1 className='p-4 text-center font-semibold text-[#337ab7] text-xl sm:text-4xl'>Prescription Today</h1>
                     <h1 className="text-blue-500 font-semibold mb-3 text-lg mt-4">{todayDate}</h1>
-                    <div className="overflow-x-auto mt-10 rounded-lg">
+                    {loading ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : <div className="overflow-x-auto mt-10 rounded-lg">
                         <table className="min-w-full border border-gray-300 bg-white shadow-md ">
                             <thead className="bg-[#337ab7] whitespace-nowrap text-white">
                                 <tr >
@@ -93,8 +115,8 @@ const Prescription = () => {
                                 }
                             </tbody>
                         </table>
-                    </div>
-                    {otherPrescriptions.length > 0 && <div><h1 className='p-4 text-center mt-5 font-semibold text-[#337ab7] text-xl sm:text-4xl'>Other Presciptions</h1>
+                    </div>}
+                    {otherPrescriptions.length > 0 && (loading ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : <div><h1 className='p-4 text-center mt-5 font-semibold text-[#337ab7] text-xl sm:text-4xl'>Other Presciptions</h1>
                         <div className="overflow-x-auto mt-10 rounded-lg">
                             <table className="min-w-full border border-gray-300 bg-white shadow-md">
                                 <thead className="bg-[#337ab7] whitespace-nowrap text-white">
@@ -117,7 +139,7 @@ const Prescription = () => {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </div>)
                     }
                     {
                         currentAppointment?.medicine_issued_flag === false &&

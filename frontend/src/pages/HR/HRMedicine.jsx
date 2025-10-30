@@ -27,7 +27,7 @@ const HRMedicine = () => {
             });
         }
         if (user?._id) fetchShiftAndAppointments();
-    }, [medSection]);
+    }, [medSection, recStore.getState().isShift?.shift, shiftToggle]);
 
     const medicineArray = appointments.filter((appointment) => (appointment?.PatientCase?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.casePaperNo?.toLowerCase().includes(searchTerm.toLowerCase()) || appointment?.PatientCase?.phone?.toLowerCase().includes(searchTerm.toLowerCase())));
 

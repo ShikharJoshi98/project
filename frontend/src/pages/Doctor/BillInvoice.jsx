@@ -14,7 +14,7 @@ import { useAuthStore } from '../../store/authStore';
 const BillInvoice = () => {
     const { getAllPatients, allPatients, allBranchPatients } = recStore();
     const { user } = useAuthStore();
-    const { getPrescriptions, prescriptionsArray } = docStore();
+    const { getPrescriptions, prescriptionsArray, getLetterHead, letterHead } = docStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [selectedDiagnosis, setSelecetedDiagnosis] = useState(null);
     const [billStatus, setBillStatus] = useState('first');
@@ -50,6 +50,9 @@ const BillInvoice = () => {
         fetchPatients();
     }, [user?.role, user?.branch]);
 
+    useEffect(() => {
+        getLetterHead(user?._id)
+    }, []);
 
     useEffect(() => {
         getPrescriptions();
@@ -101,7 +104,7 @@ const BillInvoice = () => {
             patient = allBranchPatients.filter((patient) => patient?._id === formValues.patient);
         }
 
-        generateBillInvoicePdf(patient[0], formValues.title, todayDate, formValues, response?.data?.invoice?.billNumber);
+        generateBillInvoicePdf(patient[0], letterHead?.billInvoiceImage, formValues.title, todayDate, formValues, response?.data?.invoice?.billNumber);
         setFormValues({
             title: 'Mr.',
             patient: '',

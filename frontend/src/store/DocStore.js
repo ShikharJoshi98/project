@@ -26,11 +26,11 @@ export const docStore = create((set) => ({
     caseImages: [],//
     prescription: [],
     diagnosisImages: [],
-    historyDetails:[],
+    historyDetails: [],
     allPrescriptions: [],
     list: [],
     payment: [],//
-    PresentComplaintData: [],    
+    PresentComplaintData: [],
     briefMindSymptomScribble: [],
     PastHistoryData: [],
     FamilyMedicalData: [],
@@ -44,8 +44,8 @@ export const docStore = create((set) => ({
     consultationCharges: [],
     investigationAdvised: [],
     testInfo: [],
-    selectedTest:[],
-    prescriptionsArray:[],
+    selectedTest: [],
+    prescriptionsArray: [],
     chiefComplaints: [],
     personalHistory: [],
     section: "medicine",
@@ -55,7 +55,7 @@ export const docStore = create((set) => ({
     totalBill: [],
     balanceDue: [],
     billInvoices: [],
-    certificates:[],
+    certificates: [],
     appointmentSection: "general",
     homeoBhagwatSection: "medicine",
     orderId: [],
@@ -65,7 +65,8 @@ export const docStore = create((set) => ({
     clinicDetails: [],
     ordersBillNumber: [],
     medicalOrderBillNumbers: [],
-    shifts:[],
+    shifts: [],
+    letterHead: null,
     setHomeoBhagwatSection: (newsection) => set({ homeoBhagwatSection: newsection }),
     setAppointmentSection: (newsection) => set({ appointmentSection: newsection }),
     setsection: (newsection) => set({ section: newsection }),
@@ -211,11 +212,11 @@ export const docStore = create((set) => ({
             console.log(error.message);
         }
     },
-    getAppointmentCount: async (shift='',user, isBranch) => {
+    getAppointmentCount: async (shift = '', user, isBranch) => {
         try {
-            const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`,{
-            params: { shift, user, isBranch }
-        });
+            const response = await axios.get(`${DOC_API_URL}/get-incomplete-appointments`, {
+                params: { shift, user, isBranch }
+            });
             set({ domGeneral: response.data.domCounts.domGeneral })
             set({ mulGeneral: response.data.mulCounts.mulGeneral });
             set({ domRepeat: response.data.domCounts.domRepeat });
@@ -225,20 +226,20 @@ export const docStore = create((set) => ({
         } catch (error) {
             console.log(error.message);
         }
-    }, 
-    getAppDetails: async (appointmentSection,branch,doctor,shift='') => {
+    },
+    getAppDetails: async (appointmentSection, branch, doctor, shift = '') => {
         try {
-          const response = await axios.get(`${DOC_API_URL}/getAppointments`,{
-            params: { appointmentSection, branch, doctor, shift}
-        });
-          set({ appointments: response.data.Appointments });
-          set({ newAppointmentLength: response.data.newAppointmentLength });
-          set({ followUpAppointmentLength: response.data.followUpAppointmentLength });
-          set({ medicineIssuedLength: response.data.medicineIssuedLength });
-          set({ medicineNotIssuedLength: response.data.medicineNotIssuedLength });
-      } catch (error) {
-          console.error(error.message);
-      }  
+            const response = await axios.get(`${DOC_API_URL}/getAppointments`, {
+                params: { appointmentSection, branch, doctor, shift }
+            });
+            set({ appointments: response.data.Appointments });
+            set({ newAppointmentLength: response.data.newAppointmentLength });
+            set({ followUpAppointmentLength: response.data.followUpAppointmentLength });
+            set({ medicineIssuedLength: response.data.medicineIssuedLength });
+            set({ medicineNotIssuedLength: response.data.medicineNotIssuedLength });
+        } catch (error) {
+            console.error(error.message);
+        }
     },
     deleteCaseImage: async (patientId, imageId) => {
         let response = await axios.delete(`${DOC_API_URL}/patient/${patientId}/case-images/${imageId}`);
@@ -254,11 +255,11 @@ export const docStore = create((set) => ({
     },
     getHistoryDetails: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/getHistoryDetails/${id}`);
-        set({historyDetails:response.data.combinedArray})
+        set({ historyDetails: response.data.combinedArray })
     },
     getPresentComplaint: async (id) => {
         const response = await axios.get(`${DOC_API_URL}/getPresentComplaint/${id}`);
-        set({PresentComplaintData:response.data.combinedArray})
+        set({ PresentComplaintData: response.data.combinedArray })
     },
     getCaseData: async (complaint) => {
         const response = await axios.get(`${DOC_API_URL}/CaseMaster/${complaint.replace(/\s+/g, "")}`);
@@ -375,15 +376,15 @@ export const docStore = create((set) => ({
     },
     getCertificates: async () => {
         const response = await axios.get(`${DOC_API_URL}/getCertificates`);
-        set({certificates:response.data.certificates})
+        set({ certificates: response.data.certificates })
     },
     getOrderId: async () => {
         const response = await axios.get(`${HR_API_URL}/getOrderId`);
-        set({orderId: response.data.order})
+        set({ orderId: response.data.order })
     },
     getMedicalOrderId: async () => {
         const response = await axios.get(`${HR_API_URL}/getMedicalOrderId`);
-        set({medicalOrderId: response.data.medicalOrder})
+        set({ medicalOrderId: response.data.medicalOrder })
     },
     getOrderPaymentDetails: async (type) => {
         const response = await axios.get(`${DOC_API_URL}/getOrderPaymentDetails/${type}`);
@@ -416,5 +417,9 @@ export const docStore = create((set) => ({
     getClinicShifts: async (branch) => {
         const response = await axios.get(`${DOC_API_URL}/getShifts/${branch}`);
         set({ shifts: response.data.shifts });
+    },
+    getLetterHead: async (doctor) => {
+        const response = await axios.get(`${DOC_API_URL}/getLetterHead/${doctor}`);
+        set({ letterHead: response.data.letterHeads });
     }
 }))

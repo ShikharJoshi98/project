@@ -8,4 +8,11 @@ const ClinicSchema = new mongoose.Schema({
     selectedBranch: {type: Boolean}
 });
 
+const letterHeadSchema = new mongoose.Schema({
+    billInvoiceImage: { type: String },
+    letterHeadImage: { type: String },
+    doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' }
+});
+
 export const Clinic = mongoose.model('Clinic', ClinicSchema);
+export const letterHead = mongoose.model('letterHead', letterHeadSchema);

@@ -23,7 +23,7 @@ const Footer = () => {
                     <h1 onClick={scrollToTop} className='text-white font-semibold cursor-pointer mb-4'>Wings Classical Homeopathy</h1>
                     <hr className='bg-[#4a9acc] mb-5 h-1 border-none rounded-sm w-7' />
                     <p className='w-full text-[#c2c4c2]'>" Service To Patient is Service To Nation "</p>
-                    <div className=' flex text-[#c2c4c2]  items-center gap-5 mt-10'>
+                    <div className=' flex flex-col sm:flex-row text-[#c2c4c2] items-start  sm:items-center gap-5 mt-10'>
                         <a href='#' className='p-3   hover:bg-[#343a40] rounded-full bg-[#3e4144]'><IoLogoWhatsapp /></a>
                         <a href='#' className='p-3 hover:bg-[#343a40] rounded-full bg-[#3e4144]'>  <FaSquareXTwitter /></a>
                         <a href='#' className='p-3 hover:bg-[#343a40] rounded-full bg-[#3e4144]'><AiFillInstagram /></a>

@@ -1,10 +1,5 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { recStore } from "./RecStore";
-import { useEffect } from "react";
-
-const img = '/bill_page-0001.jpg';
-const certificate = '/certificate.jpg';
 
 const convertDateFormat = (dateString) => {
     const [year, month, date] = dateString.split('-');
@@ -61,10 +56,10 @@ function numberToWords(num) {
     return result;
 }
 
-export const generateBillInvoicePdf = (patient,title, today, data, billNumber) => {
+export const generateBillInvoicePdf = (patient, billInvoice, title, today, data, billNumber) => {
     const doc = new jsPDF();
     patient.casePaperNo = String(patient?.casePaperNo).split('-');
-    doc.addImage(img, 'JPEG', 0, 0, 210, 297);
+    doc.addImage(billInvoice, 'JPEG', 0, 0, 210, 297);
     doc.setFontSize(12);
     doc.text(billNumber, 52, 67);
     doc.text(today, 162, 67);
@@ -99,10 +94,10 @@ export const generateBillInvoicePdf = (patient,title, today, data, billNumber) =
     window.open(pdfUrl, "_blank");
 }
 
-export const generatePreviousIssuedInvoice = (patient,title="", today, data) => {
+export const generatePreviousIssuedInvoice = (patient, billInvoice, title="", today, data) => {
     const doc = new jsPDF();
     patient.casePaperNo = String(patient?.casePaperNo).split('-');
-    doc.addImage(img, 'JPEG', 0, 0, 210, 297);
+    doc.addImage(billInvoice, 'JPEG', 0, 0, 210, 297);
     doc.setFontSize(12);
     doc.text(data?.billNumber, 52, 67);
     doc.text(today, 162, 67);
@@ -141,9 +136,9 @@ doc.text(splitText, 75, 241);
     window.open(pdfUrl, "_blank");
 }
 
-export const generateMedicalCertificate = (details, patient, user) => {
+export const generateMedicalCertificate = (letterHead, details, patient, user) => {
   const doc = new jsPDF();
-  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.addImage(letterHead, 'JPEG', 0, 0, 210, 297);
   doc.setFontSize(15);
   doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
@@ -198,9 +193,9 @@ export const generateMedicalCertificate = (details, patient, user) => {
 };
 
 
-export const generateTravellingCertificate = (details, patient, user) => {
+export const generateTravellingCertificate = (letterHead, details, patient, user) => {
   const doc = new jsPDF();
-  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.addImage(letterHead, 'JPEG', 0, 0, 210, 297);
   doc.setFontSize(15);
   doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
@@ -257,9 +252,9 @@ He/She has been given medicine for ${details?.duration} according to his/her dis
 };
 
 
-export const generateFitnessCertificate = (details, patient, user) => {
+export const generateFitnessCertificate = (letterHead, details, patient, user) => {
   const doc = new jsPDF();
-  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.addImage(letterHead, 'JPEG', 0, 0, 210, 297);
   doc.setFontSize(15);
   doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
@@ -307,9 +302,9 @@ export const generateFitnessCertificate = (details, patient, user) => {
 };
 
 
-export const generateUnfitCertificate = (details, patient, user) => {
+export const generateUnfitCertificate = (letterHead, details, patient, user) => {
   const doc = new jsPDF();
-  doc.addImage(certificate, 'JPEG', 0, 0, 210, 297);
+  doc.addImage(letterHead, 'JPEG', 0, 0, 210, 297);
   doc.setFontSize(15);
   doc.text(`Date : ${convertDateFormat(details.date)}`, 157, 70);
 
@@ -335,7 +330,7 @@ export const generateUnfitCertificate = (details, patient, user) => {
       : details.diagnoseOne && details.diagnoseTwo
       ? `${details.diagnoseOne} and ${details.diagnoseTwo}`
       : `${details.diagnoseOne}`
-  } on ${convertDateFormat(details.date)} so He/She is advised to take rest accordingly.`;
+  } on ${convertDateFormat(details.date)}. So He/She is advised to take rest accordingly.`;
 
   // Apply custom line spacing
   doc.setFontSize(14);
