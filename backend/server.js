@@ -14,7 +14,7 @@ connectDB();
 
 //middlewares
 app.use(express.json({ limit: '50mb' }));
-app.use(cors({origin: "http://localhost:5173", 
+app.use(cors({origin: "https://project-frontend-vert.vercel.app", 
     credentials: true,}));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
