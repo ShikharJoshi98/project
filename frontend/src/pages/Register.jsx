@@ -79,10 +79,10 @@ const Register = () => {
   }
 
   return (
-    <div className='flex flex-col min-h-screen bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden'>
+    <div className='flex flex-col min-h-screen bg-gradient-to-b from-[#ecf3fe] to-white relative overflow-hidden'>
       <div>
 
-        <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-8 h-auto bg-white p-8 md:max-w-[500px] max-w-[80vw] border rounded-xl text-zinc-600 text-sm shadow-lg'>
+        <form onSubmit={handleSubmit} className='mx-auto relative z-10 my-8 h-auto border border-gray-500 bg-white/40 backdrop-blur-lg p-8 md:max-w-[500px] max-w-[80vw] rounded-xl text-zinc-600 text-sm shadow-lg'>
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'>Registration</span> Form</h1>
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-10 w-28 mx-auto ' />
           <div className='flex flex-col gap-2 mb-3'>

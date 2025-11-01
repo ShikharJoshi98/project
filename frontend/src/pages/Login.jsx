@@ -12,7 +12,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(true);
   const [role, setRole] = useState('PATIENT');
   const { login, isLoading, error } = useAuthStore();
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newRole = role.toLowerCase()
@@ -21,9 +21,9 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 relative overflow-hidden'>
+    <div className='min-h-screen bg-gradient-to-b from-[#ecf3fe] to-white relative overflow-hidden'>
       <div >
-        <form onSubmit={handleSubmit} className='mx-auto relative z-10 mt-4 mb-2 h-auto bg-white p-5 md:max-w-[430px] max-w-[80vw] border rounded-xl text-zinc-600 text-sm shadow-lg'>
+        <form onSubmit={handleSubmit} className='mx-auto relative z-10 mt-4 mb-2 h-auto border border-gray-500 bg-white/40 backdrop-blur-lg p-5 md:max-w-[430px] max-w-[80vw] rounded-xl text-zinc-600 text-sm shadow-lg'>
           <h1 className='text-3xl font-semibold mb-5 text-center'><span className='bg-gradient-to-br from-blue-400 via-blue-500 to-sky-600 bg-clip-text text-transparent'>{role}</span> LOGIN</h1>
           <hr className='bg-[#4a9acc] h-1 border-none rounded-sm mb-8 w-28 mx-auto' />
           <div className='md:flex items-center text-zinc-900 md:max-w-[380px] hidden mb-8 text-sm md:text-base justify-center'>

@@ -6,3 +6,9 @@ export const updateDate = () => {
     const formattedDate = `${day}-${month}-${year}`;
     return formattedDate;
 };
+
+export const dateConverter = (date) => {
+            const [y, m, d] = date.split('-');
+            const newDate = String(d + '-' + m + '-' + y);
+            return newDate;
+}

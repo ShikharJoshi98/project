@@ -10,6 +10,7 @@ import { Appointment } from "../models/AppointmentModel.js";
 import { updateDate } from "../utils/todayDate.js";
 import Patient from "../models/PatientModel.js";
 import { sendCourierPatientEmail, sendMedicalVendorOrderEmail, sendVendorOrderEmail } from "../utils/sendPaymentDetails.js";
+import { dateConverter } from "../todayDate.js";
 
 export const details = async (req, res) => {
     try {
@@ -91,21 +92,16 @@ export const LeaveApply = async (req, res) => {
     try {
         let { startDate, halfDayDate, endDate, type, reason, duration, employee } = req.body;
 
-        const convertDateFormat = (dateString) => {
-            const [year, month, date] = dateString.split('-');
-            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
-        };
-
         const parseDate = (dateStr) => {
             const [day, month, year] = dateStr.split('-').map(Number);
             return new Date(year, month - 1, day);
         };
         if (halfDayDate) {
-            halfDayDate = convertDateFormat(halfDayDate);
+            halfDayDate = dateConverter(halfDayDate);
         }
         if (startDate && endDate) {
-            startDate = convertDateFormat(startDate);
-            endDate = convertDateFormat(endDate);
+            startDate = dateConverter(startDate);
+            endDate = dateConverter(endDate);
             duration = Math.abs(parseDate(endDate) - parseDate(startDate)) / (1000 * 60 * 60 * 24);
         }
         const newLeave = new LeaveApplication({
@@ -306,7 +302,7 @@ export const edit_vendor = async (req, res) => {
         const updatedVendor = await ItemVendor.findByIdAndUpdate(
             id,
             { vendorname, contact, email, address },
-            { new: true, runValidators: true } // Return updated document
+            { new: true, runValidators: true }
         );
         if (!updatedVendor) {
             return res.status(404).json({ message: "User not found" });
@@ -487,15 +483,8 @@ export const place_item_order = async (req, res) => {
     try {
         const { formRows } = req.body;
 
-        let formattedDate = '';
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();
+
         if (!formRows || formRows.length === 0) {
             return res.status(400).json({ message: "Order items are required" });
         }
@@ -1017,15 +1006,8 @@ export const place_medical_order = async (req, res) => {
     try {
         const { formRows } = req.body;
 
-        let formattedDate = '';
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();
+
         if (!formRows || formRows.length === 0) {
             return res.status(400).json({ message: "Order items are required" });
         }
@@ -1201,14 +1183,6 @@ export const getCollection = async (req, res) => {
     try {
         const { branch, shift } = req.query;
        
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            const formattedDate = `${day}-${month}-${year}`;
-            return formattedDate;
-        };
         const todayDate = updateDate();
         const collection = await billPayment.find({shift}).populate('patient').populate('paymentCollectedBy');
         const branchCollection = collection.filter((item) => item?.patient?.branch === branch);
@@ -1229,14 +1203,7 @@ export const getCollection = async (req, res) => {
 export const getEveryCollectionToday = async (req, res) => {
     try {
         const { branch } = req.query;
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            const formattedDate = `${day}-${month}-${year}`;
-            return formattedDate;
-        };
+      
         const todayDate = updateDate();
         const collection = await billPayment.find().populate('patient').populate('paymentCollectedBy');
         const everyCollection = collection.filter((item) => item?.patient?.branch === branch && item?.date === todayDate);
@@ -1339,14 +1306,6 @@ export const addCourierPayment = async (req, res) => {
 export const getCourierPayment = async (req, res) => {
     try {
         const { id } = req.params;
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            const formattedDate = `${day}-${month}-${year}`;
-            return formattedDate;
-        };
         const todayDate = updateDate();
         const allCourier = await courierPayment.find().populate('patient').populate('paymentCollectedBy');
         const branchCourier = allCourier.filter((item) => item?.patient?.branch === id);

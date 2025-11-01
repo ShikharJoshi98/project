@@ -16,6 +16,7 @@ import { receiveOrderHelper } from "./HR.controller.js";
 import { ItemVendor, MedicalVendor } from "../models/VendorModel.js";
 import sendWhatsAppMessage, { sendAppointmentPatientEmail, sendCourierPatientEmail, sendPaymentEmail } from "../utils/sendPaymentDetails.js";
 import { Clinic, letterHead } from "../models/ClinicModel.js";
+import { dateConverter } from "../todayDate.js";
 
 export const assignTask = async (req, res) => {
     try {
@@ -763,15 +764,7 @@ export const addNewPrescription = async (req, res) => {
 export const getPrescriptionToday = async (req, res) => {
     try {
         const { id } = req.params;
-        let formattedDate = '';
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();
 
         const presToday = await Prescription.find({
             patient: id,
@@ -870,15 +863,8 @@ export const addOtherPrescription = async (req, res) => {
     try {
         const { id } = req.params;
         const { medicineName, price } = req.body;
-        let formattedDate;
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();
+
         const response = await OtherPrescription.create({
             patient: id,
             medicineName,
@@ -1002,12 +988,7 @@ export const addFollowUpPatient = async (req, res) => {
     try {
         const id = req.params.id;
         const image = req.body.savedImage;
-        const date = new Date().toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            timeZone: "Asia/Kolkata",
-        });
+        const date = updateDate();
 
         const addFollowUp = await FollowUpPatient.create({
             patient: id,
@@ -1111,12 +1092,7 @@ export const addWriteUpPatient = async (req, res) => {
     try {
         const { id } = req.params;
         const { value } = req.body;
-        const date = new Date().toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            timeZone: "Asia/Kolkata",
-        });
+        const date = updateDate();
 
         const addWriteUp = await WriteUpPatient.create({
             patient: id,
@@ -1188,12 +1164,7 @@ export const addPresentComplaintScribble = async (req, res) => {
         const id = req.params.id;
         const image = req.body.savedImage;
 
-        const date = new Date().toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            timeZone: "Asia/Kolkata",
-        });
+        const date = updateDate();
 
         const addPresentComplaint = await PresentComplaintScribble.create({
             patient: id,
@@ -1217,12 +1188,7 @@ export const addWriteUpPresentComplaint = async (req, res) => {
     try {
         const { id } = req.params;
         const { value } = req.body;
-        const date = new Date().toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            timeZone: "Asia/Kolkata",
-        });
+        const date = updateDate();
 
         const addWriteUp = await PresentComplaintWriteUp.create({
             patient: id,
@@ -1752,12 +1718,7 @@ export const deleteCaseMaster = async (req, res) => {
 export const addPresentComplaintPatient = async (req, res) => {
     const { id } = req.params;
     const { complaintName, duration, durationSuffix, remark } = req.body;
-    const date = new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-    });
+    const date = updateDate();
     try {
         const addData = await PresentComplaintsPatient.create({
             patient: id,
@@ -1814,12 +1775,7 @@ export const deletePresentComplaintPatient = async (req, res) => {
 export const addPastHistoryPatient = async (req, res) => {
     const { id } = req.params;
     const { complaintName, lastDiagnosed, lastSuffix, duration, durationSuffix, remark } = req.body;
-    const date = new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-    });
+    const date = updateDate();
     try {
         const addData = await PastHistoryPatient.create({
             patient: id,
@@ -1879,12 +1835,7 @@ export const deletePastHistoryPatient = async (req, res) => {
 export const addFamilyMedicalPatient = async (req, res) => {
     const { id } = req.params;
     const { relation, diseases, anyOther, lifeStatus, age } = req.body;
-    const date = new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-    });
+    const date = updateDate();
     try {
         const addData = await FamilyHistoryPatient.create({
             patient: id,
@@ -1943,12 +1894,7 @@ export const deleteFamilyMedical = async (req, res) => {
 export const addMentalCausativePatient = async (req, res) => {
     const { id } = req.params;
 
-    const date = new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-    });
+    const date = updateDate();
     try {
         const { selectedInvestigationOptions } = req.body;
         const existingDiseases = await MentalCausativePatient.find({ patient: id });
@@ -2016,12 +1962,7 @@ export const deleteMentalCausative = async (req, res) => {
 export const addMentalPersonalityPatient = async (req, res) => {
     const { id } = req.params;
 
-    const date = new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-    });
+    const date = updateDate();
     try {
         const { selectedInvestigationOptions } = req.body;
         const existingDiseases = await MentalPersonalityPatient.find({ patient: id });
@@ -2089,12 +2030,7 @@ export const deleteMentalPersonality = async (req, res) => {
 export const addThermalReactionPatient = async (req, res) => {
     const { id } = req.params;
 
-    const date = new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-    });
+    const date = updateDate();
     try {
         const { selectedInvestigationOptions } = req.body;
         const existingDiseases = await ThermalReactionPatient.find({ patient: id });
@@ -2163,12 +2099,7 @@ export const deleteThermalReaction = async (req, res) => {
 export const addMiasmPatient = async (req, res) => {
     const { id } = req.params;
 
-    const date = new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-    });
+    const date = updateDate();
     try {
         const { selectedInvestigationOptions } = req.body;
         const existingDiseases = await MiasmPatient.find({ patient: id });
@@ -2458,15 +2389,8 @@ export const addConsultationCharges = async (req, res) => {
     try {
         const { type, price, date } = req.body;
         const { id } = req.params;
-        let formattedDate;
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();
+        
         await ConsultationCharges.create({
             type,
             price,
@@ -2591,15 +2515,8 @@ export const updatePayment = async (req, res) => {
 export const getBill = async (req, res) => {
     try {
         const { id } = req.params;
-        let formattedDate;
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();
+        
         let medicineCharges = 0;
         let consultation = 0;
         let newCaseCharge = 0;
@@ -2674,15 +2591,7 @@ export const addPayment = async (req, res) => {
         const { billPaid, modeOfPayment, appointmentType, paymentCollectedBy, transactionDetails, totalBill, balance_paid_flag, shift } = req.body;
        
         const { id } = req.params;
-        let formattedDate;
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear()
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();        
 
         const newBalance = totalBill - billPaid;
         const payment = await billPayment.updateOne(
@@ -2746,15 +2655,8 @@ export const getBalanceDue = async (req, res) => {
 export const getPaymentBill = async (req, res) => {
     try {
         const { id } = req.params;
-        let formattedDate;
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
+        let formattedDate = updateDate();
+        
         const response = await billPayment.findOne({ patient: id, date: formattedDate });
         res.json({
             response
@@ -2943,11 +2845,6 @@ export const addOrderPaymentDetails = async (req, res) => {
     try {
         const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment, branch, phone } = req.body;
         
-        const dateConverter = (date) => {
-            const [y, m, d] = date.split('-');
-            const newDate = String(d + '-' + m + '-' + y);
-            return newDate;
-        }
         const paymentDetails = await OrderPaymentDetails.create({
             order: billNo,
             transactionDetails,
@@ -3027,11 +2924,6 @@ export const addMedicalOrderPaymentDetails = async (req, res) => {
     try {
 
         const { transactionDetails, chequeNo, date, billNo, bills, totalBill, amountPaid, modeOfPayment, branch, phone } = req.body;
-        const dateConverter = (date) => {
-            const [y, m, d] = date.split('-');
-            const newDate = String(d + '-' + m + '-' + y);
-            return newDate;
-        }
         
         const paymentDetails = await OrderMedicalPaymentDetails.create({
                 order: billNo,
@@ -3087,22 +2979,10 @@ export const addMedicalOrderPaymentDetails = async (req, res) => {
 export const addBillInvoice = async (req, res) => {
     try {
         let { title, patient, selectedDiagnosis, medicineName, startDate, endDate, consultingFee, medicineFee } = req.body;
-        let formattedDate = '';
+        let formattedDate = updateDate();
 
-        const updateDate = () => {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            formattedDate = `${day}-${month}-${year}`;
-        };
-        updateDate();
-        const convertDateFormat = (dateString) => {
-            const [year, month, date] = dateString.split('-');
-            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
-        };
-        startDate = convertDateFormat(startDate);
-        endDate = convertDateFormat(endDate);
+        startDate = dateConverter(startDate);
+        endDate = dateConverter(endDate);
         const invoices = await BillInvoice.find();
         const lastInvoice = invoices[invoices.length - 1];
         let billNumber = "001";
@@ -3149,14 +3029,10 @@ export const addCertificateDetails = async (req, res) => {
     try {
         let { selectedPatient, doctor, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration } = req.body;
 
-        const convertDateFormat = (dateString) => {
-            const [year, month, date] = dateString.split('-');
-            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
-        };
-        date = convertDateFormat(date);
-        restFrom = convertDateFormat(restFrom);
-        restTill = convertDateFormat(restTill);
-        resumeDate = convertDateFormat(resumeDate);
+        date = dateConverter(date);
+        restFrom = dateConverter(restFrom);
+        restTill = dateConverter(restTill);
+        resumeDate = dateConverter(resumeDate);
         if (!doctor) doctor = undefined;
         await Certificate.create({
             patient: selectedPatient, doctor, diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration
@@ -3192,14 +3068,11 @@ export const editCertificate = async (req, res) => {
     try {
         let { diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration } = req.body;
         const { id } = req.params;
-        const convertDateFormat = (dateString) => {
-            const [year, month, date] = dateString.split('-');
-            return `${parseInt(date)}-${parseInt(month)}-${parseInt(year)}`;
-        };
-        date = convertDateFormat(date);
-        restFrom = convertDateFormat(restFrom);
-        restTill = convertDateFormat(restTill);
-        resumeDate = convertDateFormat(resumeDate);
+       
+        date = dateConverter(date);
+        restFrom = dateConverter(restFrom);
+        restTill = dateConverter(restTill);
+        resumeDate = dateConverter(resumeDate);
         const certificate = await Certificate.findByIdAndUpdate(id,
             { diagnoseOne, diagnoseTwo, diagnoseThree, date, restFrom, restTill, resumeDate, duration }
         );
@@ -3438,6 +3311,7 @@ export const uploadLetterHead = async (req, res) => {
 export const getLetterHead = async (req, res) => {
     try {
         const { doctor } = req.params;
+        
         const letterHeads = await letterHead.findOne({ doctor });  
         return res.json({
             success: true,
