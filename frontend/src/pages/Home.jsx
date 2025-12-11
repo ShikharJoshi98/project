@@ -50,6 +50,7 @@ const Home = () => {
               <button onClick={goToContactUs} className="flex items-center gap-2 cursor-pointer text-blue-600 hover:text-blue-700 font-semibold">Contact Us <FaAngleRight /></button>
             </div>
           </div>
+          <button onClick={() => navigate('/audioTest')}>test video</button>
           <div className="bg-[#d9eaff] hidden md:block relative rounded-[2rem] transition-all">
             <div className="absolute -top-10 -right-18 px-5 py-4 rounded-[1.75rem] 
                     bg-white/80 border border-white/30 
