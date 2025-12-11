@@ -1,10 +1,8 @@
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react'
-import { ReactSketchCanvas } from 'react-sketch-canvas'
+import { useRef } from 'react'
 import { DOC_API_URL } from '../../store/DocStore';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { LuEraser, LuPen, LuRedo, LuTrash, LuUndo } from 'react-icons/lu';
 import { Excalidraw, exportToBlob } from "@excalidraw/excalidraw";
 import "@excalidraw/excalidraw/index.css";
 

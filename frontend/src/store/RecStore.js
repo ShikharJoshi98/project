@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Axis3D } from "lucide-react";
 import { create } from "zustand";
 
 export const REC_API_URL = `${import.meta.env.VITE_API_URL}/api/receptionist`;
@@ -22,7 +23,8 @@ export const recStore = create((set) => ({
     update: false,//
     stockToggle: false,
     isShift: null,
-    shiftToggle:false,
+    shiftToggle: false,
+    letterHeads:[],
     setShift: async (shift, role, user) => {
         try {
             const response = await axios.post(`${REC_API_URL}/setShift`, {
@@ -130,6 +132,14 @@ export const recStore = create((set) => ({
         try {
             const response = await axios.get(`${REC_API_URL}/getDoctor/${id}`);
             set({ doctor: response.data.doctor });
+        } catch (error) {
+            console.log(error.message);
+        }
+    },
+    getLetterHeads: async () => {
+        try {
+            const response = await axios.get(`${REC_API_URL}/getLetterHeads`);
+            set({ letterHeads: response.data.letterHeads });
         } catch (error) {
             console.log(error.message);
         }

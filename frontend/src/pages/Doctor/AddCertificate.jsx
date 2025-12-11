@@ -11,6 +11,7 @@ import SearchSelect from '../../components/SearchSelect'
 import { FaCalendar, FaCalendarAlt } from 'react-icons/fa'
 import { IoIosRefresh } from 'react-icons/io'
 import { useStore } from '../../store/UpdateStore'
+import { LuLoaderCircle } from 'react-icons/lu'
 
 const AddCertificate = () => {
     const { user } = useAuthStore();
@@ -24,6 +25,7 @@ const AddCertificate = () => {
     const [durationUnit, setDurationUnit] = useState('Days');
     const [loading, setLoading] = useState(false);
     const [isDoctor, setDoctor] = useState("");
+    const [generateLoading, setGenerateLoading] = useState(false);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -42,11 +44,15 @@ const AddCertificate = () => {
         };
 
         fetchPatients();
-    }, [user?.role, user?.branch]);
+    }, []);
 
     useEffect(() => {
-        getLetterHead(user?._id)
-    }, []);
+        if (user?.role === 'doctor' && user?._id) {
+            getLetterHead(user._id);
+        } else if (isDoctor) {
+            getLetterHead(isDoctor);
+        }
+    }, [user, isDoctor]);
 
     useEffect(() => {
         getDetails();
@@ -77,25 +83,35 @@ const AddCertificate = () => {
             [name]: value,
         }));
     };
-    let patient;
+    let patient = [];
     if (user?.role === 'doctor') {
-        patient = allPatients.filter((patient) => patient?._id === certificateDetails?.selectedPatient);
-
-    }
-    else {
-        patient = allBranchPatients.filter((patient) => patient?._id === certificateDetails?.selectedPatient);
+        patient = (allPatients ?? []).filter(
+            (p) => p?._id === certificateDetails?.selectedPatient
+        );
+    } else {
+        patient = (allBranchPatients ?? []).filter(
+            (p) => p?._id === certificateDetails?.selectedPatient
+        );
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setGenerateLoading(true);
             const finalDuration = `${formValues.duration} ${durationUnit}`.trim();
+            if (!letterHead) {
+                alert('No letter head template available');
+                setGenerateLoading(false);
+                return;
+            }
             const payload = {
                 ...formValues,
                 doctor: isDoctor,
+                templateImage: letterHead?.letterHeadImage,
                 selectedPatient,
                 duration: finalDuration,
             };
+
             let response = await axios.post(`${DOC_API_URL}/postCertificate`, payload);
             await getDoctor(isDoctor);
             if (response.data.message === 'certificate added') {
@@ -106,6 +122,7 @@ const AddCertificate = () => {
                 alert("Details not added");
             }
             setCertificateDetails(payload);
+            setGenerateLoading(false);
         } catch (error) {
             console.log(error.message);
         }
@@ -186,7 +203,7 @@ const AddCertificate = () => {
                             </select>
                         </div>
                     </div>
-                    <button className='py-2 px-6 mt-5 rounded-lg bg-green-500 text-white text-base font-semibold block mx-auto cursor-pointer'>Submit</button>
+                    <button className='py-2 px-6 mt-5 rounded-lg bg-green-500 text-white text-base font-semibold block mx-auto cursor-pointer'>{generateLoading === true ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : 'Submit'}</button>
                 </form>
             </div>
             {detailsAddedModal && <DetailsAddedModal onClose={() => setDetailsAddedModal(false)} />}

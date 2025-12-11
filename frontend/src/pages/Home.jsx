@@ -1,6 +1,6 @@
 import { FaAngleRight, FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot, } from "react-icons/fa6";
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -17,17 +17,25 @@ const Home = () => {
   const { clinicDetails, getClinicDetails } = docStore();
   const navigate = useNavigate();
   const contactUsRef = useRef(null);
+  const location = useLocation();
 
   useEffect(() => {
     getClinicDetails();
   }, []);
 
+  useEffect(() => {
+    if (location.hash === '#contact-us' && contactUsRef.current) {
+      setTimeout(() => {
+        contactUsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [location]);
+
   const goToContactUs = () => {
     if (!contactUsRef.current) return;
-    setTimeout(() => {
-      contactUsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    setTimeout(() => { contactUsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
   };
+
   return (
     <div className='overflow-hidden'>
       <section className="bg-gradient-to-b from-[#ecf3fe] to-white pt-20 pb-14">
@@ -70,7 +78,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section ref={contactUsRef} className="py-10 mt-10 max-w-6xl mx-auto">
+      <section id='contact-us' ref={contactUsRef} className="py-10 mt-10 max-w-6xl mx-auto">
         <div className='w-fit mx-auto'>
           <h1 className='text-4xl md:text-[38px] text-center text-gray-800 font-semibold tracking-wide' >BOOK <span className='text-blue-500'>APPOINTMENT</span></h1>
           <Underline color={'oklch(62.3% 0.214 259.815)'} />

@@ -10,9 +10,10 @@ import { generateBillInvoicePdf } from '../../store/generateCertificatePdf';
 import { updateDate } from '../../store/todayDate';
 import SearchSelect from '../../components/SearchSelect';
 import { useAuthStore } from '../../store/authStore';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const BillInvoice = () => {
-    const { getAllPatients, allPatients, allBranchPatients } = recStore();
+    const { getAllPatients, allPatients, allBranchPatients, getLetterHeads, letterHeads } = recStore();
     const { user } = useAuthStore();
     const { getPrescriptions, prescriptionsArray, getLetterHead, letterHead } = docStore();
     const [selectedPatient, setSelectedPatient] = useState(null);
@@ -21,6 +22,7 @@ const BillInvoice = () => {
     const [formValues, setFormValues] = useState({
         title: 'Mr.',
         patient: '',
+        templateImage: '',
         selectedDiagnosis: '',
         medicineName: '',
         startDate: '',
@@ -30,6 +32,7 @@ const BillInvoice = () => {
     });
     const todayDate = updateDate();
     const [loading, setLoading] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -51,7 +54,12 @@ const BillInvoice = () => {
     }, [user?.role, user?.branch]);
 
     useEffect(() => {
-        getLetterHead(user?._id)
+        if (user?.role === 'doctor') {
+            getLetterHead(user?._id)
+        }
+        else {
+            getLetterHeads();
+        }
     }, []);
 
     useEffect(() => {
@@ -59,10 +67,19 @@ const BillInvoice = () => {
     }, [getPrescriptions]);
 
     useEffect(() => {
-        setFormValues((prev) => ({
-            ...prev,
-            title: 'Mr.'
-        }))
+        if (user?.role !== 'doctor') {
+            setFormValues((prev) => ({
+                ...prev,
+                title: 'Mr.'
+            }))
+        }
+        else {
+            setFormValues((prev) => ({
+                ...prev,
+                title: 'Mr.',
+                templateImage: letterHead?.billInvoiceImage
+            }))
+        }
     }, []);
 
     const handleInputChange = (e) => {
@@ -83,7 +100,8 @@ const BillInvoice = () => {
     const nextSection = () => {
         if (
             selectedPatient &&
-            selectedDiagnosis?.value
+            selectedDiagnosis?.value &&
+            formValues.templateImage !== ""
         ) {
             setBillStatus('second');
         } else {
@@ -93,9 +111,11 @@ const BillInvoice = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitLoading(true);
         formValues.patient = selectedPatient;
         formValues.selectedDiagnosis = selectedDiagnosis.label;
         let patient;
+
         const response = await axios.post(`${DOC_API_URL}/addBillInvoice`, formValues);
         if (user?.role === 'doctor') {
             patient = allPatients.filter((patient) => patient?._id === formValues.patient);
@@ -104,17 +124,19 @@ const BillInvoice = () => {
             patient = allBranchPatients.filter((patient) => patient?._id === formValues.patient);
         }
 
-        generateBillInvoicePdf(patient[0], letterHead?.billInvoiceImage, formValues.title, todayDate, formValues, response?.data?.invoice?.billNumber);
+        generateBillInvoicePdf(patient[0], formValues.templateImage, formValues.title, todayDate, formValues, response?.data?.invoice?.billNumber);
         setFormValues({
             title: 'Mr.',
             patient: '',
             selectedDiagnosis: '',
+            templateImage: '',
             medicineName: '',
             startDate: '',
             endDate: '',
             consultingFee: '',
             medicineFee: ''
         })
+        setSubmitLoading(false);
         setBillStatus('first');
     }
     return (
@@ -148,6 +170,17 @@ const BillInvoice = () => {
                                 <Select options={diagnosisArray} placeholder="Search" value={selectedDiagnosis} onChange={setSelecetedDiagnosis} className="font-normal rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900 transition duration-200" required />
                             </div>
                         </div>
+                        {user?.role !== 'doctor' && <div className='flex flex-col gap-2'>
+                            <h1>Select Doctor Bill Invoice template : </h1>
+                            <select onChange={handleInputChange} value={formValues.templateImage} name='templateImage' className='py-2 pl-3 bg-white rounded-lg border border-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-zinc-900'>
+                                <option disabled value="">Select Template</option>
+                                {
+                                    letterHeads?.map((letterHead, index) => (
+                                        <option key={index} value={letterHead?.billInvoiceImage}>{letterHead?.doctor?.fullname}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>}
                         <div className='flex flex-col gap-2'>
                             <h1>Medicine Name : </h1>
                             <Input icon={AiFillMedicineBox} onChange={handleInputChange} value={formValues.medicineName} name="medicineName" type='text' placeholder='Please Mention Name of the Medicine if any' />
@@ -173,7 +206,7 @@ const BillInvoice = () => {
                             <h1>Medicine Fees : </h1>
                             <Input icon={CiMoneyBill} onChange={handleInputChange} value={formValues.medicineFee} name="medicineFee" type='text' required placeholder='Rs' />
                         </div>
-                        <button type='submit' className='py-2 px-6 mt-10 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer'>Generate Bill</button>
+                        <button type='submit' className='py-2 px-6 mt-10 rounded-lg text-lg bg-green-500 text-white font-semibold block mx-auto cursor-pointer'>{submitLoading === true ? <LuLoaderCircle className='mx-auto animate-spin' size={24} /> : 'Generate Bill'}</button>
                     </div>}
                 </form>
             </div>

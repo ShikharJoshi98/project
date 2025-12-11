@@ -8,16 +8,9 @@ import { LuLoaderCircle } from 'react-icons/lu'
 import { useAuthStore } from '../../store/authStore'
 
 const PreviousIssuedInvoice = () => {
-    const { billInvoices, getBillInvoices, getLetterHead, letterHead } = docStore();
-    const { user } = useAuthStore();
+    const { billInvoices, getBillInvoices } = docStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        getLetterHead(user?._id)
-    }, []);
-
-    console.log(letterHead);
 
     useEffect(() => {
         const timeout = setTimeout(() => setLoading(true), 200);
@@ -26,6 +19,7 @@ const PreviousIssuedInvoice = () => {
             setLoading(false);
         });
     }, [getBillInvoices]);
+
     return (
         <div className='bg-gradient-to-br from-blue-300 via-blue-400 to-sky-700 p-8 overflow-hidden min-h-screen w-full'>
             <div className='bg-[#e9ecef] w-auto p-5 rounded-lg'>
@@ -49,7 +43,7 @@ const PreviousIssuedInvoice = () => {
                                     <td className='px-2 py-4 text-center'>{invoice?.patient?.casePaperNo}</td>
                                     <td className='px-2 py-4 text-center'>{invoice?.patient?.fullname}</td>
                                     <td className='px-2 py-4 text-center'>{invoice?.patient?.phone}</td>
-                                    <td className='px-2 py-4'><FaRegFilePdf size={35} onClick={() => generatePreviousIssuedInvoice(invoice?.patient, letterHead?.billInvoiceImage, invoice?.title, invoice?.date, invoice)} className='mx-auto bg-green-500 cursor-pointer text-white p-1 rounded-md' /></td>
+                                    <td className='px-2 py-4'><FaRegFilePdf size={35} onClick={() => generatePreviousIssuedInvoice(invoice?.patient, invoice?.templateImage, invoice?.title, invoice?.date, invoice)} className='mx-auto bg-green-500 cursor-pointer text-white p-1 rounded-md' /></td>
                                 </tr>
                             ))}
                         </tbody>

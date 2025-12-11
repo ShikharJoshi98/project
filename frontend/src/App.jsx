@@ -70,6 +70,9 @@ import ReceptionistLayout from "./components/Layouts/ReceptionistLayout";
 import GenerateInvestigationPdf from "./pages/Doctor/GenerateInvestigationPdf";
 import ClinicDetails from "./pages/Doctor/ClinicDetails";
 import AudioTest from "./components/AudioTest";
+import AboutUs from "./pages/AboutUs";
+import AboutHomeopathy from "./pages/AboutHomeopathy";
+import DiseasesAndTreatment from "./pages/DiseasesAndTreatment";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -115,6 +118,9 @@ function App() {
           <Route path="/" element={<HomeLayout />}>//--
             <Route index element={<Home />} />//--
             <Route path="login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />//--
+            <Route path="AboutUs" element={<RedirectAuthenticatedUser><AboutUs /></RedirectAuthenticatedUser>} />//--
+            <Route path="About-Homeopathy" element={<RedirectAuthenticatedUser><AboutHomeopathy /></RedirectAuthenticatedUser>} />//--
+            <Route path="Diseases-and-Treatment" element={<RedirectAuthenticatedUser><DiseasesAndTreatment /></RedirectAuthenticatedUser>} />//--
             <Route path="register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />//--
             <Route path="forgotPassword" element={<RedirectAuthenticatedUser><ForgotPassword /></RedirectAuthenticatedUser>} />//--
             <Route path="reset-password/:token" element={<RedirectAuthenticatedUser><ResetPassword /></RedirectAuthenticatedUser>} />//--
