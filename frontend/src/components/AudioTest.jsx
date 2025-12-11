@@ -1,78 +1,60 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
-export default function CameraRecorder() {
-    const videoRef = useRef(null);
-    const mediaRecorderRef = useRef(null);
+export default function NativeCameraRecorder() {
+    const [videoURL, setVideoURL] = useState(null);
 
-    const [stream, setStream] = useState(null);
-    const [chunks, setChunks] = useState([]);
-
-    // Open device camera
-    const openCamera = async () => {
-        try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true
-            });
-
-            setStream(mediaStream);
-            videoRef.current.srcObject = mediaStream;
-        } catch (err) {
-            console.error("Error opening camera:", err);
+    const handleVideoCapture = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setVideoURL(url);
         }
     };
 
-    // Start recording
-    const startRecording = () => {
-        if (!stream) return;
-
-        const recorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = recorder;
-
-        recorder.ondataavailable = (e) => {
-            if (e.data.size > 0) setChunks((prev) => [...prev, e.data]);
-        };
-
-        recorder.start();
-        console.log("Recording...");
-    };
-
-    // Stop recording
-    const stopRecording = () => {
-        mediaRecorderRef.current.stop();
-        console.log("Stopped");
-    };
-
-    // Download video file
-    const downloadVideo = () => {
-        const blob = new Blob(chunks, { type: "video/webm" });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "recorded-video.webm";
-        a.click();
-
-        URL.revokeObjectURL(url);
-    };
-
     return (
-        <div>
-            <h2>Device Camera Recorder</h2>
+        <div style={{ padding: "20px" }}>
+            <h2>Record Using Device Camera App</h2>
 
-            <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                style={{ width: "300px", border: "1px solid black" }}
+            {/* This opens the native camera app */}
+            <input
+                type="file"
+                accept="video/*"
+                capture="environment" // use "user" for front camera
+                onChange={handleVideoCapture}
+                style={{ marginBottom: "20px" }}
             />
 
-            <br /><br />
+            {videoURL && (
+                <div>
+                    <h3>Preview</h3>
+                    <video
+                        src={videoURL}
+                        controls
+                        style={{
+                            width: "300px",
+                            border: "1px solid #ccc",
+                            borderRadius: "6px",
+                        }}
+                    />
 
-            <button onClick={openCamera}>Open Camera</button>
-            <button onClick={startRecording}>Start Recording</button>
-            <button onClick={stopRecording}>Stop</button>
-            <button onClick={downloadVideo}>Download</button>
+                    <br /><br />
+
+                    {/* Download the captured video */}
+                    <a
+                        href={videoURL}
+                        download="captured-video.mp4"
+                        style={{
+                            padding: "10px 20px",
+                            background: "#007bff",
+                            color: "white",
+                            borderRadius: "5px",
+                            textDecoration: "none",
+                        }}
+                    >
+                        Download Video
+                    </a>
+                </div>
+            )}
         </div>
     );
 }
